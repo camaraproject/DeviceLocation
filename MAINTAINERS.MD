@@ -4,3 +4,4 @@
 | Orange | Sylvain Morel |
 | Telefonica | Jose A Ordonez Lucena |
 | Vodafone | Kevin Smith |
+| KDDI | Toshi (Toshiyasu) Wakayama |
