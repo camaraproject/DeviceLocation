@@ -21,3 +21,7 @@ Repository to describe, develop, document and test the DeviceLocation API family
 * Meetings are held virtually
 * Schedule: tbd
 * Meeting link: tbd
+
+## Contributorship and mailing list
+* To subscribe / unsubscribe to the mailing list of this Sub Project and thus be / resign as Contributor please visit <https://lists.camaraproject.org/g/sp-dlo>.
+* A message to all Contributors of this Sub Project can be sent using <sp-dlo@lists.camaraproject.org>.
