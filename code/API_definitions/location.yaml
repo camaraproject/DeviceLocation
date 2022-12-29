@@ -97,14 +97,14 @@ components:
           $ref: '#/components/schemas/Longitude'
         accuracy:
           $ref: '#/components/schemas/Accuracy'
-        maxLocationAge:
-          $ref: '#/components/schemas/MaxLocationAge'
+        maxAge:
+          $ref: '#/components/schemas/MaxAge'
       required:
         - ueId
         - latitude
         - longitude
         - accuracy
-        - maxLocationAge 
+        - maxAge 
     VerifyLocationResponse:
       type: object
       required:
@@ -184,7 +184,7 @@ components:
       minimum: 2
       maximum: 200
       example: 50
-    MaxLocationAge:
+    MaxAge:
       description: Max location aging validity required by the application in Minute, Default =0 for realtime location
       type: number
       minimum: 0
