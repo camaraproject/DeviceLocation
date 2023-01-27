@@ -8,7 +8,7 @@ info:
   license:
     name: Apache 2.0
     url: https://www.apache.org/licenses/LICENSE-2.0.html
-  version: 0.1.0
+  version: 0.2.0
 externalDocs:
   description: Product documentation at Camara
   url: https://github.com/camaraproject/
@@ -97,11 +97,14 @@ components:
           $ref: '#/components/schemas/Longitude'
         accuracy:
           $ref: '#/components/schemas/Accuracy'
+        maxAge:
+          $ref: '#/components/schemas/MaxAge'
       required:
         - ueId
         - latitude
         - longitude
         - accuracy
+        - maxAge 
     VerifyLocationResponse:
       type: object
       required:
@@ -181,6 +184,12 @@ components:
       minimum: 2
       maximum: 200
       example: 50
+    MaxAge:
+      description: Max location aging validity required by the application in Minute, Default =0 for realtime location
+      type: number
+      minimum: 0
+      maximum: 1440
+      example: 30
     VerificationResult:
       description: Result of a verification request, true on match
       type: boolean
