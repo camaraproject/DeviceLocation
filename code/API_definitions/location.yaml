@@ -182,8 +182,12 @@ components:
       maximum: 200
       example: 50
     VerificationResult:
-      description: Result of a verification request, true on match
-      type: boolean
+      description: Result of a verification request, true on match, false on unmatch and unknown on no result
+      type: string
+      enum:
+        - true
+        - false
+        - unknown
     ErrorInfo:
       type: object
       required:
