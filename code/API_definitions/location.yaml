@@ -182,7 +182,7 @@ components:
       maximum: 200
       example: 50
     VerificationResult:
-      description: Result of a verification request: TRUE on match, FALSE on no match, and UNKNOWN on location not known
+      description: Result of a verification request, TRUE on match, FALSE on no match, and UNKNOWN on location not known
       type: string
       enum:
         - TRUE
