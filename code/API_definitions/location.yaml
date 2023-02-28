@@ -17,7 +17,7 @@ security:
 #  - BasicAuth: []
 #  - apiKey: []
   - three_legged:
-    - device-location-read
+      - device-location-read
 servers:
   - url: '{apiRoot}/{basePath}'
     variables:
@@ -59,6 +59,53 @@ paths:
           $ref: '#/components/responses/Generic500'
         '503':
           $ref: '#/components/responses/Generic503'
+  /subscriptions:
+    post:
+      tags:
+        - Location Subscription
+      summary: 'Create a location subscription for a device'
+      operationId: createSubscription
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateSubscription'
+        required: true
+      responses:
+        '201':
+          description: Created (Successful creation of subscription)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SubscriptionInfo'
+        '400':
+          $ref: '#/components/responses/Generic400'
+        '401':
+          $ref: '#/components/responses/Generic401'
+        '403':
+          $ref: '#/components/responses/Generic403'
+        '409':
+          $ref: '#/components/responses/Generic409'
+        '500':
+          $ref: '#/components/responses/Generic500'
+        '503':
+          $ref: '#/components/responses/Generic503'
+  /notifications:
+    post:
+      tags:
+        - Notification Callback
+      summary: "Subscription notification callback"
+      operationId: postNotification
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Notification"
+      responses:
+        '204':
+          description: No Content
+
 components:
   securitySchemes:
     oAuth2ClientCredentials:
@@ -66,15 +113,15 @@ components:
       flows:
         clientCredentials:
           tokenUrl: '{tokenUrl}'
-          scopes: {}
-#    BasicAuth:
+          scopes: { }
+    #    BasicAuth:
 #      type: http
-#      scheme: basic
-#    apiKey:
-#      type: apiKey
-#      description: API key to authorize requests
-#      name: apikey
-#      in: query
+    #      scheme: basic
+    #    apiKey:
+    #      type: apiKey
+    #      description: API key to authorize requests
+    #      name: apikey
+    #      in: query
     three_legged:
       type: oauth2
       flows:
@@ -122,6 +169,11 @@ components:
         ipv6Addr:
           $ref: '#/components/schemas/Ipv6Addr'
       minProperties: 1
+    UeIdList:
+      description: List of User equipment identifiers
+      type: array
+      items:
+        $ref: '#/components/schemas/UeId'
     ExternalId:
       type: string
       example: '123456789@domain.com'
@@ -143,9 +195,7 @@ components:
     Ipv6Addr:
       type: string
       format: ipv6
-      allOf:
-        - pattern: '^((:|(0?|([1-9a-f][0-9a-f]{0,3}))):)((0?|([1-9a-f][0-9a-f]{0,3})):){0,6}(:|(0?|([1-9a-f][0-9a-f]{0,3})))(\/(([0-9])|([0-9]{2})|(1[0-1][0-9])|(12[0-8])))?$'
-        - pattern: '^((([^:]+:){7}([^:]+))|((([^:]+:)*[^:]+)?::(([^:]+:)*[^:]+)?))(\/.+)?$'
+      pattern: '(^((:|(0?|([1-9a-f][0-9a-f]{0,3}))):)((0?|([1-9a-f][0-9a-f]{0,3})):){0,6}(:|(0?|([1-9a-f][0-9a-f]{0,3})))(\/(([0-9])|([0-9]{2})|(1[0-1][0-9])|(12[0-8])))?$)|(^((([^:]+:){7}([^:]+))|((([^:]+:)*[^:]+)?::(([^:]+:)*[^:]+)?))(\/.+)?$)'
       example: '2001:db8:85a3:8d3:1319:8a2e:370:7344'
       description: |
         IPv6 address, following IETF 5952 format, may be specified in form <address/mask> as:
@@ -200,6 +250,92 @@ components:
         message:
           type: string
           description: Detailed error description
+    LocationEventType:
+      description: |
+        AREA_ENTERED - Location event triggered when the UE entered the given area
+        AREA_LEFT - Location event triggered when the UE left the given area
+      type: string
+      enum:
+        - AREA_ENTERED
+        - AREA_LEFT
+    LocationEventTypeList:
+      description: List of Location Event Type
+      type: array
+      items:
+        $ref: '#/components/schemas/LocationEventType'
+      example: [ AREA_ENTERED, AREA_LEFT ]
+    CreateSubscription:
+      description: The request for creating a Location Subscription
+      type: object
+      properties:
+        ueId:
+          $ref: '#/components/schemas/UeIdList'
+        eventType:
+          $ref: '#/components/schemas/LocationEventTypeList'
+        notificationUrl:
+          type: string
+          example: "https://application-server.com"
+          description: Allows asynchronous delivery of aread-location related events
+        notificationAuthToken:
+          type: string
+          example: "c8974e592c2fa383d4a3960714"
+          description: Authentification token for callback API
+        subscriptionExpireTime:
+          type: string
+          format: date-time
+          example: 2023-01-17T13:18:23.682Z
+          description: The subscription expiration time in date-time format.
+
+      required:
+        - ueId
+        - eventType
+        - notificationUrl
+        - notificationAuthToken
+        - subscriptionExpireTime
+    SubscriptionInfo:
+      description: Represents a area-location subscription.
+      type: object
+      allOf:
+        - $ref: '#/components/schemas/CreateSubscription'
+        - type: object
+          properties:
+            subscriptionId:
+              $ref: '#/components/schemas/SubscriptionId'
+            startedAt:
+              type: string
+              format: date-time
+            expiresAt:
+              type: string
+              format: date-time
+          required:
+            - subscriptionId
+            - startedAt
+            - expiresAt
+    SubscriptionId:
+      type: string
+      description: The subscription identifier.
+    EventTime:
+      format: date-time
+      type: string
+      description: The time when the event was notified.
+    Notification:
+      description: The notification callback.
+      type: object
+      required:
+        - subscriptionId
+        - event
+        - eventTime
+        - ueId
+      properties:
+        subscriptionId:
+          $ref: '#/components/schemas/SubscriptionId'
+        ueId:
+          $ref: '#/components/schemas/UeId'
+        eventType:
+          $ref: "#/components/schemas/LocationEventType"
+        eventTime:
+          $ref: '#/components/schemas/EventTime'
+
   responses:
     Generic400:
       description: Invalid input
@@ -237,6 +373,15 @@ components:
           example:
             code: NOT_FOUND
             message: 'The specified resource is not found'
+    Generic409:
+      description: Conflict
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/ErrorInfo"
+          example:
+            code: CONFLICT
+            message: "The specified resource is in a conflict"
     Generic500:
       description: Internal server error
       content:
