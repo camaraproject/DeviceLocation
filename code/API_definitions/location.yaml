@@ -13,11 +13,11 @@ externalDocs:
   description: Product documentation at Camara
   url: https://github.com/camaraproject/
 security:
-  - oAuth2ClientCredentials: []
-#  - BasicAuth: []
-#  - apiKey: []
+  - oAuth2ClientCredentials: [ ]
+  #  - BasicAuth: []
+  #  - apiKey: []
   - three_legged:
-      - device-location-read
+      - device-location-tracking
 servers:
   - url: '{apiRoot}/{basePath}'
     variables:
@@ -39,6 +39,53 @@ paths:
           application/json:
             schema:
               $ref: '#/components/schemas/VerifyLocationRequest'
+            examples:
+              Circle:
+                value:
+                  ueId: [
+                    {
+                      "externalId": "123456789@domain.com",
+                      "msisdn": "123456789",
+                      "ipv4Addr": "192.168.0.1/24",
+                      "ipv6Addr": "2001:db8:85a3:8d3:1319:8a2e:370:7344"
+                    }
+                  ]
+                  area:
+                    latitude: 50.735851
+                    longitude: 7.10066
+                    accuracy: 50
+                    type: CIRCLE
+              Polygon:
+                value:
+                  ueId: [
+                    {
+                      "externalId": "123456789@domain.com",
+                      "msisdn": "123456789",
+                      "ipv4Addr": "192.168.0.1/24",
+                      "ipv6Addr": "2001:db8:85a3:8d3:1319:8a2e:370:7344"
+                    }
+                  ]
+                  area:
+                    polygon: [
+                      {
+                        "latitude": 50.735851,
+                        "longitude": 7.10066
+                      },
+                      {
+                        "latitude": 52.15987,
+                        "longitude": 7.10066
+                      },
+                      {
+                        "latitude": 52.15987,
+                        "longitude": 7.98066
+                      },
+                      {
+                        "latitude": 50.735851,
+                        "longitude": 7.98066
+                      },
+                    ]
+                    accuracy: 50
+                    type: POLYGON
         required: true
       responses:
         '200':
@@ -70,6 +117,69 @@ paths:
           application/json:
             schema:
               $ref: '#/components/schemas/CreateSubscription'
+            examples:
+              Circle:
+                value:
+                  ueId: [
+                    {
+                      "externalId": "123456789@domain.com",
+                      "msisdn": "123456789",
+                      "ipv4Addr": "192.168.0.1/24",
+                      "ipv6Addr": "2001:db8:85a3:8d3:1319:8a2e:370:7344"
+                    }
+                  ]
+                  eventType: [
+                    "AREA_ENTERED",
+                    "AREA_LEFT"
+                  ]
+                  area:
+                    latitude: 50.735851
+                    longitude: 7.10066
+                    accuracy: 50
+                    type: CIRCLE
+                  notificationUrl: https://application-server.com
+                  notificationAuthToken: c8974e592c2fa383d4a3960714
+                  subscriptionExpireTime: 2023-01-17T13:18:23.682Z
+                  startedAt: 2023-01-17T13:18:23.682Z
+              Polygon:
+                value:
+                  ueId: [
+                    {
+                      "externalId": "123456789@domain.com",
+                      "msisdn": "123456789",
+                      "ipv4Addr": "192.168.0.1/24",
+                      "ipv6Addr": "2001:db8:85a3:8d3:1319:8a2e:370:7344"
+                    }
+                  ]
+                  eventType: [
+                    "AREA_ENTERED",
+                    "AREA_LEFT"
+                  ]
+                  area:
+                    polygon: [
+                      {
+                        "latitude": 50.735851,
+                        "longitude": 7.10066
+                      },
+                      {
+                        "latitude": 52.15987,
+                        "longitude": 7.10066
+                      },
+                      {
+                        "latitude": 52.15987,
+                        "longitude": 7.98066
+                      },
+                      {
+                        "latitude": 50.735851,
+                        "longitude": 7.98066
+                      },
+                    ]
+                    accuracy: 50
+                    type: POLYGON
+                  notificationUrl: https://application-server.com,
+                  notificationAuthToken: c8974e592c2fa383d4a3960714,
+                  subscriptionExpireTime: 2023-01-17T13:18:23.682Z,
+                  startedAt: 2023-01-17T13:18:23.682Z
         required: true
       responses:
         '201':
@@ -115,7 +225,7 @@ components:
           tokenUrl: '{tokenUrl}'
           scopes: { }
     #    BasicAuth:
-#      type: http
+    #      type: http
     #      scheme: basic
     #    apiKey:
     #      type: apiKey
@@ -136,19 +246,13 @@ components:
       properties:
         ueId:
           $ref: '#/components/schemas/UeId'
+        area:
+          $ref: '#/components/schemas/Area'
         uePort:
           $ref: '#/components/schemas/Port'
-        latitude:
-          $ref: '#/components/schemas/Latitude'
-        longitude:
-          $ref: '#/components/schemas/Longitude'
-        accuracy:
-          $ref: '#/components/schemas/Accuracy'
       required:
         - ueId
-        - latitude
-        - longitude
-        - accuracy
+        - area
     VerifyLocationResponse:
       type: object
       required:
@@ -205,6 +309,71 @@ components:
           - address/mask - an IP v6 number with a mask:
             - 2001:db8:85a3:8d3::0/64
             - 2001:db8:85a3:8d3::/64
+    Area:
+      description: The definition of an area described by a geographical point and accuracy.
+      type: object
+      oneOf:
+        - $ref: '#/components/schemas/Circle'
+        - $ref: '#/components/schemas/Polygon'
+    Circle:
+      description: A geographical area defined as a Circle.
+      type: object
+      allOf:
+        - $ref: '#/components/schemas/Point'
+        - type: object
+          properties:
+            latitude:
+              $ref: '#/components/schemas/Latitude'
+            longitude:
+              $ref: '#/components/schemas/Longitude'
+            accuracy:
+              $ref: '#/components/schemas/Accuracy'
+            type:
+              $ref: '#/components/schemas/GeoType'
+      required:
+        - latitude
+        - longitude
+        - accuracy
+        - type
+    Polygon:
+      description: A geographical area defined as a Polygon.
+      type: object
+      properties:
+        polygon:
+          $ref: '#/components/schemas/PolygonPointList'
+        accuracy:
+          $ref: '#/components/schemas/Accuracy'
+        type:
+          $ref: '#/components/schemas/GeoType'
+      required:
+        - polygon
+        - accuracy
+        - type
+    Point:
+      description: A geographical point described by latitude and longitude.
+      type: object
+      properties:
+        latitude:
+          $ref: '#/components/schemas/Latitude'
+        longitude:
+          $ref: '#/components/schemas/Longitude'
+      required:
+        - latitude
+        - longitude
+    PolygonPointList:
+      description: A list of geographical points for a Polygon.
+      type: array
+      minItems: 3
+      items:
+        $ref: '#/components/schemas/Point'
+    GeoType:
+      description: |
+        CIRCLE - The geographical area is defined as a circle.
+        POLYGON - The geographical area is defined as a polygon.
+      type: string
+      enum:
+        - CIRCLE
+        - POLYGON
     Port:
       type: integer
       minimum: 0
@@ -235,9 +404,9 @@ components:
       description: Result of a verification request, TRUE on match, FALSE on no match, and UNKNOWN on location not known
       type: string
       enum:
-        - TRUE
-        - FALSE
-        - UNKNOWN
+        - "TRUE"
+        - "FALSE"
+        - "UNKNOWN"
     ErrorInfo:
       type: object
       required:
@@ -268,10 +437,12 @@ components:
       description: The request for creating a Location Subscription
       type: object
       properties:
-        ueId:
+        ueIds:
           $ref: '#/components/schemas/UeIdList'
-        eventType:
+        eventTypes:
           $ref: '#/components/schemas/LocationEventTypeList'
+        area:
+          $ref: '#/components/schemas/Area'
         notificationUrl:
           type: string
           example: "https://application-server.com"
@@ -279,16 +450,21 @@ components:
         notificationAuthToken:
           type: string
           example: "c8974e592c2fa383d4a3960714"
-          description: Authentification token for callback API
+          description: Authentication token for callback API
         subscriptionExpireTime:
           type: string
           format: date-time
           example: 2023-01-17T13:18:23.682Z
           description: The subscription expiration time in date-time format.
-
+        startedAt:
+          type: string
+          format: date-time
+          example: 2023-01-17T13:18:23.682Z
+          description: The time when the location-tracking has to be performed (e.g. in 7 days from now on).
       required:
-        - ueId
-        - eventType
+        - ueIds
+        - eventTypes
+        - area
         - notificationUrl
         - notificationAuthToken
         - subscriptionExpireTime
