@@ -8,15 +8,16 @@ info:
   license:
     name: Apache 2.0
     url: https://www.apache.org/licenses/LICENSE-2.0.html
-  version: 0.1.0
+  version: 0.2.0
 externalDocs:
   description: Product documentation at Camara
   url: https://github.com/camaraproject/
 security:
-  - oAuth2ClientCredentials: []
-#  - BasicAuth: []
-#  - apiKey: []
+  - oAuth2ClientCredentials: [ ]
+  #  - BasicAuth: []
+  #  - apiKey: []
   - three_legged:
+      - device-location-tracking
       - device-location-read
 servers:
   - url: '{apiRoot}/{basePath}'
@@ -115,7 +116,7 @@ components:
           tokenUrl: '{tokenUrl}'
           scopes: { }
     #    BasicAuth:
-#      type: http
+    #      type: http
     #      scheme: basic
     #    apiKey:
     #      type: apiKey
@@ -235,9 +236,9 @@ components:
       description: Result of a verification request, TRUE on match, FALSE on no match, and UNKNOWN on location not known
       type: string
       enum:
-        - TRUE
-        - FALSE
-        - UNKNOWN
+        - "TRUE"
+        - "FALSE"
+        - "UNKNOWN"
     ErrorInfo:
       type: object
       required:
@@ -268,9 +269,9 @@ components:
       description: The request for creating a Location Subscription
       type: object
       properties:
-        ueId:
+        ueIds:
           $ref: '#/components/schemas/UeIdList'
-        eventType:
+        eventTypes:
           $ref: '#/components/schemas/LocationEventTypeList'
         notificationUrl:
           type: string
@@ -279,16 +280,20 @@ components:
         notificationAuthToken:
           type: string
           example: "c8974e592c2fa383d4a3960714"
-          description: Authentification token for callback API
+          description: Authentication token for callback API
         subscriptionExpireTime:
           type: string
           format: date-time
           example: 2023-01-17T13:18:23.682Z
           description: The subscription expiration time in date-time format.
-
+        startedAt:
+          type: string
+          format: date-time
+          example: 2023-01-17T13:18:23.682Z
+          description: The time when the location-tracking has to be performed (e.g. in 7 days from now on).
       required:
-        - ueId
-        - eventType
+        - ueIds
+        - eventTypes
         - notificationUrl
         - notificationAuthToken
         - subscriptionExpireTime
