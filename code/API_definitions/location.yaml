@@ -224,9 +224,13 @@ components:
     ErrorInfo:
       type: object
       required:
+        - status
         - code
         - message
       properties:
+        status:
+          type: integer
+          description: HTTP status code returned along with this error response
         code:
           type: string
           description: Code given to this error
@@ -241,6 +245,7 @@ components:
           schema:
             $ref: '#/components/schemas/ErrorInfo'
           example:
+            status: 400
             code: INVALID_INPUT
             message: 'Invalid input'
     Generic401:
@@ -250,6 +255,7 @@ components:
           schema:
             $ref: '#/components/schemas/ErrorInfo'
           example:
+            status: 401
             code: UNAUTHORIZED
             message: 'Authorization failed: ...'
     Generic403:
@@ -259,6 +265,7 @@ components:
           schema:
             $ref: '#/components/schemas/ErrorInfo'
           example:
+            status: 403
             code: FORBIDDEN
             message: 'Operation not allowed: ...'
     Generic404:
@@ -268,6 +275,7 @@ components:
           schema:
             $ref: '#/components/schemas/ErrorInfo'
           example:
+            status: 404
             code: NOT_FOUND
             message: 'The specified resource is not found'
     Generic500:
@@ -277,6 +285,7 @@ components:
           schema:
             $ref: '#/components/schemas/ErrorInfo'
           example:
+            status: 500
             code: INTERNAL_SERVER_ERROR
             message: 'Internal server error'
     Generic503:
@@ -286,5 +295,6 @@ components:
           schema:
             $ref: '#/components/schemas/ErrorInfo'
           example:
+            status: 503
             code: SERVICE_UNAVAILABLE
             message: 'Service unavailable'
