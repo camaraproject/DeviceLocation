@@ -285,12 +285,12 @@ components:
           type: string
           format: date-time
           example: 2023-01-17T13:18:23.682Z
-          description: The subscription expiration time in date-time format.
+          description: The time when the location-tracking has to be terminated (e.g. in 14 days from now on). Provided in date-time format.
         startedAt:
           type: string
           format: date-time
           example: 2023-01-17T13:18:23.682Z
-          description: The time when the location-tracking has to be performed (e.g. in 7 days from now on).
+          description: The time when the location-tracking has to be started (e.g. in 7 days from now on). Provided in date-time format.
       required:
         - ueIds
         - eventTypes
