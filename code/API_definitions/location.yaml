@@ -8,7 +8,7 @@ info:
   license:
     name: Apache 2.0
     url: https://www.apache.org/licenses/LICENSE-2.0.html
-  version: 0.1.0
+  version: 0.2.0
 externalDocs:
   description: Product documentation at Camara
   url: https://github.com/camaraproject/
@@ -38,7 +38,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/VerifyLocationRequest'
+              $ref: '#/components/schemas/VerifyLocationRequest'               
         required: true
       responses:
         '200':
@@ -84,6 +84,72 @@ components:
           scopes:
             device-location-read: Read device location
   schemas:
+    Area:
+      oneOf: 
+        -  $ref: "#/components/schemas/Circle"
+      discriminator: 
+        propertyName: type
+    BaseArea:
+      type: object
+      description: Delimited area
+      required:
+        - type
+      properties:
+        type:
+          type: string
+          description:  Type of this area. Supported types are `Circle`
+      discriminator: 
+        propertyName: type
+    Circle:
+      allOf:
+        - $ref: '#/components/schemas/BaseArea'
+        - type: object
+          description: Circular area
+          required:
+            - center
+            - radius
+          properties:
+            center:
+              $ref: '#/components/schemas/Point'
+            radius:
+              type: number
+              description: Accuracy from center expected for location verification in km
+              minimum: 2
+              maximum: 200
+      example:
+        type: Circle
+        center:
+          latitude: 50.735851
+          longitude: 7.10066
+        radius: 50
+    Point:
+      type: object
+      description: Coordinates (latitude, longitude) defining a location in a map
+      required: 
+        - latitude
+        - longitude
+      properties: 
+        latitude:
+          $ref: "#/components/schemas/Latitude"
+        longitude:
+          $ref: "#/components/schemas/Longitude"
+      example: 
+        latitude: 50.735851
+        longitude: 7.10066
+    Latitude:
+      description: Latitude component of a location
+      type: number
+      format: double
+      minimum: -90
+      maximum: 90
+      example: 50.735851      
+    Longitude:
+      description: Longitude component of location
+      type: number
+      format: double
+      minimum: -180
+      maximum: 180
+      example: 7.10066        
     VerifyLocationRequest:
       type: object
       properties:
@@ -91,17 +157,11 @@ components:
           $ref: '#/components/schemas/UeId'
         uePort:
           $ref: '#/components/schemas/Port'
-        latitude:
-          $ref: '#/components/schemas/Latitude'
-        longitude:
-          $ref: '#/components/schemas/Longitude'
-        accuracy:
-          $ref: '#/components/schemas/Accuracy'
+        area:
+          $ref: '#/components/schemas/Area'
       required:
         - ueId
-        - latitude
-        - longitude
-        - accuracy
+        - area
     VerifyLocationResponse:
       type: object
       required:
@@ -161,26 +221,6 @@ components:
       maximum: 65535
       description: User equipment port. Device port may be required along with IP address to identify the target device
       example: 5060
-    Latitude:
-      description: Latitude component of location
-      type: number
-      format: double
-      minimum: -90
-      maximum: 90
-      example: 50.735851
-    Longitude:
-      description: Longitude component of location
-      type: number
-      format: double
-      minimum: -180
-      maximum: 180
-      example: 7.10066
-    Accuracy:
-      description: Accuracy expected for location verification in km
-      type: number
-      minimum: 2
-      maximum: 200
-      example: 50
     VerificationResult:
       description: Result of a verification request, TRUE on match, FALSE on no match, and UNKNOWN on location not known
       type: string
