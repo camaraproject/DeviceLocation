@@ -89,39 +89,32 @@ components:
         -  $ref: "#/components/schemas/Circle"
       discriminator: 
         propertyName: type
-    BaseArea:
+        mapping: 
+          Circle:  "#/components/schemas/Circle"
+    Circle:
       type: object
-      description: Delimited area
+      description: Circular area
       required:
         - type
+        - location
+        - accuracy
       properties:
         type:
           type: string
-          description:  Type of this area. Supported types are `Circle`
-      discriminator: 
-        propertyName: type
-    Circle:
-      allOf:
-        - $ref: '#/components/schemas/BaseArea'
-        - type: object
-          description: Circular area
-          required:
-            - center
-            - radius
-          properties:
-            center:
-              $ref: '#/components/schemas/Point'
-            radius:
-              type: number
-              description: Accuracy from center expected for location verification in km
-              minimum: 2
-              maximum: 200
+          description:  Type of this area.
+        location:
+          $ref: '#/components/schemas/Point'
+        accuracy:
+          type: number
+          description: Expected accuracy for the verification in km, from location (radius)
+          minimum: 2
+          maximum: 200
       example:
         type: Circle
-        center:
+        location:
           latitude: 50.735851
           longitude: 7.10066
-        radius: 50
+        accuracy: 50
     Point:
       type: object
       description: Coordinates (latitude, longitude) defining a location in a map
