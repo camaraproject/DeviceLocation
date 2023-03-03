@@ -42,11 +42,33 @@ paths:
         required: true
       responses:
         '200':
-          description: Location verification successful
+          description: Location verification result
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/VerifyLocationResponse'
+              examples: 
+                'True':
+                  summary: Match
+                  description: The network locates the device within the requested area
+                  value:
+                    verificationResult: 'TRUE'
+                'False':
+                  summary: No match
+                  description: The requested area does not match the area where the network locates the device
+                  value:
+                    verificationResult: 'FALSE' 
+                'Unknown':
+                  summary: Unknown
+                  description: The network cannot locate the device
+                  value:
+                    verificationResult: 'UNKNOWN'
+                'Partial':
+                  summary: Partial match
+                  description: The requested area partially match the area where the network locates the device
+                  value:
+                    verificationResult: 'PARTIAL' 
+                    matchRate: 74
         '400':
           $ref: '#/components/responses/Generic400'
         '401':
@@ -109,6 +131,8 @@ components:
       properties:
         verificationResult:
           $ref: '#/components/schemas/VerificationResult'
+        matchRate:
+          $ref: '#/components/schemas/MatchRate'
     UeId:
       description: User equipment identifier
       type: object
@@ -182,12 +206,23 @@ components:
       maximum: 200
       example: 50
     VerificationResult:
-      description: Result of a verification request, TRUE on match, FALSE on no match, and UNKNOWN on location not known
+      description: |
+        Result of a verification request:
+          - `TRUE`: when the network locates the device within the requested area, 
+          - `FALSE`: when the requested area does not match the area where the network locates the device,
+          - `UNKNOWN`: when the network cannot locate the device,
+          - `PARTIAL`: when the requested area partially match the area where the network locates the device. A `match_rate` must be included in the response.
       type: string
       enum:
-        - TRUE
-        - FALSE
-        - UNKNOWN
+        - 'TRUE'
+        - 'FALSE'
+        - 'UNKNOWN'
+        - 'PARTIAL'
+    MatchRate:
+      description: Match rate estimation for the location verification in percent
+      type: integer
+      minimum: 1
+      maximum: 99
     ErrorInfo:
       type: object
       required:
