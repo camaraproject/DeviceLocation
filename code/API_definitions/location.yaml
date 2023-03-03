@@ -43,7 +43,6 @@ paths:
               ueId:
                 [ msisdn: 123456789, { msisdn: 987654321, ipv4Addr: "192.168.0.1/24" } ]
               port: [ 4060, null ]
-              eventType: VERIFY_LOCATION
         required: true
       responses:
         '200':
@@ -55,34 +54,17 @@ paths:
               examples:
                 No-Country-Code:
                   value:
-                    ueId:
+                    ueIds:
                       [ msisdn: 123456789, msisdn: 987654321 ]
-                    eventType: VERIFY_LOCATION
-                    countryInfo:
-                      [ { countryCode: 801,
-                          countryName: [ ] },
-                        { countryCode: 821,
-                          countryName: [ ] } ]
                 Single-Country-Code:
                   value:
-                    ueId:
+                    ueIds:
                       [ msisdn: 123456789, msisdn: 987654321 ]
-                    eventType: VERIFY_LOCATION
-                    countryInfo:
-                      [ { countryCode: 262,
-                          countryName: [ "DE" ] },
-                        { countryCode: 616,
-                          countryName: [ "PL" ] } ]
                 Multiple-Country-Codes:
                   value:
-                    ueId:
+                    ueIds:
                       [ msisdn: 123456789, msisdn: 987654321 ]
-                    eventType: VERIFY_LOCATION
-                    countryInfo:
-                      [ { countryCode: 340,
-                          countryName: [ "BL","GF","GP","MF","MQ" ] },
-                        { countryCode: 350,
-                          countryName: [ "BL","GF","GP","MF","MQ" ] } ]
+               
         '400':
           $ref: '#/components/responses/Generic400'
         '401':
@@ -123,18 +105,16 @@ components:
     VerifyLocationRequest:
       type: object
       properties:
-        ueId:
+        ueIds:
           $ref: '#/components/schemas/UeIdList'
         uePort:
-          $ref: '#/components/schemas/PortList'
+          $ref: '#/components/schemas/Port'
         latitude:
           $ref: '#/components/schemas/Latitude'
         longitude:
           $ref: '#/components/schemas/Longitude'
         accuracy:
           $ref: '#/components/schemas/Accuracy'
-        countryInfo:
-          $ref: "#/components/schemas/CountryInfoList"
       required:
         - ueId
         - latitude
@@ -198,11 +178,6 @@ components:
           - address/mask - an IP v6 number with a mask:
             - 2001:db8:85a3:8d3::0/64
             - 2001:db8:85a3:8d3::/64
-    PortList:
-      description: List of user equipment port for each device in the same order as in the UeId list
-      type: array
-      items:
-        $ref: '#/components/schemas/Port'
     Port:
       type: integer
       minimum: 0
@@ -229,27 +204,6 @@ components:
       minimum: 2
       maximum: 200
       example: 50
-    CountryInfoList:
-      description: List of country information for each device in the same order as in the UeId list
-      type: array
-      items:
-        $ref: '#/components/schemas/CountryInfo'
-    CountryInfo:
-      description: Info about country code and country name for the given device
-      type: object
-      properties:
-          countryCode:
-            $ref: '#/components/schemas/CountryCode'
-          countryName:
-            $ref: '#/components/schemas/CountryName'
-    CountryCode:
-      description: The Mobile country code (MCC) as an geographic region identifier for the country and the dependent areas.
-      type: integer
-    CountryName:
-      description: The ISO 3166 ALPHA-2 country-codes of mapped to mobile country code(MCC). If there is mapping of one MCC to multiple countries, Then we have list of countries. If there is no mapping of MCC to any country, Then the array of countryNames will be empty.
-      type: array
-      items:
-        type: string  
     VerificationResult:
       description: Result of a verification request, true on match
       type: boolean
