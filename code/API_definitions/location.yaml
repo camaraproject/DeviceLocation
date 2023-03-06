@@ -48,7 +48,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/VerifyLocationResponse'
               examples:
-                No-Country-Code:
+                Is-Location-Verified:
                   value:
                     - ueId:
                         ipv6Addr: 2001:db8:85a3:8d3:1319:8a2e:370:7344
@@ -113,11 +113,14 @@ components:
         - accuracy
     VerifyLocationResponse:
       type: object
-      required:
-        - verificationResult
       properties:
+        ueId:
+          $ref: '#/components/schemas/UeId'
         verificationResult:
           $ref: '#/components/schemas/VerificationResult'
+      required:
+        - UeId
+        - verificationResult
     UeIdList:
       description: List of User equipment identifiers
       type: array
