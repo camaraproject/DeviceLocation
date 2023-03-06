@@ -39,10 +39,6 @@ paths:
           application/json:
             schema:
               $ref: '#/components/schemas/VerifyLocationRequest'
-            example:
-              ueId:
-                [ msisdn: 123456789, { msisdn: 987654321, ipv4Addr: "192.168.0.1/24" } ]
-              port: [ 4060, null ]
         required: true
       responses:
         '200':
@@ -54,17 +50,12 @@ paths:
               examples:
                 No-Country-Code:
                   value:
-                    ueIds:
-                      [ msisdn: 123456789, msisdn: 987654321 ]
-                Single-Country-Code:
-                  value:
-                    ueIds:
-                      [ msisdn: 123456789, msisdn: 987654321 ]
-                Multiple-Country-Codes:
-                  value:
-                    ueIds:
-                      [ msisdn: 123456789, msisdn: 987654321 ]
-               
+                    - ueId:
+                        ipv6Addr: 2001:db8:85a3:8d3:1319:8a2e:370:7344
+                      verificationResult: true
+                    - ueId:
+                        msisdn: '123456789'
+                      verificationResult: false
         '400':
           $ref: '#/components/responses/Generic400'
         '401':
