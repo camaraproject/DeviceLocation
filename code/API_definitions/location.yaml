@@ -46,7 +46,16 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/VerifyLocationResponse'
+                $ref: '#/components/schemas/VerifyLocationResponseList'
+              examples:
+                Is-Location-Verified:
+                  value:
+                    - ueId:
+                        ipv6Addr: 2001:db8:85a3:8d3:1319:8a2e:370:7344
+                      verificationResult: true
+                    - ueId:
+                        msisdn: '123456789'
+                      verificationResult: false
         '400':
           $ref: '#/components/responses/Generic400'
         '401':
@@ -87,8 +96,8 @@ components:
     VerifyLocationRequest:
       type: object
       properties:
-        ueId:
-          $ref: '#/components/schemas/UeId'
+        ueIds:
+          $ref: '#/components/schemas/UeIdList'
         uePort:
           $ref: '#/components/schemas/Port'
         latitude:
@@ -102,13 +111,26 @@ components:
         - latitude
         - longitude
         - accuracy
+    VerifyLocationResponseList:
+      description: List of items of VerifyLocationResponse
+      type: array
+      items:
+        $ref: '#/components/schemas/VerifyLocationResponse'
     VerifyLocationResponse:
       type: object
-      required:
-        - verificationResult
       properties:
+        ueId:
+          $ref: '#/components/schemas/UeId'
         verificationResult:
           $ref: '#/components/schemas/VerificationResult'
+      required:
+        - UeId
+        - verificationResult
+    UeIdList:
+      description: List of User equipment identifiers
+      type: array
+      items:
+        $ref: '#/components/schemas/UeId'
     UeId:
       description: User equipment identifier
       type: object
