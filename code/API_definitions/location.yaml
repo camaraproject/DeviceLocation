@@ -46,7 +46,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/VerifyLocationResponse'
+                $ref: '#/components/schemas/VerifyLocationResponseList'
               examples:
                 Is-Location-Verified:
                   value:
@@ -111,6 +111,11 @@ components:
         - latitude
         - longitude
         - accuracy
+    VerifyLocationResponseList:
+      description: List of items of VerifyLocationResponse
+      type: array
+      items:
+        $ref: '#/components/schemas/VerifyLocationResponse'
     VerifyLocationResponse:
       type: object
       properties:
