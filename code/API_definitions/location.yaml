@@ -269,8 +269,8 @@ components:
       description: The request for creating a Location Subscription
       type: object
       properties:
-        ueIds:
-          $ref: '#/components/schemas/UeIdList'
+        ueId:
+          $ref: '#/components/schemas/UeId'
         eventTypes:
           $ref: '#/components/schemas/LocationEventTypeList'
         area:
