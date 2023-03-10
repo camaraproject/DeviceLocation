@@ -199,8 +199,8 @@ components:
         - FALSE
         - UNKNOWN
     LastLocationTime:
-      description: timestamp of the age
-      example: 1995-09-07T10:40:52Z
+      description: Timestamp of the last location information
+      example: 2022-09-07T10:40:52Z
       format: date-time
       type: string
     ErrorInfo:
