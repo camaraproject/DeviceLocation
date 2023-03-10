@@ -97,6 +97,8 @@ components:
           $ref: '#/components/schemas/Longitude'
         accuracy:
           $ref: '#/components/schemas/Accuracy'
+        maxAge:
+          $ref: '#/components/schemas/MaxAge'
       required:
         - ueId
         - latitude
@@ -107,6 +109,8 @@ components:
       required:
         - verificationResult
       properties:
+        lastLocationTime:
+          $ref: '#/components/schemas/LastLocationTime'
         verificationResult:
           $ref: '#/components/schemas/VerificationResult'
     UeId:
@@ -181,6 +185,12 @@ components:
       minimum: 2
       maximum: 200
       example: 50
+    MaxAge:
+      description: The maximum age of the location information to be accepted for the verification.
+      type: number
+      format: integer
+      minimum: 0
+      example: 3600
     VerificationResult:
       description: Result of a verification request, TRUE on match, FALSE on no match, and UNKNOWN on location not known
       type: string
@@ -188,6 +198,11 @@ components:
         - TRUE
         - FALSE
         - UNKNOWN
+    LastLocationTime:
+      description: timestamp of the age
+      example: 1995-09-07T10:40:52Z
+      format: date-time
+      type: string
     ErrorInfo:
       type: object
       required:
