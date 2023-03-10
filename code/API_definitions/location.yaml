@@ -190,7 +190,7 @@ components:
       type: number
       format: integer
       minimum: 0
-      example: 3600
+      example: 120
     VerificationResult:
       description: Result of a verification request, TRUE on match, FALSE on no match, and UNKNOWN on location not known
       type: string
