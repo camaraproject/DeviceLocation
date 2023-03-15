@@ -390,16 +390,6 @@ components:
             - subscriptionId
             - startedAt
             - expiresAt
-    Area:
-      description: The definition of an area described by a geographical point and accuracy.
-      type: object
-      properties:
-        latitude:
-          $ref: '#/components/schemas/Latitude'
-        longitude:
-          $ref: '#/components/schemas/Longitude'
-        accuracy:
-          $ref: '#/components/schemas/Accuracy'
     SubscriptionId:
       type: string
       description: The subscription identifier.
