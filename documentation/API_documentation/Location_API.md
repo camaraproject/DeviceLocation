@@ -45,7 +45,7 @@ Following table defines API endpoints of exposed REST based for Device location 
 | **Verify location** |
 | --- |
 | **HTTP Request** <ul> POST /location/v0/verify</ul> **Query Parameters** <ul> No query parameters are defined.</ul> **Path Parameters** <ul> No path parameter are defined. </ul> **Request Body Parameters** <ul> <li> **ueId**: User equipment identifier object, contains 4 different identifiers, at least 1 has to be set: <ul> <li>**msisdn**: Subscriber number in E.164 format (starting with country code). Optionally prefixed with '+'. </li><li>**ipv4addr**: IPv4 address (supports mask) e.g. 192.168.0.1/24 </li><li>**ipv6addr**: IPv6 address (supports mask) e.g. 2001:db8:85a3:8d3:1319:8a2e:370:7344 </li><li>**externalId**: assigned by the mobile network operator (MNO) for the user equipment. e.g. 123456789@domain.com </li></ul> <li> **uePort (optional):** User equipment port. Device port may be required along with IP address to identify the target device. </li><li> **latitude:**: double number value for the latitude to be verified in decimal degrees. </li><li> **longitude**: double number value for the longitude to be verified in decimal degrees. </li><li> **accuracy**: number value for the expected accuracy in km. </ul> 
-**Responses** <br><br> **200**: Returns the result of the location verification. <ul> Response body: <ul><li> **verificationResult**: Result of a verification request, true on match. </li> </ul></ul> **400**: Invalid input.<ul></ul> **401**: Unauthorized. <ul></ul> **403**: Forbidden.<ul></ul> **404**: Not found.<ul></ul> **500**: Internal server error.<ul></ul> **503**: Service  unavailable.
+**Responses** <br><br> **200**: Returns the result of the location verification. <ul> Response body: <ul><li> **verificationResult**: Result of a verification request, TRUE on match, FALSE on no match, PARTIAL if device is not for sure in the defined zone and UNKNOWN on location not known. </li> </ul> <ul><li> **matchRate**: Match rate estimation for the location verification in percent (Optional - may be provided for PARTIAL result). </li> </ul></ul> **400**: Invalid input.<ul></ul> **401**: Unauthorized. <ul></ul> **403**: Forbidden.<ul></ul> **404**: Not found.<ul></ul> **500**: Internal server error.<ul></ul> **503**: Service  unavailable.
 
  
 ### 4.3 Errors
@@ -79,7 +79,7 @@ Please note, the credentials for API authentication purposes need to be adjusted
 | Snippet 1. Verify location request  |
 | --- |
 | curl -X 'POST' `https://sample-base-url/location/v0/verify`   <br>    -H 'accept: application/json' <br>    -H 'Content-Type: application/json'<br>    -H "Authorization: Bearer eyJ0eXAiOiJKV1QiLCJhbG...."<br>    -d '{ "ueId": { "ipv4addr": "123.234.123.234" }, "uePort": 1234, "latitude": 40.416775, "longitude": -3.703790, "accuracy": 5 }  |
-| If location is successfully verified, response will be: <br> 200 <br>   { "verificationResult": true } |
+| If location is successfully verified, response will be: <br> 200 <br>   { "verificationResult": "TRUE" } |
 
 
 ### 4.6 FAQ's
