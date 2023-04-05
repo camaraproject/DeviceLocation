@@ -108,14 +108,17 @@ components:
   schemas:
     Area:
       oneOf: 
-        -  $ref: "#/components/schemas/Circle"
+        - $ref: "#/components/schemas/Circle"
+        - $ref: "#/components/schemas/PostalCode"
       discriminator: 
         propertyName: type
         mapping: 
           Circle:  "#/components/schemas/Circle"
+          PostalCode: "#/components/schemas/PostalCode"
+      description: Portion of Earth surface delimited by certain borders. Different type of areas may be supported with different geometries. `Circle` is always supoported. 
     Circle:
       type: object
-      description: Circular area
+      description: Circular area specified by a center (`location`) and a radius (`accuracy`).
       required:
         - type
         - location
@@ -123,6 +126,8 @@ components:
       properties:
         type:
           type: string
+          enum:
+            - Circle
           description:  Type of this area.
         location:
           $ref: '#/components/schemas/Point'
@@ -164,7 +169,30 @@ components:
       format: double
       minimum: -180
       maximum: 180
-      example: 7.10066        
+      example: 7.10066      
+    PostalCode:
+      type: object
+      description: Delivery area associated to a postal code. Each contry defines its own postal code system.
+      required:
+        - type
+        - postalCode
+      properties:
+        type:
+          type: string
+          enum:
+            - PostalCode
+          description:  Type of this area.
+        postalCode:
+          type: string
+          description: Postal Code (aka Zip code or Postcode), according to the local format.
+        countryCode:
+          type: string
+          pattern: "^[A-Z]{2}$"
+          description: ISO 3166-1 alpha-2 code for the country. Uppercase. If not specified, each implementation may assume a default value.
+      example: 
+        type: PostalCode
+        postalCode: "SW1A 1AA"
+        countryCode: "GB"
     VerifyLocationRequest:
       type: object
       properties:
