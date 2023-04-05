@@ -115,7 +115,7 @@ components:
         mapping: 
           Circle:  "#/components/schemas/Circle"
           PostalCode: "#/components/schemas/PostalCode"
-      description: Portion of Earth surface delimited by certain borders. Different type of areas may be supported with different geometries. `Circle` is always supoported. 
+      description: Portion of Earth surface delimited by certain borders. Different type of areas may be supported with different geometries. `Circle` is always supported. 
     Circle:
       type: object
       description: Circular area specified by a center (`location`) and a radius (`accuracy`).
@@ -172,7 +172,7 @@ components:
       example: 7.10066      
     PostalCode:
       type: object
-      description: Delivery area associated to a postal code. Each contry defines its own postal code system.
+      description: Delivery area associated to a postal code. Each country defines its own postal code system.
       required:
         - type
         - postalCode
