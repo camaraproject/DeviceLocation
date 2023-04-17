@@ -48,7 +48,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/VerifyLocationResponse'
-              examples: 
+              examples:
                 'True':
                   summary: Match
                   description: The network locates the device within the requested area
@@ -58,7 +58,7 @@ paths:
                   summary: No match
                   description: The requested area does not match the area where the network locates the device
                   value:
-                    verificationResult: 'FALSE' 
+                    verificationResult: 'FALSE'
                 'Unknown':
                   summary: Unknown
                   description: The network cannot locate the device
@@ -68,7 +68,7 @@ paths:
                   summary: Partial match
                   description: The requested area partially match the area where the network locates the device
                   value:
-                    verificationResult: 'PARTIAL' 
+                    verificationResult: 'PARTIAL'
                     matchRate: 74
         '400':
           $ref: '#/components/responses/Generic400'
@@ -113,6 +113,23 @@ paths:
           $ref: '#/components/responses/Generic500'
         '503':
           $ref: '#/components/responses/Generic503'
+  /subscriptions/{subscriptionId}:
+    delete:
+      tags:
+        - Location Subscription
+      summary: 'Deletes an existing subscription for a device'
+      operationId: deleteSubscription
+      description: Delete a given subscription by ID
+      parameters:
+        - name: subscriptionId
+          in: path
+          description: subscription identifier that was obtained from the create subscription operation
+          required: true
+          schema:
+            type: string
+      responses:
+        204:
+          description: No content - subscription deleted.
   /notifications:
     post:
       tags:
@@ -155,12 +172,12 @@ components:
             device-location-read: Read device location
   schemas:
     Area:
-      oneOf: 
-        -  $ref: "#/components/schemas/Circle"
-      discriminator: 
+      oneOf:
+        - $ref: "#/components/schemas/Circle"
+      discriminator:
         propertyName: type
-        mapping: 
-          Circle:  "#/components/schemas/Circle"
+        mapping:
+          Circle: "#/components/schemas/Circle"
     Circle:
       type: object
       description: Circular area
@@ -171,7 +188,7 @@ components:
       properties:
         type:
           type: string
-          description:  Type of this area.
+          description: Type of this area.
         location:
           $ref: '#/components/schemas/Point'
         accuracy:
@@ -188,15 +205,15 @@ components:
     Point:
       type: object
       description: Coordinates (latitude, longitude) defining a location in a map
-      required: 
+      required:
         - latitude
         - longitude
-      properties: 
+      properties:
         latitude:
           $ref: "#/components/schemas/Latitude"
         longitude:
           $ref: "#/components/schemas/Longitude"
-      example: 
+      example:
         latitude: 50.735851
         longitude: 7.10066
     Latitude:
@@ -205,14 +222,14 @@ components:
       format: double
       minimum: -90
       maximum: 90
-      example: 50.735851      
+      example: 50.735851
     Longitude:
       description: Longitude component of location
       type: number
       format: double
       minimum: -180
       maximum: 180
-      example: 7.10066        
+      example: 7.10066
     VerifyLocationRequest:
       type: object
       properties:
