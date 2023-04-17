@@ -4,3 +4,4 @@
 | Ericsson | Joachim Dahlgren |
 | Orange | Sylvain Morel |
 | Vodafone | Kevin Smith |
+| Verizon | Mahesh Chapalamadugu |

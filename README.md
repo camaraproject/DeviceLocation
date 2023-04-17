@@ -19,7 +19,7 @@ Repository to describe, develop, document and test the DeviceLocation API family
 
 ## Meetings
 * Meetings are held virtually
-* Schedule: bi-weekly (odd weeks), Tuesday, 9 AM CET
+* Schedule: bi-weekly (odd weeks), Tuesday, 9 AM CET/CEST
 * Meeting link: [Microsoft Teams Meeting](https://teams.microsoft.com/l/meetup-join/19%3ameeting_OGZlNTY3NGYtOGY1MS00NmE1LTk1ZjQtMjU5Nzc5MmRmYzkz%40thread.v2/0?context=%7b%22Tid%22%3a%229744600e-3e04-492e-baa1-25ec245c6f10%22%2c%22Oid%22%3a%22d068e45e-a3af-46a4-8b86-a333bc7ffe81%22%7d)
 
 ## Contributorship and mailing list
