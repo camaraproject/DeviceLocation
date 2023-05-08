@@ -8,7 +8,7 @@ info:
   license:
     name: Apache 2.0
     url: https://www.apache.org/licenses/LICENSE-2.0.html
-  version: 0.2.0
+  version: 0.2.0-wip
 externalDocs:
   description: Product documentation at Camara
   url: https://github.com/camaraproject/
@@ -28,7 +28,7 @@ servers:
         default: location/v0
         description: Base path for the device location API
 paths:
-  /verify:
+  /verifications:
     post:
       tags:
         - Location verification
@@ -42,11 +42,33 @@ paths:
         required: true
       responses:
         '200':
-          description: Location verification successful
+          description: Location verification result
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/VerifyLocationResponse'
+              examples: 
+                'True':
+                  summary: Match
+                  description: The network locates the device within the requested area
+                  value:
+                    verificationResult: 'TRUE'
+                'False':
+                  summary: No match
+                  description: The requested area does not match the area where the network locates the device
+                  value:
+                    verificationResult: 'FALSE' 
+                'Unknown':
+                  summary: Unknown
+                  description: The network cannot locate the device
+                  value:
+                    verificationResult: 'UNKNOWN'
+                'Partial':
+                  summary: Partial match
+                  description: The requested area partially match the area where the network locates the device
+                  value:
+                    verificationResult: 'PARTIAL' 
+                    matchRate: 74
         '400':
           $ref: '#/components/responses/Generic400'
         '401':
@@ -84,6 +106,65 @@ components:
           scopes:
             device-location-read: Read device location
   schemas:
+    Area:
+      oneOf: 
+        -  $ref: "#/components/schemas/Circle"
+      discriminator: 
+        propertyName: type
+        mapping: 
+          Circle:  "#/components/schemas/Circle"
+    Circle:
+      type: object
+      description: Circular area
+      required:
+        - type
+        - location
+        - accuracy
+      properties:
+        type:
+          type: string
+          description:  Type of this area.
+        location:
+          $ref: '#/components/schemas/Point'
+        accuracy:
+          type: number
+          description: Expected accuracy for the verification in km, from location (radius)
+          minimum: 2
+          maximum: 200
+      example:
+        type: Circle
+        location:
+          latitude: 50.735851
+          longitude: 7.10066
+        accuracy: 50
+    Point:
+      type: object
+      description: Coordinates (latitude, longitude) defining a location in a map
+      required: 
+        - latitude
+        - longitude
+      properties: 
+        latitude:
+          $ref: "#/components/schemas/Latitude"
+        longitude:
+          $ref: "#/components/schemas/Longitude"
+      example: 
+        latitude: 50.735851
+        longitude: 7.10066
+    Latitude:
+      description: Latitude component of a location
+      type: number
+      format: double
+      minimum: -90
+      maximum: 90
+      example: 50.735851      
+    Longitude:
+      description: Longitude component of location
+      type: number
+      format: double
+      minimum: -180
+      maximum: 180
+      example: 7.10066        
     VerifyLocationRequest:
       type: object
       properties:
@@ -91,19 +172,13 @@ components:
           $ref: '#/components/schemas/UeId'
         uePort:
           $ref: '#/components/schemas/Port'
-        latitude:
-          $ref: '#/components/schemas/Latitude'
-        longitude:
-          $ref: '#/components/schemas/Longitude'
-        accuracy:
-          $ref: '#/components/schemas/Accuracy'
+        area:
+          $ref: '#/components/schemas/Area'
         maxAge:
           $ref: '#/components/schemas/MaxAge'
       required:
         - ueId
-        - latitude
-        - longitude
-        - accuracy
+        - area
     VerifyLocationResponse:
       type: object
       required:
@@ -113,6 +188,8 @@ components:
           $ref: '#/components/schemas/LastLocationTime'
         verificationResult:
           $ref: '#/components/schemas/VerificationResult'
+        matchRate:
+          $ref: '#/components/schemas/MatchRate'
     UeId:
       description: User equipment identifier
       type: object
@@ -165,26 +242,6 @@ components:
       maximum: 65535
       description: User equipment port. Device port may be required along with IP address to identify the target device
       example: 5060
-    Latitude:
-      description: Latitude component of location
-      type: number
-      format: double
-      minimum: -90
-      maximum: 90
-      example: 50.735851
-    Longitude:
-      description: Longitude component of location
-      type: number
-      format: double
-      minimum: -180
-      maximum: 180
-      example: 7.10066
-    Accuracy:
-      description: Accuracy expected for location verification in km
-      type: number
-      minimum: 2
-      maximum: 200
-      example: 50
     MaxAge:
       description: The maximum age (in minutes) of the location information to be accepted for the verification.
       type: number
@@ -192,12 +249,23 @@ components:
       minimum: 0
       example: 120
     VerificationResult:
-      description: Result of a verification request, TRUE on match, FALSE on no match, and UNKNOWN on location not known
+      description: |
+        Result of a verification request:
+          - `TRUE`: when the network locates the device within the requested area, 
+          - `FALSE`: when the requested area does not match the area where the network locates the device,
+          - `UNKNOWN`: when the network cannot locate the device,
+          - `PARTIAL`: when the requested area partially match the area where the network locates the device. A `match_rate` could be included in the response.
       type: string
       enum:
-        - TRUE
-        - FALSE
-        - UNKNOWN
+        - 'TRUE'
+        - 'FALSE'
+        - 'UNKNOWN'
+        - 'PARTIAL'
+    MatchRate:
+      description: Match rate estimation for the location verification in percent
+      type: integer
+      minimum: 1
+      maximum: 99
     LastLocationTime:
       description: Timestamp of the last location information
       example: 2022-09-07T10:40:52Z
@@ -228,7 +296,7 @@ components:
             $ref: '#/components/schemas/ErrorInfo'
           example:
             status: 400
-            code: INVALID_INPUT
+            code: INVALID_ARGUMENT
             message: 'Invalid input'
     Generic401:
       description: Unauthorized
@@ -238,7 +306,7 @@ components:
             $ref: '#/components/schemas/ErrorInfo'
           example:
             status: 401
-            code: UNAUTHORIZED
+            code: UNAUTHENTICATED
             message: 'Authorization failed: ...'
     Generic403:
       description: Forbidden
@@ -248,7 +316,7 @@ components:
             $ref: '#/components/schemas/ErrorInfo'
           example:
             status: 403
-            code: FORBIDDEN
+            code: PERMISSION_DENIED
             message: 'Operation not allowed: ...'
     Generic404:
       description: Not found
@@ -268,7 +336,7 @@ components:
             $ref: '#/components/schemas/ErrorInfo'
           example:
             status: 500
-            code: INTERNAL_SERVER_ERROR
+            code: INTERNAL
             message: 'Internal server error'
     Generic503:
       description: Service unavailable
@@ -278,5 +346,5 @@ components:
             $ref: '#/components/schemas/ErrorInfo'
           example:
             status: 503
-            code: SERVICE_UNAVAILABLE
+            code: UNAVAILABLE
             message: 'Service unavailable'
