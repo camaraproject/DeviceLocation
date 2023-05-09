@@ -1,0 +1,243 @@
+openapi: 3.0.3
+info:
+  title: Get Device location API
+  description: Service Enabling Network Function API for location retrieval from a device identifier.
+  termsOfService: http://swagger.io/terms/
+  contact:
+    email: project-email@sample.com
+  license:
+    name: Apache 2.0
+    url: https://www.apache.org/licenses/LICENSE-2.0.html
+  version: 0.1.0-wip
+externalDocs:
+  description: Product documentation at Camara
+  url: https://github.com/camaraproject/
+security:
+  - oAuth2ClientCredentials: []
+#  - BasicAuth: []
+#  - apiKey: []
+  - three_legged:
+    - device-location-provide
+servers:
+  - url: '{apiRoot}/{basePath}'
+    variables:
+      apiRoot:
+        default: http://localhost:9091
+        description: API root
+      basePath:
+        default: location/v0
+        description: Base path for the device location API
+paths:
+  /locations:
+    get:
+      tags:
+        - Location retrieval
+      summary: 'Retrieve location for a user equipment'
+      operationId: retrieveLocation
+      description: Retrieve location for an user equipement from an identifier like phone number, IP address (and port) or external identifier provided by the network operator.
+      parameters:
+          - description: Subscriber number in E.164 format (starting with country code). Optionally prefixed with '+'.
+            name: phoneNumber
+            in : query
+            schema: 
+              type: string
+              pattern: '^\+?[0-9]{5,15}$'
+          - description: Identifier assigned by the mobile network operator (MNO) for the device 
+            name: networkAccessIdentifier
+            in: query
+            schema:
+              type: string
+          - description:  |
+              IPv6 address, following IETF 5952 format, may be specified in form <address/mask> as:
+                - address - The /128 subnet is optional for single addresses:
+                  - 2001:db8:85a3:8d3:1319:8a2e:370:7344
+                  - 2001:db8:85a3:8d3:1319:8a2e:370:7344/128
+                - address/mask - an IP v6 number with a mask:
+                  - 2001:db8:85a3:8d3::0/64
+                  - 2001:db8:85a3:8d3::/64
+            name: ipv6Address
+            in : query
+            schema:
+              type: string
+              pattern: 
+                -'^((:|(0?|([1-9a-f][0-9a-f]{0,3}))):)((0?|([1-9a-f][0-9a-f]{0,3})):){0,6}(:|(0?|([1-9a-f][0-9a-f]{0,3})))(\/(([0-9])|([0-9]{2})|(1[0-1][0-9])|(12[0-8])))?$'
+                -'^((([^:]+:){7}([^:]+))|((([^:]+:)*[^:]+)?::(([^:]+:)*[^:]+)?))(\/.+)?$'
+          - description: |
+              IPv4 address may be specified in form <address/mask> as:
+              - address - an IPv4 number in dotted-quad form 1.2.3.4. Only this exact IP number will match the flow control rule.
+              - address/mask - an IP number as above with a mask width of the form 1.2.3.4/24.
+              In this case, all IP numbers from 1.2.3.0 to 1.2.3.255 will match. The bit width MUST be valid for the IP version.
+            name: Ipv4Address
+            in : query
+            schema:
+              type: string
+              pattern: 
+                -'^((:|(0?|([1-9a-f][0-9a-f]{0,3}))):)((0?|([1-9a-f][0-9a-f]{0,3})):){0,6}(:|(0?|([1-9a-f][0-9a-f]{0,3})))(\/(([0-9])|([0-9]{2})|(1[0-1][0-9])|(12[0-8])))?$'
+                -'^((([^:]+:){7}([^:]+))|((([^:]+:)*[^:]+)?::(([^:]+:)*[^:]+)?))(\/.+)?$'
+          - description: User equipment port. Device port may be required along with IP address to identify the target device
+            name: port
+            in : query
+            schema:
+              type: integer
+              minimum: 0
+              maximum: 65535
+      responses:
+        '200':
+          description: Location retrieval result
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RetrievalLocationResponse'
+              examples: 
+                'success':
+                  summary: successful location
+                  description: The network provides device location
+                  value:
+                    latitude: 50.735851
+                    longitude: 7.10066
+                    accuracy: 2
+
+        '400':
+          $ref: '#/components/responses/Generic400'
+        '401':
+          $ref: '#/components/responses/Generic401'
+        '403':
+          $ref: '#/components/responses/Generic403'
+        '404':
+          $ref: '#/components/responses/Generic404'
+        '500':
+          $ref: '#/components/responses/Generic500'
+        '503':
+          $ref: '#/components/responses/Generic503'
+components:
+  securitySchemes:
+    oAuth2ClientCredentials:
+      type: oauth2
+      flows:
+        clientCredentials:
+          tokenUrl: '{tokenUrl}'
+          scopes: {}
+#    BasicAuth:
+#      type: http
+#      scheme: basic
+#    apiKey:
+#      type: apiKey
+#      description: API key to authorize requests
+#      name: apikey
+#      in: query
+    three_legged:
+      type: oauth2
+      flows:
+        authorizationCode:
+          authorizationUrl: https://auth.example.com/authorize
+          tokenUrl: https://auth.example.com/token
+          scopes:
+            device-location-provide: Provide device location
+  schemas:
+    RetrievalLocationResponse:
+      type: object
+      required:
+        - latitude
+        - longitude
+        - accuracy
+      properties:
+        latitude:
+          description: Latitude component of a location
+          type: number
+          format: double
+          minimum: -90
+          maximum: 90
+          example: 50.735851      
+        longitude:
+          description: Longitude component of location
+          type: number
+          format: double
+          minimum: -180
+          maximum: 180
+          example: 7.10066     
+        accuracy:
+          type: number
+          description: Expected accuracy for the location in km, from the point defined by latitude/longitude
+    Port:
+      type: integer
+      minimum: 0
+      maximum: 65535
+      description: User equipment port. Device port may be required along with IP address to identify the target device
+      example: 5060
+    ErrorInfo:
+      type: object
+      required:
+        - status
+        - code
+        - message
+      properties:
+        status:
+          type: integer
+          description: HTTP status code returned along with this error response
+        code:
+          type: string
+          description: Code given to this error
+        message:
+          type: string
+          description: Detailed error description
+  responses:
+    Generic400:
+      description: Invalid input
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorInfo'
+          example:
+            status: 400
+            code: INVALID_ARGUMENT
+            message: 'Invalid input'
+    Generic401:
+      description: Unauthorized
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorInfo'
+          example:
+            status: 401
+            code: UNAUTHENTICATED
+            message: 'Authorization failed: ...'
+    Generic403:
+      description: Forbidden
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorInfo'
+          example:
+            status: 403
+            code: PERMISSION_DENIED
+            message: 'Operation not allowed: ...'
+    Generic404:
+      description: Not found
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorInfo'
+          example:
+            status: 404
+            code: NOT_FOUND
+            message: 'The specified resource is not found'
+    Generic500:
+      description: Internal server error
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorInfo'
+          example:
+            status: 500
+            code: INTERNAL
+            message: 'Internal server error'
+    Generic503:
+      description: Service unavailable
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorInfo'
+          example:
+            status: 503
+            code: UNAVAILABLE
+            message: 'Service unavailable'
