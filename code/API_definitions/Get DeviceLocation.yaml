@@ -158,12 +158,6 @@ components:
         accuracy:
           type: number
           description: Expected accuracy for the location in km, from the point defined by latitude/longitude
-    Port:
-      type: integer
-      minimum: 0
-      maximum: 65535
-      description: User equipment port. Device port may be required along with IP address to identify the target device
-      example: 5060
     ErrorInfo:
       type: object
       required:
