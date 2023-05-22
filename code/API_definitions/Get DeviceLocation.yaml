@@ -1,6 +1,6 @@
 openapi: 3.0.3
 info:
-  title: Get Device location API
+  title: Retrieve Device location API
   description: Service Enabling Network Function API for location retrieval from a device identifier.
   termsOfService: http://swagger.io/terms/
   contact:
@@ -28,59 +28,18 @@ servers:
         default: location/v0
         description: Base path for the device location API
 paths:
-  /locations:
-    get:
+  /location:
+    post:
       tags:
         - Location retrieval
-      summary: 'Retrieve location for a user equipment'
+      summary: 'Execute location retrieval for a user equipment'
       operationId: retrieveLocation
-      description: Retrieve location for an user equipement from an identifier like phone number, IP address (and port) or external identifier provided by the network operator.
-      parameters:
-          - description: Subscriber number in E.164 format (starting with country code). Optionally prefixed with '+'.
-            name: phoneNumber
-            in : query
-            schema: 
-              type: string
-              pattern: '^\+?[0-9]{5,15}$'
-          - description: Identifier assigned by the mobile network operator (MNO) for the device 
-            name: networkAccessIdentifier
-            in: query
+      requestBody:
+        content:
+          application/json:
             schema:
-              type: string
-          - description:  |
-              IPv6 address, following IETF 5952 format, may be specified in form <address/mask> as:
-                - address - The /128 subnet is optional for single addresses:
-                  - 2001:db8:85a3:8d3:1319:8a2e:370:7344
-                  - 2001:db8:85a3:8d3:1319:8a2e:370:7344/128
-                - address/mask - an IP v6 number with a mask:
-                  - 2001:db8:85a3:8d3::0/64
-                  - 2001:db8:85a3:8d3::/64
-            name: ipv6Address
-            in : query
-            schema:
-              type: string
-              pattern: 
-                -'^((:|(0?|([1-9a-f][0-9a-f]{0,3}))):)((0?|([1-9a-f][0-9a-f]{0,3})):){0,6}(:|(0?|([1-9a-f][0-9a-f]{0,3})))(\/(([0-9])|([0-9]{2})|(1[0-1][0-9])|(12[0-8])))?$'
-                -'^((([^:]+:){7}([^:]+))|((([^:]+:)*[^:]+)?::(([^:]+:)*[^:]+)?))(\/.+)?$'
-          - description: |
-              IPv4 address may be specified in form <address/mask> as:
-              - address - an IPv4 number in dotted-quad form 1.2.3.4. Only this exact IP number will match the flow control rule.
-              - address/mask - an IP number as above with a mask width of the form 1.2.3.4/24.
-              In this case, all IP numbers from 1.2.3.0 to 1.2.3.255 will match. The bit width MUST be valid for the IP version.
-            name: Ipv4Address
-            in : query
-            schema:
-              type: string
-              pattern: 
-                -'^((:|(0?|([1-9a-f][0-9a-f]{0,3}))):)((0?|([1-9a-f][0-9a-f]{0,3})):){0,6}(:|(0?|([1-9a-f][0-9a-f]{0,3})))(\/(([0-9])|([0-9]{2})|(1[0-1][0-9])|(12[0-8])))?$'
-                -'^((([^:]+:){7}([^:]+))|((([^:]+:)*[^:]+)?::(([^:]+:)*[^:]+)?))(\/.+)?$'
-          - description: User equipment port. Device port may be required along with IP address to identify the target device
-            name: port
-            in : query
-            schema:
-              type: integer
-              minimum: 0
-              maximum: 65535
+              $ref: '#/components/schemas/RetrievalLocationRequest'
+        required: true
       responses:
         '200':
           description: Location retrieval result
@@ -96,7 +55,6 @@ paths:
                     latitude: 50.735851
                     longitude: 7.10066
                     accuracy: 2
-
         '400':
           $ref: '#/components/responses/Generic400'
         '401':
@@ -134,6 +92,67 @@ components:
           scopes:
             device-location-provide: Provide device location
   schemas:
+    RetrievalLocationRequest:
+      type: object
+      properties:
+        ueId:
+          $ref: '#/components/schemas/UeId'
+        uePort:
+          $ref: '#/components/schemas/Port'
+      required:
+        - ueId
+    UeId:
+      description: User equipment identifier
+      type: object
+      properties:
+        externalId:
+          $ref: '#/components/schemas/ExternalId'
+        msisdn:
+          $ref: '#/components/schemas/MSISDN'
+        ipv4Addr:
+          $ref: '#/components/schemas/Ipv4Addr'
+        ipv6Addr:
+          $ref: '#/components/schemas/Ipv6Addr'
+      minProperties: 1
+    ExternalId:
+      type: string
+      example: '123456789@domain.com'
+    MSISDN:
+      type: string
+      pattern: '^\+?[0-9]{5,15}$'
+      example: '123456789'
+      description: Subscriber number in E.164 format (starting with country code). Optionally prefixed with '+'.
+    Ipv4Addr:
+      type: string
+      format: ipv4
+      pattern: '^([01]?\d\d?|2[0-4]\d|25[0-5])(?:\.(?:[01]?\d\d?|2[0-4]\d|25[0-5])){3}(\/([0-9]|[1-2][0-9]|3[0-2]))?$'
+      example: '192.168.0.1/24'
+      description: |
+        IPv4 address may be specified in form <address/mask> as:
+          - address - an IPv4 number in dotted-quad form 1.2.3.4. Only this exact IP number will match the flow control rule.
+          - address/mask - an IP number as above with a mask width of the form 1.2.3.4/24.
+            In this case, all IP numbers from 1.2.3.0 to 1.2.3.255 will match. The bit width MUST be valid for the IP version.
+    Ipv6Addr:
+      type: string
+      format: ipv6
+      allOf:
+        - pattern: '^((:|(0?|([1-9a-f][0-9a-f]{0,3}))):)((0?|([1-9a-f][0-9a-f]{0,3})):){0,6}(:|(0?|([1-9a-f][0-9a-f]{0,3})))(\/(([0-9])|([0-9]{2})|(1[0-1][0-9])|(12[0-8])))?$'
+        - pattern: '^((([^:]+:){7}([^:]+))|((([^:]+:)*[^:]+)?::(([^:]+:)*[^:]+)?))(\/.+)?$'
+      example: '2001:db8:85a3:8d3:1319:8a2e:370:7344'
+      description: |
+        IPv6 address, following IETF 5952 format, may be specified in form <address/mask> as:
+          - address - The /128 subnet is optional for single addresses:
+            - 2001:db8:85a3:8d3:1319:8a2e:370:7344
+            - 2001:db8:85a3:8d3:1319:8a2e:370:7344/128
+          - address/mask - an IP v6 number with a mask:
+            - 2001:db8:85a3:8d3::0/64
+            - 2001:db8:85a3:8d3::/64
+    Port:
+      type: integer
+      minimum: 0
+      maximum: 65535
+      description: User equipment port. Device port may be required along with IP address to identify the target device
+      example: 5060
     RetrievalLocationResponse:
       type: object
       required:
