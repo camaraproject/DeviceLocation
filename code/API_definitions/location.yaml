@@ -17,7 +17,7 @@ security:
 #  - BasicAuth: []
 #  - apiKey: []
   - three_legged:
-    - device-location-verification-read
+    - location-verification-read
 servers:
   - url: '{apiRoot}/{basePath}'
     variables:
@@ -25,7 +25,7 @@ servers:
         default: http://localhost:9091
         description: API root
       basePath:
-        default: device-location-verification/v0
+        default: location-verification/v0
         description: Base path for the device location verification API
 paths:
   /verifications:
@@ -104,7 +104,7 @@ components:
           authorizationUrl: https://auth.example.com/authorize
           tokenUrl: https://auth.example.com/token
           scopes:
-            device-location-verification-read: Read device location verification
+            location-verification-read: Read device location verification
   schemas:
     Area:
       oneOf: 
