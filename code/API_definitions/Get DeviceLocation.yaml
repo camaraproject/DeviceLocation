@@ -54,7 +54,8 @@ paths:
                   value:
                     latitude: 50.735851
                     longitude: 7.10066
-                    accuracy: 2
+                    accuracy: 2000
+                    lastLocationTime: 2023-01-17T13:18:23.682Z
         '400':
           $ref: '#/components/responses/Generic400'
         '401':
@@ -97,6 +98,10 @@ components:
       properties:
         device:
           $ref: '#/components/schemas/Device'
+        maxAge:
+          type: integer
+          description: Maximum age of the location information which is accepted for the verification (in seconds)
+          minimum: 60
       required:
         - device
 
@@ -183,6 +188,7 @@ components:
         - latitude
         - longitude
         - accuracy
+        - lastLocationTime
       properties:
         latitude:
           description: Latitude component of a location
@@ -200,7 +206,11 @@ components:
           example: 7.10066     
         accuracy:
           type: number
-          description: Expected accuracy for the location in km, from the point defined by latitude/longitude
+          description: Expected accuracy for the location in meters, from the point defined by latitude/longitude
+        lastLocationTime: 
+          description: last date and time when the device was localized (using ISO 8601 with timezone)
+          type: string
+          format: datetime
     ErrorInfo:
       type: object
       required:
