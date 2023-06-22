@@ -1,3 +1,7 @@
+**To be deprecated in v0.2. Current version is not aligned with API spec. This documentation will be integrated and consolidated into the API spec as agreed in Commonalities**
+
+---
+
 # Overview
 This API provides the customer with the ability to verify the location of a device. 
 

@@ -1,6 +1,6 @@
 openapi: 3.0.3
 info:
-  title: Device location API
+  title: Device location verification API
   description: Service Enabling Network Function API for location verification
   termsOfService: http://swagger.io/terms/
   contact:
@@ -17,7 +17,7 @@ security:
 #  - BasicAuth: []
 #  - apiKey: []
   - three_legged:
-    - device-location-read
+    - location-verification-read
 servers:
   - url: '{apiRoot}/{basePath}'
     variables:
@@ -25,8 +25,8 @@ servers:
         default: http://localhost:9091
         description: API root
       basePath:
-        default: location/v0
-        description: Base path for the device location API
+        default: location-verification/v0
+        description: Base path for the device location verification API
 paths:
   /verifications:
     post:
@@ -104,7 +104,7 @@ components:
           authorizationUrl: https://auth.example.com/authorize
           tokenUrl: https://auth.example.com/token
           scopes:
-            device-location-read: Read device location
+            location-verification-read: Read device location verification
   schemas:
     Area:
       oneOf: 
