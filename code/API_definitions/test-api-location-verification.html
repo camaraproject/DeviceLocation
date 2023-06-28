@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/mocha@8.1.3/mocha.min.css">
+    <title>Tests</title>
+</head>
+
+<body>
+    <div id="mocha"></div>
+</body>
+
+</html>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mocha/10.2.0/mocha.min.js"
+    integrity="sha512-jsP/sG70bnt0xNVJt+k9NxQqGYvRrLzWhI+46SSf7oNJeCwdzZlBvoyrAN0zhtVyolGcHNh/9fEgZppG2pH+eA=="
+    crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+<script src="https://cdn.jsdelivr.net/npm/chai@4.2.0/chai.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+
+<script>
+    mocha.setup("bdd");
+    mocha.timeout(20000);
+    const expect = chai.expect;
+
+    const version = '0.3.1'; // supported spec version
+
+    // set up values
+    const apiRoot = 'http://localhost:9091';
+    const basePath = 'location-verification/v0';
+    const baseURL = `${apiRoot}/${basePath}`;
+    let token = "";
+
+    const device = {
+        phoneNumber: '123456789',
+        networkAccessIdentifier: '123456789@domain.com',
+        ipv4Address: {
+            publicAddress: '84.125.93.10',
+            publicPort: 59765
+        }
+    };
+    const area = {
+        type: 'Circle',
+        location: {
+            latitude: 50.735851,
+            longitude: 7.10066
+        },
+        accuracy: 50
+    };
+
+    const expectedResponse = {
+      verificationResult: 'TRUE',
+    };
+
+    const device2 = {
+        phoneNumber: '123456789'
+    };
+
+    const expectedResponse2 = {
+      verificationResult: 'PARTIAL',
+      matchRate: 74,
+    };
+
+    const area3 = {
+      type: 'Circle',
+      location: {
+        latitude: 50.735851,
+        longitude: 7.10066
+      },
+      accuracy: -10 // Invalid accuracy
+    };
+
+    const expectedResponse3 = {
+      status: 400,
+      code: 'INVALID_ARGUMENT',
+      message: 'Invalid input',
+    };
+
+
+    // Test Suite
+
+    describe("Device location verification API Tests", function () {
+
+
+        // Authentication test case
+        describe('Authentication Tests', function () {
+
+            it('should include OAuth2 client credentials security', async () => {
+                // TODO: Write the test case to verify OAuth2 client credentials security
+            });
+
+            it('should include three-legged OAuth2 security with location-verification-read scope',
+                async () => {
+                    // TODO: Write the test case to verify three-legged OAuth2 security with location-verification-read scope
+                });
+
+            it("Successful Authentication should return a token", async function () {
+                let response = await axios.post(`${baseURL}/authenticate`, {
+                    username: 'test-user',
+                    password: 'test-pass'
+                });
+                expect(response.status).to.equal(200);
+                token = response.data.token;
+                expect(token).to.be.a('string');
+            });
+        });
+
+        // Authorization test case
+        describe('Authorization Tests', function () {
+
+            // TODO: Write test cases to verify authorization for different user roles and permissions
+            it("TODO: Write test cases to verify authorization for different user roles and permissions ",
+                function () {
+                    expect("0").to.equal("1");
+                });
+
+            it("Unauthorized request should return 401", async function () {
+                try {
+                    let response = await axios.post(`${baseURL}/verifications`);
+                } catch (error) {
+                    expect(error.response.status).to.equal(401);
+                }
+            });
+
+            it("Authorized request should return 200", async function () {
+                let response = await axios.post(`${baseURL}/verifications`, {
+                    device: 'device1',
+                    area: 'area1'
+                }, {
+                    headers: {
+                        Authorization: `Bearer ${token}`
+                    }
+                });
+                expect(response.status).to.equal(200);
+            });
+        });
+
+        // Security test case
+        describe('Security Tests', function () {
+
+            //TODO: Write test cases to verify security measures such as encryption, input validation, etc.
+            it("TODO: Write test cases to verify security measures such as encryption, input validation, etc.",
+                function () {
+                    expect("0").to.equal("1");
+                });
+
+            it("Invalid token should return 403", async function () {
+                try {
+                    let response = await axios.post(`${baseURL}/verifications`, {
+                        device: 'device1',
+                        area: 'area1'
+                    }, {
+                        headers: {
+                            Authorization: `Bearer ${'invalidToken'}`
+                        }
+                    });
+                } catch (error) {
+                    expect(error.response.status).to.equal(403);
+                }
+            });
+
+            it("No token should return 401", async function () {
+                try {
+                    let response = await axios.post(`${baseURL}/verifications`, {
+                        device: 'device1',
+                        area: 'area1'
+                    });
+                } catch (error) {
+                    expect(error.response.status).to.equal(401);
+                }
+            });
+        });
+
+        // Tests for specific URI like /verifications
+        describe('Location Verification', function () {
+
+            it("Successful verification should return 200", async function () {
+                let response = await axios.post(`${baseURL}/verifications`, {
+                    device: device,
+                    area: area
+                }, {
+                    headers: {
+                        Authorization: `Bearer ${token}`
+                    }
+                });
+                expect(response.status).to.equal(200);
+                expect(response.data.verificationResult).to.be.a('string');
+            });
+
+            it("Invalid device should return 404", async function () {
+                try {
+                    let response = await axios.post(`${baseURL}/verifications`, {
+                        device: 'invalidDevice',
+                        area: area
+                    }, {
+                        headers: {
+                            Authorization: `Bearer ${token}`
+                        }
+                    });
+                } catch (error) {
+                    expect(error.response.status).to.equal(404);
+                }
+            });
+
+            it("Missing device parameters should return 400", async function () {
+                try {
+                    let response = await axios.post(`${baseURL}/verifications`, {
+                        area: area
+                    }, {
+                        headers: {
+                            Authorization: `Bearer ${token}`
+                        }
+                    });
+                } catch (error) {
+                    expect(error.response.status).to.equal(400);
+                }
+            });
+
+            it("Missing area parameters should return 400", async function () {
+                try {
+                    let response = await axios.post(`${baseURL}/verifications`, {
+                        device: device
+                    }, {
+                        headers: {
+                            Authorization: `Bearer ${token}`
+                        }
+                    });
+                } catch (error) {
+                    expect(error.response.status).to.equal(400);
+                }
+            });
+        });
+    });
+
+    mocha.run();
+</script>
