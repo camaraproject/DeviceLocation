@@ -410,27 +410,19 @@ components:
       description: Device left area
       required:
         - area
-        - entered
       properties:
         area:
           $ref: '#/components/schemas/Area'
-        entered:
-          type:
-            boolean
     
     AreaEntered:
       type: object
       description: Device enter area
       required:
         - area
-        - left
       properties:
         area:
           $ref: '#/components/schemas/Area'
-        left:
-          type:
-            boolean
-    
+      
     AreaEnteredEvent:
       allOf:
         - $ref: "#/components/schemas/EventBase"
