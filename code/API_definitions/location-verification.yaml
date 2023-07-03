@@ -12,7 +12,7 @@ info:
     
     * The network locates the device within the requested area, the verification result is `TRUE`.
     * The requested area may not match the area where the network locates the device. In this case, the verification result is `FALSE` . 
-    * The requested area partially match the area where the network locates the device, or the accuracy provided by the network is higher than the requested one, the verification result is `PARTIAL`. In this case, a `match_rate` could be included in the response, indicating an estimation of the likelihood of the match in percent.
+    * The requested area partially match the area where the network locates the device, the verification result is `PARTIAL`. In this case, a `match_rate` could be included in the response, indicating an estimation of the likelihood of the match in percent.
     * Lastly, the network may not be able to locate the device. In this case, the verification result is `UNKNOWN`
 
     Location Verification could be useful in scenarios such as:
