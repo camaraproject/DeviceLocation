@@ -252,6 +252,82 @@ components:
       maximum: 180
       example: 7.10066        
     
+    Device:
+      type: object
+      minProperties: 1
+      properties:
+        phoneNumber:
+          $ref: "#/components/schemas/PhoneNumber"
+        networkAccessIdentifier:
+          $ref: "#/components/schemas/NetworkAccessIdentifier"
+        ipv4Address:
+          $ref: "#/components/schemas/DeviceIpv4Addr"
+        ipv6Address:
+          $ref: "#/components/schemas/Ipv6Address"
+      description: One or more parameters allocated to the device that allow it to be identified
+    
+    PhoneNumber:
+      type: string
+      pattern: '^\+?[0-9]{5,15}$'
+      example: "123456789"
+      description: Subscriber number (MSISDN) in E.164 format, starting with country code and optionally prefixed with '+'.
+
+    NetworkAccessIdentifier:
+      type: string
+      example: "123456789@domain.com"
+    
+    DeviceIpv4Addr:
+      type: object
+      properties:
+        publicAddress:
+          $ref: "#/components/schemas/SingleIpv4Addr"
+        privateAddress:
+          $ref: "#/components/schemas/SingleIpv4Addr"
+        publicPort:
+          $ref: "#/components/schemas/Port"
+      anyOf:
+        - required: [publicAddress, privateAddress]
+        - required: [publicAddress, publicPort]
+      example:
+            {
+              "publicAddress": "84.125.93.10",
+              "publicPort" : 59765
+            }
+      description: |
+        The device should be identified by either the public (observed) IP address and port as seen by the application server, or the private (local) and any public (observed) IP addresses in use by the device (this information can be obtained by various means, for example from some DNS servers).
+        
+        If the allocated and observed IP addresses are the same (i.e. NAT is not in use) then  the same address should be specified for both publicAddress and privateAddress.
+        
+        If NAT64 is in use, the device should be identified by its publicAddress and publicPort, or separately by its allocated IPv6 address (field ipv6Address of the Device object)
+      
+        In all cases, publicAddress must be specified, along with at least one of either privateAddress or publicPort, dependent upon which is known. In general, mobile devices cannot be identified by their public IPv4 address alone.
+
+    SingleIpv4Addr:
+      type: string
+      description: A single IPv4 address with no subnet mask
+      example: "84.125.93.10"
+      pattern: '^(([0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])$'
+    
+    Port:
+      type: integer
+      minimum: 0
+      maximum: 65535
+    
+    Ipv6Address:
+      type: string
+      allOf:
+        - pattern: '^((:|(0?|([1-9a-f][0-9a-f]{0,3}))):)((0?|([1-9a-f][0-9a-f]{0,3})):){0,6}(:|(0?|([1-9a-f][0-9a-f]{0,3})))(\/(([0-9])|([0-9]{2})|(1[0-1][0-9])|(12[0-8])))?$'
+        - pattern: '^((([^:]+:){7}([^:]+))|((([^:]+:)*[^:]+)?::(([^:]+:)*[^:]+)?))(\/.+)?$'
+      example: "2001:db8:85a3:8d3:1319:8a2e:370:7344"
+      description: |
+        IPv6 address, following IETF 5952 format, may be specified in form <address/mask> as:
+          - address - The /128 subnet is optional for single addresses:
+            - 2001:db8:85a3:8d3:1319:8a2e:370:7344
+            - 2001:db8:85a3:8d3:1319:8a2e:370:7344/128
+          - address/mask - an IP v6 number with a mask:
+            - 2001:db8:85a3:8d3::0/64
+            - 2001:db8:85a3:8d3::/64
+    
     ErrorInfo:
       type: object
       required:
@@ -289,6 +365,10 @@ components:
       type: object
       description: Subscription detail
       properties:
+        device:
+          $ref: '#/components/schemas/Device'
+        area:
+          $ref: '#/components/schemas/Area'
         eventType: 
           $ref: "#/components/schemas/EventType"
       required:
@@ -405,24 +485,6 @@ components:
         eventTime:
           $ref: '#/components/schemas/EventTime'
     
-    AreaLeft:
-      type: object
-      description: Device left area
-      required:
-        - area
-      properties:
-        area:
-          $ref: '#/components/schemas/Area'
-    
-    AreaEntered:
-      type: object
-      description: Device enter area
-      required:
-        - area
-      properties:
-        area:
-          $ref: '#/components/schemas/Area'
-      
     AreaEnteredEvent:
       allOf:
         - $ref: "#/components/schemas/EventBase"
@@ -431,14 +493,11 @@ components:
             eventDetail:
               type: object
               description: Event details depending on the event type
-              required:
-                - areaEntered
-              properties:
-                areaEntered:
-                  $ref: "#/components/schemas/AreaEntered"
-          required:
-            - eventDetail
-    
+            eventType:
+              type: string
+              enum: 
+                - AREA_ENTERED
+         
     AreaLeftEvent: 
       allOf:
         - $ref: "#/components/schemas/EventBase"
@@ -447,13 +506,10 @@ components:
             eventDetail:
               type: object
               description: Event details depending on the event type
-              required:
-                - areaLeft
-              properties:
-                areaLeft:
-                  $ref: "#/components/schemas/AreaLeft"
-          required:
-            - eventDetail
+            eventType:
+              type: string
+              enum: 
+                - AREA_LEFT
     
   responses:
     Generic400:
