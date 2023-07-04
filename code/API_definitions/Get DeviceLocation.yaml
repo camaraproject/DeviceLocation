@@ -208,7 +208,7 @@ components:
           type: number
           description: Expected accuracy for the location in meters, from the point defined by latitude/longitude
         lastLocationTime: 
-          description: last date and time when the device was localized (using ISO 8601 with timezone)
+          description: Last date and time when the device was localized (using ISO 8601 with timezone)
           type: string
           format: datetime
     ErrorInfo:
