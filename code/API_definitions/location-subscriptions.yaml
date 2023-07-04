@@ -1,0 +1,591 @@
+openapi: 3.0.3
+info:
+  title: Device location subscription event API
+  description: Service Enabling Network Function API which create, retrieve and delete subscriptions for events related to the location of a device
+  termsOfService: http://swagger.io/terms/
+  contact:
+    email: project-email@sample.com
+  license:
+    name: Apache 2.0
+    url: https://www.apache.org/licenses/LICENSE-2.0.html
+  version: 0.1.0-wip
+externalDocs:
+  description: Product documentation at Camara
+  url: https://github.com/camaraproject/
+security:
+  - oAuth2ClientCredentials: []
+  - three_legged: []
+ 
+servers:
+  - url: '{apiRoot}/{basePath}'
+    variables:
+      apiRoot:
+        default: http://localhost:9091
+        description: API root
+      basePath:
+        default: location-subscription/v0
+        description: Base path for the device location subscription API
+paths:
+  /event-subscriptions:
+    post:
+      tags:
+        - Location Event Subscription
+      summary: 'Create a location event subscription for a device'
+      operationId: createEventSubscription
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateEventSubscription'
+        required: true
+      callbacks:
+        event-notifications:
+          '{$request.body#/webhook/notificationUrl}':
+            post:
+              tags:
+                - Notification Callback
+              summary: "Event Subscription notification callback"
+              operationId: postEventNotification
+              requestBody:
+                required: true
+                content:
+                  application/json:
+                    schema:
+                      $ref: "#/components/schemas/EventNotifications"
+              responses:
+                '204':
+                  description: Successful event notification
+                '400':
+                  $ref: '#/components/responses/Generic400'
+                '401':
+                  $ref: '#/components/responses/Generic401'
+                '403':
+                  $ref: '#/components/responses/Generic403'
+                '500':
+                  $ref: '#/components/responses/Generic500'
+                '503':
+                  $ref: '#/components/responses/Generic503'
+              security:
+                - {}
+                - notificationsBearerAuth: []
+      responses:
+        '201':
+          description: Created (Successful creation of event subscription)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SubscriptionInfo'
+        '400':
+          $ref: '#/components/responses/Generic400'
+        '401':
+          $ref: '#/components/responses/Generic401'
+        '403':
+          $ref: '#/components/responses/Generic403'
+        '409':
+          $ref: '#/components/responses/Generic409'
+        '500':
+          $ref: '#/components/responses/Generic500'
+        '503':
+          $ref: '#/components/responses/Generic503'
+    get:
+      tags:
+        - Location Event Subscription
+      summary: 'Operation to retrieve a list of event subscriptions - could be an empty list.'
+      operationId: getEventSubscriptionList
+      description: Operation to retrieve a list of event subscriptions
+      responses:
+        '200':
+          description: The list of event subscriptions is retrieved.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/SubscriptionInfo'
+        '400':
+          $ref: '#/components/responses/Generic400'
+        '401':
+          $ref: '#/components/responses/Generic401'
+        '403':
+          $ref: '#/components/responses/Generic403'
+        '500':
+          $ref: '#/components/responses/Generic500'
+        '503':
+          $ref: '#/components/responses/Generic503'
+  
+  /event-subscriptions/{eventSubscriptionsId}:
+    get:
+      tags:
+        - Location Event Subscription
+      summary: 'Operation to retrieve an event subscription'
+      operationId: getEventSubscription
+      description: Retrieve a given event subscription by ID
+      parameters:
+        - name: eventSubscriptionsId
+          in: path
+          description: event subscription identifier that was obtained from the create event subscription operation
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Contains information about Event Subscriptions
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SubscriptionInfo'
+        '400':
+          $ref: '#/components/responses/Generic400'
+        '401':
+          $ref: '#/components/responses/Generic401'
+        '403':
+          $ref: '#/components/responses/Generic403'
+        '404':
+          $ref: '#/components/responses/Generic404'
+        '500':
+          $ref: '#/components/responses/Generic500'
+        '503':
+          $ref: '#/components/responses/Generic503' 
+    delete:
+      tags:
+        - Location Event Subscription
+      summary: 'Operation to delete a event subscription'
+      operationId: deleteEventSubscription
+      description: Delete a given subscription of event by ID
+      parameters:
+        - name: eventSubscriptionsId
+          in: path
+          description: event subscription identifier
+          required: true
+          schema:
+            type: string
+      responses:
+        '204':
+          description: Event subscription deleted
+        '400':
+          $ref: '#/components/responses/Generic400'
+        '401':
+          $ref: '#/components/responses/Generic401'
+        '403':
+          $ref: '#/components/responses/Generic403'
+        '404':
+          $ref: '#/components/responses/Generic404'
+        '500':
+          $ref: '#/components/responses/Generic500'
+        '503':
+          $ref: '#/components/responses/Generic503'
+ 
+components:
+  securitySchemes:
+    oAuth2ClientCredentials:
+      type: oauth2
+      flows:
+        clientCredentials:
+          tokenUrl: '{tokenUrl}'
+          scopes: {}
+    notificationsBearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: "{$request.body#/webhook/notificationAuthToken}"      
+    three_legged:
+      type: oauth2
+      flows:
+        authorizationCode:
+          authorizationUrl: https://auth.example.com/authorize
+          tokenUrl: https://auth.example.com/token
+          scopes: {}
+  
+  schemas:
+    Area:
+      oneOf: 
+        -  $ref: "#/components/schemas/Circle"
+      discriminator: 
+        propertyName: type
+        mapping: 
+          Circle:  "#/components/schemas/Circle"
+    
+    Circle:
+      type: object
+      description: Circular area
+      required:
+        - type
+        - location
+        - accuracy
+      properties:
+        type:
+          type: string
+          description:  Type of this area.
+        location:
+          $ref: '#/components/schemas/Point'
+        accuracy:
+          type: number
+          description: Expected accuracy for the subscription event of device location in km, from location (radius)
+          minimum: 2
+          maximum: 200
+      example:
+        type: Circle
+        location:
+          latitude: 50.735851
+          longitude: 7.10066
+        accuracy: 50
+    
+    Point:
+      type: object
+      description: Coordinates (latitude, longitude) defining a location in a map
+      required: 
+        - latitude
+        - longitude
+      properties: 
+        latitude:
+          $ref: "#/components/schemas/Latitude"
+        longitude:
+          $ref: "#/components/schemas/Longitude"
+      example: 
+        latitude: 50.735851
+        longitude: 7.10066
+    
+    Latitude:
+      description: Latitude component of a location
+      type: number
+      format: double
+      minimum: -90
+      maximum: 90
+      example: 50.735851      
+    
+    Longitude:
+      description: Longitude component of location
+      type: number
+      format: double
+      minimum: -180
+      maximum: 180
+      example: 7.10066        
+    
+    Device:
+      type: object
+      minProperties: 1
+      properties:
+        phoneNumber:
+          $ref: "#/components/schemas/PhoneNumber"
+        networkAccessIdentifier:
+          $ref: "#/components/schemas/NetworkAccessIdentifier"
+        ipv4Address:
+          $ref: "#/components/schemas/DeviceIpv4Addr"
+        ipv6Address:
+          $ref: "#/components/schemas/Ipv6Address"
+      description: One or more parameters allocated to the device that allow it to be identified
+    
+    PhoneNumber:
+      type: string
+      pattern: '^\+?[0-9]{5,15}$'
+      example: "123456789"
+      description: Subscriber number (MSISDN) in E.164 format, starting with country code and optionally prefixed with '+'.
+
+    NetworkAccessIdentifier:
+      type: string
+      example: "123456789@domain.com"
+    
+    DeviceIpv4Addr:
+      type: object
+      properties:
+        publicAddress:
+          $ref: "#/components/schemas/SingleIpv4Addr"
+        privateAddress:
+          $ref: "#/components/schemas/SingleIpv4Addr"
+        publicPort:
+          $ref: "#/components/schemas/Port"
+      anyOf:
+        - required: [publicAddress, privateAddress]
+        - required: [publicAddress, publicPort]
+      example:
+            {
+              "publicAddress": "84.125.93.10",
+              "publicPort" : 59765
+            }
+      description: |
+        The device should be identified by either the public (observed) IP address and port as seen by the application server, or the private (local) and any public (observed) IP addresses in use by the device (this information can be obtained by various means, for example from some DNS servers).
+        
+        If the allocated and observed IP addresses are the same (i.e. NAT is not in use) then  the same address should be specified for both publicAddress and privateAddress.
+        
+        If NAT64 is in use, the device should be identified by its publicAddress and publicPort, or separately by its allocated IPv6 address (field ipv6Address of the Device object)
+      
+        In all cases, publicAddress must be specified, along with at least one of either privateAddress or publicPort, dependent upon which is known. In general, mobile devices cannot be identified by their public IPv4 address alone.
+
+    SingleIpv4Addr:
+      type: string
+      description: A single IPv4 address with no subnet mask
+      example: "84.125.93.10"
+      pattern: '^(([0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])$'
+    
+    Port:
+      type: integer
+      minimum: 0
+      maximum: 65535
+    
+    Ipv6Address:
+      type: string
+      allOf:
+        - pattern: '^((:|(0?|([1-9a-f][0-9a-f]{0,3}))):)((0?|([1-9a-f][0-9a-f]{0,3})):){0,6}(:|(0?|([1-9a-f][0-9a-f]{0,3})))(\/(([0-9])|([0-9]{2})|(1[0-1][0-9])|(12[0-8])))?$'
+        - pattern: '^((([^:]+:){7}([^:]+))|((([^:]+:)*[^:]+)?::(([^:]+:)*[^:]+)?))(\/.+)?$'
+      example: "2001:db8:85a3:8d3:1319:8a2e:370:7344"
+      description: |
+        IPv6 address, following IETF 5952 format, may be specified in form <address/mask> as:
+          - address - The /128 subnet is optional for single addresses:
+            - 2001:db8:85a3:8d3:1319:8a2e:370:7344
+            - 2001:db8:85a3:8d3:1319:8a2e:370:7344/128
+          - address/mask - an IP v6 number with a mask:
+            - 2001:db8:85a3:8d3::0/64
+            - 2001:db8:85a3:8d3::/64
+    
+    ErrorInfo:
+      type: object
+      required:
+        - status
+        - code
+        - message
+      properties:
+        status:
+          type: integer
+          description: HTTP status code returned along with this error response
+        code:
+          type: string
+          description: Code given to this error
+        message:
+          type: string
+          description: Detailed error description
+    
+    Webhook:
+      type: object
+      description: Detail for event channel
+      properties:
+        notificationUrl:
+          $ref: '#/components/schemas/NotificationUrl'
+        notificationAuthToken:
+          $ref: '#/components/schemas/NotificationAuthToken'
+      required: 
+        - notificationUrl
+    
+    EventSubscriptionId:
+      type: string
+      format: uuid
+      description: EventSubscription ID in UUID format      
+    
+    SubscriptionDetail:
+      type: object
+      description: Subscription detail
+      properties:
+        device:
+          $ref: '#/components/schemas/Device'
+        area:
+          $ref: '#/components/schemas/Area'
+        eventType: 
+          $ref: "#/components/schemas/EventType"
+      required:
+        - device
+        - area
+        - eventType
+    
+    EventType:
+      description: |
+        AREA_ENTERED - Location event triggered when the device entered the given area
+        AREA_LEFT - Location event triggered when the device left the given area
+      type: string
+      enum:
+        - AREA_ENTERED
+        - AREA_LEFT
+    
+    NotificationUrl:
+      type: string
+      example: "https://application-server.com"
+      description: https callback address where the event notification must be POST-ed
+    
+    NotificationAuthToken:
+      type: string
+      example: "c8974e592c2fa383d4a3960714"
+      description: Authentication token for callback API 
+    
+    CreateEventSubscription:
+      description: The request for creating a Location Event Subscription
+      type: object
+      properties:
+        webhook:
+          $ref: '#/components/schemas/Webhook'
+        subscriptionDetail:
+          $ref: '#/components/schemas/SubscriptionDetail'
+        subscriptionExpireTime:
+          type: string
+          format: date-time
+          example: 2023-01-17T13:18:23.682Z
+          description: The time when the location-tracking has to be terminated (e.g. in 14 days from now on). Provided in date-time format.
+      required:
+        - webhook
+        
+    SubscriptionInfo:
+      description: Represents a area-location event subscription.
+      type: object
+      allOf:
+        - $ref: '#/components/schemas/CreateEventSubscription'
+        - type: object
+          properties:
+            eventSubscriptionId:
+              $ref: '#/components/schemas/EventSubscriptionId'
+            startsAt:
+              type: string
+              format: date-time
+              example: 2023-01-17T13:18:23.682Z
+              description: The time when the location-tracking has to be started (e.g. in 7 days from now on). Provided in date-time format.
+            expiresAt:
+              type: string
+              format: date-time
+              example: 2023-01-17T13:18:23.682Z
+              description: The time when the location-tracking has to be expired (e.g. in 7 days from now on). Provided in date-time format.
+          required:
+            - eventSubscriptionId
+            - webhook
+  
+    EventTime:
+      format: date-time
+      type: string
+      description: The time when the event was notified.
+    
+    EventNotifications:
+      description: The event notification callback.
+      type: object
+      required:
+        - event
+      properties:
+        eventSubscriptionId:
+          $ref: '#/components/schemas/EventSubscriptionId'
+        event:
+          $ref: '#/components/schemas/Event'
+    
+    Event:
+      description: The event being notified
+      anyOf:
+        - $ref: '#/components/schemas/AreaEnteredEvent'
+        - $ref: '#/components/schemas/AreaLeftEvent'
+      discriminator:
+        propertyName: eventType
+        mapping: 
+          AREA_ENTERED: '#/components/schemas/AreaEnteredEvent'
+          AREA_LEFT: '#/components/schemas/AreaLeftEvent'
+    
+    EventId:
+      type: string
+      description: The subscription event identifier.
+    
+    EventBase:
+      type: object
+      required:
+        - eventType
+        - eventTime
+      properties:
+        eventId:
+          $ref: '#/components/schemas/EventId'
+        eventType:
+          $ref: "#/components/schemas/EventType"
+        eventTime:
+          $ref: '#/components/schemas/EventTime'
+    
+    AreaEnteredEvent:
+      allOf:
+        - $ref: "#/components/schemas/EventBase"
+        - type: object
+          properties:
+            eventDetail:
+              type: object
+              description: Event details depending on the event type
+            eventType:
+              type: string
+              enum: 
+                - AREA_ENTERED
+         
+    AreaLeftEvent: 
+      allOf:
+        - $ref: "#/components/schemas/EventBase"
+        - type: object
+          properties:
+            eventDetail:
+              type: object
+              description: Event details depending on the event type
+            eventType:
+              type: string
+              enum: 
+                - AREA_LEFT
+    
+  responses:
+    Generic400:
+      description: Invalid input
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorInfo'
+          example:
+            status: 400
+            code: INVALID_ARGUMENT
+            message: 'Invalid input'
+    
+    Generic401:
+      description: Unauthorized
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorInfo'
+          example:
+            status: 401
+            code: UNAUTHENTICATED
+            message: 'Authorization failed: ...'
+    
+    Generic403:
+      description: Forbidden
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorInfo'
+          example:
+            status: 403
+            code: PERMISSION_DENIED
+            message: 'Operation not allowed: ...'
+    
+    Generic404:
+      description: Not found
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorInfo'
+          example:
+            status: 404
+            code: NOT_FOUND
+            message: 'The specified resource is not found'
+    
+    Generic409:
+      description: Conflict
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorInfo'
+          example:
+            status: 409
+            code: Conflict
+            message: 'There is conflict in the request'        
+    
+    Generic500:
+      description: Internal server error
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorInfo'
+          example:
+            status: 500
+            code: INTERNAL
+            message: 'Internal server error'
+    
+    Generic503:
+      description: Service unavailable
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorInfo'
+          example:
+            status: 503
+            code: UNAVAILABLE
+            message: 'Service unavailable'
