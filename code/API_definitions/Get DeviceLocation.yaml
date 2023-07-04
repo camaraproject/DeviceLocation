@@ -17,7 +17,7 @@ security:
 #  - BasicAuth: []
 #  - apiKey: []
   - three_legged:
-    - device-location-provide
+    - location-retrieval-read
 servers:
   - url: '{apiRoot}/{basePath}'
     variables:
@@ -46,18 +46,21 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/RetrievalLocationResponse'
+                $ref: '#/components/schemas/Location'
               examples: 
                 'success':
                   summary: successful location
                   description: The network provides device location
                   value:
-                    latitude: 50.735851
-                    longitude: 7.10066
-                    accuracy: 2000
                     lastLocationTime: 2023-01-17T13:18:23.682Z
+                    area:
+                      areaType: Circle
+                      center:
+                        latitude: 50.735851
+                        longitude: 7.10066
+                      radius: 2000
         '400':
-          $ref: '#/components/responses/Generic400'
+          $ref: '#/components/responses/RetrieveLocationBadRequest400'
         '401':
           $ref: '#/components/responses/Generic401'
         '403':
@@ -101,7 +104,6 @@ components:
         maxAge:
           type: integer
           description: Maximum age of the location information which is accepted for the location retrieval (in seconds)
-
           minimum: 60
       required:
         - device
@@ -183,36 +185,79 @@ components:
       maximum: 65535
       description: User equipment port. Device port may be required along with IP address to identify the target device
       example: 5060
-    RetrievalLocationResponse:
-      type: object
-      required:
-        - latitude
-        - longitude
-        - accuracy
-        - lastLocationTime
-      properties:
-        latitude:
-          description: Latitude component of a location
-          type: number
-          format: double
-          minimum: -90
-          maximum: 90
-          example: 50.735851      
-        longitude:
-          description: Longitude component of location
-          type: number
-          format: double
-          minimum: -180
-          maximum: 180
-          example: 7.10066     
-        accuracy:
-          type: number
-          description: Provided accuracy for the location, in meters, from the point defined by latitude/longitude
 
+    Location:
+      type: object
+      description: Device location
+      required:
+        - lastLocationTime
+        - area
+      properties:
         lastLocationTime: 
           description: Last date and time when the device was localized (using ISO 8601 with timezone)
           type: string
           format: datetime
+        area:
+          $ref: '#/components/schemas/Area'
+        
+    Area:
+      type: object
+      required:
+        - areaType
+      properties:
+        areaType:
+          description: type of the area (like Circle)
+          type: string
+      discriminator: 
+          propertyName: areaType
+          mapping: 
+            Circle:  "#/components/schemas/Circle"
+
+    Circle:
+      description: Circular area
+      allOf: 
+        - $ref: "#/components/schemas/Area"
+        - type: object
+          required:
+            - center
+            - radius
+          properties:
+            center: 
+              $ref: "#/components/schemas/Point"
+            radius:
+              type: number
+              description: Distance from the center in meters
+              minimum: 1
+        
+    Point:
+      type: object
+      description: Coordinates (latitude, longitude) defining a location in a map
+      required: 
+        - latitude
+        - longitude
+      properties: 
+        latitude:
+          $ref: "#/components/schemas/Latitude"
+        longitude:
+          $ref: "#/components/schemas/Longitude"
+      example: 
+        latitude: 50.735851
+        longitude: 7.10066
+
+    Latitude:
+      description: Latitude component of a location
+      type: number
+      format: double
+      minimum: -90
+      maximum: 90
+  
+    Longitude:
+      description: Longitude component of location
+      type: number
+      format: double
+      minimum: -180
+      maximum: 180
+
     ErrorInfo:
       type: object
       required:
@@ -230,16 +275,25 @@ components:
           type: string
           description: Detailed error description
   responses:
-    Generic400:
-      description: Invalid input
+    RetrieveLocationBadRequest400:
+      description: |-
+        Problem with the client request. In addition to regular scenario of `INVALID_ARGUMENT`, another scenarios may exist:
+          - maxAge threshold cannot be satisfied
       content:
         application/json:
           schema:
             $ref: '#/components/schemas/ErrorInfo'
-          example:
-            status: 400
-            code: INVALID_ARGUMENT
-            message: 'Invalid input'
+          examples:
+            InvalidArgument:
+              value:
+                status: 400
+                code: INVALID_ARGUMENT
+                message: 'Invalid input'
+            MaxAgeIssue:
+              value:
+                tatus: 400
+                code: LOCATION_RETRIEVAL.MAXAGE_INVALID_ARGUMENT
+                message: 'maxAge threshold cannot be satisfied'
     Generic401:
       description: Unauthorized
       content:
