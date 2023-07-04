@@ -15,7 +15,7 @@ externalDocs:
 security:
   - oAuth2ClientCredentials: []
   - three_legged: []
-  
+ 
 servers:
   - url: '{apiRoot}/{basePath}'
     variables:
@@ -183,6 +183,10 @@ components:
         clientCredentials:
           tokenUrl: '{tokenUrl}'
           scopes: {}
+    notificationsBearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: "{$request.body#/webhook/notificationAuthToken}"      
     three_legged:
       type: oauth2
       flows:
@@ -463,7 +467,7 @@ components:
         propertyName: eventType
         mapping: 
           AREA_ENTERED: '#/components/schemas/AreaEnteredEvent'
-          AREA_LEFTL: '#/components/schemas/AreaLeftEvent'
+          AREA_LEFT: '#/components/schemas/AreaLeftEvent'
     
     EventId:
       type: string
