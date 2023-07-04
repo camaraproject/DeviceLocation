@@ -291,7 +291,7 @@ components:
                 message: 'Invalid input'
             MaxAgeIssue:
               value:
-                tatus: 400
+                status: 400
                 code: LOCATION_RETRIEVAL.MAXAGE_INVALID_ARGUMENT
                 message: 'maxAge threshold cannot be satisfied'
     Generic401:
