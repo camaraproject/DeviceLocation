@@ -181,6 +181,7 @@ components:
       type: object
       required:
         - verificationResult
+        - lastLocationTime
       properties:
         lastLocationTime:
           $ref: '#/components/schemas/LastLocationTime'
@@ -264,12 +265,11 @@ components:
           - address/mask - an IP v6 number with a mask:
             - 2001:db8:85a3:8d3::0/64
             - 2001:db8:85a3:8d3::/64
-
     MaxAge:
-      description: The maximum age (in minutes) of the location information to be accepted for the verification.
+      description: The maximum age (in seconds) of the available location, which is accepted for the verification.
       type: number
       format: integer
-      minimum: 0
+      minimum: 60
       example: 120
     VerificationResult:
       description: |
@@ -291,7 +291,7 @@ components:
       maximum: 99
     LastLocationTime:
       description: Timestamp of the last location information
-      example: 2022-09-07T10:40:52Z
+      example: 2023-09-07T10:40:52Z
       format: date-time
       type: string
     ErrorInfo:
