@@ -100,7 +100,8 @@ components:
           $ref: '#/components/schemas/Device'
         maxAge:
           type: integer
-          description: Maximum age of the location information which is accepted for the verification (in seconds)
+          description: Maximum age of the location information which is accepted for the location retrieval (in seconds)
+
           minimum: 60
       required:
         - device
