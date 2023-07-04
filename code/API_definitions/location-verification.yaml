@@ -127,10 +127,10 @@ components:
         location:
           $ref: '#/components/schemas/Point'
         accuracy:
-          type: number
-          description: Expected accuracy for the verification in km, from location (radius)
-          minimum: 2
-          maximum: 200
+          type: integer
+          description: Expected accuracy for the verification in meters, from location (radius)
+          minimum: 2000
+          maximum: 200000
       example:
         type: Circle
         location:
