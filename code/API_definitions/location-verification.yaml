@@ -107,30 +107,32 @@ components:
             location-verification-read: Read device location verification
   schemas:
     Area:
-      oneOf: 
-        -  $ref: "#/components/schemas/Circle"
+      properties: 
+        type:
+          type: string
+          description: Type of this area.
+      required:
+        - type
       discriminator: 
         propertyName: type
         mapping: 
           Circle:  "#/components/schemas/Circle"
     Circle:
-      type: object
       description: Circular area
-      required:
-        - type
-        - location
-        - accuracy
-      properties:
-        type:
-          type: string
-          description:  Type of this area.
-        location:
-          $ref: '#/components/schemas/Point'
-        accuracy:
-          type: number
-          description: Expected accuracy for the verification in km, from location (radius)
-          minimum: 2
-          maximum: 200
+      allOf:
+        - $ref: '#/components/schemas/Area'
+        - type: object
+          properties:
+            location:
+              $ref: '#/components/schemas/Point'
+            accuracy:
+              type: number
+              description: Expected accuracy for the verification in km, from location (radius)
+              minimum: 2
+              maximum: 200
+          required:
+            - location
+            - accuracy
       example:
         type: Circle
         location:
