@@ -136,7 +136,7 @@ components:
         location:
           latitude: 50.735851
           longitude: 7.10066
-        accuracy: 50
+        accuracy: 50000
     Point:
       type: object
       description: Coordinates (latitude, longitude) defining a location in a map
