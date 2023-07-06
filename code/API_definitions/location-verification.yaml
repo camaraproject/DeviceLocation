@@ -10,7 +10,7 @@ info:
     url: https://www.apache.org/licenses/LICENSE-2.0.html
   version: 0.2.0-wip
 externalDocs:
-  description: Product documentation at Camara
+  description: Product documentation at CAMARA
   url: https://github.com/camaraproject/
 security:
   - oAuth2ClientCredentials: []
@@ -108,13 +108,13 @@ components:
   schemas:
     Area:
       properties: 
-        type:
+        areaType:
           type: string
           description: Type of this area.
       required:
-        - type
+        - areaType
       discriminator: 
-        propertyName: type
+        propertyName: areaType
         mapping: 
           Circle:  "#/components/schemas/Circle"
     Circle:
@@ -123,22 +123,22 @@ components:
         - $ref: '#/components/schemas/Area'
         - type: object
           properties:
-            location:
+            center:
               $ref: '#/components/schemas/Point'
-            accuracy:
+            radius:
               type: number
-              description: Expected accuracy for the verification in km, from location (radius)
+              description: Radius for the verification area, in km.
               minimum: 2
               maximum: 200
           required:
-            - location
-            - accuracy
+            - center
+            - radius
       example:
-        type: Circle
-        location:
+        areaType: Circle
+        center:
           latitude: 50.735851
           longitude: 7.10066
-        accuracy: 50
+        radius: 50
     Point:
       type: object
       description: Coordinates (latitude, longitude) defining a location in a map
