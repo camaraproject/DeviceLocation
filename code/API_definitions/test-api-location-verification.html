@@ -10,6 +10,31 @@
 </head>
 
 <body>
+    <pre>
+        Background:
+        Given the API root is "http://localhost:9091"
+        And the base path is "location-verification/v0"
+    
+      Scenario: Execute location verification for a user equipment
+        Given a device with the following details:
+          | phoneNumber            | 123456789       |
+          | networkAccessIdentifier| 123456789@domain.com |
+          | ipv4Address.publicAddress   | 84.125.93.10   |
+          | ipv4Address.publicPort      | 59765          |
+        And a circular area with the following details:
+          | type        | Circle |
+          | location.latitude    | 50.735851    |
+          | location.longitude   | 7.10066      |
+          | accuracy     | 50            |
+        When I execute the location verification request
+        Then the response should have a verification result of "TRUE"
+    
+      Scenario: Execute location verification for a user equipment partially
+        Given a device with the following details:
+          | phoneNumber            | 123456789       |
+          | networkAccessIdentifier| 123456789@domain.com |
+          | ipv4Address.publicAddress   | 84.125.93.10   |        
+    </pre>
     <div id="mocha"></div>
 </body>
 
