@@ -164,16 +164,16 @@ components:
         location:
           $ref: '#/components/schemas/Point'
         accuracy:
-          type: number
-          description: Expected accuracy for the verification in km, from location (radius)
-          minimum: 2
-          maximum: 200
+          type: integer
+          description: Expected accuracy for the verification in meters, from location (radius)
+          minimum: 2000
+          maximum: 200000
       example:
         type: Circle
         location:
           latitude: 50.735851
           longitude: 7.10066
-        accuracy: 50
+        accuracy: 50000
     Point:
       type: object
       description: Coordinates (latitude, longitude) defining a location in a map
