@@ -163,10 +163,10 @@ components:
             center:
               $ref: '#/components/schemas/Point'
             radius:
-              type: number
-              description: Radius for the verification area, in km.
-              minimum: 2
-              maximum: 200
+              type: integer
+              description: Expected accuracy for the verification in meters, from location (radius)
+              minimum: 2000
+              maximum: 200000
           required:
             - center
             - radius
@@ -175,7 +175,7 @@ components:
         center:
           latitude: 50.735851
           longitude: 7.10066
-        radius: 50
+        accuracy: 50000
     Point:
       type: object
       description: Coordinates (latitude, longitude) defining a location in a map
