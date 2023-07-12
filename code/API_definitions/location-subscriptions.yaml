@@ -197,7 +197,7 @@ components:
   
   schemas:
     Area:
-      oneOf: 
+      allOf: 
         -  $ref: "#/components/schemas/Circle"
       discriminator: 
         propertyName: type
@@ -209,19 +209,19 @@ components:
       description: Circular area
       required:
         - type
-        - location
+        - center
         - accuracy
       properties:
         type:
           type: string
           description:  Type of this area.
-        location:
+        center:
           $ref: '#/components/schemas/Point'
         accuracy:
           type: number
-          description: Expected accuracy for the subscription event of device location in km, from location (radius)
-          minimum: 2
-          maximum: 200
+          description: Expected accuracy for the subscription event of device location in m, from location (radius)
+          minimum: 2000
+          maximum: 200000
       example:
         type: Circle
         location:
@@ -388,10 +388,12 @@ components:
       description: |
         AREA_ENTERED - Location event triggered when the device entered the given area
         AREA_LEFT - Location event triggered when the device left the given area
+        SUBSCRIPTION_ENDS - It is inform listener request that subscription terminates.
       type: string
       enum:
         - AREA_ENTERED
         - AREA_LEFT
+        - SUBSCRIPTION_ENDS
     
     NotificationUrl:
       type: string
@@ -432,12 +434,12 @@ components:
               type: string
               format: date-time
               example: 2023-01-17T13:18:23.682Z
-              description: The time when the location-tracking has to be started (e.g. in 7 days from now on). Provided in date-time format.
+              description: The time when the location-tracking started (e.g. in 7 days from now on). Provided in date-time format.
             expiresAt:
               type: string
               format: date-time
               example: 2023-01-17T13:18:23.682Z
-              description: The time when the location-tracking has to be expired (e.g. in 7 days from now on). Provided in date-time format.
+              description: The time when the location-tracking expired (e.g. in 7 days from now on). Provided in date-time format.
           required:
             - eventSubscriptionId
             - webhook
@@ -463,11 +465,13 @@ components:
       anyOf:
         - $ref: '#/components/schemas/AreaEnteredEvent'
         - $ref: '#/components/schemas/AreaLeftEvent'
+        - $ref: '#/components/schemas/SubscriptionEnds'
       discriminator:
         propertyName: eventType
         mapping: 
           AREA_ENTERED: '#/components/schemas/AreaEnteredEvent'
           AREA_LEFT: '#/components/schemas/AreaLeftEvent'
+          SUBSCRIPTION_ENDS: '#/components/schemas/SubscriptionEnds'
     
     EventId:
       type: string
@@ -486,6 +490,19 @@ components:
         eventTime:
           $ref: '#/components/schemas/EventTime'
     
+    SubscriptionEnds:
+      allOf:
+        - $ref: "#/components/schemas/EventBase"
+        - type: object
+          properties:
+            eventDetail:
+              type: object
+              description: Subscription is terminated
+            eventType:
+              type: string
+              enum: 
+                - SUBSCRIPTION_ENDS
+    
     AreaEnteredEvent:
       allOf:
         - $ref: "#/components/schemas/EventBase"
@@ -493,7 +510,7 @@ components:
           properties:
             eventDetail:
               type: object
-              description: Event details depending on the event type
+              description: Location Device entered the area
             eventType:
               type: string
               enum: 
@@ -506,7 +523,7 @@ components:
           properties:
             eventDetail:
               type: object
-              description: Event details depending on the event type
+              description: Location Device left the area
             eventType:
               type: string
               enum: 
