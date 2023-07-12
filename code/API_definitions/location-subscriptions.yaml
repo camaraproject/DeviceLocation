@@ -197,38 +197,40 @@ components:
   
   schemas:
     Area:
-      allOf: 
-        -  $ref: "#/components/schemas/Circle"
+      properties: 
+        areaType:
+          type: string
+          description: Type of this area.
+      required:
+        - areaType
       discriminator: 
-        propertyName: type
+        propertyName: areaType
         mapping: 
           Circle:  "#/components/schemas/Circle"
     
     Circle:
-      type: object
       description: Circular area
-      required:
-        - type
-        - center
-        - accuracy
-      properties:
-        type:
-          type: string
-          description:  Type of this area.
-        center:
-          $ref: '#/components/schemas/Point'
-        accuracy:
-          type: number
-          description: Expected accuracy for the subscription event of device location in m, from location (radius)
-          minimum: 2000
-          maximum: 200000
+      allOf:
+        - $ref: '#/components/schemas/Area'
+        - type: object
+          properties:
+            center:
+              $ref: '#/components/schemas/Point'
+            radius:
+              type: integer
+              description: Expected accuracy for the subscription event of device location in m, from location (radius)
+              minimum: 2000
+              maximum: 200000
+          required:
+            - center
+            - radius
       example:
-        type: Circle
-        location:
+        areaType: Circle
+        center:
           latitude: 50.735851
           longitude: 7.10066
-        accuracy: 50
-    
+        accuracy: 50000
+      
     Point:
       type: object
       description: Coordinates (latitude, longitude) defining a location in a map
