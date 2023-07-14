@@ -492,6 +492,15 @@ components:
         eventTime:
           $ref: '#/components/schemas/EventTime'
     
+    TerminationReason:
+      type: string
+      description: |
+        NETWORK_TERMINATED - API server stopped sending notification
+        SUBSCRIPTION_EXPIRED - Subscription expire time (required by the requester) has been reached
+      enum: 
+        - NETWORK_TERMINATED
+        - SUBSCRIPTION_EXPIRED
+        
     SubscriptionEnds:
       allOf:
         - $ref: "#/components/schemas/EventBase"
@@ -500,6 +509,11 @@ components:
             eventDetail:
               type: object
               description: Subscription is terminated
+              properties:
+                terminationReason:
+                  $ref: '#/components/schemas/TerminationReason'
+              required:
+                - terminationReason
             eventType:
               type: string
               enum: 
@@ -513,6 +527,14 @@ components:
             eventDetail:
               type: object
               description: Location Device entered the area
+              properties:
+                device:
+                  $ref: '#/components/schemas/Device'
+                area:
+                  $ref: '#/components/schemas/Area'
+              required:
+                - device
+                - area
             eventType:
               type: string
               enum: 
@@ -526,6 +548,14 @@ components:
             eventDetail:
               type: object
               description: Location Device left the area
+              properties:
+                device:
+                  $ref: '#/components/schemas/Device'
+                area:
+                  $ref: '#/components/schemas/Area'
+              required:
+                - device
+                - area    
             eventType:
               type: string
               enum: 
