@@ -461,26 +461,10 @@ components:
           $ref: '#/components/schemas/EventSubscriptionId'
         event:
           $ref: '#/components/schemas/Event'
-    
+ 
     Event:
+      type: object  
       description: The event being notified
-      anyOf:
-        - $ref: '#/components/schemas/AreaEnteredEvent'
-        - $ref: '#/components/schemas/AreaLeftEvent'
-        - $ref: '#/components/schemas/SubscriptionEnds'
-      discriminator:
-        propertyName: eventType
-        mapping: 
-          AREA_ENTERED: '#/components/schemas/AreaEnteredEvent'
-          AREA_LEFT: '#/components/schemas/AreaLeftEvent'
-          SUBSCRIPTION_ENDS: '#/components/schemas/SubscriptionEnds'
-    
-    EventId:
-      type: string
-      description: The subscription event identifier.
-    
-    EventBase:
-      type: object
       required:
         - eventType
         - eventTime
@@ -488,22 +472,19 @@ components:
         eventId:
           $ref: '#/components/schemas/EventId'
         eventType:
-          $ref: "#/components/schemas/EventType"
+          $ref: '#/components/schemas/EventType'
         eventTime:
           $ref: '#/components/schemas/EventTime'
+      discriminator:
+        propertyName: eventType
+        mapping: 
+          AREA_ENTERED: '#/components/schemas/AreaEnteredEvent'
+          AREA_LEFT: '#/components/schemas/AreaLeftEvent'
+          SUBSCRIPTION_ENDS: '#/components/schemas/SubscriptionEnds'
     
-    TerminationReason:
-      type: string
-      description: |
-        NETWORK_TERMINATED - API server stopped sending notification
-        SUBSCRIPTION_EXPIRED - Subscription expire time (required by the requester) has been reached
-      enum: 
-        - NETWORK_TERMINATED
-        - SUBSCRIPTION_EXPIRED
-        
     SubscriptionEnds:
       allOf:
-        - $ref: "#/components/schemas/EventBase"
+        - $ref: "#/components/schemas/Event"
         - type: object
           properties:
             eventDetail:
@@ -517,11 +498,24 @@ components:
             eventType:
               type: string
               enum: 
-                - SUBSCRIPTION_ENDS
+                - SUBSCRIPTION_ENDS      
     
+    EventId:
+      type: string
+      description: The subscription event identifier.
+    
+    TerminationReason:
+      type: string
+      description: |
+        NETWORK_TERMINATED - API server stopped sending notification
+        SUBSCRIPTION_EXPIRED - Subscription expire time (required by the requester) has been reached
+      enum: 
+        - NETWORK_TERMINATED
+        - SUBSCRIPTION_EXPIRED
+  
     AreaEnteredEvent:
       allOf:
-        - $ref: "#/components/schemas/EventBase"
+        - $ref: "#/components/schemas/Event"
         - type: object
           properties:
             eventDetail:
@@ -542,7 +536,7 @@ components:
          
     AreaLeftEvent: 
       allOf:
-        - $ref: "#/components/schemas/EventBase"
+        - $ref: "#/components/schemas/Event"
         - type: object
           properties:
             eventDetail:
