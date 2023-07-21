@@ -1,6 +1,6 @@
 openapi: 3.0.3
 info:
-  title: Retrieve Device location API
+  title: Device location retrieval API
   description: Service Enabling Network Function API for location retrieval from a device identifier.
   termsOfService: http://swagger.io/terms/
   contact:
@@ -14,8 +14,6 @@ externalDocs:
   url: https://github.com/camaraproject/
 security:
   - oAuth2ClientCredentials: []
-#  - BasicAuth: []
-#  - apiKey: []
   - three_legged:
     - location-retrieval-read
 servers:
