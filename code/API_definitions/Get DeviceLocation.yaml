@@ -94,7 +94,7 @@ components:
           authorizationUrl: https://auth.example.com/authorize
           tokenUrl: https://auth.example.com/token
           scopes:
-            device-location-provide: Provide device location
+            location-retrieval-read: Provide device location
   schemas:
     RetrievalLocationRequest:
       type: object
