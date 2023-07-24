@@ -390,12 +390,24 @@ components:
       description: |
         AREA_ENTERED - Location event triggered when the device entered the given area
         AREA_LEFT - Location event triggered when the device left the given area
-        SUBSCRIPTION_ENDS - It is inform listener request that subscription terminates.
       type: string
       enum:
         - AREA_ENTERED
         - AREA_LEFT
-        - SUBSCRIPTION_ENDS
+        
+    EventTypeNotification:
+      description: |
+        Event type used in event notification
+      allOf:
+        - $ref: '#/components/schemas/EventType'
+        - type: string
+          properties:
+            subscriptionEnds:
+              type: string
+              description: |
+                SUBSCRIPTION_ENDS - It is inform listener request that subscription terminates.
+              enum:
+                - SUBSCRIPTION_ENDS
     
     NotificationUrl:
       type: string
@@ -472,7 +484,7 @@ components:
         eventId:
           $ref: '#/components/schemas/EventId'
         eventType:
-          $ref: '#/components/schemas/EventType'
+          $ref: '#/components/schemas/EventTypeNotification'
         eventTime:
           $ref: '#/components/schemas/EventTime'
       discriminator:
