@@ -1,6 +1,6 @@
 openapi: 3.0.3
 info:
-  title: Device location subscription event API
+  title: Device location subscription event (geofencing) API
   description: Service Enabling Network Function API which create, retrieve and delete subscriptions for events related to the location of a device
   termsOfService: http://swagger.io/terms/
   contact:
@@ -23,7 +23,7 @@ servers:
         default: http://localhost:9091
         description: API root
       basePath:
-        default: location-subscription/v0
+        default: geofencing/v0
         description: Base path for the device location subscription API
 paths:
   /event-subscriptions:
