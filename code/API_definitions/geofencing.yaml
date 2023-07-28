@@ -1,7 +1,7 @@
 openapi: 3.0.3
 info:
-  title: Device location subscription event (geofencing) API
-  description: Service Enabling Network Function API which create, retrieve and delete subscriptions for events related to the location of a device
+  title: Device geofencing API
+  description:  Service Enabling Network Function API to create, retrieve and delete event subscriptions to realize geofencing for a user device
   termsOfService: http://swagger.io/terms/
   contact:
     email: project-email@sample.com
