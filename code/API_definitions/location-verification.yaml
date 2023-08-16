@@ -34,7 +34,7 @@ info:
 
     The API exposes a single endpoint/operation:
 
-    - Retrieve whether the device location is within a requested area, currently circle with center specified by the latitude and longitude, and radius specified by the accuracy. The operation returns a verification result and, optionally, a match rate estimation for the location verification in percent.
+    - Verify whether the device location is within a requested area, currently circle with center specified by the latitude and longitude, and radius specified by the accuracy. The operation returns a verification result and, optionally, a match rate estimation for the location verification in percent.
 
     # Further info and support
 
@@ -51,8 +51,6 @@ externalDocs:
   url: https://github.com/camaraproject/
 security:
   - oAuth2ClientCredentials: []
-#  - BasicAuth: []
-#  - apiKey: []
   - three_legged:
     - location-verification-read
 servers:
@@ -65,7 +63,7 @@ servers:
         default: location-verification/v0
         description: Base path for the device location verification API
 paths:
-  /verifications:
+  /verify:
     post:
       tags:
         - Location verification
@@ -126,14 +124,6 @@ components:
         clientCredentials:
           tokenUrl: '{tokenUrl}'
           scopes: {}
-#    BasicAuth:
-#      type: http
-#      scheme: basic
-#    apiKey:
-#      type: apiKey
-#      description: API key to authorize requests
-#      name: apikey
-#      in: query
     three_legged:
       type: oauth2
       flows:
