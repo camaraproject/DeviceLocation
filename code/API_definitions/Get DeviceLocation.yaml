@@ -26,7 +26,7 @@ servers:
         default: location/v0
         description: Base path for the device location API
 paths:
-  /retrieve-location:
+  /retrieve:
     post:
       tags:
         - Location retrieval
