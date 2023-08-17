@@ -14,8 +14,8 @@ externalDocs:
   url: https://github.com/camaraproject/
 security:
   - oAuth2ClientCredentials: []
-  - three_legged:
-    - location-retrieval-read
+  - oAuth2AuthorizationCode:
+    - location-retrieval:read
 servers:
   - url: '{apiRoot}/{basePath}'
     variables:
@@ -85,14 +85,14 @@ components:
 #      description: API key to authorize requests
 #      name: apikey
 #      in: query
-    three_legged:
+    oAuth2AuthorizationCode:
       type: oauth2
       flows:
         authorizationCode:
           authorizationUrl: https://auth.example.com/authorize
           tokenUrl: https://auth.example.com/token
           scopes:
-            location-retrieval-read: Provide device location
+            location-retrieval:read: Provide device location
   schemas:
     RetrievalLocationRequest:
       type: object
