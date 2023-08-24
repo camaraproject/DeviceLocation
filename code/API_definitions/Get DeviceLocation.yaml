@@ -23,8 +23,8 @@ servers:
         default: http://localhost:9091
         description: API root
       basePath:
-        default: location/v0
-        description: Base path for the device location API
+        default: location-retrieval/v0
+        description: Base path for the device location retrieval API
 paths:
   /retrieve:
     post:
