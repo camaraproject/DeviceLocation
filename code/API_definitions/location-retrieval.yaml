@@ -1,7 +1,51 @@
 openapi: 3.0.3
 info:
-  title: Device location retrieval API
-  description: Service Enabling Network Function API for location retrieval from a device identifier.
+  title: Location retrieval API
+  description: |
+    This API provides the ability to retrieve a device location. 
+
+    # Introduction
+
+    With this API, customers can retrieve the area where a certain user device is localized. The area provided in the response is described by a circle determined by coordinates (latitude and longitude) and an accuracy defined by the radius. 
+    
+    The requester could optionally ask for a freshness of the localization information by providing a maxAge ("I want a location not older than 600 seconds")
+
+    The result accuracy depends on the network's ability and accuracy to locate the device. 
+    
+    Additionally to location information, the answer will also provide indication about the location time. 
+
+    Location retrieval API could be useful in scenarios such as:
+
+    - Fraud protection to ensure a given user is located in the region, country or location authorized for financial transactions
+    - Verify the GPS coordinates reported by the app on a device to ensure the GPS was not faked e.g. for content delivery with regional restrictions
+    - Location-based advertising: trigger targeted advertising after retrieving the area where the user is localized
+    - Smart Mobility (Vehicle/bikes renting): obtain the location of a vehicle/bike to guarantee they are rented correctly
+
+    **Note**: Location is in most jurisdictions considered to be sensitive data and thereby consent by device owner/user must be verified before providing it to the developer.
+
+    # Relevant terms and definitions
+
+    * **Device**: A device refers to any physical entity that can connect to a network and participate in network communication.
+
+    * **Area**: It specifies the geographical surface where a device may be physically located.
+
+    * **Max Age**: Maximum age of the location information which is accepted for the location retrieval (in seconds).
+
+    * **Last Location Time** : Last date and time when the device was localized.
+
+
+    # API Functionality
+
+    The API exposes a single endpoint/operation:
+
+    - `/retrieve` : Retrieve where the device is localized.
+     The operation returns:
+        * a localization defined with a circle with center specified by the latitude and longitude, and radius for answer accuracy,
+        * a timestamp about location information freshness.
+
+    # Further info and support
+
+    (FAQs will be added in a later version of the documentation)    
   termsOfService: http://swagger.io/terms/
   contact:
     email: project-email@sample.com
@@ -192,7 +236,7 @@ components:
         - area
       properties:
         lastLocationTime: 
-          description: Last date and time when the device was localized (using ISO 8601 with timezone)
+          description: Last date and time when the device was localized. It must follow RFC 3339 and must have time zone. Recommended format is yyyy-MM-dd'T'HH:mm:ss.SSSZ (i.e. which allows 2023-07-03T14:27:08.312+02:00 or 2023-07-03T12:27:08.312Z)
           type: string
           format: datetime
         area:
