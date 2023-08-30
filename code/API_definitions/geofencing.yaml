@@ -1,7 +1,7 @@
 openapi: 3.0.3
 info:
   title: Device geofencing API
-  description:  Service Enabling Network Function API to create, retrieve and delete event subscriptions to realize geofencing for a user device
+  description: API to create, retrieve and delete event subscriptions to realize geofencing for a user device
   termsOfService: http://swagger.io/terms/
   contact:
     email: project-email@sample.com
@@ -14,7 +14,7 @@ externalDocs:
   url: https://github.com/camaraproject/
 security:
   - oAuth2ClientCredentials: []
-  - three_legged: []
+  
  
 servers:
   - url: '{apiRoot}/{basePath}'
@@ -24,13 +24,13 @@ servers:
         description: API root
       basePath:
         default: geofencing/v0
-        description: Base path for the device location subscription API
+        description: Base path for the device geofencing API
 paths:
   /event-subscriptions:
     post:
       tags:
-        - Location Event Subscription
-      summary: 'Create a location event subscription for a device'
+        - Geofencing
+      summary: 'Create a geofencing event subscription for a device'
       operationId: createEventSubscription
       requestBody:
         content:
@@ -87,9 +87,12 @@ paths:
           $ref: '#/components/responses/Generic500'
         '503':
           $ref: '#/components/responses/Generic503'
+      security:
+         - oAuth2AuthorizationCode:
+           - "geofencing:subscriptions:write"
     get:
       tags:
-        - Location Event Subscription
+        - Geofencing
       summary: 'Operation to retrieve a list of event subscriptions - could be an empty list.'
       operationId: getEventSubscriptionList
       description: Operation to retrieve a list of event subscriptions
@@ -112,11 +115,14 @@ paths:
           $ref: '#/components/responses/Generic500'
         '503':
           $ref: '#/components/responses/Generic503'
-  
+      security:
+         - oAuth2AuthorizationCode:
+           - "geofencing:subscriptions:read"
+    
   /event-subscriptions/{eventSubscriptionsId}:
     get:
       tags:
-        - Location Event Subscription
+        - Geofencing
       summary: 'Operation to retrieve an event subscription'
       operationId: getEventSubscription
       description: Retrieve a given event subscription by ID
@@ -145,10 +151,13 @@ paths:
         '500':
           $ref: '#/components/responses/Generic500'
         '503':
-          $ref: '#/components/responses/Generic503' 
+          $ref: '#/components/responses/Generic503'
+      security:
+         - oAuth2AuthorizationCode:
+           - "geofencing:subscriptions:read"
     delete:
       tags:
-        - Location Event Subscription
+        - Geofencing
       summary: 'Operation to delete a event subscription'
       operationId: deleteEventSubscription
       description: Delete a given subscription of event by ID
@@ -174,6 +183,9 @@ paths:
           $ref: '#/components/responses/Generic500'
         '503':
           $ref: '#/components/responses/Generic503'
+      security:
+         - oAuth2AuthorizationCode:
+           - "geofencing:subscriptions:write"
  
 components:
   securitySchemes:
@@ -187,13 +199,15 @@ components:
       type: http
       scheme: bearer
       bearerFormat: "{$request.body#/webhook/notificationAuthToken}"      
-    three_legged:
+    oAuth2AuthorizationCode:
       type: oauth2
       flows:
         authorizationCode:
           authorizationUrl: https://auth.example.com/authorize
           tokenUrl: https://auth.example.com/token
-          scopes: {}
+          scopes: 
+             'geofencing:subscriptions:write': Create or delete subscriptions to geofencing events
+             'geofencing:subscriptions:read': Get details of subscriptions to geofencing events
   
   schemas:
     Area:
