@@ -14,8 +14,8 @@ externalDocs:
   url: https://github.com/camaraproject/
 security:
   - oAuth2ClientCredentials: []
-  
- 
+
+
 servers:
   - url: '{apiRoot}/{basePath}'
     variables:
@@ -26,17 +26,17 @@ servers:
         default: geofencing/v0
         description: Base path for the device geofencing API
 paths:
-  /event-subscriptions:
+  /subscriptions:
     post:
       tags:
         - Geofencing
-      summary: 'Create a geofencing event subscription for a device'
-      operationId: createEventSubscription
+      summary: 'Create a geofencing subscription for a device'
+      operationId: createSubscription
       requestBody:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/CreateEventSubscription'
+              $ref: '#/components/schemas/CreateSubscription'
         required: true
       callbacks:
         event-notifications:
@@ -44,8 +44,8 @@ paths:
             post:
               tags:
                 - Notification Callback
-              summary: "Event Subscription notification callback"
-              operationId: postEventNotification
+              summary: "Subscription notification callback"
+              operationId: postNotification
               requestBody:
                 required: true
                 content:
@@ -70,7 +70,7 @@ paths:
                 - notificationsBearerAuth: []
       responses:
         '201':
-          description: Created (Successful creation of event subscription)
+          description: Created (Successful creation of subscription)
           content:
             application/json:
               schema:
@@ -88,17 +88,17 @@ paths:
         '503':
           $ref: '#/components/responses/Generic503'
       security:
-         - oAuth2AuthorizationCode:
-           - "geofencing:subscriptions:write"
+        - oAuth2AuthorizationCode:
+            - "geofencing:subscriptions:write"
     get:
       tags:
         - Geofencing
-      summary: 'Operation to retrieve a list of event subscriptions - could be an empty list.'
-      operationId: getEventSubscriptionList
-      description: Operation to retrieve a list of event subscriptions
+      summary: 'Operation to retrieve a list of subscriptions - could be an empty list.'
+      operationId: getSubscriptionList
+      description: Operation to retrieve a list of subscriptions
       responses:
         '200':
-          description: The list of event subscriptions is retrieved.
+          description: The list of subscriptions is retrieved.
           content:
             application/json:
               schema:
@@ -116,26 +116,26 @@ paths:
         '503':
           $ref: '#/components/responses/Generic503'
       security:
-         - oAuth2AuthorizationCode:
-           - "geofencing:subscriptions:read"
-    
-  /event-subscriptions/{eventSubscriptionsId}:
+        - oAuth2AuthorizationCode:
+            - "geofencing:subscriptions:read"
+
+  /subscriptions/{subscriptionsId}:
     get:
       tags:
         - Geofencing
-      summary: 'Operation to retrieve an event subscription'
-      operationId: getEventSubscription
-      description: Retrieve a given event subscription by ID
+      summary: 'Operation to retrieve an subscription'
+      operationId: getSubscription
+      description: Retrieve a given subscription by ID
       parameters:
-        - name: eventSubscriptionsId
+        - name: subscriptionsId
           in: path
-          description: event subscription identifier that was obtained from the create event subscription operation
+          description: subscription identifier that was obtained from the create event subscription operation
           required: true
           schema:
             type: string
       responses:
         '200':
-          description: Contains information about Event Subscriptions
+          description: Contains information about Subscriptions
           content:
             application/json:
               schema:
@@ -153,18 +153,18 @@ paths:
         '503':
           $ref: '#/components/responses/Generic503'
       security:
-         - oAuth2AuthorizationCode:
-           - "geofencing:subscriptions:read"
+        - oAuth2AuthorizationCode:
+            - "geofencing:subscriptions:read"
     delete:
       tags:
         - Geofencing
-      summary: 'Operation to delete a event subscription'
-      operationId: deleteEventSubscription
-      description: Delete a given subscription of event by ID
+      summary: 'Operation to delete a subscription'
+      operationId: deleteSubscription
+      description: Delete a given subscription by ID
       parameters:
-        - name: eventSubscriptionsId
+        - name: subscriptionsId
           in: path
-          description: event subscription identifier
+          description: subscription identifier
           required: true
           schema:
             type: string
@@ -184,9 +184,9 @@ paths:
         '503':
           $ref: '#/components/responses/Generic503'
       security:
-         - oAuth2AuthorizationCode:
-           - "geofencing:subscriptions:write"
- 
+        - oAuth2AuthorizationCode:
+            - "geofencing:subscriptions:write"
+
 components:
   securitySchemes:
     oAuth2ClientCredentials:
@@ -198,30 +198,30 @@ components:
     notificationsBearerAuth:
       type: http
       scheme: bearer
-      bearerFormat: "{$request.body#/webhook/notificationAuthToken}"      
+      bearerFormat: "{$request.body#/webhook/notificationAuthToken}"
     oAuth2AuthorizationCode:
       type: oauth2
       flows:
         authorizationCode:
           authorizationUrl: https://auth.example.com/authorize
           tokenUrl: https://auth.example.com/token
-          scopes: 
-             'geofencing:subscriptions:write': Create or delete subscriptions to geofencing events
-             'geofencing:subscriptions:read': Get details of subscriptions to geofencing events
-  
+          scopes:
+            'geofencing:subscriptions:write': Create or delete subscriptions to geofencing events
+            'geofencing:subscriptions:read': Get details of subscriptions to geofencing events
+
   schemas:
     Area:
-      properties: 
+      properties:
         areaType:
           type: string
           description: Type of this area.
       required:
         - areaType
-      discriminator: 
+      discriminator:
         propertyName: areaType
-        mapping: 
+        mapping:
           Circle:  "#/components/schemas/Circle"
-    
+
     Circle:
       description: Circular area
       allOf:
@@ -244,38 +244,38 @@ components:
           latitude: 50.735851
           longitude: 7.10066
         accuracy: 50000
-      
+
     Point:
       type: object
       description: Coordinates (latitude, longitude) defining a location in a map
-      required: 
+      required:
         - latitude
         - longitude
-      properties: 
+      properties:
         latitude:
           $ref: "#/components/schemas/Latitude"
         longitude:
           $ref: "#/components/schemas/Longitude"
-      example: 
+      example:
         latitude: 50.735851
         longitude: 7.10066
-    
+
     Latitude:
       description: Latitude component of a location
       type: number
       format: double
       minimum: -90
       maximum: 90
-      example: 50.735851      
-    
+      example: 50.735851
+
     Longitude:
       description: Longitude component of location
       type: number
       format: double
       minimum: -180
       maximum: 180
-      example: 7.10066        
-    
+      example: 7.10066
+
     Device:
       type: object
       minProperties: 1
@@ -289,7 +289,7 @@ components:
         ipv6Address:
           $ref: "#/components/schemas/Ipv6Address"
       description: One or more parameters allocated to the device that allow it to be identified
-    
+
     PhoneNumber:
       type: string
       pattern: '^\+?[0-9]{5,15}$'
@@ -299,7 +299,7 @@ components:
     NetworkAccessIdentifier:
       type: string
       example: "123456789@domain.com"
-    
+
     DeviceIpv4Addr:
       type: object
       properties:
@@ -313,17 +313,17 @@ components:
         - required: [publicAddress, privateAddress]
         - required: [publicAddress, publicPort]
       example:
-            {
-              "publicAddress": "84.125.93.10",
-              "publicPort" : 59765
-            }
+        {
+          "publicAddress": "84.125.93.10",
+          "publicPort" : 59765
+        }
       description: |
         The device should be identified by either the public (observed) IP address and port as seen by the application server, or the private (local) and any public (observed) IP addresses in use by the device (this information can be obtained by various means, for example from some DNS servers).
         
         If the allocated and observed IP addresses are the same (i.e. NAT is not in use) then  the same address should be specified for both publicAddress and privateAddress.
         
         If NAT64 is in use, the device should be identified by its publicAddress and publicPort, or separately by its allocated IPv6 address (field ipv6Address of the Device object)
-      
+        
         In all cases, publicAddress must be specified, along with at least one of either privateAddress or publicPort, dependent upon which is known. In general, mobile devices cannot be identified by their public IPv4 address alone.
 
     SingleIpv4Addr:
@@ -331,12 +331,12 @@ components:
       description: A single IPv4 address with no subnet mask
       example: "84.125.93.10"
       pattern: '^(([0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])$'
-    
+
     Port:
       type: integer
       minimum: 0
       maximum: 65535
-    
+
     Ipv6Address:
       type: string
       allOf:
@@ -351,7 +351,7 @@ components:
           - address/mask - an IP v6 number with a mask:
             - 2001:db8:85a3:8d3::0/64
             - 2001:db8:85a3:8d3::/64
-    
+
     ErrorInfo:
       type: object
       required:
@@ -368,7 +368,7 @@ components:
         message:
           type: string
           description: Detailed error description
-    
+
     Webhook:
       type: object
       description: Detail for event channel
@@ -377,14 +377,14 @@ components:
           $ref: '#/components/schemas/NotificationUrl'
         notificationAuthToken:
           $ref: '#/components/schemas/NotificationAuthToken'
-      required: 
+      required:
         - notificationUrl
-    
-    EventSubscriptionId:
+
+    SubscriptionId:
       type: string
       format: uuid
-      description: EventSubscription ID in UUID format      
-    
+      description: Identifier of the event subscription - This attribute must not be present in the POST request as it is provided by API server
+
     SubscriptionDetail:
       type: object
       description: Subscription detail
@@ -393,45 +393,32 @@ components:
           $ref: '#/components/schemas/Device'
         area:
           $ref: '#/components/schemas/Area'
-        eventType: 
+        eventType:
           $ref: "#/components/schemas/EventType"
       required:
         - device
         - area
         - eventType
-    
+
     EventType:
       description: |
-        AREA_ENTERED - Location event triggered when the device entered the given area
-        AREA_LEFT - Location event triggered when the device left the given area
+        org.camaraproject.geofencing.v0.area - Location event triggered when the device enters or left the given area
       type: string
       enum:
-        - AREA_ENTERED
-        - AREA_LEFT
-    
-    NotifiedEventType:
-      description: |
-        AREA_ENTERED - Location event triggered when the device entered the given area
-        AREA_LEFT - Location event triggered when the device left the given area
-        SUBSCRIPTION_ENDS - It is inform listener request that subscription terminates
-      type: string
-      enum:
-        - AREA_ENTERED
-        - AREA_LEFT  
-        - SUBSCRIPTION_ENDS
-    
+        - org.camaraproject.geofencing.v0.area
+
     NotificationUrl:
       type: string
       example: "https://application-server.com"
       description: https callback address where the event notification must be POST-ed
-    
+
     NotificationAuthToken:
       type: string
       example: "c8974e592c2fa383d4a3960714"
-      description: Authentication token for callback API 
-    
-    CreateEventSubscription:
-      description: The request for creating a Location Event Subscription
+      description: "OAuth2 token to be used by the callback API endpoint. It MUST be indicated within HTTP Authorization header e.g. Authorization: Bearer $notificationAuthToken"
+
+    CreateSubscription:
+      description: The request for creating a Location Subscription
       type: object
       properties:
         webhook:
@@ -445,16 +432,16 @@ components:
           description: The time when the location-tracking has to be terminated (e.g. in 14 days from now on). Provided in date-time format.
       required:
         - webhook
-        
+
     SubscriptionInfo:
       description: Represents a area-location event subscription.
       type: object
       allOf:
-        - $ref: '#/components/schemas/CreateEventSubscription'
+        - $ref: '#/components/schemas/CreateSubscription'
         - type: object
           properties:
             eventSubscriptionId:
-              $ref: '#/components/schemas/EventSubscriptionId'
+              $ref: '#/components/schemas/SubscriptionId'
             startsAt:
               type: string
               format: date-time
@@ -468,116 +455,75 @@ components:
           required:
             - eventSubscriptionId
             - webhook
-  
+
     EventTime:
       format: date-time
       type: string
-      description: The time when the event was notified.
-    
+      description: |
+        Timestamp of when the occurrence happened. 
+        If the time of the occurrence cannot be determined then this attribute MAY be set to some other time (such as the current time) by the CloudEvents producer, 
+        however all producers for the same source MUST be consistent in this respect. In other words, 
+        either they all use the actual time of the occurrence or they all use the same algorithm to determine the value used. 
+        (must adhere on CAMARA datetime recommendation based on RFC 3339)
+
     EventNotifications:
       description: The event notification callback.
       type: object
       required:
-        - event
+        - id
+        - source
+        - type
+        - specversion
+        - time
       properties:
-        eventSubscriptionId:
-          $ref: '#/components/schemas/EventSubscriptionId'
-        event:
-          $ref: '#/components/schemas/Event'
- 
-    Event:
-      type: object  
-      description: The event being notified
-      required:
-        - eventType
-        - eventTime
-      properties:
-        eventId:
+        id:
           $ref: '#/components/schemas/EventId'
-        eventType:
-          $ref: '#/components/schemas/NotifiedEventType'
-        eventTime:
+        source:
+          description: |
+            identifies the context in which an event happened in the specific Provider Implementation. 
+            Often this will include information such as the type of the event source, the organization publishing the event or the process that produced the event. 
+            The exact syntax and semantics behind the data encoded in the URI is defined by the event producer.
+          type: string
+          example: "https://notificationSendServer12.supertelco.com"
+        type:
+          $ref: '#/components/schemas/EventType'
+        specversion:
+          description: version of the specification to which this event conforms - must be "1.0"
+          type: string
+          example: "1.0"
+        datacontenttype:
+          description: media-type that describes the event payload encoding, must be application/json for CAMARA APIs
+          type: string
+          example: application/json
+        time:
           $ref: '#/components/schemas/EventTime'
-      discriminator:
-        propertyName: eventType
-        mapping: 
-          AREA_ENTERED: '#/components/schemas/AreaEnteredEvent'
-          AREA_LEFT: '#/components/schemas/AreaLeftEvent'
-          SUBSCRIPTION_ENDS: '#/components/schemas/SubscriptionEnds'
-    
-    SubscriptionEnds:
-      allOf:
-        - $ref: "#/components/schemas/Event"
-        - type: object
-          properties:
-            eventDetail:
-              type: object
-              description: Subscription is terminated
-              properties:
-                terminationReason:
-                  $ref: '#/components/schemas/TerminationReason'
-              required:
-                - terminationReason
-            eventType:
-              type: string
-              enum: 
-                - SUBSCRIPTION_ENDS      
-    
+        data:
+          $ref: '#/components/schemas/Data'
+
+    Data:
+      type: object
+      description: event notification details payload described in each CAMARA API and referenced by its type
+      properties:
+        subscriptionId:
+          $ref: '#/components/schemas/SubscriptionId'
+        device:
+          $ref: '#/components/schemas/Device'
+        terminationReason:
+          $ref: '#/components/schemas/TerminationReason'
+
     EventId:
       type: string
       description: The subscription event identifier.
-    
+
     TerminationReason:
       type: string
       description: |
         NETWORK_TERMINATED - API server stopped sending notification
         SUBSCRIPTION_EXPIRED - Subscription expire time (required by the requester) has been reached
-      enum: 
+      enum:
         - NETWORK_TERMINATED
         - SUBSCRIPTION_EXPIRED
-  
-    AreaEnteredEvent:
-      allOf:
-        - $ref: "#/components/schemas/Event"
-        - type: object
-          properties:
-            eventDetail:
-              type: object
-              description: Location Device entered the area
-              properties:
-                device:
-                  $ref: '#/components/schemas/Device'
-                area:
-                  $ref: '#/components/schemas/Area'
-              required:
-                - device
-                - area
-            eventType:
-              type: string
-              enum: 
-                - AREA_ENTERED
-         
-    AreaLeftEvent: 
-      allOf:
-        - $ref: "#/components/schemas/Event"
-        - type: object
-          properties:
-            eventDetail:
-              type: object
-              description: Location Device left the area
-              properties:
-                device:
-                  $ref: '#/components/schemas/Device'
-                area:
-                  $ref: '#/components/schemas/Area'
-              required:
-                - device
-                - area    
-            eventType:
-              type: string
-              enum: 
-                - AREA_LEFT
-    
+
   responses:
     Generic400:
       description: Invalid input
@@ -632,7 +578,7 @@ components:
           example:
             status: 409
             code: Conflict
-            message: 'There is conflict in the request'        
+            message: 'There is conflict in the request'
     
     Generic500:
       description: Internal server error
