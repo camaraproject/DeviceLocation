@@ -1,0 +1,114 @@
+# CAMARA DeviceLocation meeting - 2023-10-10
+
+*October 10th, 2023*
+
+## Attendees
+
+* José Luis Urien (Telefonica)
+* Foo Ming Hui (Singtel)
+* Cetin Alpaycetin (Vodafone)
+* Joachim Dahlgreen (Ericsson)
+* Rafal Artych (DT)
+* Akos Hunyadi (DT)
+* Sébastien Synold (Intersec)
+* Ludovic Robert (Orange)
+* Fernando Prado Cabrillo (Telefonica)
+* Jorge Garcia Hospital (Telefonica)
+* Javier Carro Calador (Telefonica)
+
+
+Device Location minutes: [https://github.com/camaraproject/DeviceLocation/tree/main/documentation/MeetingMinutes](https://github.com/camaraproject/DeviceLocation/tree/main/documentation/MeetingMinutes)
+
+## Agenda
+
+* Open issues and PRs
+* Any other business
+
+## Open issues and PRs
+
+
+### Geofencing v0.1-wip (Subscription for Location Area) 
+
+* [Issue #18](https://github.com/camaraproject/DeviceLocation/issues/18), [PR #74](https://github.com/camaraproject/DeviceLocation/pull/74)
+  - New model based on CloudEvents are now approved
+  - PR proposed by DT https://github.com/camaraproject/DeviceLocation/pull/98 before the meeting.
+  - Ludovic raised the point about the event granularity - José shared the point and also expected 2 event types.
+  - Akos questionned if we need maxRate in this API.
+  - Cetin explained that in Vodafone implementation the cell id is used as an input. This will need API consumer to 'know' the cell which is a 'technical' information. 
+  - [action] PR#74 could be close and point to PR#98
+
+
+### New: Location retrieval - Allow additional area types in the response
+
+* [Issue #94](https://github.com/camaraproject/DeviceLocation/issues/94)
+  - Other possible areas other than circle
+  - Discuss which ones make sense: Polygon, Ellipse/EllipsoidArc, Areas including altitude?
+  - Some comments on issue:
+    - OK to add polygon?
+    - Others?
+
+    - José provided a feedback about TS29.572 review
+      - Limit to max 15 points could be challenged
+      - [action] Need PR for adding polygon as it is obvious. 
+      - Need additional thinking for other area type
+    - Ludovic: What about adding the cell id ?
+      - José: It could be a way to discover the cell id but perhaps we could have a dedicated endpoint.
+      - [action] Worth to open an issue for this and think about it.
+        - Joachim : Need to verify if telco are willing to share this information. José: Perhaps using an alias could be an alternative.
+        - Discussion to be continued.
+
+
+### Roadmap to Release v0.2
+
+* The proposed process for a version is to have a version x.y-wip then x.y-rc and then finally released as x.y. This pattern is used in QoD.
+
+* Align the Device Location API with the security schema as described in Unify specification of `securitySchemes`, `security` and scopes, [Commonalities Issue #53](https://github.com/camaraproject/Commonalities/issues/53), [PR #57](https://github.com/camaraproject/Commonalities/pull/57)
+  - [PR #95](https://github.com/camaraproject/DeviceLocation/pull/95) for location-verification, changing securitySchemes to openIdConnect. Waiting for resolution in Commonalities and Identity and Consent Management WGs.
+    - Some approvals, can we merge?
+    - [Decision] Yes
+    - Joachim questionned about OIDC flows use-able. 
+      - José/Ludovic answered that the proposal allow flexibilty by splitting the API yaml from the managed authorization for the API. This solution did not restriction authorization flow. In order to simplify adoption authorization flow must be constitent within one country
+      - [Action] : check for Device-location-retrieval and if not aligned to be tackled in next version.
+
+* Next steps:
+  - Then create v0.2-rc for location-verification, updating Changelog and Release notes.
+  - Add location-retrieval v0.1.0-wip 
+  - Add geofencing v0.1.0-wip, after discussion in Commonalities is closed. 
+    - geofencing has to be aligned with CloudEvents 
+
+* Naming of the Release
+  - Issue opened in [Commonalities Issue #60](https://github.com/camaraproject/Commonalities/issues/60)
+  - Proposal to use date format, such as Release 2023-09, but no agreement so far.
+    - EdgeCloud API using v1, v2 ...
+    - What name should we choose?
+    - [Decision] Let's wait for next TSC outcome.
+
+### Behaviour when requesting too high precision
+
+* [Issue #85](https://github.com/camaraproject/DeviceLocation/issues/85)
+  - TEF provided a doc with a proposal and use cases for the implementation of 'Partial' and matchRate
+
+* No new comments 
+* Need a better name for Partial (Javier will work on it)
+
+### Administrative Code Area
+
+* New [Issue #83](https://github.com/camaraproject/DeviceLocation/issues/83), with formal requirements from GSMA Product track
+  - Old [PR #47](https://github.com/camaraproject/DeviceLocation/pull/47) closed.
+  - Javier shared a proposal on this topic.
+    - **[Question]** How to map postal code to geolocation/coordinate?
+      - depending on the country - could be provided by local regulations
+    - [Action] Javier will share the proposal in the GIT.
+
+* No new comments or progress since last meeting, **no update or discussion during meeting**. Previous questions/doubts:
+  - How to handle the 'diversity' of the 'geo' code that we can have in a given country.
+  - How to discover what is implemented by each provider.
+  - Error scenario must be defined in CAMARA if the area type requested is not supported by the telco.
+
+
+## AOB
+N/A 
+
+<p>
+
+**Next call is on October 24th**
