@@ -51,7 +51,14 @@ paths:
                 content:
                   application/json:
                     schema:
-                      $ref: "#/components/schemas/EventNotifications"
+                      $ref: "#/components/schemas/CloudEvent"
+                    examples:
+                      AREA_ENTERED:
+                        $ref: "#/components/examples/AREA_ENTERED"
+                      AREA_LEFT:
+                        $ref: "#/components/examples/AREA_LEFT"
+                      SUBSCRIPTION_ENDS:
+                        $ref: "#/components/examples/SUBSCRIPTION_ENDS"
               responses:
                 '204':
                   description: Successful event notification
@@ -393,19 +400,23 @@ components:
           $ref: '#/components/schemas/Device'
         area:
           $ref: '#/components/schemas/Area'
-        eventType:
-          $ref: "#/components/schemas/EventType"
+        type:
+          $ref: "#/components/schemas/Type"
       required:
         - device
         - area
-        - eventType
+        - type
 
-    EventType:
+    Type:
       description: |
-        org.camaraproject.geofencing.v0.area - Location event triggered when the device enters or left the given area
+        org.camaraproject.geofencing.v0.area-entered - Location event triggered when the device enters the given area
+        org.camaraproject.geofencing.v0.area-left - Location event triggered when the device leaves the given area
+        org.camaraproject.geofencing.v0.subscription-ends - Subscription ends for the given device
       type: string
       enum:
-        - org.camaraproject.geofencing.v0.area
+        - org.camaraproject.geofencing.v0.area-entered
+        - org.camaraproject.geofencing.v0.area-left
+        - org.camaraproject.geofencing.v0.subscription-ends
 
     NotificationUrl:
       type: string
@@ -466,8 +477,8 @@ components:
         either they all use the actual time of the occurrence or they all use the same algorithm to determine the value used. 
         (must adhere on CAMARA datetime recommendation based on RFC 3339)
 
-    EventNotifications:
-      description: The event notification callback.
+    CloudEvent:
+      description: The Cloud-Event used for the callback.
       type: object
       required:
         - id
@@ -486,7 +497,7 @@ components:
           type: string
           example: "https://notificationSendServer12.supertelco.com"
         type:
-          $ref: '#/components/schemas/EventType'
+          $ref: '#/components/schemas/Type'
         specversion:
           description: version of the specification to which this event conforms - must be "1.0"
           type: string
@@ -499,6 +510,12 @@ components:
           $ref: '#/components/schemas/EventTime'
         data:
           $ref: '#/components/schemas/Data'
+      discriminator:
+        propertyName: 'type'
+        mapping:
+          org.camaraproject.geofencing.v0.area-left: '#/components/schemas/Type'
+          org.camaraproject.geofencing.v0.area-entered: '#/components/schemas/Type'
+          org.camaraproject.geofencing.v0.subscription-ends: '#/components/schemas/Type'
 
     Data:
       type: object
@@ -601,3 +618,41 @@ components:
             status: 503
             code: UNAVAILABLE
             message: 'Service unavailable'
+  examples:
+    AREA_ENTERED:
+      value:
+        id: 123655
+        source: https://notificationSendServer12.supertelco.com
+        type: org.camaraproject.geofencing.v0.area-entered
+        specversion: 1.0
+        datacontenttype: application/json
+        time: 2023-03-22T05:40:23.682Z
+        data:
+          subscriptionId: 987654321
+          device:
+            phoneNumber: 123456789
+    AREA_LEFT:
+      value:
+        id: 123655
+        source: https://notificationSendServer12.supertelco.com
+        type: org.camaraproject.geofencing.v0.area-left
+        specversion: 1.0
+        datacontenttype: application/json
+        time: 2023-03-22T05:40:23.682Z
+        data:
+          subscriptionId: 987654321
+          device:
+            phoneNumber: 123456789
+    SUBSCRIPTION_ENDS:
+      value:
+        id: 123655
+        source: https://notificationSendServer12.supertelco.com
+        type: org.camaraproject.geofencing.v0.subscription-ends
+        specversion: 1.0
+        datacontenttype: application/json
+        time: 2023-03-22T05:40:23.682Z
+        data:
+          subscriptionId: 987654321
+          device:
+            phoneNumber: 123456789
+          terminationReason: SUBSCRIPTION_EXPIRED
