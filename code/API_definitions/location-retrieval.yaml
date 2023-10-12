@@ -6,7 +6,10 @@ info:
 
     # Introduction
 
-    With this API, customers can retrieve the area where a certain user device is localized. The area provided in the response is described by a circle determined by coordinates (latitude and longitude) and an accuracy defined by the radius. 
+    With this API, customers can retrieve the area where a certain user device is localized. 
+    The area provided in the response could be described:
+    -  by a circle determined by coordinates (latitude and longitude) and a radius. 
+    -  by a polygon determined by an array of coordinates (point).
     
     The requester could optionally ask for a freshness of the localization information by providing a maxAge ("I want a location not older than 600 seconds")
 
@@ -89,18 +92,11 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Location'
-              examples: 
-                'success':
-                  summary: successful location
-                  description: The network provides device location
-                  value:
-                    lastLocationTime: 2023-01-17T13:18:23.682Z
-                    area:
-                      areaType: Circle
-                      center:
-                        latitude: 50.735851
-                        longitude: 7.10066
-                      radius: 2000
+              examples:
+                      LOCATION_CIRCLE:
+                        $ref: "#/components/examples/RETRIEVAL_CIRCLE"
+                      LOCATION_POLYGON:
+                        $ref: "#/components/examples/RETRIEVAL_POLYGON"
         '400':
           $ref: '#/components/responses/RetrieveLocationBadRequest400'
         '401':
@@ -248,12 +244,13 @@ components:
         - areaType
       properties:
         areaType:
-          description: type of the area (like Circle)
+          description: type of the area (like Circle or a Polygon)
           type: string
       discriminator: 
           propertyName: areaType
           mapping: 
             Circle:  "#/components/schemas/Circle"
+            Polygon: "#/components/schemas/Polygon"
 
     Circle:
       description: Circular area
@@ -270,7 +267,24 @@ components:
               type: number
               description: Distance from the center in meters
               minimum: 1
-        
+
+    Polygon:
+      allOf:
+        - $ref: "#/components/schemas/Area"
+        - type: object
+          required:
+            - pointList
+          properties:
+            pointList:
+              $ref: "#/components/schemas/PointList"
+
+    PointList:
+      type: array
+      items:
+        $ref: "#/components/schemas/Point"
+      minItems: 3
+      maxItems: 15
+
     Point:
       type: object
       description: Coordinates (latitude, longitude) defining a location in a map
@@ -386,3 +400,34 @@ components:
             status: 503
             code: UNAVAILABLE
             message: 'Service unavailable'
+  examples:
+    RETRIEVAL_CIRCLE:
+      value:
+        lastLocationTime: 2023-10-17T13:18:23.682Z
+        area:
+          areaType: circle
+          center: 
+            latitude: 45.754114
+            longitude: 4.860374
+          radius: 800
+    RETRIEVAL_POLYGON:
+      value:
+        lastLocationTime: 2023-10-17T13:18:23.682Z
+        area:
+          areaType: polygon
+          pointList:
+            - point: 
+                latitude: 45.754114
+                longitude: 4.860374
+            - point: 
+                latitude: 45.753845
+                longitude: 4.863185
+            - point: 
+                latitude: 45.752490
+                longitude: 4.861876
+            - point: 
+                latitude: 45.751224
+                longitude: 4.861125
+            - point: 
+                latitude: 45.751442
+                longitude: 4.859827
