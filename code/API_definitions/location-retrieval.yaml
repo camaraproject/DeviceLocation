@@ -10,6 +10,7 @@ info:
     The area provided in the response could be described:
     -  by a circle determined by coordinates (latitude and longitude) and a radius. 
     -  by a polygon determined by an array of coordinates (point).
+    The retrieved shape depends on the network conditions at the subscriber's location and any of the supported shapes could be received.
     
     The requester could optionally ask for a freshness of the localization information by providing a maxAge ("I want a location not older than 600 seconds")
 
