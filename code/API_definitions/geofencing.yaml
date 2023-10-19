@@ -1,7 +1,62 @@
 openapi: 3.0.3
 info:
   title: Device geofencing API
-  description: API to create, retrieve and delete event subscriptions to realize geofencing for a user device
+  description: |
+    API to create, retrieve and delete event subscriptions to realize geofencing for a user device.
+    
+    # Introduction
+    
+    With this API, customers can create subscriptions for their devices to receive notifications when a device enters or exits a specified area.
+    
+    The area provided in the request is described by a circle determined by coordinates (latitude and longitude) and an accuracy defined by the radius. 
+    
+    Upon successfully creating a subscription, the API will provide an Event Subscription ID, and it will indicate the subscription's expiration date.
+    
+    If the geofencing-state of a device changes, the event subscriber will be notified back to the provided Notification-Url given by the subscription-request.
+    
+    Device geofencing API could be useful in scenarios such as:
+    
+    - Tracking devices for Presetting of Home-Settings 
+    - Tracking of logistics
+    
+    # Relevant terms and definitions
+    
+    * **Device**: A device refers to any physical entity that can connect to a network and participate in network communication.
+    
+    * **Area**: It specifies the geographical surface which a device is planned to enter or exit.
+    
+    # API Functionality
+    
+    The API exposes following capabilities:
+    
+    ## Device Geofencing subscription
+    These endpoints allow to manage event subscription on geofencing device location event. 
+    
+    The CAMARA subscription model is detailed in the CAMARA API design guideline document and follows CloudEvents specification.
+
+    It is mandatory in the subscription to provide the event `type` subscribed are several are managed in this API.
+    
+    Following event ``type`` are managed for this API:
+      - ``org.camaraproject.geofencing.v0.area-entered``  - Event triggered when the device enters the given area
+    
+      - ``org.camaraproject.geofencing.v0.area-left``     - Event triggered when the device leaves the given area
+    
+    Note: Additionally to these list, ``org.camaraproject.geofencing.v0.subscription-ends`` notification `type` is sent when the subscription ends. 
+    This notification did not requires dedicated subscription. 
+    It is used when the subscription expire time (required by the requester) has been reached or if the API server has to stop sending notification prematurely. 
+
+    ### Notification callback
+
+    This endpoint describes the event notification received on subscription listener side when the event occurred. As for subscription, detailed description of the event notification is provided in the CAMARA API design guideline document.
+
+    **WARNING**: This callback endpoint must be exposed on the listener side as `POST /{$request.body#/webhook/notificationUrl}`
+      will be posted by the device geofencing resource server to the webhook url provided by notification 
+      listener.
+    
+    # Further info and support
+    
+    (FAQs will be added in a later version of the documentation)    
+
   termsOfService: http://swagger.io/terms/
   contact:
     email: project-email@sample.com
@@ -75,8 +130,8 @@ paths:
                 '503':
                   $ref: '#/components/responses/Generic503'
               security:
-                - {}
-                - notificationsBearerAuth: []
+                - { }
+                - notificationsBearerAuth: [ ]
       responses:
         '201':
           description: Created (Successful creation of subscription)
@@ -220,7 +275,7 @@ components:
       discriminator:
         propertyName: 'areaType'
         mapping:
-          CIRCLE:  "#/components/schemas/Circle"
+          CIRCLE: "#/components/schemas/Circle"
 
     AreaType:
       type: string
@@ -318,12 +373,12 @@ components:
         publicPort:
           $ref: "#/components/schemas/Port"
       anyOf:
-        - required: [publicAddress, privateAddress]
-        - required: [publicAddress, publicPort]
+        - required: [ publicAddress, privateAddress ]
+        - required: [ publicAddress, publicPort ]
       example:
         {
           "publicAddress": "84.125.93.10",
-          "publicPort" : 59765
+          "publicPort": 59765
         }
       description: |
         The device should be identified by either the public (observed) IP address and port as seen by the application server, or the private (local) and any public (observed) IP addresses in use by the device (this information can be obtained by various means, for example from some DNS servers).
@@ -515,7 +570,7 @@ components:
           org.camaraproject.geofencing.v0.subscription-ends: '#/components/schemas/EventSubscriptionEnds'
 
     EventAreaLeft:
-      description:  event structure for event when the device leaves the area
+      description: event structure for event when the device leaves the area
       allOf:
         - $ref: '#/components/schemas/CloudEvent'
         - type: object
@@ -524,7 +579,7 @@ components:
               $ref: '#/components/schemas/AreaLeft'
 
     EventAreaEntered:
-      description:  event structure for event when the device enters the area
+      description: event structure for event when the device enters the area
       allOf:
         - $ref: '#/components/schemas/CloudEvent'
         - type: object
@@ -533,7 +588,7 @@ components:
               $ref: '#/components/schemas/AreaEntered'
 
     EventSubscriptionEnds:
-      description:  event structure for event subscription ends
+      description: event structure for event subscription ends
       allOf:
         - $ref: '#/components/schemas/CloudEvent'
         - type: object
