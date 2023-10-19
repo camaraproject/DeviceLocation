@@ -26,8 +26,6 @@ servers:
 tags:
   - name: Geofencing subscriptions
     description: Operation to manage event subscription on geofencing events for leaving and entering an area
-  - name: Session notifications callback
-    description: Operation to manage callbacks based on CloudEvents
 paths:
   /subscriptions:
     post:
@@ -45,8 +43,6 @@ paths:
         event-notifications:
           '{$request.body#/webhook/notificationUrl}':
             post:
-              tags:
-                - Session notifications callback
               summary: "Subscription notification callback"
               description: |
                 Important: this endpoint is to be implemented by the API consumer.
@@ -105,7 +101,7 @@ paths:
             - "geofencing:subscriptions:write"
     get:
       tags:
-        - Geofencing subscription
+        - Geofencing subscriptions
       summary: 'Operation to retrieve a list of subscriptions - could be an empty list.'
       operationId: getSubscriptionList
       description: Operation to retrieve a list of subscriptions
@@ -135,7 +131,7 @@ paths:
   /subscriptions/{subscriptionsId}:
     get:
       tags:
-        - Geofencing subscription
+        - Geofencing subscriptions
       summary: 'Operation to retrieve an subscription'
       operationId: getSubscription
       description: Retrieve a given subscription by ID
@@ -202,16 +198,6 @@ paths:
 
 components:
   securitySchemes:
-    oAuth2ClientCredentials:
-      type: oauth2
-      flows:
-        clientCredentials:
-          tokenUrl: '{tokenUrl}'
-          scopes: {}
-    notificationsBearerAuth:
-      type: http
-      scheme: bearer
-      bearerFormat: "{$request.body#/webhook/notificationAuthToken}"
     oAuth2AuthorizationCode:
       type: oauth2
       flows:
