@@ -499,6 +499,7 @@ components:
           description: The time when the location-tracking has to be terminated (e.g. in 14 days from now on). Provided in date-time format.
       required:
         - webhook
+        - subscriptionDetail
 
     SubscriptionInfo:
       description: Represents a area-location event subscription.
