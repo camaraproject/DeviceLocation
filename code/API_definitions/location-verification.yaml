@@ -49,10 +49,6 @@ info:
 externalDocs:
   description: Product documentation at CAMARA
   url: https://github.com/camaraproject/
-security:
-  - oAuth2ClientCredentials: []
-  - oAuth2AuthorizationCode:
-    - location-verification:verify
 servers:
   - url: '{apiRoot}/{basePath}'
     variables:
@@ -116,22 +112,14 @@ paths:
           $ref: '#/components/responses/Generic500'
         '503':
           $ref: '#/components/responses/Generic503'
+      security:
+        - openId:
+          - location-verification:verify
 components:
   securitySchemes:
-    oAuth2ClientCredentials:
-      type: oauth2
-      flows:
-        clientCredentials:
-          tokenUrl: '{tokenUrl}'
-          scopes: {}
-    oAuth2AuthorizationCode:
-      type: oauth2
-      flows:
-        authorizationCode:
-          authorizationUrl: https://auth.example.com/authorize
-          tokenUrl: https://auth.example.com/token
-          scopes:
-            location-verification:verify: Verify the device location
+    openId:
+      type: openIdConnect
+      openIdConnectUrl: https://example.org/.well-known/openid-configuration
   schemas:
     Area:
       properties: 
