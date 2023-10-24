@@ -9,7 +9,7 @@ info:
     With this API, customers can retrieve the area where a certain user device is localized. 
     The area provided in the response could be described:
     -  by a circle determined by coordinates (latitude and longitude) and a radius. 
-    -  by a polygon determined by an array of coordinates (points).
+    -  by a polygon determined by an array of coordinates (points). It is not necessary to repeat the first point as the last point in the polygon definition as we always consider a 'closed' polygon.
 
     The retrieved shape depends on the network conditions at the subscriber's location and any of the supported shapes could be received.
     
@@ -61,19 +61,14 @@ info:
 externalDocs:
   description: Product documentation at Camara
   url: https://github.com/camaraproject/
-security:
-  - oAuth2ClientCredentials: []
-  - oAuth2AuthorizationCode:
-    - location-retrieval:read
+
 servers:
-  - url: '{apiRoot}/{basePath}'
+  - url: '{apiRoot}/location-retrieval/v0'
     variables:
       apiRoot:
         default: http://localhost:9091
         description: API root
-      basePath:
-        default: location-retrieval/v0
-        description: Base path for the device location retrieval API
+
 paths:
   /retrieve:
     post:
@@ -111,30 +106,15 @@ paths:
           $ref: '#/components/responses/Generic500'
         '503':
           $ref: '#/components/responses/Generic503'
+      security:
+        - openId:
+          - location-retrieval:read
+
 components:
   securitySchemes:
-    oAuth2ClientCredentials:
-      type: oauth2
-      flows:
-        clientCredentials:
-          tokenUrl: '{tokenUrl}'
-          scopes: {}
-#    BasicAuth:
-#      type: http
-#      scheme: basic
-#    apiKey:
-#      type: apiKey
-#      description: API key to authorize requests
-#      name: apikey
-#      in: query
-    oAuth2AuthorizationCode:
-      type: oauth2
-      flows:
-        authorizationCode:
-          authorizationUrl: https://auth.example.com/authorize
-          tokenUrl: https://auth.example.com/token
-          scopes:
-            location-retrieval:read: Provide device location
+    oopenId:
+      type: openIdConnect
+      openIdConnectUrl: https://example.com/.well-known/openid-configuration
   schemas:
     RetrievalLocationRequest:
       type: object
