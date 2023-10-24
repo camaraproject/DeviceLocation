@@ -49,9 +49,9 @@ info:
 
     This endpoint describes the event notification received on subscription listener side when the event occurred. As for subscription, detailed description of the event notification is provided in the CAMARA API design guideline document.
 
-    **WARNING**: This callback endpoint must be exposed on the listener side as `POST /{$request.body#/webhook/notificationUrl}`
-      will be posted by the device geofencing resource server to the webhook url provided by notification 
-      listener.
+    _**WARNING**: This callback endpoint must be exposed on the consumer side as `POST /{$request.body#/webhook/notificationUrl}`.
+      Developers may provide a callback URL on which notifications regarding geofencing can be received from the service provider.
+      If an event occurs the application will send events to the provided webhook - 'notificationUrl'._ 
     
     # Further info and support
     
@@ -76,6 +76,8 @@ servers:
         description: API root
       basePath:
         default: geofencing/v0
+        enum:
+          - geofencing/v0
         description: Base path for the device geofencing API
 
 tags:
@@ -157,7 +159,7 @@ paths:
     get:
       tags:
         - Geofencing subscriptions
-      summary: 'Operation to retrieve a list of subscriptions - could be an empty list.'
+      summary: 'Operation to retrieve a list of subscriptions created by the presently authenticated Client.'
       operationId: getSubscriptionList
       description: Operation to retrieve a list of subscriptions
       responses:
@@ -167,6 +169,7 @@ paths:
             application/json:
               schema:
                 type: array
+                minItems: 0
                 items:
                   $ref: '#/components/schemas/SubscriptionInfo'
         '400':
@@ -187,7 +190,7 @@ paths:
     get:
       tags:
         - Geofencing subscriptions
-      summary: 'Operation to retrieve an subscription'
+      summary: 'Operation to retrieve an subscription based on the provided ID'
       operationId: getSubscription
       description: Retrieve a given subscription by ID
       parameters:
@@ -508,21 +511,20 @@ components:
         - $ref: '#/components/schemas/CreateSubscription'
         - type: object
           properties:
-            eventSubscriptionId:
+            subscriptionId:
               $ref: '#/components/schemas/SubscriptionId'
             startsAt:
-              type: string
-              format: date-time
-              example: 2023-01-17T13:18:23.682Z
-              description: The time when the location-tracking started (e.g. in 7 days from now on). Provided in date-time format.
+              $ref: '#/components/schemas/DateTime'
             expiresAt:
-              type: string
-              format: date-time
-              example: 2023-01-17T13:18:23.682Z
-              description: The time when the location-tracking expired (e.g. in 7 days from now on). Provided in date-time format.
+              $ref: '#/components/schemas/DateTime'
           required:
             - eventSubscriptionId
-            - webhook
+
+    DateTime:
+      type: string
+      format: date-time
+      example: 2023-01-17T13:18:23.682Z
+      description: Date when the event subscription will begin/began. Provided in date-time format.
 
     EventTime:
       format: date-time
@@ -575,6 +577,8 @@ components:
       allOf:
         - $ref: '#/components/schemas/CloudEvent'
         - type: object
+          required:
+            - data
           properties:
             data:
               $ref: '#/components/schemas/AreaLeft'
@@ -584,6 +588,8 @@ components:
       allOf:
         - $ref: '#/components/schemas/CloudEvent'
         - type: object
+          required:
+            - data
           properties:
             data:
               $ref: '#/components/schemas/AreaEntered'
@@ -593,6 +599,8 @@ components:
       allOf:
         - $ref: '#/components/schemas/CloudEvent'
         - type: object
+          required:
+            - data
           properties:
             data:
               $ref: '#/components/schemas/SubscriptionEnds'
@@ -603,11 +611,14 @@ components:
       required:
         - device
         - area
+        - subscriptionId
       properties:
         device:
           $ref: '#/components/schemas/Device'
         area:
           $ref: '#/components/schemas/Area'
+        subscriptionId:
+          $ref: '#/components/schemas/SubscriptionId'
 
     AreaEntered:
       description: Event detail structure for area-entered event
@@ -615,23 +626,32 @@ components:
       required:
         - device
         - area
+        - subscriptionId
       properties:
         device:
           $ref: '#/components/schemas/Device'
         area:
           $ref: '#/components/schemas/Area'
+        subscriptionId:
+          $ref: '#/components/schemas/SubscriptionId'
 
     SubscriptionEnds:
       description: Event detail structure for SUBSCRIPTION_ENDS event
       type: object
       required:
         - device
+        - area
         - terminationReason
+        - subscriptionId
       properties:
         device:
           $ref: '#/components/schemas/Device'
+        area:
+          $ref: '#/components/schemas/Area'
         terminationReason:
           $ref: '#/components/schemas/TerminationReason'
+        subscriptionId:
+          $ref: '#/components/schemas/SubscriptionId'
 
     Source:
       type: string
