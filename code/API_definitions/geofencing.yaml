@@ -69,16 +69,11 @@ externalDocs:
   url: https://github.com/camaraproject/
 
 servers:
-  - url: '{apiRoot}/{basePath}'
+  - url: '{apiRoot}/geofencing/v0'
     variables:
       apiRoot:
         default: http://localhost:9091
         description: API root
-      basePath:
-        default: geofencing/v0
-        enum:
-          - geofencing/v0
-        description: Base path for the device geofencing API
 
 tags:
   - name: Geofencing subscriptions
@@ -154,8 +149,8 @@ paths:
         '503':
           $ref: '#/components/responses/Generic503'
       security:
-        - oAuth2AuthorizationCode:
-            - "geofencing:subscriptions:write"
+        - openId:
+            - location-retrieval:write
     get:
       tags:
         - Geofencing subscriptions
@@ -183,8 +178,8 @@ paths:
         '503':
           $ref: '#/components/responses/Generic503'
       security:
-        - oAuth2AuthorizationCode:
-            - "geofencing:subscriptions:read"
+        - openId:
+            - location-retrieval:read
 
   /subscriptions/{subscriptionsId}:
     get:
@@ -220,8 +215,8 @@ paths:
         '503':
           $ref: '#/components/responses/Generic503'
       security:
-        - oAuth2AuthorizationCode:
-            - "geofencing:subscriptions:read"
+        - openId:
+            - location-retrieval:read
     delete:
       tags:
         - Geofencing subscriptions
@@ -251,21 +246,14 @@ paths:
         '503':
           $ref: '#/components/responses/Generic503'
       security:
-        - oAuth2AuthorizationCode:
-            - "geofencing:subscriptions:delete"
+        - openId:
+            - location-retrieval:delete
 
 components:
   securitySchemes:
-    oAuth2AuthorizationCode:
-      type: oauth2
-      flows:
-        authorizationCode:
-          authorizationUrl: https://auth.example.com/authorize
-          tokenUrl: https://auth.example.com/token
-          scopes:
-            'geofencing:subscriptions:write': Create subscriptions to geofencing events
-            'geofencing:subscriptions:delete': Delete subscriptions to geofencing events
-            'geofencing:subscriptions:read': Get details of subscriptions to geofencing events
+    oopenId:
+      type: openIdConnect
+      openIdConnectUrl: https://example.com/.well-known/openid-configuration
 
   schemas:
     Area:
