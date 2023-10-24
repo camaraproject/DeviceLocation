@@ -126,9 +126,6 @@ paths:
                   $ref: '#/components/responses/Generic500'
                 '503':
                   $ref: '#/components/responses/Generic503'
-              security:
-                - { }
-                - notificationsBearerAuth: [ ]
       responses:
         '201':
           description: Created (Successful creation of subscription)
@@ -154,9 +151,9 @@ paths:
     get:
       tags:
         - Geofencing subscriptions
-      summary: 'Operation to retrieve a list of subscriptions created by the presently authenticated Client.'
+      summary: 'Operation to retrieve a list of subscriptions.'
       operationId: getSubscriptionList
-      description: Operation to retrieve a list of subscriptions
+      description: Operation to list subscriptions authorized to be retrieved by the provided access token.
       responses:
         '200':
           description: The list of subscriptions is retrieved.
