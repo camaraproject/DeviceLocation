@@ -518,7 +518,7 @@ components:
             expiresAt:
               $ref: '#/components/schemas/DateTime'
           required:
-            - eventSubscriptionId
+            - subscriptionId
 
     DateTime:
       type: string
