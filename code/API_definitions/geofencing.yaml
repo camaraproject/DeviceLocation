@@ -146,8 +146,8 @@ paths:
         '503':
           $ref: '#/components/responses/Generic503'
       security:
-        - openId:
-            - location-retrieval:write
+        - { }
+        - notificationsBearerAuth: [ ]
     get:
       tags:
         - Geofencing subscriptions
@@ -248,7 +248,7 @@ paths:
 
 components:
   securitySchemes:
-    oopenId:
+    openId:
       type: openIdConnect
       openIdConnectUrl: https://example.com/.well-known/openid-configuration
 
