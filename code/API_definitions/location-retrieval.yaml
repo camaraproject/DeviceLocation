@@ -9,7 +9,7 @@ info:
     With this API, customers can retrieve the area where a certain user device is localized. 
     The area provided in the response could be described:
     -  by a circle determined by coordinates (latitude and longitude) and a radius. 
-    -  by a polygon determined by an array of coordinates (points). It is not necessary to repeat the first point as the last point in the polygon definition as we always consider a 'closed' polygon.
+    -  by a simple polygon delimited by segments connecting consecutively an array of coordinates (points). The last point connects to the first point to delimit a closed shape bounded with straight sides.
 
     The retrieved shape depends on the network conditions at the subscriber's location and any of the supported shapes could be received.
     
