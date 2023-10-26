@@ -112,7 +112,7 @@ paths:
 
 components:
   securitySchemes:
-    oopenId:
+    openId:
       type: openIdConnect
       openIdConnectUrl: https://example.com/.well-known/openid-configuration
   schemas:
