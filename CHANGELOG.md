@@ -33,7 +33,8 @@
     - Error responses adapted to new commonalities guidelines.
     - Inline documentation within OpenAPI spec. 
 
-* Pre-alpha version of the new API `location-retrieval`, v0.1.0-wip
+* First alpha version of the new API `location-retrieval`, v0.1.0-wip
+
     - Initial version already aligned with latest guidelines.
     - Returns 2 possible location areas: `Circle` and `Polygon`.
 
