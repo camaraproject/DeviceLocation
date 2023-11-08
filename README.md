@@ -33,7 +33,7 @@ Repository to describe, develop, document and test the DeviceLocation API family
     - OpenAPI [YAML spec file](https://github.com/camaraproject/DeviceLocation/blob/release-0.2.0/code/API_definitions/location-verification.yaml)
     - [View it on ReDoc](https://redocly.github.io/redoc/?url=https://raw.githubusercontent.com/camaraproject/DeviceLocation/blob/release-0.2.0/code/API_definitions/location-verification.yaml&nocors)
     - [View it on Swagger Editor](https://editor.swagger.io/?url=https://raw.githubusercontent.com/camaraproject/DeviceLocation/blob/release-0.2.0/code/API_definitions/location-verification.yaml)
-  - **location-retrieval v0.1.0-wip**, which is still a pre-alpha release.
+  - **location-retrieval v0.1.0-wip**, which is the first alpha release.
     - OpenAPI [YAML spec file](https://github.com/camaraproject/DeviceLocation/blob/release-0.2.0/code/API_definitions/location-retrieval.yaml)
     - [View it on ReDoc](https://redocly.github.io/redoc/?url=https://raw.githubusercontent.com/camaraproject/DeviceLocation/blob/release-0.2.0/code/API_definitions/location-retrieval.yaml&nocors)
     - [View it on Swagger Editor](https://editor.swagger.io/?url=https://raw.githubusercontent.com/camaraproject/DeviceLocation/blob/release-0.2.0/code/API_definitions/location-retrieval.yaml)
