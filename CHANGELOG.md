@@ -24,7 +24,7 @@
 
 ## What's changed
 
-*  Second alpha version of `location-verification` API, v0.2.0, ranamed from `location`, with main changes:
+*  Second alpha version of `location-verification` API, v0.2.0, renamed from `location`, with main changes:
     - Input property `ueId` evolved to `device`, following CAMARA guidelines.
     - New input parameter `area`, considering initially circular areas, and deprecating previous `latitude`, `longitude` and `accuracy` properties.
     - New input parameter `maxAge`.
