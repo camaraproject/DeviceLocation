@@ -12,7 +12,7 @@ Repository to describe, develop, document and test the DeviceLocation API family
 * Service APIs for “Device Location” (see APIBacklog.md)  
 * It provides the customer with the ability to:  
   * verify the location of a device.
-  * retrieve the location of a device (WIP).
+  * retrieve the location of a device.
   * subscribe and receive notifications about a device entering or leaving certain location (geofencing) (WIP). 
   * NOTE: The scope of this API family should be limited (at least at a first stage) to 4G and 5G.  
 * Describe, develop, document and test the APIs (with 1-2 Telcos)  
