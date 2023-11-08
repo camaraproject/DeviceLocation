@@ -38,7 +38,8 @@
     - Initial version already aligned with latest guidelines.
     - Returns 2 possible location areas: `Circle` and `Polygon`.
 
-* Pre-alpha version of the new API `geofencing`, v0.1.0-wip
+* First alpha version of the new API `geofencing`, v0.1.0-wip
+
     - Initial version already aligned with latest guidelines.
     - Follows CloudEvents format.
 
