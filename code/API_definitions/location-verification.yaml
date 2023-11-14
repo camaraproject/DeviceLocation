@@ -54,16 +54,19 @@ externalDocs:
   description: Product documentation at CAMARA
   url: https://github.com/camaraproject/
 servers:
-  - url: '{apiRoot}/location-verification/v0'
+  - url: "{apiRoot}/location-verification/v0"
     variables:
       apiRoot:
         default: http://localhost:9091
         description: API root
+tags:
+  - name: Location Verification
+    description: Verification the location of a device
 paths:
   /verify:
     post:
       tags:
-        - Location verification
+        - Location Verification
       summary: Execute location verification for a user equipment
       operationId: verifyLocation
       requestBody:
@@ -71,7 +74,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/VerifyLocationRequest'
+              $ref: "#/components/schemas/VerifyLocationRequest"
             examples:
               INPUT_PHONE_NUMBER_CIRCLE:
                 summary: Phone number, circle and maxAge
@@ -101,55 +104,55 @@ paths:
                       longitude: 7.10066
                     radius: 50000
       responses:
-        '200':
+        "200":
           description: Location verification result
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/VerifyLocationResponse'
+                $ref: "#/components/schemas/VerifyLocationResponse"
               examples: 
                 VERIFICATION_TRUE:
                   summary: Match
                   description: The network locates the device within the requested area
                   value:
-                    verificationResult: 'TRUE'
+                    verificationResult: "TRUE"
                     lastLocationTime: 2023-09-07T10:40:52Z
                 VERIFICATION_FALSE:
                   summary: No match
                   description: The requested area does not match the area where the network locates the device
                   value:
-                    verificationResult: 'FALSE'
+                    verificationResult: "FALSE"
                     lastLocationTime: 2023-09-07T10:40:52Z 
                 VERIFICATION_UNKNOWN_WITH_LAST_LOCATION_TIME:
                   summary: Unknown with last location time
                   description: The network cannot locate the device after the requested maxAge
                   value:
-                    verificationResult: 'UNKNOWN'
+                    verificationResult: "UNKNOWN"
                     lastLocationTime: 2023-09-07T10:40:52Z
                 VERIFICATION_UNKNOWN_WITHOUT_LAST_LOCATION_TIME:
                   summary: Unknown without last location time
                   description: The network cannot locate the device and there is no history available 
                   value:
-                    verificationResult: 'UNKNOWN'
+                    verificationResult: "UNKNOWN"
                 VERIFICATION_PARTIAL:
                   summary: Partial match
                   description: The requested area partially matches the area where the network locates the device
                   value:
-                    verificationResult: 'PARTIAL' 
+                    verificationResult: "PARTIAL" 
                     matchRate: 74
                     lastLocationTime: 2023-09-07T10:40:52Z
-        '400':
-          $ref: '#/components/responses/Generic400'
-        '401':
-          $ref: '#/components/responses/Generic401'
-        '403':
-          $ref: '#/components/responses/Generic403'
-        '404':
-          $ref: '#/components/responses/Generic404'
-        '500':
-          $ref: '#/components/responses/Generic500'
-        '503':
-          $ref: '#/components/responses/Generic503'
+        "400":
+          $ref: "#/components/responses/Generic400"
+        "401":
+          $ref: "#/components/responses/Generic401"
+        "403":
+          $ref: "#/components/responses/Generic403"
+        "404":
+          $ref: "#/components/responses/Generic404"
+        "500":
+          $ref: "#/components/responses/Generic500"
+        "503":
+          $ref: "#/components/responses/Generic503"
       security:
         - openId:
           - location-verification:verify
@@ -173,11 +176,11 @@ components:
     Circle:
       description: Circular area
       allOf:
-        - $ref: '#/components/schemas/Area'
+        - $ref: "#/components/schemas/Area"
         - type: object
           properties:
             center:
-              $ref: '#/components/schemas/Point'
+              $ref: "#/components/schemas/Point"
             radius:
               type: integer
               description: Expected accuracy for the verification in meters, from location (radius)
@@ -224,11 +227,11 @@ components:
       type: object
       properties:
         device:
-          $ref: '#/components/schemas/Device'
+          $ref: "#/components/schemas/Device"
         area:
-          $ref: '#/components/schemas/Area'
+          $ref: "#/components/schemas/Area"
         maxAge:
-          $ref: '#/components/schemas/MaxAge'
+          $ref: "#/components/schemas/MaxAge"
       required:
         - device
         - area
@@ -239,11 +242,11 @@ components:
         - verificationResult
       properties:
         lastLocationTime:
-          $ref: '#/components/schemas/LastLocationTime'
+          $ref: "#/components/schemas/LastLocationTime"
         verificationResult:
-          $ref: '#/components/schemas/VerificationResult'
+          $ref: "#/components/schemas/VerificationResult"
         matchRate:
-          $ref: '#/components/schemas/MatchRate'
+          $ref: "#/components/schemas/MatchRate"
 
     Device:
       type: object
@@ -263,7 +266,7 @@ components:
       type: string
       pattern: '^\+?[0-9]{5,15}$'
       example: "123456789"
-      description: Subscriber number (MSISDN) in E.164 format, starting with country code and optionally prefixed with '+'.
+      description: Subscriber number (MSISDN) in E.164 format, starting with country code and optionally prefixed with "+".
 
     NetworkAccessIdentifier:
       type: string
@@ -331,10 +334,10 @@ components:
           - `PARTIAL`: when the requested area partially match the area where the network locates the device. A `match_rate` could be included in the response.
       type: string
       enum:
-        - 'TRUE'
-        - 'FALSE'
-        - 'UNKNOWN'
-        - 'PARTIAL'
+        - "TRUE"
+        - "FALSE"
+        - "UNKNOWN"
+        - "PARTIAL"
     MatchRate:
       description: Match rate estimation for the location verification in percent
       type: integer
@@ -342,7 +345,7 @@ components:
       maximum: 99
     LastLocationTime:
       description: Timestamp of the last location information
-      example: 2023-09-07T10:40:52Z
+      example: "2023-09-07T10:40:52Z"
       format: date-time
       type: string
     ErrorInfo:
@@ -363,62 +366,62 @@ components:
           description: Detailed error description
   responses:
     Generic400:
-      description: Invalid input
+      description: Invalid argument
       content:
         application/json:
           schema:
-            $ref: '#/components/schemas/ErrorInfo'
+            $ref: "#/components/schemas/ErrorInfo"
           example:
             status: 400
             code: INVALID_ARGUMENT
-            message: 'Invalid input'
+            message: Invalid argument
     Generic401:
-      description: Unauthorized
+      description: Unauthenticated
       content:
         application/json:
           schema:
-            $ref: '#/components/schemas/ErrorInfo'
+            $ref: "#/components/schemas/ErrorInfo"
           example:
             status: 401
             code: UNAUTHENTICATED
-            message: 'Authorization failed: ...'
+            message: "Authorization failed: ..."
     Generic403:
-      description: Forbidden
+      description: Permission denied
       content:
         application/json:
           schema:
-            $ref: '#/components/schemas/ErrorInfo'
+            $ref: "#/components/schemas/ErrorInfo"
           example:
             status: 403
             code: PERMISSION_DENIED
-            message: 'Operation not allowed: ...'
+            message: "Operation not allowed: ..."
     Generic404:
       description: Not found
       content:
         application/json:
           schema:
-            $ref: '#/components/schemas/ErrorInfo'
+            $ref: "#/components/schemas/ErrorInfo"
           example:
             status: 404
             code: NOT_FOUND
-            message: 'The specified resource is not found'
+            message: "The specified resource is not found"
     Generic500:
       description: Internal server error
       content:
         application/json:
           schema:
-            $ref: '#/components/schemas/ErrorInfo'
+            $ref: "#/components/schemas/ErrorInfo"
           example:
             status: 500
             code: INTERNAL
-            message: 'Internal server error'
+            message: "Internal server error"
     Generic503:
       description: Service unavailable
       content:
         application/json:
           schema:
-            $ref: '#/components/schemas/ErrorInfo'
+            $ref: "#/components/schemas/ErrorInfo"
           example:
             status: 503
             code: UNAVAILABLE
-            message: 'Service unavailable'
+            message: "Service unavailable"
