@@ -445,22 +445,31 @@ components:
         area:
           $ref: '#/components/schemas/Area'
         type:
-          $ref: "#/components/schemas/Type"
+          $ref: "#/components/schemas/SubscriptionCreationEventType"
       required:
         - device
         - area
         - type
 
-    Type:
+    SubscriptionCreationEventType:
+      type: string
       description: |
         area-entered - Event triggered when the device enters the given area
         area-left - Event triggered when the device leaves the given area
         subscription-ends - Event triggered when the subscription ends
-      type: string
       enum:
         - org.camaraproject.geofencing.v0.area-entered
         - org.camaraproject.geofencing.v0.area-left
         - org.camaraproject.geofencing.v0.subscription-ends
+
+    SubscriptionEventType:
+      allOf:
+        - $ref: "#/components/schemas/SubscriptionCreationEventType"
+        - type: string
+          description: |
+            subscription-ends: Event triggered when the subscription ends.
+          enum:
+            - org.camaraproject.device-status.v0.subscription-ends
 
     NotificationUrl:
       type: string
@@ -537,7 +546,7 @@ components:
         source:
           $ref: '#/components/schemas/Source'
         type:
-          $ref: '#/components/schemas/Type'
+          $ref: "#/components/schemas/SubscriptionEventType"
         specversion:
           description: Version of the specification to which this event conforms (must be 1.0 if it conforms to cloudevents 1.0.2 version)
           type: string
