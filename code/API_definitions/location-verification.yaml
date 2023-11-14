@@ -67,7 +67,9 @@ paths:
     post:
       tags:
         - Location Verification
-      summary: Execute location verification for a user equipment
+      summary: Verify the location of a device
+      description: |
+        Verify whether the location of a device is within a requested area. The operation returns a verification result and, optionally, a match rate estimation for the location verification in percent.
       operationId: verifyLocation
       requestBody:
         required: true
