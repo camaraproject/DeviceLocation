@@ -69,7 +69,7 @@ externalDocs:
   url: https://github.com/camaraproject/
 
 servers:
-  - url: '{apiRoot}/geofencing/v0'
+  - url: "{apiRoot}/geofencing/v0"
     variables:
       apiRoot:
         default: http://localhost:9091
@@ -83,17 +83,17 @@ paths:
     post:
       tags:
         - Geofencing subscriptions
-      summary: 'Create a geofencing subscription for a device'
+      summary: "Create a geofencing subscription for a device"
       operationId: createSubscription
       requestBody:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/CreateSubscription'
+              $ref: "#/components/schemas/CreateSubscription"
         required: true
       callbacks:
         event-notifications:
-          '{$request.body#/webhook/notificationUrl}':
+          "{$request.body#/webhook/notificationUrl}":
             post:
               summary: "Subscription notification callback"
               description: |
@@ -114,48 +114,48 @@ paths:
                       SUBSCRIPTION_ENDS:
                         $ref: "#/components/examples/SUBSCRIPTION_ENDS"
               responses:
-                '204':
+                "204":
                   description: Successful notification
-                '400':
-                  $ref: '#/components/responses/Generic400'
-                '401':
-                  $ref: '#/components/responses/Generic401'
-                '403':
-                  $ref: '#/components/responses/Generic403'
-                '500':
-                  $ref: '#/components/responses/Generic500'
-                '503':
-                  $ref: '#/components/responses/Generic503'
+                "400":
+                  $ref: "#/components/responses/Generic400"
+                "401":
+                  $ref: "#/components/responses/Generic401"
+                "403":
+                  $ref: "#/components/responses/Generic403"
+                "500":
+                  $ref: "#/components/responses/Generic500"
+                "503":
+                  $ref: "#/components/responses/Generic503"
+              security:
+                - {}
+                - notificationsBearerAuth: []
       responses:
-        '201':
+        "201":
           description: Created (Successful creation of subscription)
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/SubscriptionInfo'
-        '400':
-          $ref: '#/components/responses/Generic400'
-        '401':
-          $ref: '#/components/responses/Generic401'
-        '403':
-          $ref: '#/components/responses/Generic403'
-        '409':
-          $ref: '#/components/responses/Generic409'
-        '500':
-          $ref: '#/components/responses/Generic500'
-        '503':
-          $ref: '#/components/responses/Generic503'
-      security:
-        - { }
-        - notificationsBearerAuth: [ ]
+                $ref: "#/components/schemas/SubscriptionInfo"
+        "400":
+          $ref: "#/components/responses/Generic400"
+        "401":
+          $ref: "#/components/responses/Generic401"
+        "403":
+          $ref: "#/components/responses/Generic403"
+        "409":
+          $ref: "#/components/responses/Generic409"
+        "500":
+          $ref: "#/components/responses/Generic500"
+        "503":
+          $ref: "#/components/responses/Generic503"
     get:
       tags:
         - Geofencing subscriptions
-      summary: 'Operation to retrieve a list of subscriptions.'
+      summary: "Operation to retrieve a list of subscriptions."
       operationId: getSubscriptionList
       description: Operation to list subscriptions authorized to be retrieved by the provided access token.
       responses:
-        '200':
+        "200":
           description: The list of subscriptions is retrieved.
           content:
             application/json:
@@ -163,17 +163,17 @@ paths:
                 type: array
                 minItems: 0
                 items:
-                  $ref: '#/components/schemas/SubscriptionInfo'
-        '400':
-          $ref: '#/components/responses/Generic400'
-        '401':
-          $ref: '#/components/responses/Generic401'
-        '403':
-          $ref: '#/components/responses/Generic403'
-        '500':
-          $ref: '#/components/responses/Generic500'
-        '503':
-          $ref: '#/components/responses/Generic503'
+                  $ref: "#/components/schemas/SubscriptionInfo"
+        "400":
+          $ref: "#/components/responses/Generic400"
+        "401":
+          $ref: "#/components/responses/Generic401"
+        "403":
+          $ref: "#/components/responses/Generic403"
+        "500":
+          $ref: "#/components/responses/Generic500"
+        "503":
+          $ref: "#/components/responses/Generic503"
       security:
         - openId:
             - location-retrieval:read
@@ -182,7 +182,7 @@ paths:
     get:
       tags:
         - Geofencing subscriptions
-      summary: 'Operation to retrieve an subscription based on the provided ID'
+      summary: "Operation to retrieve an subscription based on the provided ID"
       operationId: getSubscription
       description: Retrieve a given subscription by ID
       parameters:
@@ -193,31 +193,31 @@ paths:
           schema:
             type: string
       responses:
-        '200':
+        "200":
           description: Contains information about Subscriptions
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/SubscriptionInfo'
-        '400':
-          $ref: '#/components/responses/Generic400'
-        '401':
-          $ref: '#/components/responses/Generic401'
-        '403':
-          $ref: '#/components/responses/Generic403'
-        '404':
-          $ref: '#/components/responses/Generic404'
-        '500':
-          $ref: '#/components/responses/Generic500'
-        '503':
-          $ref: '#/components/responses/Generic503'
+                $ref: "#/components/schemas/SubscriptionInfo"
+        "400":
+          $ref: "#/components/responses/Generic400"
+        "401":
+          $ref: "#/components/responses/Generic401"
+        "403":
+          $ref: "#/components/responses/Generic403"
+        "404":
+          $ref: "#/components/responses/Generic404"
+        "500":
+          $ref: "#/components/responses/Generic500"
+        "503":
+          $ref: "#/components/responses/Generic503"
       security:
         - openId:
             - location-retrieval:read
     delete:
       tags:
         - Geofencing subscriptions
-      summary: 'Operation to delete a subscription'
+      summary: "Operation to delete a subscription"
       operationId: deleteSubscription
       description: Delete a given subscription by ID
       parameters:
@@ -228,20 +228,20 @@ paths:
           schema:
             type: string
       responses:
-        '204':
+        "204":
           description: Event subscription deleted
-        '400':
-          $ref: '#/components/responses/Generic400'
-        '401':
-          $ref: '#/components/responses/Generic401'
-        '403':
-          $ref: '#/components/responses/Generic403'
-        '404':
-          $ref: '#/components/responses/Generic404'
-        '500':
-          $ref: '#/components/responses/Generic500'
-        '503':
-          $ref: '#/components/responses/Generic503'
+        "400":
+          $ref: "#/components/responses/Generic400"
+        "401":
+          $ref: "#/components/responses/Generic401"
+        "403":
+          $ref: "#/components/responses/Generic403"
+        "404":
+          $ref: "#/components/responses/Generic404"
+        "500":
+          $ref: "#/components/responses/Generic500"
+        "503":
+          $ref: "#/components/responses/Generic503"
       security:
         - openId:
             - location-retrieval:delete
@@ -257,11 +257,11 @@ components:
       type: object
       properties:
         areaType:
-          $ref: '#/components/schemas/AreaType'
+          $ref: "#/components/schemas/AreaType"
       required:
         - areaType
       discriminator:
-        propertyName: 'areaType'
+        propertyName: "areaType"
         mapping:
           CIRCLE: "#/components/schemas/Circle"
 
@@ -276,11 +276,11 @@ components:
     Circle:
       description: Circular area
       allOf:
-        - $ref: '#/components/schemas/Area'
+        - $ref: "#/components/schemas/Area"
         - type: object
           properties:
             center:
-              $ref: '#/components/schemas/Point'
+              $ref: "#/components/schemas/Point"
             radius:
               type: integer
               description: Expected accuracy for the subscription event of device location in m, from location (radius)
@@ -345,7 +345,7 @@ components:
       type: string
       pattern: '^\+?[0-9]{5,15}$'
       example: "123456789"
-      description: Subscriber number (MSISDN) in E.164 format, starting with country code and optionally prefixed with '+'.
+      description: Subscriber number (MSISDN) in E.164 format, starting with country code and optionally prefixed with "+".
 
     NetworkAccessIdentifier:
       type: string
@@ -425,9 +425,9 @@ components:
       description: Detail for event channel
       properties:
         notificationUrl:
-          $ref: '#/components/schemas/NotificationUrl'
+          $ref: "#/components/schemas/NotificationUrl"
         notificationAuthToken:
-          $ref: '#/components/schemas/NotificationAuthToken'
+          $ref: "#/components/schemas/NotificationAuthToken"
       required:
         - notificationUrl
 
@@ -441,9 +441,9 @@ components:
       description: Subscription detail
       properties:
         device:
-          $ref: '#/components/schemas/Device'
+          $ref: "#/components/schemas/Device"
         area:
-          $ref: '#/components/schemas/Area'
+          $ref: "#/components/schemas/Area"
         type:
           $ref: "#/components/schemas/SubscriptionCreationEventType"
       required:
@@ -486,9 +486,9 @@ components:
       type: object
       properties:
         webhook:
-          $ref: '#/components/schemas/Webhook'
+          $ref: "#/components/schemas/Webhook"
         subscriptionDetail:
-          $ref: '#/components/schemas/SubscriptionDetail'
+          $ref: "#/components/schemas/SubscriptionDetail"
         subscriptionExpireTime:
           type: string
           format: date-time
@@ -502,15 +502,15 @@ components:
       description: Represents a area-location event subscription.
       type: object
       allOf:
-        - $ref: '#/components/schemas/CreateSubscription'
+        - $ref: "#/components/schemas/CreateSubscription"
         - type: object
           properties:
             subscriptionId:
-              $ref: '#/components/schemas/SubscriptionId'
+              $ref: "#/components/schemas/SubscriptionId"
             startsAt:
-              $ref: '#/components/schemas/DateTime'
+              $ref: "#/components/schemas/DateTime"
             expiresAt:
-              $ref: '#/components/schemas/DateTime'
+              $ref: "#/components/schemas/DateTime"
           required:
             - subscriptionId
 
@@ -544,60 +544,60 @@ components:
           description: Identifier of this event, that must be unique in the source context.
           type: string
         source:
-          $ref: '#/components/schemas/Source'
+          $ref: "#/components/schemas/Source"
         type:
           $ref: "#/components/schemas/SubscriptionEventType"
         specversion:
           description: Version of the specification to which this event conforms (must be 1.0 if it conforms to cloudevents 1.0.2 version)
           type: string
           enum:
-            - '1.0'
+            - "1.0"
         datacontenttype:
           description: 'media-type that describes the event payload encoding, must be "application/json" for CAMARA APIs'
           type: string
           enum:
             - application/json
         time:
-          $ref: '#/components/schemas/EventTime'
+          $ref: "#/components/schemas/EventTime"
       discriminator:
-        propertyName: 'type'
+        propertyName: "type"
         mapping:
-          org.camaraproject.geofencing.v0.area-left: '#/components/schemas/EventAreaLeft'
-          org.camaraproject.geofencing.v0.area-entered: '#/components/schemas/EventAreaEntered'
-          org.camaraproject.geofencing.v0.subscription-ends: '#/components/schemas/EventSubscriptionEnds'
+          org.camaraproject.geofencing.v0.area-left: "#/components/schemas/EventAreaLeft"
+          org.camaraproject.geofencing.v0.area-entered: "#/components/schemas/EventAreaEntered"
+          org.camaraproject.geofencing.v0.subscription-ends: "#/components/schemas/EventSubscriptionEnds"
 
     EventAreaLeft:
       description: event structure for event when the device leaves the area
       allOf:
-        - $ref: '#/components/schemas/CloudEvent'
+        - $ref: "#/components/schemas/CloudEvent"
         - type: object
           required:
             - data
           properties:
             data:
-              $ref: '#/components/schemas/AreaLeft'
+              $ref: "#/components/schemas/AreaLeft"
 
     EventAreaEntered:
       description: event structure for event when the device enters the area
       allOf:
-        - $ref: '#/components/schemas/CloudEvent'
+        - $ref: "#/components/schemas/CloudEvent"
         - type: object
           required:
             - data
           properties:
             data:
-              $ref: '#/components/schemas/AreaEntered'
+              $ref: "#/components/schemas/AreaEntered"
 
     EventSubscriptionEnds:
       description: event structure for event subscription ends
       allOf:
-        - $ref: '#/components/schemas/CloudEvent'
+        - $ref: "#/components/schemas/CloudEvent"
         - type: object
           required:
             - data
           properties:
             data:
-              $ref: '#/components/schemas/SubscriptionEnds'
+              $ref: "#/components/schemas/SubscriptionEnds"
 
     AreaLeft:
       description: Event detail structure for area-left event
@@ -608,11 +608,11 @@ components:
         - subscriptionId
       properties:
         device:
-          $ref: '#/components/schemas/Device'
+          $ref: "#/components/schemas/Device"
         area:
-          $ref: '#/components/schemas/Area'
+          $ref: "#/components/schemas/Area"
         subscriptionId:
-          $ref: '#/components/schemas/SubscriptionId'
+          $ref: "#/components/schemas/SubscriptionId"
 
     AreaEntered:
       description: Event detail structure for area-entered event
@@ -623,11 +623,11 @@ components:
         - subscriptionId
       properties:
         device:
-          $ref: '#/components/schemas/Device'
+          $ref: "#/components/schemas/Device"
         area:
-          $ref: '#/components/schemas/Area'
+          $ref: "#/components/schemas/Area"
         subscriptionId:
-          $ref: '#/components/schemas/SubscriptionId'
+          $ref: "#/components/schemas/SubscriptionId"
 
     SubscriptionEnds:
       description: Event detail structure for SUBSCRIPTION_ENDS event
@@ -639,13 +639,13 @@ components:
         - subscriptionId
       properties:
         device:
-          $ref: '#/components/schemas/Device'
+          $ref: "#/components/schemas/Device"
         area:
-          $ref: '#/components/schemas/Area'
+          $ref: "#/components/schemas/Area"
         terminationReason:
-          $ref: '#/components/schemas/TerminationReason'
+          $ref: "#/components/schemas/TerminationReason"
         subscriptionId:
-          $ref: '#/components/schemas/SubscriptionId'
+          $ref: "#/components/schemas/SubscriptionId"
 
     Source:
       type: string
@@ -675,77 +675,77 @@ components:
       content:
         application/json:
           schema:
-            $ref: '#/components/schemas/ErrorInfo'
+            $ref: "#/components/schemas/ErrorInfo"
           example:
             status: 400
             code: INVALID_ARGUMENT
-            message: 'Invalid input'
+            message: "Invalid input"
     
     Generic401:
       description: Unauthorized
       content:
         application/json:
           schema:
-            $ref: '#/components/schemas/ErrorInfo'
+            $ref: "#/components/schemas/ErrorInfo"
           example:
             status: 401
             code: UNAUTHENTICATED
-            message: 'Authorization failed: ...'
+            message: "Authorization failed: ..."
     
     Generic403:
       description: Forbidden
       content:
         application/json:
           schema:
-            $ref: '#/components/schemas/ErrorInfo'
+            $ref: "#/components/schemas/ErrorInfo"
           example:
             status: 403
             code: PERMISSION_DENIED
-            message: 'Operation not allowed: ...'
+            message: "Operation not allowed: ..."
     
     Generic404:
       description: Not found
       content:
         application/json:
           schema:
-            $ref: '#/components/schemas/ErrorInfo'
+            $ref: "#/components/schemas/ErrorInfo"
           example:
             status: 404
             code: NOT_FOUND
-            message: 'The specified resource is not found'
+            message: "The specified resource is not found"
     
     Generic409:
       description: Conflict
       content:
         application/json:
           schema:
-            $ref: '#/components/schemas/ErrorInfo'
+            $ref: "#/components/schemas/ErrorInfo"
           example:
             status: 409
             code: Conflict
-            message: 'There is conflict in the request'
+            message: "There is conflict in the request"
     
     Generic500:
       description: Internal server error
       content:
         application/json:
           schema:
-            $ref: '#/components/schemas/ErrorInfo'
+            $ref: "#/components/schemas/ErrorInfo"
           example:
             status: 500
             code: INTERNAL
-            message: 'Internal server error'
+            message: "Internal server error"
     
     Generic503:
       description: Service unavailable
       content:
         application/json:
           schema:
-            $ref: '#/components/schemas/ErrorInfo'
+            $ref: "#/components/schemas/ErrorInfo"
           example:
             status: 503
             code: UNAVAILABLE
-            message: 'Service unavailable'
+            message: "Service unavailable"
   examples:
     CIRCLE_AREA_ENTERED:
       value:
