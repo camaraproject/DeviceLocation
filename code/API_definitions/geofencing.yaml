@@ -472,7 +472,7 @@ components:
       enum:
         - org.camaraproject.geofencing.v0.area-entered
         - org.camaraproject.geofencing.v0.area-left
-        - org.camaraproject.device-status.v0.subscription-ends
+        - org.camaraproject.geofencing.v0.subscription-ends
 
     NotificationUrl:
       type: string
