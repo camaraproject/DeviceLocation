@@ -326,14 +326,14 @@ components:
               value:
                 status: 400
                 code: INVALID_ARGUMENT
-                message: 'Invalid input'
+                message: "Invalid argument"
             MaxAgeIssue:
               value:
                 status: 400
                 code: LOCATION_RETRIEVAL.MAXAGE_INVALID_ARGUMENT
-                message: 'maxAge threshold cannot be satisfied'
+                message: "maxAge threshold cannot be satisfied"
     Generic401:
-      description: Unauthorized
+      description: Unauthenticated
       content:
         application/json:
           schema:
@@ -341,9 +341,9 @@ components:
           example:
             status: 401
             code: UNAUTHENTICATED
-            message: 'Authorization failed: ...'
+            message: "Authorization failed: ..."
     Generic403:
-      description: Forbidden
+      description: Permission denied
       content:
         application/json:
           schema:
@@ -351,7 +351,7 @@ components:
           example:
             status: 403
             code: PERMISSION_DENIED
-            message: 'Operation not allowed: ...'
+            message: "Operation not allowed: ..."
     Generic404:
       description: Not found
       content:
@@ -371,7 +371,7 @@ components:
           example:
             status: 500
             code: INTERNAL
-            message: 'Internal server error'
+            message: "Internal server error"
     Generic503:
       description: Service unavailable
       content:
@@ -381,7 +381,7 @@ components:
           example:
             status: 503
             code: UNAVAILABLE
-            message: 'Service unavailable'
+            message: "Service unavailable"
   examples:
     RETRIEVAL_CIRCLE:
       value:
