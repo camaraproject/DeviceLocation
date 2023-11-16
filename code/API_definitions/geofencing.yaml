@@ -677,7 +677,7 @@ components:
 
   responses:
     Generic400:
-      description: Invalid input
+      description: Invalid argument
       content:
         application/json:
           schema:
@@ -685,10 +685,10 @@ components:
           example:
             status: 400
             code: INVALID_ARGUMENT
-            message: "Invalid input"
+            message: "Invalid argument"
     
     Generic401:
-      description: Unauthorized
+      description: Unauthenticated
       content:
         application/json:
           schema:
@@ -699,7 +699,7 @@ components:
             message: "Authorization failed: ..."
     
     Generic403:
-      description: Forbidden
+      description: Permission denied
       content:
         application/json:
           schema:
