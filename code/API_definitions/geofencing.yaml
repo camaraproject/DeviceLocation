@@ -135,19 +135,19 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/SubscriptionInfo'
+                $ref: "#/components/schemas/SubscriptionInfo"
         "400":
-          $ref: '#/components/responses/Generic400'
+          $ref: "#/components/responses/Generic400"
         "401":
-          $ref: '#/components/responses/Generic401'
+          $ref: "#/components/responses/Generic401"
         "403":
-          $ref: '#/components/responses/Generic403'
+          $ref: "#/components/responses/Generic403"
         "409":
-          $ref: '#/components/responses/Generic409'
+          $ref: "#/components/responses/Generic409"
         "500":
-          $ref: '#/components/responses/Generic500'
+          $ref: "#/components/responses/Generic500"
         "503":
-          $ref: '#/components/responses/Generic503'
+          $ref: "#/components/responses/Generic503"
       security:
         - openId:
             - geofencing-subscriptions:write
