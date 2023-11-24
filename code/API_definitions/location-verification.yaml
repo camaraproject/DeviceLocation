@@ -11,7 +11,7 @@ info:
     The verification result depends on the network's ability and accuracy to locate the device at the requested area. 
     
     * If the network's estimation of the device's location is fully contained within the requested area, the verification result is `TRUE`.
-    * When the requested area does not match the area where the network locates the device. the verification result is `FALSE` . 
+    * If the network's estimation of the device's location does not overlap with the requested area at all, the verification result is `FALSE` . 
     * When the requested area partially matches the area where the network locates the device, the verification result is `PARTIAL`. In this case, a `match_rate` may be included in the response, indicating an estimation of the likelihood of the match in percent.
     * Lastly, the network may not be able to locate the device. In this case, the verification result is `UNKNOWN`.
 
