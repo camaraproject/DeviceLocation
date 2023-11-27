@@ -12,7 +12,7 @@ info:
     
     * If the network's estimation of the device's location is fully contained within the requested area, the verification result is `TRUE`.
     * If the network's estimation of the device's location does not overlap with the requested area at all, the verification result is `FALSE` . 
-    * If the network's estimation of the device's location partially overlaps with the requested area, or it is fully contained within the requested area, the result is 'PARTIAL'. In this case, a `match_rate` may be included in the response, indicating an estimation of the likelihood of the match in percent.
+    * If the network's estimation of the device's location partially overlaps with the requested area, or it fully contains the requested area (because is larger), the result is 'PARTIAL'. In this case, a `match_rate` may be included in the response, indicating an estimation of the likelihood of the match in percent.
     * Lastly, the network may not be able to locate the device. In this case, the verification result is `UNKNOWN`.
 
     The client may optionally include a `maxAge` indication. If the location information known to the server is older than the specified `maxAge`, the verification result will be `UNKNOWN` and the `lastLocationTime` attribute may indicate the last available time for the device location. 
