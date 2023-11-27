@@ -657,14 +657,17 @@ components:
       type: string
       format: uri-reference
       minLength: 1
-      description: "Identifies the context in which an event happened in the specific Provider Implementation."
-      example:
-        - https://github.com/cloudevents
-        - mailto:cncf-wg-serverless@lists.cncf.io
-        - urn:uuid:6e8bc430-9c3a-11d9-9669-0800200c9a66
-        - cloudevents/spec/pull/123
-        - /sensors/tn-1234567/alerts
-        - 1-555-123-4567
+      description: |
+        Identifies the context in which an event happened, as a non-empty `URI-reference` like:
+        - URI with a DNS authority:
+          * https://github.com/cloudevents
+          * mailto:cncf-wg-serverless@lists.cncf.io
+        - Universally-unique URN with a UUID:
+          * urn:uuid:6e8bc430-9c3a-11d9-9669-0800200c9a66
+        - Application-specific identifier:
+          * /cloudevents/spec/pull/123
+          * 1-555-123-4567
+      example: "https://notificationSendServer12.supertelco.com"
 
     TerminationReason:
       type: string
