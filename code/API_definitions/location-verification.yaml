@@ -341,7 +341,7 @@ components:
         - "UNKNOWN"
         - "PARTIAL"
     MatchRate:
-      description: Match rate estimation for the location verification in percent
+      description: Estimation of the match rate between the area in the request (R), and area where the network locates the device (N), calculated as the percent value of the intersection of both areas divided by the network area, that is (R ∩ N) / N * 100. Included only if VerificationResult is PARTIAL. 
       type: integer
       minimum: 1
       maximum: 99
