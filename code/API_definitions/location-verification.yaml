@@ -346,7 +346,7 @@ components:
       minimum: 1
       maximum: 99
     LastLocationTime:
-      description: Timestamp of the last location information
+      description: Timestamp of the last location information. It must follow RFC 3339 and must have time zone. Recommended format is yyyy-MM-dd'T'HH:mm:ss.SSSZ (i.e. which allows 2023-07-03T14:27:08.312+02:00 or 2023-07-03T12:27:08.312Z)
       example: "2023-09-07T10:40:52Z"
       format: date-time
       type: string
