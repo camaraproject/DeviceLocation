@@ -499,9 +499,10 @@ components:
           $ref: "#/components/schemas/SubscriptionDetail"
         subscriptionExpireTime:
           type: string
-          format: date-time
-          example: 2023-01-17T13:18:23.682Z
-          description: The time when the location-tracking has to be terminated (e.g. in 14 days from now on). Provided in date-time format.
+          format: date-time         
+          description: The date time when the location-tracking has to be terminated. 
+            It must follow [RFC 3339](https://datatracker.ietf.org/doc/html/rfc3339#section-5.6) and must have time zone. 
+            Recommended format is yyyy-MM-dd'T'HH:mm:ss.SSSZ (i.e. which allows 2023-07-03T14:27:08.312+02:00 or 2023-07-03T12:27:08.312Z)
       required:
         - webhook
         - subscriptionDetail
@@ -516,17 +517,19 @@ components:
             subscriptionId:
               $ref: "#/components/schemas/SubscriptionId"
             startsAt:
-              $ref: "#/components/schemas/DateTime"
+              type: string
+              format: date-time
+              description: The date time when the subscription started.
+                It must follow [RFC 3339](https://datatracker.ietf.org/doc/html/rfc3339#section-5.6) and must have time zone. 
+                Recommended format is yyyy-MM-dd'T'HH:mm:ss.SSSZ (i.e. which allows 2023-07-03T14:27:08.312+02:00 or 2023-07-03T12:27:08.312Z)
             expiresAt:
-              $ref: "#/components/schemas/DateTime"
+              type: string
+              format: date-time
+              description: The date time when the subscription will expire or expired.                
+                It must follow [RFC 3339](https://datatracker.ietf.org/doc/html/rfc3339#section-5.6) and must have time zone. 
+                Recommended format is yyyy-MM-dd'T'HH:mm:ss.SSSZ (i.e. which allows 2023-07-03T14:27:08.312+02:00 or 2023-07-03T12:27:08.312Z)
           required:
-            - subscriptionId
-
-    DateTime:
-      type: string
-      format: date-time
-      example: 2023-01-17T13:18:23.682Z
-      description: Date when the event subscription will begin/end. Provided in date-time format.
+            - subscriptionId   
 
     EventTime:
       format: date-time
@@ -536,7 +539,8 @@ components:
         If the time of the occurrence cannot be determined then this attribute MAY be set to some other time (such as the current time) by the CloudEvents producer, 
         however all producers for the same source MUST be consistent in this respect. In other words, 
         either they all use the actual time of the occurrence or they all use the same algorithm to determine the value used. 
-        (must adhere on CAMARA datetime recommendation based on RFC 3339)
+        It must follow [RFC 3339](https://datatracker.ietf.org/doc/html/rfc3339#section-5.6) and must have time zone. 
+        Recommended format is yyyy-MM-dd'T'HH:mm:ss.SSSZ (i.e. which allows 2023-07-03T14:27:08.312+02:00 or 2023-07-03T12:27:08.312Z)
 
     CloudEvent:
       description: The Cloud-Event used for the callback.
