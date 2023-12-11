@@ -7,6 +7,12 @@
 
 - Ludovic Robert (Orange)
 - Fernando Prado Cabrillo (TEF)
+- Foo Ming Hui (SingTel)
+- Cetin Alpaycetin (Vodafone)
+- Akos Hunyadi (DT)
+- Jorge Garcia Hospital (TEF)
+- Rafal Artych (DT)
+- Joachim Dahlgreen (Ericsson)
 
 
 Device Location minutes: [https://github.com/camaraproject/DeviceLocation/tree/main/documentation/MeetingMinutes](https://github.com/camaraproject/DeviceLocation/tree/main/documentation/MeetingMinutes)
@@ -94,5 +100,4 @@ Device Location minutes: [https://github.com/camaraproject/DeviceLocation/tree/m
 
 <p>
 
-**Next call is on December 5th**
-    José will be off - Fernando & Ludovic will host the call.
+**Next call is on December 19th**
