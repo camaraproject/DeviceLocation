@@ -10,9 +10,11 @@
 - Foo Ming Hui (SingTel)
 - Cetin Alpaycetin (Vodafone)
 - Akos Hunyadi (DT)
-- Jorge Garcia Hospital (TEF)
+- Javier Carro (TEF)
 - Rafal Artych (DT)
 - Joachim Dahlgreen (Ericsson)
+- Sönke Peters (Vodafone)
+- Surajj Jaggernath (Vodacom)
 
 
 Device Location minutes: [https://github.com/camaraproject/DeviceLocation/tree/main/documentation/MeetingMinutes](https://github.com/camaraproject/DeviceLocation/tree/main/documentation/MeetingMinutes)
@@ -33,16 +35,20 @@ Device Location minutes: [https://github.com/camaraproject/DeviceLocation/tree/m
        - Point about Ipv6 solved
        - Description comments from Cetin considered
        - Precision on date time accordingly to the commonalities guidelines
+       - MERGED during the meeting
   - [location-retrieval.yaml v0.1 Release Candidate](https://github.com/camaraproject/DeviceLocation/pull/114)
-      - Point about Ipv6 solved (complete alignement with verification device structure)
+      - Point about Ipv6 solved (complete alignment with verification device structure)
+      - Ready to review
   - [geofencing.yaml v0.1 Release Candidate](https://github.com/camaraproject/DeviceLocation/pull/116)
       - Rafal aligned Notification source example list accordingly to the guidelines
-      - Alignement with IP v6 to be done.
+      - Alignment with IP v6 to be done.
+      - Akos will align ip addresses and device model as has been done with location retrieval and location verification
+      - Typo found in "expiresAt" subscription info. Akos will fix.
 
 
 * Review latest comments in PR for README and CHANGELOG, and decide if ready to be merged:
   - [Release Notes](https://github.com/camaraproject/DeviceLocation/pull/106)
-  - *Links will work after branch for Release-0.2.0 is created* 
+  - *Links will work after branch for Release-0.2.0 is created*
   - No new comment since last meeting
 
 ### Review other Issues and PRs
@@ -77,21 +83,25 @@ Device Location minutes: [https://github.com/camaraproject/DeviceLocation/tree/m
 * [Issue #85](https://github.com/camaraproject/DeviceLocation/issues/85)
   - TEF provided a doc with a proposal and use cases for the implementation of 'Partial' and matchRate
   - During previous meeting we agreed to use the formula defined in the Word document.
+  - Descriptions regarding partials and matchRate has been added in location-verification yaml
+  - As requested by Joachim, issue will remain open until TEF uploads the document with more detail or the information is added to an API_documentation file to keep in the repo for future references.
 
 
 ### Cleaning - issues closed
 * [Does DeviceLocation itself really need to define all ways to identify a User equipment identifier](https://github.com/camaraproject/DeviceLocation/issues/51) - Tackled with https://github.com/camaraproject/DeviceLocation/issues/117
 
 * [Include locationType as a request parameter](https://github.com/camaraproject/DeviceLocation/issues/43) - Request for  Office/work location (most latched site/location in the day time) & Home location (most latched site/location in the night time). Managed in separate API request.
+  - Issue closed - Tackled with https://github.com/camaraproject/WorkingGroups/issues/336
 
   [Accuracy Levels for Device Location APIs](https://github.com/camaraproject/DeviceLocation/issues/78) - nu update since July 31st José request for clarification to the issuer.
+    - Issue closed as there have been no updates in 3 months
 
 #### Administrative Code Area
 
 * New [Issue #83](https://github.com/camaraproject/DeviceLocation/issues/83), with formal requirements from GSMA Product track
   - New [document uploaded by TEF](https://github.com/camaraproject/DeviceLocation/files/12856149/AdminCode.Proposal.-.Draft_20230926.docx) with a proposal
 * [action] Review this document. 
-    - Not progress but during last call we agreed that this feature is not top priority right now but will be discused next year.
+    - Not progress but during last call we agreed that this feature is not top priority right now but will be discussed next year.
 
 
 
