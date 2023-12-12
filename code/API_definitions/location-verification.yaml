@@ -330,8 +330,7 @@ components:
       
     MaxAge:
       description: The maximum age (in seconds) of the available location, which is accepted for the verification.
-      type: number
-      format: integer
+      type: integer
       minimum: 60
       example: 120
     VerificationResult:
