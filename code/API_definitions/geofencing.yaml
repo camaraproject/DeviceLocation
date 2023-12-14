@@ -150,7 +150,7 @@ paths:
           $ref: "#/components/responses/Generic503"
       security:
         - openId:
-            - geofencing-subscriptions:write
+            - geofencing:subscriptions:write
     get:
       tags:
         - Geofencing subscriptions
@@ -179,7 +179,7 @@ paths:
           $ref: "#/components/responses/Generic503"
       security:
         - openId:
-            - geofencing-subscriptions:read
+            - geofencing:subscriptions:read
 
   /subscriptions/{subscriptionsId}:
     get:
@@ -216,7 +216,7 @@ paths:
           $ref: "#/components/responses/Generic503"
       security:
         - openId:
-            - geofencing-subscriptions:read
+            - geofencing:subscriptions:read
     delete:
       tags:
         - Geofencing subscriptions
@@ -247,7 +247,7 @@ paths:
           $ref: "#/components/responses/Generic503"
       security:
         - openId:
-            - geofencing-subscriptions:delete
+            - geofencing:subscriptions:delete
 
 components:
   securitySchemes:
