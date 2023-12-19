@@ -28,19 +28,23 @@ Repository to describe, develop, document and test the DeviceLocation API family
 ## Status and released versions
 * Note: Please be aware that the project will have frequent updates to the main branch. There are no compatibility guarantees associated with code in any branch, including main, until a new release is created. For example, changes may be reverted before a release is created. **For best results, use the latest available release**.
 * **The latest available release for the DeviceLocation API family is 0.2.0.** There are bug fixes to be expected and incompatible changes in upcoming releases. It is suitable for implementors, but it is not recommended to use the API with customers in productive environments.
-* Release 0.2.0 of the API family is available within the [release-0.2.0 branch](https://github.com/camaraproject/DeviceLocation/tree/release-0.2.0). The API family now includes 3 APIs, in different state of progress:
+
+> [!NOTE]
+> Release 0.2.0 is still in **RELEASE CANDIDATE** status. The links below will be updated when the release is completed and the definitive branch is created.
+
+* Release 0.2.0 of the API family is available within the [release-0.2.0-rc branch](https://github.com/camaraproject/DeviceLocation/tree/release-0.2.0-rc). The API family now includes 3 APIs, in different state of progress:
   - **location-verification v0.2.0**, which is the second alpha release of this API.
-    - OpenAPI [YAML spec file](https://github.com/camaraproject/DeviceLocation/blob/release-0.2.0/code/API_definitions/location-verification.yaml)
-    - [View it on ReDoc](https://redocly.github.io/redoc/?url=https://raw.githubusercontent.com/camaraproject/DeviceLocation/blob/release-0.2.0/code/API_definitions/location-verification.yaml&nocors)
-    - [View it on Swagger Editor](https://editor.swagger.io/?url=https://raw.githubusercontent.com/camaraproject/DeviceLocation/blob/release-0.2.0/code/API_definitions/location-verification.yaml)
-  - **location-retrieval v0.1.0-wip**, which is the first alpha release.
-    - OpenAPI [YAML spec file](https://github.com/camaraproject/DeviceLocation/blob/release-0.2.0/code/API_definitions/location-retrieval.yaml)
-    - [View it on ReDoc](https://redocly.github.io/redoc/?url=https://raw.githubusercontent.com/camaraproject/DeviceLocation/blob/release-0.2.0/code/API_definitions/location-retrieval.yaml&nocors)
-    - [View it on Swagger Editor](https://editor.swagger.io/?url=https://raw.githubusercontent.com/camaraproject/DeviceLocation/blob/release-0.2.0/code/API_definitions/location-retrieval.yaml)
-  - **geofencing v0.1.0-wip**, which is the first alpha release.
-    - OpenAPI [YAML spec file](https://github.com/camaraproject/DeviceLocation/blob/release-0.2.0/code/API_definitions/geofencing.yaml)
-    - [View it on ReDoc](https://redocly.github.io/redoc/?url=https://raw.githubusercontent.com/camaraproject/DeviceLocation/blob/release-0.2.0/code/API_definitions/geofencing.yaml&nocors)
-    - [View it on Swagger Editor](https://editor.swagger.io/?url=https://raw.githubusercontent.com/camaraproject/DeviceLocation/blob/release-0.2.0/code/API_definitions/geofencing.yaml)
+    - OpenAPI [YAML spec file](https://github.com/camaraproject/DeviceLocation/blob/release-0.2.0-rc/code/API_definitions/location-verification.yaml)
+    - [View it on ReDoc](https://redocly.github.io/redoc/?url=https://raw.githubusercontent.com/camaraproject/DeviceLocation/blob/release-0.2.0-rc/code/API_definitions/location-verification.yaml&nocors)
+    - [View it on Swagger Editor](https://editor.swagger.io/?url=https://raw.githubusercontent.com/camaraproject/DeviceLocation/blob/release-0.2.0-rc/code/API_definitions/location-verification.yaml)
+  - **location-retrieval v0.1.0**, which is the first alpha release.
+    - OpenAPI [YAML spec file](https://github.com/camaraproject/DeviceLocation/blob/release-0.2.0-rc/code/API_definitions/location-retrieval.yaml)
+    - [View it on ReDoc](https://redocly.github.io/redoc/?url=https://raw.githubusercontent.com/camaraproject/DeviceLocation/blob/release-0.2.0-rc/code/API_definitions/location-retrieval.yaml&nocors)
+    - [View it on Swagger Editor](https://editor.swagger.io/?url=https://raw.githubusercontent.com/camaraproject/DeviceLocation/blob/release-0.2.0-rc/code/API_definitions/location-retrieval.yaml)
+  - **geofencing v0.1.0**, which is the first alpha release.
+    - OpenAPI [YAML spec file](https://github.com/camaraproject/DeviceLocation/blob/release-0.2.0-rc/code/API_definitions/geofencing.yaml)
+    - [View it on ReDoc](https://redocly.github.io/redoc/?url=https://raw.githubusercontent.com/camaraproject/DeviceLocation/blob/release-0.2.0-rc/code/API_definitions/geofencing.yaml&nocors)
+    - [View it on Swagger Editor](https://editor.swagger.io/?url=https://raw.githubusercontent.com/camaraproject/DeviceLocation/blob/release-0.2.0-rc/code/API_definitions/geofencing.yaml)
 
 * The previous release version v0.1.0 of DeviceLocation API is available within the [release-0.1.0 branch](https://github.com/camaraproject/DeviceLocation/tree/release-0.1.0)
   - This past release only included the first alpha version of the API now renamed to location-verification, but it was then named as "location v0.1.0"
