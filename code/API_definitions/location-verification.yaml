@@ -6,21 +6,25 @@ info:
 
     # Introduction
 
-    Customers are able to verify whether the location of certain user device is within the area specified. Currently the only area supported is a circle determined by the provided coordinates (latitude and longitude) and some expected accuracy (radius).
+    Customers are able to verify whether the location of certain user device is within the area specified. Currently the only area supported as input is a circle determined by the a set of coordinates (latitude and longitude) and some expected accuracy (radius).
 
     The verification result depends on the network's ability and accuracy to locate the device at the requested area. 
     
-    * The network locates the device within the requested area, the verification result is `TRUE`.
-    * The requested area may not match the area where the network locates the device. In this case, the verification result is `FALSE` . 
-    * The requested area partially match the area where the network locates the device, the verification result is `PARTIAL`. In this case, a `match_rate` could be included in the response, indicating an estimation of the likelihood of the match in percent.
-    * Lastly, the network may not be able to locate the device. In this case, the verification result is `UNKNOWN`
+    * If the network's estimation of the device's location is fully contained within the requested area, the verification result is `TRUE`.
+    * If the network's estimation of the device's location does not overlap with the requested area at all, the verification result is `FALSE` . 
+    * If the network's estimation of the device's location partially overlaps with the requested area, or it fully contains the requested area (because it is larger), the result is 'PARTIAL'. In this case, a `match_rate` may be included in the response, indicating an estimation of the likelihood of the match in percent.
+    * Lastly, the network may not be able to locate the device. In this case, the verification result is `UNKNOWN`.
+
+    The client may optionally include a `maxAge` indication. If the location information known to the server is older than the specified `maxAge`, the verification result will be `UNKNOWN` and the `lastLocationTime` attribute may indicate the last available time for the device location. 
+
+    `lastLocationTime` will be always included in the response unless there is no historical location information available for the device. In this case, `UNKNOWN` will be returned without `lastLocationTime`.
 
     Location Verification could be useful in scenarios such as:
 
-    - Fraud protection to ensure a given user is located in the region, country or location claimed for financial transactions
-    - Verify the GPS coordinates reported by the app on a device to ensure the GPS was not faked e.g. for content delivery with regional restrictions
-    - Location-based advertising: trigger targeted advertising after verifying the user is in the area of interest
-    - Smart Mobility (Vehicle/bikes renting): confirm the location of the device and the location of the vehicle/bike to guarantee they are rented correctly
+    - Fraud protection, to ensure a given user is located in the location area claimed for financial transactions.
+    - Verification of GPS coordinates reported by the app on a device, to ensure the GPS was not faked, e.g. for content delivery with regional restrictions.
+    - Location-based advertising, to trigger targeted advertising after verifying the user is in the area of interest.
+    - Smart mobility (vehicle / bikes renting), to confirm the location of the device and the location of the vehicle/bike to guarantee they are rented correctly.
 
     # Relevant terms and definitions
 
@@ -34,7 +38,7 @@ info:
 
     The API exposes a single endpoint/operation:
 
-    - Verify whether the device location is within a requested area, currently circle with center specified by the latitude and longitude, and radius specified by the accuracy. The operation returns a verification result and, optionally, a match rate estimation for the location verification in percent.
+    - Verify whether the device location is within a requested area, currently a circle with center specified by the latitude and longitude, and radius specified by the accuracy. The operation returns a verification result and, optionally, a match rate estimation for the location verification in percent.
 
     # Further info and support
 
@@ -45,73 +49,112 @@ info:
   license:
     name: Apache 2.0
     url: https://www.apache.org/licenses/LICENSE-2.0.html
-  version: 0.2.0-wip
+  version: 0.2.0-rc
 externalDocs:
   description: Product documentation at CAMARA
   url: https://github.com/camaraproject/
 servers:
-  - url: '{apiRoot}/{basePath}'
+  - url: "{apiRoot}/location-verification/v0"
     variables:
       apiRoot:
         default: http://localhost:9091
         description: API root
-      basePath:
-        default: location-verification/v0
-        description: Base path for the device location verification API
+tags:
+  - name: Location Verification
+    description: Verification the location of a device
 paths:
   /verify:
     post:
       tags:
-        - Location verification
-      summary: 'Execute location verification for a user equipment'
+        - Location Verification
+      summary: Verify the location of a device
+      description: |
+        Verify whether the location of a device is within a requested area. The operation returns a verification result and, optionally, a match rate estimation for the location verification in percent.
       operationId: verifyLocation
       requestBody:
+        required: true
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/VerifyLocationRequest'
-        required: true
+              $ref: "#/components/schemas/VerifyLocationRequest"
+            examples:
+              INPUT_PHONE_NUMBER_CIRCLE:
+                summary: Phone number, circle and maxAge
+                description: Verify if device identified by a phone number is within a circle, providing a maxAge
+                value:
+                  device:
+                    phoneNumber: "+123456789"
+                  area:
+                    areaType: Circle
+                    center:
+                      latitude: 50.735851
+                      longitude: 7.10066
+                    radius: 50000
+                  maxAge: 120
+              INPUT_IP_ADDRESS_V4_CIRCLE:
+                summary: IPv4 address, circle, without maxAge
+                description: Verify if device identified by an IPv4 address is within a circle
+                value:
+                  device:
+                    ipv4Address:
+                      publicAddress: 123.234.1.2
+                      publicPort: 1234
+                  area:
+                    areaType: Circle
+                    center:
+                      latitude: 50.735851
+                      longitude: 7.10066
+                    radius: 50000
       responses:
-        '200':
+        "200":
           description: Location verification result
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/VerifyLocationResponse'
+                $ref: "#/components/schemas/VerifyLocationResponse"
               examples: 
-                'True':
+                VERIFICATION_TRUE:
                   summary: Match
                   description: The network locates the device within the requested area
                   value:
-                    verificationResult: 'TRUE'
-                'False':
+                    verificationResult: "TRUE"
+                    lastLocationTime: 2023-09-07T10:40:52Z
+                VERIFICATION_FALSE:
                   summary: No match
                   description: The requested area does not match the area where the network locates the device
                   value:
-                    verificationResult: 'FALSE' 
-                'Unknown':
-                  summary: Unknown
-                  description: The network cannot locate the device
+                    verificationResult: "FALSE"
+                    lastLocationTime: 2023-09-07T10:40:52Z 
+                VERIFICATION_UNKNOWN_WITH_LAST_LOCATION_TIME:
+                  summary: Unknown with last location time
+                  description: The network cannot locate the device after the requested maxAge
                   value:
-                    verificationResult: 'UNKNOWN'
-                'Partial':
+                    verificationResult: "UNKNOWN"
+                    lastLocationTime: 2023-09-07T10:40:52Z
+                VERIFICATION_UNKNOWN_WITHOUT_LAST_LOCATION_TIME:
+                  summary: Unknown without last location time
+                  description: The network cannot locate the device and there is no history available 
+                  value:
+                    verificationResult: "UNKNOWN"
+                VERIFICATION_PARTIAL:
                   summary: Partial match
-                  description: The requested area partially match the area where the network locates the device
+                  description: The requested area partially matches the area where the network locates the device
                   value:
-                    verificationResult: 'PARTIAL' 
+                    verificationResult: "PARTIAL" 
                     matchRate: 74
-        '400':
-          $ref: '#/components/responses/Generic400'
-        '401':
-          $ref: '#/components/responses/Generic401'
-        '403':
-          $ref: '#/components/responses/Generic403'
-        '404':
-          $ref: '#/components/responses/Generic404'
-        '500':
-          $ref: '#/components/responses/Generic500'
-        '503':
-          $ref: '#/components/responses/Generic503'
+                    lastLocationTime: 2023-09-07T10:40:52Z
+        "400":
+          $ref: "#/components/responses/Generic400"
+        "401":
+          $ref: "#/components/responses/Generic401"
+        "403":
+          $ref: "#/components/responses/Generic403"
+        "404":
+          $ref: "#/components/responses/Generic404"
+        "500":
+          $ref: "#/components/responses/Generic500"
+        "503":
+          $ref: "#/components/responses/Generic503"
       security:
         - openId:
           - location-verification:verify
@@ -135,11 +178,11 @@ components:
     Circle:
       description: Circular area
       allOf:
-        - $ref: '#/components/schemas/Area'
+        - $ref: "#/components/schemas/Area"
         - type: object
           properties:
             center:
-              $ref: '#/components/schemas/Point'
+              $ref: "#/components/schemas/Point"
             radius:
               type: integer
               description: Expected accuracy for the verification in meters, from location (radius)
@@ -186,30 +229,40 @@ components:
       type: object
       properties:
         device:
-          $ref: '#/components/schemas/Device'
+          $ref: "#/components/schemas/Device"
         area:
-          $ref: '#/components/schemas/Area'
+          $ref: "#/components/schemas/Area"
         maxAge:
-          $ref: '#/components/schemas/MaxAge'
+          $ref: "#/components/schemas/MaxAge"
       required:
         - device
         - area
+
     VerifyLocationResponse:
       type: object
       required:
         - verificationResult
-        - lastLocationTime
       properties:
         lastLocationTime:
-          $ref: '#/components/schemas/LastLocationTime'
+          $ref: "#/components/schemas/LastLocationTime"
         verificationResult:
-          $ref: '#/components/schemas/VerificationResult'
+          $ref: "#/components/schemas/VerificationResult"
         matchRate:
-          $ref: '#/components/schemas/MatchRate'
+          $ref: "#/components/schemas/MatchRate"
 
     Device:
+      description: |
+        End-user equipment able to connect to a mobile network. Examples of devices include smartphones or IoT sensors/actuators.
+
+        The developer can choose to provide the below specified device identifiers:
+
+        * `ipv4Address`
+        * `ipv6Address`
+        * `phoneNumber`
+        * `networkAccessIdentifier`
+
+        NOTE: the MNO might support only a subset of these options. The API invoker can provide multiple identifiers to be compatible across different MNOs. In this case the identifiers MUST belong to the same device.
       type: object
-      minProperties: 1
       properties:
         phoneNumber:
           $ref: "#/components/schemas/PhoneNumber"
@@ -218,21 +271,30 @@ components:
         ipv4Address:
           $ref: "#/components/schemas/DeviceIpv4Addr"
         ipv6Address:
-          $ref: "#/components/schemas/Ipv6Address"
-      description: One or more parameters allocated to the device that allow it to be identified
+          $ref: "#/components/schemas/DeviceIpv6Address"
+      minProperties: 1
 
     PhoneNumber:
+      description: A public identifier addressing a telephone subscription. In mobile networks it corresponds to the MSISDN (Mobile Station International Subscriber Directory Number). In order to be globally unique it has to be formatted in international format, according to E.164 standard, optionally prefixed with '+'.
       type: string
       pattern: '^\+?[0-9]{5,15}$'
       example: "123456789"
-      description: Subscriber number (MSISDN) in E.164 format, starting with country code and optionally prefixed with '+'.
 
     NetworkAccessIdentifier:
+      description: A public identifier addressing a subscription in a mobile network. In 3GPP terminology, it corresponds to the GPSI formatted with the External Identifier ({Local Identifier}@{Domain Identifier}). Unlike the telephone number, the network access identifier is not subjected to portability ruling in force, and is individually managed by each operator.
       type: string
       example: "123456789@domain.com"
 
     DeviceIpv4Addr:
       type: object
+      description: |
+        The device should be identified by either the public (observed) IP address and port as seen by the application server, or the private (local) and any public (observed) IP addresses in use by the device (this information can be obtained by various means, for example from some DNS servers).
+
+        If the allocated and observed IP addresses are the same (i.e. NAT is not in use) then  the same address should be specified for both publicAddress and privateAddress.
+
+        If NAT64 is in use, the device should be identified by its publicAddress and publicPort, or separately by its allocated IPv6 address (field ipv6Address of the Device object)
+
+        In all cases, publicAddress must be specified, along with at least one of either privateAddress or publicPort, dependent upon which is known. In general, mobile devices cannot be identified by their public IPv4 address alone.
       properties:
         publicAddress:
           $ref: "#/components/schemas/SingleIpv4Addr"
@@ -244,48 +306,31 @@ components:
         - required: [publicAddress, privateAddress]
         - required: [publicAddress, publicPort]
       example:
-            {
-              "publicAddress": "84.125.93.10",
-              "publicPort" : 59765
-            }
-      description: |
-        The device should be identified by either the public (observed) IP address and port as seen by the application server, or the private (local) and any public (observed) IP addresses in use by the device (this information can be obtained by various means, for example from some DNS servers).
-        
-        If the allocated and observed IP addresses are the same (i.e. NAT is not in use) then  the same address should be specified for both publicAddress and privateAddress.
-        
-        If NAT64 is in use, the device should be identified by its publicAddress and publicPort, or separately by its allocated IPv6 address (field ipv6Address of the Device object)
-      
-        In all cases, publicAddress must be specified, along with at least one of either privateAddress or publicPort, dependent upon which is known. In general, mobile devices cannot be identified by their public IPv4 address alone.
+        publicAddress: "84.125.93.10"
+        publicPort: 59765
 
     SingleIpv4Addr:
-      type: string
       description: A single IPv4 address with no subnet mask
+      type: string
+      format: ipv4
       example: "84.125.93.10"
-      pattern: '^(([0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])$'
 
     Port:
+      description: TCP or UDP port number
       type: integer
       minimum: 0
       maximum: 65535
 
-    Ipv6Address:
-      type: string
-      allOf:
-        - pattern: '^((:|(0?|([1-9a-f][0-9a-f]{0,3}))):)((0?|([1-9a-f][0-9a-f]{0,3})):){0,6}(:|(0?|([1-9a-f][0-9a-f]{0,3})))(\/(([0-9])|([0-9]{2})|(1[0-1][0-9])|(12[0-8])))?$'
-        - pattern: '^((([^:]+:){7}([^:]+))|((([^:]+:)*[^:]+)?::(([^:]+:)*[^:]+)?))(\/.+)?$'
-      example: "2001:db8:85a3:8d3:1319:8a2e:370:7344"
+    DeviceIpv6Address:
       description: |
-        IPv6 address, following IETF 5952 format, may be specified in form <address/mask> as:
-          - address - The /128 subnet is optional for single addresses:
-            - 2001:db8:85a3:8d3:1319:8a2e:370:7344
-            - 2001:db8:85a3:8d3:1319:8a2e:370:7344/128
-          - address/mask - an IP v6 number with a mask:
-            - 2001:db8:85a3:8d3::0/64
-            - 2001:db8:85a3:8d3::/64
+        The device should be identified by the observed IPv6 address, or by any single IPv6 address from within the subnet allocated to the device (e.g. adding ::0 to the /64 prefix).
+      type: string
+      format: ipv6
+      example: 2001:db8:85a3:8d3:1319:8a2e:370:7344
+      
     MaxAge:
       description: The maximum age (in seconds) of the available location, which is accepted for the verification.
-      type: number
-      format: integer
+      type: integer
       minimum: 60
       example: 120
     VerificationResult:
@@ -297,18 +342,18 @@ components:
           - `PARTIAL`: when the requested area partially match the area where the network locates the device. A `match_rate` could be included in the response.
       type: string
       enum:
-        - 'TRUE'
-        - 'FALSE'
-        - 'UNKNOWN'
-        - 'PARTIAL'
+        - "TRUE"
+        - "FALSE"
+        - "UNKNOWN"
+        - "PARTIAL"
     MatchRate:
-      description: Match rate estimation for the location verification in percent
+      description: Estimation of the match rate between the area in the request (R), and area where the network locates the device (N), calculated as the percent value of the intersection of both areas divided by the network area, that is (R ∩ N) / N * 100. Included only if VerificationResult is PARTIAL.
       type: integer
       minimum: 1
       maximum: 99
     LastLocationTime:
-      description: Timestamp of the last location information
-      example: 2023-09-07T10:40:52Z
+      description: Timestamp of the last location information. It must follow RFC 3339 and must have time zone. Recommended format is yyyy-MM-dd'T'HH:mm:ss.SSSZ (i.e. which allows 2023-07-03T14:27:08.312+02:00 or 2023-07-03T12:27:08.312Z)
+      example: "2023-09-07T10:40:52Z"
       format: date-time
       type: string
     ErrorInfo:
@@ -329,62 +374,62 @@ components:
           description: Detailed error description
   responses:
     Generic400:
-      description: Invalid input
+      description: Invalid argument
       content:
         application/json:
           schema:
-            $ref: '#/components/schemas/ErrorInfo'
+            $ref: "#/components/schemas/ErrorInfo"
           example:
             status: 400
             code: INVALID_ARGUMENT
-            message: 'Invalid input'
+            message: Invalid argument
     Generic401:
-      description: Unauthorized
+      description: Unauthenticated
       content:
         application/json:
           schema:
-            $ref: '#/components/schemas/ErrorInfo'
+            $ref: "#/components/schemas/ErrorInfo"
           example:
             status: 401
             code: UNAUTHENTICATED
-            message: 'Authorization failed: ...'
+            message: "Authorization failed: ..."
     Generic403:
-      description: Forbidden
+      description: Permission denied
       content:
         application/json:
           schema:
-            $ref: '#/components/schemas/ErrorInfo'
+            $ref: "#/components/schemas/ErrorInfo"
           example:
             status: 403
             code: PERMISSION_DENIED
-            message: 'Operation not allowed: ...'
+            message: "Operation not allowed: ..."
     Generic404:
       description: Not found
       content:
         application/json:
           schema:
-            $ref: '#/components/schemas/ErrorInfo'
+            $ref: "#/components/schemas/ErrorInfo"
           example:
             status: 404
             code: NOT_FOUND
-            message: 'The specified resource is not found'
+            message: "The specified resource is not found"
     Generic500:
       description: Internal server error
       content:
         application/json:
           schema:
-            $ref: '#/components/schemas/ErrorInfo'
+            $ref: "#/components/schemas/ErrorInfo"
           example:
             status: 500
             code: INTERNAL
-            message: 'Internal server error'
+            message: "Internal server error"
     Generic503:
       description: Service unavailable
       content:
         application/json:
           schema:
-            $ref: '#/components/schemas/ErrorInfo'
+            $ref: "#/components/schemas/ErrorInfo"
           example:
             status: 503
             code: UNAVAILABLE
-            message: 'Service unavailable'
+            message: "Service unavailable"
