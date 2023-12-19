@@ -34,7 +34,7 @@ info:
     
     The CAMARA subscription model is detailed in the CAMARA API design guideline document and follows CloudEvents specification.
 
-    It is mandatory in the subscription to provide the event `type` subscribed are several are managed in this API.
+    It is mandatory in the subscription to provide the event `type` for which the client would like to subscribe.  
     
     Following event ``type`` are managed for this API:
       - ``org.camaraproject.geofencing.v0.area-entered``  - Event triggered when the device enters the given area
@@ -63,7 +63,7 @@ info:
   license:
     name: Apache 2.0
     url: https://www.apache.org/licenses/LICENSE-2.0.html
-  version: 0.1.0-wip
+  version: 0.1.0-rc
 externalDocs:
   description: Product documentation at Camara
   url: https://github.com/camaraproject/
@@ -148,6 +148,9 @@ paths:
           $ref: "#/components/responses/Generic500"
         "503":
           $ref: "#/components/responses/Generic503"
+      security:
+        - openId:
+            - geofencing:subscriptions:write
     get:
       tags:
         - Geofencing subscriptions
@@ -176,19 +179,19 @@ paths:
           $ref: "#/components/responses/Generic503"
       security:
         - openId:
-            - location-retrieval:read
+            - geofencing:subscriptions:read
 
   /subscriptions/{subscriptionsId}:
     get:
       tags:
         - Geofencing subscriptions
-      summary: "Operation to retrieve an subscription based on the provided ID"
+      summary: "Operation to retrieve a subscription based on the provided ID"
       operationId: getSubscription
       description: Retrieve a given subscription by ID
       parameters:
         - name: subscriptionsId
           in: path
-          description: subscription identifier that was obtained from the create event subscription operation
+          description: Subscription identifier that was obtained from the create event subscription operation
           required: true
           schema:
             type: string
@@ -213,7 +216,7 @@ paths:
           $ref: "#/components/responses/Generic503"
       security:
         - openId:
-            - location-retrieval:read
+            - geofencing:subscriptions:read
     delete:
       tags:
         - Geofencing subscriptions
@@ -244,7 +247,7 @@ paths:
           $ref: "#/components/responses/Generic503"
       security:
         - openId:
-            - location-retrieval:delete
+            - geofencing:subscriptions:delete
 
 components:
   securitySchemes:
@@ -328,8 +331,18 @@ components:
       example: 7.10066
 
     Device:
+      description: |
+        End-user equipment able to connect to a mobile network. Examples of devices include smartphones or IoT sensors/actuators.
+
+        The developer can choose to provide the below specified device identifiers:
+
+        * `ipv4Address`
+        * `ipv6Address`
+        * `phoneNumber`
+        * `networkAccessIdentifier`
+
+        NOTE: the MNO might support only a subset of these options. The API invoker can provide multiple identifiers to be compatible across different MNOs. In this case the identifiers MUST belong to the same device.
       type: object
-      minProperties: 1
       properties:
         phoneNumber:
           $ref: "#/components/schemas/PhoneNumber"
@@ -338,21 +351,30 @@ components:
         ipv4Address:
           $ref: "#/components/schemas/DeviceIpv4Addr"
         ipv6Address:
-          $ref: "#/components/schemas/Ipv6Address"
-      description: One or more parameters allocated to the device that allow it to be identified
+          $ref: "#/components/schemas/DeviceIpv6Address"
+      minProperties: 1
 
     PhoneNumber:
+      description: A public identifier addressing a telephone subscription. In mobile networks it corresponds to the MSISDN (Mobile Station International Subscriber Directory Number). In order to be globally unique it has to be formatted in international format, according to E.164 standard, optionally prefixed with '+'.
       type: string
       pattern: '^\+?[0-9]{5,15}$'
       example: "123456789"
-      description: Subscriber number (MSISDN) in E.164 format, starting with country code and optionally prefixed with "+".
 
     NetworkAccessIdentifier:
+      description: A public identifier addressing a subscription in a mobile network. In 3GPP terminology, it corresponds to the GPSI formatted with the External Identifier ({Local Identifier}@{Domain Identifier}). Unlike the telephone number, the network access identifier is not subjected to portability ruling in force, and is individually managed by each operator.
       type: string
       example: "123456789@domain.com"
 
     DeviceIpv4Addr:
       type: object
+      description: |
+        The device should be identified by either the public (observed) IP address and port as seen by the application server, or the private (local) and any public (observed) IP addresses in use by the device (this information can be obtained by various means, for example from some DNS servers).
+
+        If the allocated and observed IP addresses are the same (i.e. NAT is not in use) then  the same address should be specified for both publicAddress and privateAddress.
+
+        If NAT64 is in use, the device should be identified by its publicAddress and publicPort, or separately by its allocated IPv6 address (field ipv6Address of the Device object)
+
+        In all cases, publicAddress must be specified, along with at least one of either privateAddress or publicPort, dependent upon which is known. In general, mobile devices cannot be identified by their public IPv4 address alone.
       properties:
         publicAddress:
           $ref: "#/components/schemas/SingleIpv4Addr"
@@ -361,47 +383,30 @@ components:
         publicPort:
           $ref: "#/components/schemas/Port"
       anyOf:
-        - required: [ publicAddress, privateAddress ]
-        - required: [ publicAddress, publicPort ]
+        - required: [publicAddress, privateAddress]
+        - required: [publicAddress, publicPort]
       example:
-        {
-          "publicAddress": "84.125.93.10",
-          "publicPort": 59765
-        }
-      description: |
-        The device should be identified by either the public (observed) IP address and port as seen by the application server, or the private (local) and any public (observed) IP addresses in use by the device (this information can be obtained by various means, for example from some DNS servers).
-        
-        If the allocated and observed IP addresses are the same (i.e. NAT is not in use) then  the same address should be specified for both publicAddress and privateAddress.
-        
-        If NAT64 is in use, the device should be identified by its publicAddress and publicPort, or separately by its allocated IPv6 address (field ipv6Address of the Device object)
-        
-        In all cases, publicAddress must be specified, along with at least one of either privateAddress or publicPort, dependent upon which is known. In general, mobile devices cannot be identified by their public IPv4 address alone.
+        publicAddress: "84.125.93.10"
+        publicPort: 59765
 
     SingleIpv4Addr:
-      type: string
       description: A single IPv4 address with no subnet mask
+      type: string
+      format: ipv4
       example: "84.125.93.10"
-      pattern: '^(([0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])$'
 
     Port:
+      description: TCP or UDP port number
       type: integer
       minimum: 0
       maximum: 65535
 
-    Ipv6Address:
-      type: string
-      allOf:
-        - pattern: '^((:|(0?|([1-9a-f][0-9a-f]{0,3}))):)((0?|([1-9a-f][0-9a-f]{0,3})):){0,6}(:|(0?|([1-9a-f][0-9a-f]{0,3})))(\/(([0-9])|([0-9]{2})|(1[0-1][0-9])|(12[0-8])))?$'
-        - pattern: '^((([^:]+:){7}([^:]+))|((([^:]+:)*[^:]+)?::(([^:]+:)*[^:]+)?))(\/.+)?$'
-      example: "2001:db8:85a3:8d3:1319:8a2e:370:7344"
+    DeviceIpv6Address:
       description: |
-        IPv6 address, following IETF 5952 format, may be specified in form <address/mask> as:
-          - address - The /128 subnet is optional for single addresses:
-            - 2001:db8:85a3:8d3:1319:8a2e:370:7344
-            - 2001:db8:85a3:8d3:1319:8a2e:370:7344/128
-          - address/mask - an IP v6 number with a mask:
-            - 2001:db8:85a3:8d3::0/64
-            - 2001:db8:85a3:8d3::/64
+        The device should be identified by the observed IPv6 address, or by any single IPv6 address from within the subnet allocated to the device (e.g. adding ::0 to the /64 prefix).
+      type: string
+      format: ipv6
+      example: 2001:db8:85a3:8d3:1319:8a2e:370:7344
 
     ErrorInfo:
       type: object
@@ -485,7 +490,7 @@ components:
       description: "OAuth2 token to be used by the callback API endpoint. It MUST be indicated within HTTP Authorization header e.g. Authorization: Bearer $notificationAuthToken"
 
     CreateSubscription:
-      description: The request for creating a Location Subscription
+      description: The request for creating a geofencing subscription
       type: object
       properties:
         webhook:
@@ -494,15 +499,16 @@ components:
           $ref: "#/components/schemas/SubscriptionDetail"
         subscriptionExpireTime:
           type: string
-          format: date-time
-          example: 2023-01-17T13:18:23.682Z
-          description: The time when the location-tracking has to be terminated (e.g. in 14 days from now on). Provided in date-time format.
+          format: date-time         
+          description: The date time when the location-tracking has to be terminated. 
+            It must follow [RFC 3339](https://datatracker.ietf.org/doc/html/rfc3339#section-5.6) and must have time zone. 
+            Recommended format is yyyy-MM-dd'T'HH:mm:ss.SSSZ (i.e. which allows 2023-07-03T14:27:08.312+02:00 or 2023-07-03T12:27:08.312Z)
       required:
         - webhook
         - subscriptionDetail
 
     SubscriptionInfo:
-      description: Represents a area-location event subscription.
+      description: Represents a geofencing event subscription.
       type: object
       allOf:
         - $ref: "#/components/schemas/CreateSubscription"
@@ -511,17 +517,19 @@ components:
             subscriptionId:
               $ref: "#/components/schemas/SubscriptionId"
             startsAt:
-              $ref: "#/components/schemas/DateTime"
+              type: string
+              format: date-time
+              description: The date time when the subscription started.
+                It must follow [RFC 3339](https://datatracker.ietf.org/doc/html/rfc3339#section-5.6) and must have time zone. 
+                Recommended format is yyyy-MM-dd'T'HH:mm:ss.SSSZ (i.e. which allows 2023-07-03T14:27:08.312+02:00 or 2023-07-03T12:27:08.312Z)
             expiresAt:
-              $ref: "#/components/schemas/DateTime"
+              type: string
+              format: date-time
+              description: The date time when the subscription will expire or expired.                
+                It must follow [RFC 3339](https://datatracker.ietf.org/doc/html/rfc3339#section-5.6) and must have time zone. 
+                Recommended format is yyyy-MM-dd'T'HH:mm:ss.SSSZ (i.e. which allows 2023-07-03T14:27:08.312+02:00 or 2023-07-03T12:27:08.312Z)
           required:
-            - subscriptionId
-
-    DateTime:
-      type: string
-      format: date-time
-      example: 2023-01-17T13:18:23.682Z
-      description: Date when the event subscription will begin/began. Provided in date-time format.
+            - subscriptionId   
 
     EventTime:
       format: date-time
@@ -531,7 +539,8 @@ components:
         If the time of the occurrence cannot be determined then this attribute MAY be set to some other time (such as the current time) by the CloudEvents producer, 
         however all producers for the same source MUST be consistent in this respect. In other words, 
         either they all use the actual time of the occurrence or they all use the same algorithm to determine the value used. 
-        (must adhere on CAMARA datetime recommendation based on RFC 3339)
+        It must follow [RFC 3339](https://datatracker.ietf.org/doc/html/rfc3339#section-5.6) and must have time zone. 
+        Recommended format is yyyy-MM-dd'T'HH:mm:ss.SSSZ (i.e. which allows 2023-07-03T14:27:08.312+02:00 or 2023-07-03T12:27:08.312Z)
 
     CloudEvent:
       description: The Cloud-Event used for the callback.
@@ -654,14 +663,17 @@ components:
       type: string
       format: uri-reference
       minLength: 1
-      description: "Identifies the context in which an event happened in the specific Provider Implementation."
-      example:
-        - https://github.com/cloudevents
-        - mailto:cncf-wg-serverless@lists.cncf.io
-        - urn:uuid:6e8bc430-9c3a-11d9-9669-0800200c9a66
-        - cloudevents/spec/pull/123
-        - /sensors/tn-1234567/alerts
-        - 1-555-123-4567
+      description: |
+        Identifies the context in which an event happened, as a non-empty `URI-reference` like:
+        - URI with a DNS authority:
+          * https://github.com/cloudevents
+          * mailto:cncf-wg-serverless@lists.cncf.io
+        - Universally-unique URN with a UUID:
+          * urn:uuid:6e8bc430-9c3a-11d9-9669-0800200c9a66
+        - Application-specific identifier:
+          * /cloudevents/spec/pull/123
+          * 1-555-123-4567
+      example: "https://notificationSendServer12.supertelco.com"
 
     TerminationReason:
       type: string
@@ -674,7 +686,7 @@ components:
 
   responses:
     Generic400:
-      description: Invalid input
+      description: Invalid argument
       content:
         application/json:
           schema:
@@ -682,10 +694,10 @@ components:
           example:
             status: 400
             code: INVALID_ARGUMENT
-            message: "Invalid input"
+            message: "Invalid argument"
     
     Generic401:
-      description: Unauthorized
+      description: Unauthenticated
       content:
         application/json:
           schema:
@@ -696,7 +708,7 @@ components:
             message: "Authorization failed: ..."
     
     Generic403:
-      description: Forbidden
+      description: Permission denied
       content:
         application/json:
           schema:
