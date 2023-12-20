@@ -165,16 +165,26 @@ components:
       openIdConnectUrl: https://example.org/.well-known/openid-configuration
   schemas:
     Area:
-      properties: 
+      type: object
+      properties:
         areaType:
-          type: string
-          description: Type of this area.
+          $ref: "#/components/schemas/AreaType"
       required:
         - areaType
-      discriminator: 
+      discriminator:
         propertyName: areaType
-        mapping: 
-          Circle:  "#/components/schemas/Circle"
+        mapping:
+          CIRCLE: "#/components/schemas/Circle"
+
+    AreaType:
+      type: string
+      description: |
+        Type of this area.
+        CIRCLE - The area is defined as a circle.
+        POLYGON - The area is defined as a polygon.
+      enum:
+        - CIRCLE
+
     Circle:
       description: Circular area
       allOf:

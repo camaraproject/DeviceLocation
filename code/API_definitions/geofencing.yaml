@@ -264,7 +264,7 @@ components:
       required:
         - areaType
       discriminator:
-        propertyName: "areaType"
+        propertyName: areaType
         mapping:
           CIRCLE: "#/components/schemas/Circle"
 

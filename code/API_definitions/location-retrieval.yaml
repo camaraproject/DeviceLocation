@@ -224,17 +224,26 @@ components:
         
     Area:
       type: object
-      required:
-        - areaType
       properties:
         areaType:
-          description: type of the area (like Circle or a Polygon)
-          type: string
-      discriminator: 
-          propertyName: areaType
-          mapping: 
-            Circle:  "#/components/schemas/Circle"
-            Polygon: "#/components/schemas/Polygon"
+          $ref: "#/components/schemas/AreaType"
+      required:
+        - areaType
+      discriminator:
+        propertyName: areaType
+        mapping:
+          CIRCLE: "#/components/schemas/Circle"
+          POLYGON: "#/components/schemas/Polygon"
+
+    AreaType:
+      type: string
+      description: |
+        Type of this area.
+        CIRCLE - The area is defined as a circle.
+        POLYGON - The area is defined as a polygon.
+      enum:
+        - CIRCLE
+        - POLYGON
 
     Circle:
       description: Circular area
