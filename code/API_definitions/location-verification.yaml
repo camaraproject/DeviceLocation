@@ -181,7 +181,6 @@ components:
       description: |
         Type of this area.
         CIRCLE - The area is defined as a circle.
-        POLYGON - The area is defined as a polygon.
       enum:
         - CIRCLE
 
