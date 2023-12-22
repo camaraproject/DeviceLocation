@@ -34,12 +34,12 @@
     - Error responses adapted to new commonalities guidelines.
     - Inline documentation within OpenAPI spec. 
 
-* First alpha version of the new API `location-retrieval`, v0.1.0-wip
+* First alpha version of the new API `location-retrieval`, v0.1.0:
 
     - Initial version already aligned with latest guidelines.
     - Returns 2 possible location areas: `CIRCLE` and `POLYGON`.
 
-* First alpha version of the new API `geofencing`, v0.1.0-wip
+* First alpha version of the new API `geofencing`, v0.1.0:
 
     - Initial version already aligned with latest guidelines.
     - Follows CloudEvents format.
