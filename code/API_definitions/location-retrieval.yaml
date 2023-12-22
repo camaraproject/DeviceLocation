@@ -57,7 +57,7 @@ info:
   license:
     name: Apache 2.0
     url: https://www.apache.org/licenses/LICENSE-2.0.html
-  version: 0.1.0-rc
+  version: 0.1.0-rc2
 externalDocs:
   description: Product documentation at Camara
   url: https://github.com/camaraproject/
@@ -224,17 +224,26 @@ components:
         
     Area:
       type: object
-      required:
-        - areaType
       properties:
         areaType:
-          description: type of the area (like Circle or a Polygon)
-          type: string
-      discriminator: 
-          propertyName: areaType
-          mapping: 
-            Circle:  "#/components/schemas/Circle"
-            Polygon: "#/components/schemas/Polygon"
+          $ref: "#/components/schemas/AreaType"
+      required:
+        - areaType
+      discriminator:
+        propertyName: areaType
+        mapping:
+          CIRCLE: "#/components/schemas/Circle"
+          POLYGON: "#/components/schemas/Polygon"
+
+    AreaType:
+      type: string
+      description: |
+        Type of this area.
+        CIRCLE - The area is defined as a circle.
+        POLYGON - The area is defined as a polygon.
+      enum:
+        - CIRCLE
+        - POLYGON
 
     Circle:
       description: Circular area

@@ -49,7 +49,7 @@ info:
   license:
     name: Apache 2.0
     url: https://www.apache.org/licenses/LICENSE-2.0.html
-  version: 0.2.0-rc
+  version: 0.2.0-rc2
 externalDocs:
   description: Product documentation at CAMARA
   url: https://github.com/camaraproject/
@@ -165,16 +165,25 @@ components:
       openIdConnectUrl: https://example.org/.well-known/openid-configuration
   schemas:
     Area:
-      properties: 
+      type: object
+      properties:
         areaType:
-          type: string
-          description: Type of this area.
+          $ref: "#/components/schemas/AreaType"
       required:
         - areaType
-      discriminator: 
+      discriminator:
         propertyName: areaType
-        mapping: 
-          Circle:  "#/components/schemas/Circle"
+        mapping:
+          CIRCLE: "#/components/schemas/Circle"
+
+    AreaType:
+      type: string
+      description: |
+        Type of this area.
+        CIRCLE - The area is defined as a circle.
+      enum:
+        - CIRCLE
+
     Circle:
       description: Circular area
       allOf:
