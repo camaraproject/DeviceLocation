@@ -85,7 +85,7 @@ paths:
                   device:
                     phoneNumber: "+123456789"
                   area:
-                    areaType: Circle
+                    areaType: CIRCLE
                     center:
                       latitude: 50.735851
                       longitude: 7.10066
@@ -100,7 +100,7 @@ paths:
                       publicAddress: 123.234.1.2
                       publicPort: 1234
                   area:
-                    areaType: Circle
+                    areaType: CIRCLE
                     center:
                       latitude: 50.735851
                       longitude: 7.10066
