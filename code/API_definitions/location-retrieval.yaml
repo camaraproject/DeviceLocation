@@ -23,7 +23,8 @@ info:
 
     - Fraud protection to ensure a given user is located in the region, country or location authorized for financial transactions
     - Verify the GPS coordinates reported by the app on a device to ensure the GPS was not faked e.g. for content delivery with regional restrictions
-    - Contextual-based advertising, to trigger ** advertising** after verifying the device is in the area of interest
+    - Contextual-based advertising, to trigger advertising after verifying the device is in the area of interest
+
     - Smart Mobility (Vehicle/bikes renting): obtain the location of a vehicle/bike to guarantee they are rented correctly
 
     **Note**: Location is in most jurisdictions considered to be sensitive data and thereby consent by device owner/user must be verified before providing it to the developer.
