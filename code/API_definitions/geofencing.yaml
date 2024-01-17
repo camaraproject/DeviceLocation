@@ -450,13 +450,13 @@ components:
         area:
           $ref: "#/components/schemas/Area"
         type:
-          $ref: "#/components/schemas/SubscriptionCreationEventType"
+          $ref: "#/components/schemas/SubcriptionEventType"
       required:
         - device
         - area
         - type
 
-    SubscriptionCreationEventType:
+    SubcriptionEventType:
       type: string
       description: |
         area-entered - Event triggered when the device enters the given area
@@ -466,7 +466,7 @@ components:
         - org.camaraproject.geofencing.v0.area-entered
         - org.camaraproject.geofencing.v0.area-left
 
-    SubscriptionEventType:
+    NotificationEventType:
       type: string
       description: |
         area-entered - Event triggered when the device enters the given area
@@ -558,7 +558,7 @@ components:
         source:
           $ref: "#/components/schemas/Source"
         type:
-          $ref: "#/components/schemas/SubscriptionEventType"
+          $ref: "#/components/schemas/NotificationEventType"
         specversion:
           description: Version of the specification to which this event conforms (must be 1.0 if it conforms to cloudevents 1.0.2 version)
           type: string
@@ -775,7 +775,7 @@ components:
           device:
             phoneNumber: 123456789
           area:
-            areaType: Circle
+            areaType: CIRCLE
             center:
               latitude: 50.735851
               longitude: 7.10066
@@ -793,7 +793,7 @@ components:
           device:
             phoneNumber: 123456789
           area:
-            areaType: Circle
+            areaType: CIRCLE
             center:
               latitude: 50.735851
               longitude: 7.10066
