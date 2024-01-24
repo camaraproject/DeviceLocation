@@ -48,8 +48,8 @@
 
 **This is the first alpha version of the DeviceLocation API.** 
 
-- API [definition](https://github.com/camaraproject/DeviceLocation/tree/release-0.1.0/code/API_definitions)
-- API [documentation](https://github.com/camaraproject/DeviceLocation/tree/release-0.1.0/documentation/API_documentation)
+- API [definition](https://github.com/camaraproject/DeviceLocation/tree/release-v0.1.0/code/API_definitions)
+- API [documentation](https://github.com/camaraproject/DeviceLocation/tree/release-v0.1.0/documentation/API_documentation)
 
 ## Please note:
 
