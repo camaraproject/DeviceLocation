@@ -46,7 +46,7 @@ Repository to describe, develop, document and test the DeviceLocation API family
     - [View it on ReDoc](https://redocly.github.io/redoc/?url=https://raw.githubusercontent.com/camaraproject/DeviceLocation/blob/release-0.2.0-rc2/code/API_definitions/geofencing.yaml&nocors)
     - [View it on Swagger Editor](https://editor.swagger.io/?url=https://raw.githubusercontent.com/camaraproject/DeviceLocation/blob/release-0.2.0-rc2/code/API_definitions/geofencing.yaml)
 
-* The previous release version v0.1.0 of DeviceLocation API is available within the [release-0.1.0 branch](https://github.com/camaraproject/DeviceLocation/tree/release-0.1.0)
+* The previous release version v0.1.0 of DeviceLocation API is available within the [release-0.1.0 branch](https://github.com/camaraproject/DeviceLocation/tree/release-v0.1.0)
   - This past release only included the first alpha version of the API now renamed to location-verification, but it was then named as "location v0.1.0"
 
 ## Contributorship and mailing list
