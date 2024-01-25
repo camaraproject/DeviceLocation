@@ -456,7 +456,7 @@ components:
         - area
         - type
 
-    SubcriptionEventType:
+    SubscriptionEventType:
       type: string
       description: |
         area-entered - Event triggered when the device enters the given area
