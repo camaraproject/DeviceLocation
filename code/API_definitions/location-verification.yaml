@@ -201,7 +201,7 @@ components:
             - center
             - radius
       example:
-        areaType: Circle
+        areaType: CIRCLE
         center:
           latitude: 50.735851
           longitude: 7.10066
