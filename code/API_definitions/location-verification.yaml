@@ -23,7 +23,7 @@ info:
 
     - Fraud protection, to ensure a given user is located in the location area claimed for financial transactions.
     - Verification of GPS coordinates reported by the app on a device, to ensure the GPS was not faked, e.g. for content delivery with regional restrictions.
-    - Location-based advertising, to trigger targeted advertising after verifying the user is in the area of interest.
+    - Contextual-based advertising, to trigger advertising after verifying the device is in the area of interest.
     - Smart mobility (vehicle / bikes renting), to confirm the location of the device and the location of the vehicle/bike to guarantee they are rented correctly.
 
     # Relevant terms and definitions
@@ -85,7 +85,7 @@ paths:
                   device:
                     phoneNumber: "+123456789"
                   area:
-                    areaType: Circle
+                    areaType: CIRCLE
                     center:
                       latitude: 50.735851
                       longitude: 7.10066
@@ -100,7 +100,7 @@ paths:
                       publicAddress: 123.234.1.2
                       publicPort: 1234
                   area:
-                    areaType: Circle
+                    areaType: CIRCLE
                     center:
                       latitude: 50.735851
                       longitude: 7.10066
@@ -201,7 +201,7 @@ components:
             - center
             - radius
       example:
-        areaType: Circle
+        areaType: CIRCLE
         center:
           latitude: 50.735851
           longitude: 7.10066
