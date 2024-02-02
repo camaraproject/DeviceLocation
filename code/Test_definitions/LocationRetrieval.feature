@@ -2,7 +2,17 @@ Feature: Get a device location (POST /retrieve)
 
   @location_retrieval_01_by_phoneNumber_or_ipv4Address_or_networkAccessIdentifier
   Scenario: Get the location of a device
-    Given a valid device <device> identified by a <deviceIdentierName> <deviceIdentierValue>
+    Given a device identified by a <deviceIdentifierName> at a well known location
+    And the body parameter "maxAge" is set to 80
+    When the operation "retrieveLocation" is requested 
+    Then the response status code is 200
+    And the response body should provide the area where the device is located 
+
+    Examples:
+        | deviceIdentifierName     | 
+        | phoneNumber              | 
+        | networkAccessIdentifier  |
+        | ipv6Address              |
     And a provided maxAge of 80 seconds
     When a retrieve device location request is made 
     Then the response status code should be 200
