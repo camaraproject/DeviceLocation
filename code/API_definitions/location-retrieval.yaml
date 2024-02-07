@@ -408,7 +408,7 @@ components:
       value:
         lastLocationTime: 2023-10-17T13:18:23.682Z
         area:
-          areaType: polygon
+          areaType: POLYGON
           boundary:
             - latitude: 45.754114
               longitude: 4.860374
