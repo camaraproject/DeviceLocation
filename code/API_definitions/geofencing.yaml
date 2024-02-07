@@ -450,7 +450,7 @@ components:
         area:
           $ref: "#/components/schemas/Area"
         type:
-          $ref: "#/components/schemas/SubcriptionEventType"
+          $ref: "#/components/schemas/SubscriptionEventType"
       required:
         - device
         - area
