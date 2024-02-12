@@ -77,13 +77,14 @@ servers:
 
 tags:
   - name: Geofencing subscriptions
-    description: Operation to manage event subscription on geofencing events for leaving and entering an area
+    description: Operations to manage event subscription on geofencing events for leaving and entering an area
 paths:
   /subscriptions:
     post:
       tags:
         - Geofencing subscriptions
       summary: "Create a geofencing subscription for a device"
+      description: Create a subscription for a device to receive notifications when a device enters or exits a specified area
       operationId: createSubscription
       requestBody:
         content:
