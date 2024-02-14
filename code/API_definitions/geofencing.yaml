@@ -77,13 +77,14 @@ servers:
 
 tags:
   - name: Geofencing subscriptions
-    description: Operation to manage event subscription on geofencing events for leaving and entering an area
+    description: Operations to manage event subscription on geofencing events for leaving and entering an area
 paths:
   /subscriptions:
     post:
       tags:
         - Geofencing subscriptions
       summary: "Create a geofencing subscription for a device"
+      description: Create a subscription for a device to receive notifications when a device enters or exits a specified area
       operationId: createSubscription
       requestBody:
         content:
@@ -764,7 +765,7 @@ components:
   examples:
     CIRCLE_AREA_ENTERED:
       value:
-        id: 123655
+        id: "123655"
         source: https://notificationSendServer12.supertelco.com
         type: org.camaraproject.geofencing.v0.area-entered
         specversion: "1.0"
@@ -782,7 +783,7 @@ components:
             radius: 2000
     CIRCLE_AREA_LEFT:
       value:
-        id: 123655
+        id: "123655"
         source: https://notificationSendServer12.supertelco.com
         type: org.camaraproject.geofencing.v0.area-left
         specversion: "1.0"
@@ -801,7 +802,7 @@ components:
 
     SUBSCRIPTION_ENDS:
       value:
-        id: 123655
+        id: "123655"
         source: https://notificationSendServer12.supertelco.com
         type: org.camaraproject.geofencing.v0.subscription-ends
         specversion: "1.0"
