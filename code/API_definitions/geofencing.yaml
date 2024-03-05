@@ -43,7 +43,7 @@ info:
     
     Note: Additionally to these list, ``org.camaraproject.geofencing.v0.subscription-ends`` notification `type` is sent when the subscription ends. 
     This notification did not requires dedicated subscription. 
-    It is used when the subscription expire time (required by the requester) has been reached or if the API server has to stop sending notification prematurely. 
+    It is used when the subscription expire time (optionally set by the requester) has been reached or if the API server has to stop sending notification prematurely. 
 
     ### Notification callback
 
@@ -128,8 +128,8 @@ paths:
                 "503":
                   $ref: "#/components/responses/Generic503"
               security:
-                - {}
-                - notificationsBearerAuth: []
+                - { }
+                - notificationsBearerAuth: [ ]
       responses:
         "201":
           description: Created (Successful creation of subscription)
@@ -384,8 +384,8 @@ components:
         publicPort:
           $ref: "#/components/schemas/Port"
       anyOf:
-        - required: [publicAddress, privateAddress]
-        - required: [publicAddress, publicPort]
+        - required: [ publicAddress, privateAddress ]
+        - required: [ publicAddress, publicPort ]
       example:
         publicAddress: "84.125.93.10"
         publicPort: 59765
@@ -500,9 +500,9 @@ components:
           $ref: "#/components/schemas/SubscriptionDetail"
         subscriptionExpireTime:
           type: string
-          format: date-time         
-          description: The date time when the location-tracking has to be terminated. 
-            It must follow [RFC 3339](https://datatracker.ietf.org/doc/html/rfc3339#section-5.6) and must have time zone. 
+          format: date-time
+          description: The date time when the location-tracking has to be terminated.
+            It must follow [RFC 3339](https://datatracker.ietf.org/doc/html/rfc3339#section-5.6) and must have time zone.
             Recommended format is yyyy-MM-dd'T'HH:mm:ss.SSSZ (i.e. which allows 2023-07-03T14:27:08.312+02:00 or 2023-07-03T12:27:08.312Z)
       required:
         - webhook
@@ -521,16 +521,16 @@ components:
               type: string
               format: date-time
               description: The date time when the subscription started.
-                It must follow [RFC 3339](https://datatracker.ietf.org/doc/html/rfc3339#section-5.6) and must have time zone. 
+                It must follow [RFC 3339](https://datatracker.ietf.org/doc/html/rfc3339#section-5.6) and must have time zone.
                 Recommended format is yyyy-MM-dd'T'HH:mm:ss.SSSZ (i.e. which allows 2023-07-03T14:27:08.312+02:00 or 2023-07-03T12:27:08.312Z)
             expiresAt:
               type: string
               format: date-time
-              description: The date time when the subscription will expire or expired.                
-                It must follow [RFC 3339](https://datatracker.ietf.org/doc/html/rfc3339#section-5.6) and must have time zone. 
+              description: The date time when the subscription will expire or expired.
+                It must follow [RFC 3339](https://datatracker.ietf.org/doc/html/rfc3339#section-5.6) and must have time zone.
                 Recommended format is yyyy-MM-dd'T'HH:mm:ss.SSSZ (i.e. which allows 2023-07-03T14:27:08.312+02:00 or 2023-07-03T12:27:08.312Z)
           required:
-            - subscriptionId   
+            - subscriptionId
 
     EventTime:
       format: date-time
@@ -680,7 +680,7 @@ components:
       type: string
       description: |
         NETWORK_TERMINATED - API server stopped sending notification
-        SUBSCRIPTION_EXPIRED - Subscription expire time (required by the requester) has been reached
+        SUBSCRIPTION_EXPIRED - Subscription expire time has been reached - only if subscriptionExpireTime was set by the requester
       enum:
         - NETWORK_TERMINATED
         - SUBSCRIPTION_EXPIRED
