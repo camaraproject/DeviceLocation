@@ -348,7 +348,7 @@ components:
           - `TRUE`: when the network locates the device within the requested area, 
           - `FALSE`: when the requested area does not match the area where the network locates the device,
           - `UNKNOWN`: when the network cannot locate the device,
-          - `PARTIAL`: when the requested area partially match the area where the network locates the device. A `match_rate` could be included in the response.
+          - `PARTIAL`: when the requested area partially match the area where the network locates the device. A `match_rate` is included in the response.
       type: string
       enum:
         - "TRUE"
