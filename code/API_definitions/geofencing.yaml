@@ -511,6 +511,7 @@ components:
         subscriptionMaxEvents:
           type: integer
           description: Identifies the maximum number of event reports to be generated (>=1) - Once this number is reached, the subscription ends.
+          example: 5
       required:
         - webhook
         - subscriptionDetail
