@@ -11,7 +11,7 @@
 
 **This is the second alpha version of the DeviceLocation API family.**
 
-- API [definition](https://github.com/camaraproject/DeviceLocation/tree/release-0.2.0/code/API_definitions) **with inline documentation**.
+- API [definition](https://github.com/camaraproject/DeviceLocation/tree/release-v0.2.0/code/API_definitions) **with inline documentation**.
 
 ## Please note:
 
