@@ -42,7 +42,7 @@ info:
 
     # Further info and support
 
-    (FAQs will be added in a later version of the documentation) 
+    (FAQs will be added in a later version of the documentation)
   termsOfService: http://swagger.io/terms/
   contact:
     email: project-email@sample.com
@@ -233,7 +233,7 @@ components:
       format: double
       minimum: -180
       maximum: 180
-      example: 7.10066   
+      example: 7.10066  
     VerifyLocationRequest:
       type: object
       properties:
