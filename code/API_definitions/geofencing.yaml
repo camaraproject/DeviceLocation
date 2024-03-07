@@ -63,7 +63,7 @@ info:
   license:
     name: Apache 2.0
     url: https://www.apache.org/licenses/LICENSE-2.0.html
-  version: 0.1.0
+  version: 0.2.0-wip
 externalDocs:
   description: Product documentation at Camara
   url: https://github.com/camaraproject/
@@ -91,6 +91,9 @@ paths:
           application/json:
             schema:
               $ref: "#/components/schemas/CreateSubscription"
+            examples:
+              CIRCLE_AREA_ENTERED:
+                $ref: "#/components/examples/REQUEST_CIRCLE_AREA_ENTERED"
         required: true
       callbacks:
         event-notifications:
@@ -763,6 +766,27 @@ components:
             code: UNAVAILABLE
             message: "Service unavailable"
   examples:
+    REQUEST_CIRCLE_AREA_ENTERED:
+      value:
+        webhook:
+          notificationUrl: https://application-server.com
+          notificationAuthToken: c8974e592c2fa383d4a3960714
+        subscriptionDetail:
+          device:
+            phoneNumber: +4912345678912
+            networkAccessIdentifier: 123456789@domain.com
+            ipv4Address:
+              publicAddress: 84.125.93.10
+              publicPort: 59765
+            ipv6Address: 2001:db8:85a3:8d3:1319:8a2e:370:7344
+          area:
+            areaType: CIRCLE
+            center:
+              latitude: 50.735851
+              longitude: 7.10066
+            radius: 2000
+          type: org.camaraproject.geofencing.v0.area-entered
+        subscriptionExpireTime: 2024-03-22T05:40:58.469Z
     CIRCLE_AREA_ENTERED:
       value:
         id: "123655"
