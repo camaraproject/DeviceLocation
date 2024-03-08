@@ -42,10 +42,10 @@ info:
       - ``org.camaraproject.geofencing.v0.area-left``     - Event triggered when the device leaves the given area
     
     Note: Additionally to these list, ``org.camaraproject.geofencing.v0.subscription-ends`` notification `type` is sent when the subscription ends. 
-    This notification did not requires dedicated subscription. 
+    This notification does not require dedicated subscription. 
 
     It is used when:
-      - the subscription expire time (required by the requester) has been reached 
+      - the subscription expire time (optionally set by the requester) has been reached 
       - the maximum number of subscription events (optionally set by the requester) has been reached
       - the API server has to stop sending notification prematurely
 
@@ -688,7 +688,7 @@ components:
       type: string
       description: |
         NETWORK_TERMINATED - API server stopped sending notification
-        SUBSCRIPTION_EXPIRED - Subscription expire time (required by the requester) has been reached
+        SUBSCRIPTION_EXPIRED - Subscription expire time (optionally set by the requester) has been reached
         MAX_EVENTS_REACHED - maximum number of events (optionally set by the requester) has been reached
       enum:
         - MAX_EVENTS_REACHED
