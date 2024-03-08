@@ -774,11 +774,6 @@ components:
         subscriptionDetail:
           device:
             phoneNumber: +4912345678912
-            networkAccessIdentifier: 123456789@domain.com
-            ipv4Address:
-              publicAddress: 84.125.93.10
-              publicPort: 59765
-            ipv6Address: 2001:db8:85a3:8d3:1319:8a2e:370:7344
           area:
             areaType: CIRCLE
             center:
