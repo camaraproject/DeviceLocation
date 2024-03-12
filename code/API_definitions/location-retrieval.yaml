@@ -58,7 +58,7 @@ info:
   license:
     name: Apache 2.0
     url: https://www.apache.org/licenses/LICENSE-2.0.html
-  version: 0.1.0
+  version: 0.2.0-wip
 externalDocs:
   description: Product documentation at Camara
   url: https://github.com/camaraproject/
@@ -82,6 +82,8 @@ paths:
       summary: 'Execute location retrieval for a user equipment'
       description: Retrieve the area where a certain user device is localized.
       operationId: retrieveLocation
+      parameters:
+        - $ref: '#/components/parameters/x-correlator'
       requestBody:
         content:
           application/json:
@@ -91,6 +93,9 @@ paths:
       responses:
         '200':
           description: Location retrieval result
+          headers:
+            x-correlator:
+              $ref: '#/components/headers/x-correlator'
           content:
             application/json:
               schema:
@@ -121,6 +126,18 @@ components:
     openId:
       type: openIdConnect
       openIdConnectUrl: https://example.com/.well-known/openid-configuration
+  parameters:
+    x-correlator:
+      name: x-correlator
+      in: header
+      description: Correlation id for the different services
+      schema:
+        type: string
+  headers:
+    x-correlator:
+      description: Correlation id for the different services
+      schema:
+        type: string
   schemas:
     RetrievalLocationRequest:
       type: object
@@ -334,6 +351,9 @@ components:
       description: |-
         Problem with the client request. In addition to regular scenario of `INVALID_ARGUMENT`, another scenarios may exist:
           - maxAge threshold cannot be satisfied
+      headers:
+        x-correlator:
+          $ref: '#/components/headers/x-correlator'
       content:
         application/json:
           schema:
@@ -351,6 +371,9 @@ components:
                 message: "maxAge threshold cannot be satisfied"
     Generic401:
       description: Unauthenticated
+      headers:
+        x-correlator:
+          $ref: '#/components/headers/x-correlator'
       content:
         application/json:
           schema:
@@ -361,6 +384,9 @@ components:
             message: "Authorization failed: ..."
     Generic403:
       description: Permission denied
+      headers:
+        x-correlator:
+          $ref: '#/components/headers/x-correlator'
       content:
         application/json:
           schema:
@@ -371,6 +397,9 @@ components:
             message: "Operation not allowed: ..."
     Generic404:
       description: Not found
+      headers:
+        x-correlator:
+          $ref: '#/components/headers/x-correlator'
       content:
         application/json:
           schema:
@@ -381,6 +410,9 @@ components:
             message: 'The specified resource is not found'
     Generic500:
       description: Internal server error
+      headers:
+        x-correlator:
+          $ref: '#/components/headers/x-correlator'
       content:
         application/json:
           schema:
@@ -391,6 +423,9 @@ components:
             message: "Internal server error"
     Generic503:
       description: Service unavailable
+      headers:
+        x-correlator:
+          $ref: '#/components/headers/x-correlator'
       content:
         application/json:
           schema:
