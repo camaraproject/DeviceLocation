@@ -42,8 +42,12 @@ info:
       - ``org.camaraproject.geofencing.v0.area-left``     - Event triggered when the device leaves the given area
     
     Note: Additionally to these list, ``org.camaraproject.geofencing.v0.subscription-ends`` notification `type` is sent when the subscription ends. 
-    This notification did not requires dedicated subscription. 
-    It is used when the subscription expire time (required by the requester) has been reached or if the API server has to stop sending notification prematurely. 
+    This notification does not require dedicated subscription. 
+
+    It is used when:
+      - the subscription expire time (optionally set by the requester) has been reached 
+      - the maximum number of subscription events (optionally set by the requester) has been reached
+      - the API server has to stop sending notification prematurely
 
     ### Notification callback
 
@@ -63,7 +67,7 @@ info:
   license:
     name: Apache 2.0
     url: https://www.apache.org/licenses/LICENSE-2.0.html
-  version: 0.1.0
+  version: 0.2.0-wip
 externalDocs:
   description: Product documentation at Camara
   url: https://github.com/camaraproject/
@@ -504,6 +508,11 @@ components:
           description: The date time when the location-tracking has to be terminated. 
             It must follow [RFC 3339](https://datatracker.ietf.org/doc/html/rfc3339#section-5.6) and must have time zone. 
             Recommended format is yyyy-MM-dd'T'HH:mm:ss.SSSZ (i.e. which allows 2023-07-03T14:27:08.312+02:00 or 2023-07-03T12:27:08.312Z)
+        subscriptionMaxEvents:
+          type: integer
+          description: Identifies the maximum number of event reports to be generated (>=1) - Once this number is reached, the subscription ends.
+          minimum: 1
+          example: 5
       required:
         - webhook
         - subscriptionDetail
@@ -680,8 +689,10 @@ components:
       type: string
       description: |
         NETWORK_TERMINATED - API server stopped sending notification
-        SUBSCRIPTION_EXPIRED - Subscription expire time (required by the requester) has been reached
+        SUBSCRIPTION_EXPIRED - Subscription expire time (optionally set by the requester) has been reached
+        MAX_EVENTS_REACHED - maximum number of events (optionally set by the requester) has been reached
       enum:
+        - MAX_EVENTS_REACHED
         - NETWORK_TERMINATED
         - SUBSCRIPTION_EXPIRED
 
