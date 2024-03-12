@@ -95,6 +95,9 @@ paths:
           application/json:
             schema:
               $ref: "#/components/schemas/CreateSubscription"
+            examples:
+              CIRCLE_AREA_ENTERED:
+                $ref: "#/components/examples/REQUEST_CIRCLE_AREA_ENTERED"
         required: true
       callbacks:
         event-notifications:
@@ -774,6 +777,22 @@ components:
             code: UNAVAILABLE
             message: "Service unavailable"
   examples:
+    REQUEST_CIRCLE_AREA_ENTERED:
+      value:
+        webhook:
+          notificationUrl: https://application-server.com
+          notificationAuthToken: c8974e592c2fa383d4a3960714
+        subscriptionDetail:
+          device:
+            phoneNumber: +4912345678912
+          area:
+            areaType: CIRCLE
+            center:
+              latitude: 50.735851
+              longitude: 7.10066
+            radius: 2000
+          type: org.camaraproject.geofencing.v0.area-entered
+        subscriptionExpireTime: 2024-03-22T05:40:58.469Z
     CIRCLE_AREA_ENTERED:
       value:
         id: "123655"
