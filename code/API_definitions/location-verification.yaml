@@ -71,6 +71,8 @@ paths:
       description: |
         Verify whether the location of a device is within a requested area. The operation returns a verification result and, optionally, a match rate estimation for the location verification in percent.
       operationId: verifyLocation
+      parameters:
+        - $ref: '#/components/parameters/x-correlator'
       requestBody:
         required: true
         content:
@@ -108,6 +110,9 @@ paths:
       responses:
         "200":
           description: Location verification result
+          headers:
+            x-correlator:
+              $ref: '#/components/headers/x-correlator'
           content:
             application/json:
               schema:
@@ -163,6 +168,18 @@ components:
     openId:
       type: openIdConnect
       openIdConnectUrl: https://example.org/.well-known/openid-configuration
+  parameters:
+    x-correlator:
+      name: x-correlator
+      in: header
+      description: Correlation id for the different services
+      schema:
+        type: string
+  headers:
+    x-correlator:
+      description: Correlation id for the different services
+      schema:
+        type: string
   schemas:
     Area:
       type: object
@@ -384,6 +401,9 @@ components:
   responses:
     Generic400:
       description: Invalid argument
+      headers:
+        x-correlator:
+          $ref: '#/components/headers/x-correlator'
       content:
         application/json:
           schema:
@@ -394,6 +414,9 @@ components:
             message: Invalid argument
     Generic401:
       description: Unauthenticated
+      headers:
+        x-correlator:
+          $ref: '#/components/headers/x-correlator'
       content:
         application/json:
           schema:
@@ -404,6 +427,9 @@ components:
             message: "Authorization failed: ..."
     Generic403:
       description: Permission denied
+      headers:
+        x-correlator:
+          $ref: '#/components/headers/x-correlator'
       content:
         application/json:
           schema:
@@ -414,6 +440,9 @@ components:
             message: "Operation not allowed: ..."
     Generic404:
       description: Not found
+      headers:
+        x-correlator:
+          $ref: '#/components/headers/x-correlator'
       content:
         application/json:
           schema:
@@ -424,6 +453,9 @@ components:
             message: "The specified resource is not found"
     Generic500:
       description: Internal server error
+      headers:
+        x-correlator:
+          $ref: '#/components/headers/x-correlator'
       content:
         application/json:
           schema:
@@ -434,6 +466,9 @@ components:
             message: "Internal server error"
     Generic503:
       description: Service unavailable
+      headers:
+        x-correlator:
+          $ref: '#/components/headers/x-correlator'
       content:
         application/json:
           schema:
