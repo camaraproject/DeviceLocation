@@ -12,7 +12,7 @@ info:
     
     * If the network's estimation of the device's location is fully contained within the requested area, the verification result is `TRUE`.
     * If the network's estimation of the device's location does not overlap with the requested area at all, the verification result is `FALSE` . 
-    * If the network's estimation of the device's location partially overlaps with the requested area, or it fully contains the requested area (because it is larger), the result is 'PARTIAL'. In this case, a `match_rate` may be included in the response, indicating an estimation of the likelihood of the match in percent.
+    * If the network's estimation of the device's location partially overlaps with the requested area, or it fully contains the requested area (because it is larger), the result is 'PARTIAL'. In this case, a `match_rate` is included in the response, indicating an estimation of the likelihood of the match in percent.
     * Lastly, the network may not be able to locate the device. In this case, the verification result is `UNKNOWN`.
 
     The client may optionally include a `maxAge` indication. If the location information known to the server is older than the specified `maxAge`, the verification result will be `UNKNOWN` and the `lastLocationTime` attribute may indicate the last available time for the device location. 
@@ -49,7 +49,7 @@ info:
   license:
     name: Apache 2.0
     url: https://www.apache.org/licenses/LICENSE-2.0.html
-  version: 0.2.0
+  version: 0.3.0-wip
 externalDocs:
   description: Product documentation at CAMARA
   url: https://github.com/camaraproject/
@@ -348,7 +348,7 @@ components:
           - `TRUE`: when the network locates the device within the requested area, 
           - `FALSE`: when the requested area does not match the area where the network locates the device,
           - `UNKNOWN`: when the network cannot locate the device,
-          - `PARTIAL`: when the requested area partially match the area where the network locates the device. A `match_rate` could be included in the response.
+          - `PARTIAL`: when the requested area partially match the area where the network locates the device. A `match_rate` is included in the response.
       type: string
       enum:
         - "TRUE"
