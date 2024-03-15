@@ -90,6 +90,8 @@ paths:
       summary: "Create a geofencing subscription for a device"
       description: Create a subscription for a device to receive notifications when a device enters or exits a specified area
       operationId: createSubscription
+      parameters:
+        - $ref: '#/components/parameters/x-correlator'
       requestBody:
         content:
           application/json:
@@ -108,6 +110,8 @@ paths:
                 Important: this endpoint is to be implemented by the API consumer.
                 The Device Location server will call this endpoint whenever a device geofencing related event occurs.
               operationId: postNotification
+              parameters:
+              - $ref: '#/components/parameters/x-correlator'
               requestBody:
                 required: true
                 content:
@@ -124,6 +128,9 @@ paths:
               responses:
                 "204":
                   description: Successful notification
+                  headers:
+                    x-correlator:
+                      $ref: '#/components/headers/x-correlator'                  
                 "400":
                   $ref: "#/components/responses/Generic400"
                 "401":
@@ -140,6 +147,9 @@ paths:
       responses:
         "201":
           description: Created (Successful creation of subscription)
+          headers:
+            x-correlator:
+              $ref: '#/components/headers/x-correlator'
           content:
             application/json:
               schema:
@@ -165,9 +175,14 @@ paths:
       summary: "Operation to retrieve a list of subscriptions."
       operationId: getSubscriptionList
       description: Operation to list subscriptions authorized to be retrieved by the provided access token.
+      parameters:
+        - $ref: '#/components/parameters/x-correlator'
       responses:
         "200":
           description: The list of subscriptions is retrieved.
+          headers:
+            x-correlator:
+              $ref: '#/components/headers/x-correlator'
           content:
             application/json:
               schema:
@@ -197,6 +212,7 @@ paths:
       operationId: getSubscription
       description: Retrieve a given subscription by ID
       parameters:
+        - $ref: '#/components/parameters/x-correlator'
         - name: subscriptionsId
           in: path
           description: Subscription identifier that was obtained from the create event subscription operation
@@ -206,6 +222,9 @@ paths:
       responses:
         "200":
           description: Contains information about Subscriptions
+          headers:
+            x-correlator:
+              $ref: '#/components/headers/x-correlator'
           content:
             application/json:
               schema:
@@ -231,7 +250,9 @@ paths:
       summary: "Operation to delete a subscription"
       operationId: deleteSubscription
       description: Delete a given subscription by ID
+
       parameters:
+        - $ref: '#/components/parameters/x-correlator'
         - name: subscriptionsId
           in: path
           description: subscription identifier
@@ -241,6 +262,9 @@ paths:
       responses:
         "204":
           description: Event subscription deleted
+          headers:
+            x-correlator:
+              $ref: '#/components/headers/x-correlator'
         "400":
           $ref: "#/components/responses/Generic400"
         "401":
@@ -262,7 +286,18 @@ components:
     openId:
       type: openIdConnect
       openIdConnectUrl: https://example.com/.well-known/openid-configuration
-
+  parameters:
+    x-correlator:
+      name: x-correlator
+      in: header
+      description: Correlation id for the different services
+      schema:
+        type: string
+  headers:
+    x-correlator:
+      description: Correlation id for the different services
+      schema:
+        type: string
   schemas:
     Area:
       type: object
@@ -702,6 +737,9 @@ components:
   responses:
     Generic400:
       description: Invalid argument
+      headers:
+        x-correlator:
+          $ref: '#/components/headers/x-correlator'
       content:
         application/json:
           schema:
@@ -713,6 +751,9 @@ components:
     
     Generic401:
       description: Unauthenticated
+      headers:
+        x-correlator:
+          $ref: '#/components/headers/x-correlator'
       content:
         application/json:
           schema:
@@ -724,6 +765,9 @@ components:
     
     Generic403:
       description: Permission denied
+      headers:
+        x-correlator:
+          $ref: '#/components/headers/x-correlator'
       content:
         application/json:
           schema:
@@ -735,6 +779,9 @@ components:
     
     Generic404:
       description: Not found
+      headers:
+        x-correlator:
+          $ref: '#/components/headers/x-correlator'
       content:
         application/json:
           schema:
@@ -746,6 +793,9 @@ components:
     
     Generic409:
       description: Conflict
+      headers:
+        x-correlator:
+          $ref: '#/components/headers/x-correlator'
       content:
         application/json:
           schema:
@@ -757,6 +807,9 @@ components:
     
     Generic500:
       description: Internal server error
+      headers:
+        x-correlator:
+          $ref: '#/components/headers/x-correlator'
       content:
         application/json:
           schema:
@@ -768,6 +821,9 @@ components:
     
     Generic503:
       description: Service unavailable
+      headers:
+        x-correlator:
+          $ref: '#/components/headers/x-correlator'
       content:
         application/json:
           schema:
@@ -776,6 +832,8 @@ components:
             status: 503
             code: UNAVAILABLE
             message: "Service unavailable"
+
+
   examples:
     REQUEST_CIRCLE_AREA_ENTERED:
       value:
