@@ -112,7 +112,8 @@ Device Location minutes: [https://github.com/camaraproject/DeviceLocation/tree/m
 
 <p>
 
-- Next call would be on **March 26th, 2024**
-- Easter week, discuss if people would be available
+- Next call would be on **April 9th, 2024**
+- **Not present in calendar?**
+
 
 <p>
