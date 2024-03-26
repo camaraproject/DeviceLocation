@@ -4,6 +4,12 @@
 
 ## Attendees
 
+Joachim Dahlgren (Ericsson)
+Cetin Alpaycetin (Vodafone)
+Akos Hunyadi (DT)
+Javier Carro Calabor (Telefonica)
+Ludovic Robert (Orange)
+Rafal Artych (DT)
   
 
 Device Location minutes: [https://github.com/camaraproject/DeviceLocation/tree/main/documentation/MeetingMinutes](https://github.com/camaraproject/DeviceLocation/tree/main/documentation/MeetingMinutes)
@@ -29,7 +35,6 @@ Device Location minutes: [https://github.com/camaraproject/DeviceLocation/tree/m
   - Discussion on this topic in progress in Commonalities (https://github.com/camaraproject/Commonalities/issues/163)
 
 
-
 ### Ongoing
 
 * [Add x-correlator as specified in the guideline](https://github.com/camaraproject/DeviceLocation/issues/160)
@@ -47,7 +52,6 @@ Device Location minutes: [https://github.com/camaraproject/DeviceLocation/tree/m
 * [Remove API from info.title](https://github.com/camaraproject/DeviceLocation/issues/169)
   - Remove API from the title
   - [Action] José will create the PR
-
 
 
 * [Implement use of linting rule set for Device Location API](https://github.com/camaraproject/DeviceLocation/issues/125)
@@ -70,6 +74,7 @@ Device Location minutes: [https://github.com/camaraproject/DeviceLocation/tree/m
 * [Geofencing API - Add Subscription type 'area-left-or-entered' to subscribe to both event in one time](https://github.com/camaraproject/DeviceLocation/issues/138)
   - New issue in Commonalities [Subscription-Issue2: Allow event consumers to subscribe to more than one event types with a single subscription](https://github.com/camaraproject/Commonalities/issues/154)
   - Waiting for Commonalities outcomes
+  - As we have several issues aroung Subscriptions and the progress on commonalities are slow we need to speed up the resolution. One proposal should be to have a cross meeting with Device Status WG as these 2 projets rely on subscriptions.
 
 * [Geofencing API - Defining a standard behavior for first event](https://github.com/camaraproject/DeviceLocation/issues/124)
   - Moved to Commonalities [Issue 140](https://github.com/camaraproject/Commonalities/issues/140)
@@ -100,7 +105,7 @@ Device Location minutes: [https://github.com/camaraproject/DeviceLocation/tree/m
       - Ludovic preference is for a separate API as for example in France this is not a request.
       - For Javier this is not a top priority for Telefonica as of now.
     - More generally probably we need to have feedback loop with GSMA team about API work (and review the priority as focus could change)
-      - Perhaps a point to be share in TSC.
+      - Done during last TSC - see here: https://wiki.camaraproject.org/display/CAM/2024-03-21+TSC+Minutes
 
 #### Behaviour when requesting too high precision
 
@@ -113,7 +118,7 @@ Device Location minutes: [https://github.com/camaraproject/DeviceLocation/tree/m
 <p>
 
 - Next call would be on **April 9th, 2024**
-- **Not present in calendar?**
+- **Not present in calendar** : Ludovic will check with José about resending a serie - we have probaly to move to LF zoom.
 
 
 <p>
