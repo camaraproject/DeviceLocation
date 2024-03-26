@@ -7,7 +7,7 @@
 Joachim Dahlgren (Ericsson)
 Cetin Alpaycetin (Vodafone)
 Akos Hunyadi (DT)
-Javier Carro Calabor (Telefonica)
+Fernando Prado Cabrillo (Telefonica)
 Ludovic Robert (Orange)
 Rafal Artych (DT)
   
@@ -58,12 +58,13 @@ Device Location minutes: [https://github.com/camaraproject/DeviceLocation/tree/m
   - New PRs: [Introducing corrections for yamllint](https://github.com/camaraproject/DeviceLocation/pull/166) and [Adding configuration for Github Actions with linting ruleset](https://github.com/camaraproject/DeviceLocation/pull/167)
   - PR#166 Rafal will regenerate the linter & once done the PR will be merge
   - PR#167: to be merged after #166
-  - Can be done offline
+  - Rafal will check if PR can be merged and will prepare what is needed.
 
 * [Add Test Definition for location Retrieval #119](https://github.com/camaraproject/DeviceLocation/pull/119/files)
   - Issue in Commonalities to discuss [Enhancement of the Testing Guidelines](https://github.com/camaraproject/Commonalities/issues/158) by TEF 
   - [Action] José propose to make an example to illustrate his proposal
   - [Action] Toyeeb to check with GSMA conformance
+  - Orange is working on the testing too and will provide feedback soon. Jose from TEF will upload an example of Location Verification ATP once the commonalities guidelines are approved
 
 * [Geofencing - Adding a value in Termination Reason value enum](https://github.com/camaraproject/DeviceLocation/issues/141)
   - Discussion in progress in Commnonalities: https://github.com/camaraproject/Commonalities/issues/153 
@@ -79,7 +80,9 @@ Device Location minutes: [https://github.com/camaraproject/DeviceLocation/tree/m
 * [Geofencing API - Defining a standard behavior for first event](https://github.com/camaraproject/DeviceLocation/issues/124)
   - Moved to Commonalities [Issue 140](https://github.com/camaraproject/Commonalities/issues/140)
   - No comments in the issue in the last 2 weeks
-  - Waiting for Commonalities outcomes
+  - Low participation in commonalities is blocking the issue for device location
+  - Ludovic proposes to have a cross meeting with Device Location and Device Status to tackle the issue
+
 
 * [Define guidelines for geofencing implementation](https://github.com/camaraproject/DeviceLocation/issues/133)
   - No new comments. 
