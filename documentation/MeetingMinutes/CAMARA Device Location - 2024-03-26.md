@@ -76,7 +76,8 @@ Device Location minutes: [https://github.com/camaraproject/DeviceLocation/tree/m
 * [Geofencing API - Add Subscription type 'area-left-or-entered' to subscribe to both event in one time](https://github.com/camaraproject/DeviceLocation/issues/138)
   - New issue in Commonalities [Subscription-Issue2: Allow event consumers to subscribe to more than one event types with a single subscription](https://github.com/camaraproject/Commonalities/issues/154)
   - Waiting for Commonalities outcomes
-  - As we have several issues aroung Subscriptions and the progress on commonalities are slow we need to speed up the resolution. One proposal should be to have a cross meeting with Device Status WG as these 2 projets rely on subscriptions.
+  - As we have several issues aroung Subscriptions and the progress on commonalities are slow we need to speed up the resolution. One proposal should be to have a cross meeting with Device Status WG as these 2 projects rely on subscriptions.
+
 
 * [Geofencing API - Defining a standard behavior for first event](https://github.com/camaraproject/DeviceLocation/issues/124)
   - Moved to Commonalities [Issue 140](https://github.com/camaraproject/Commonalities/issues/140)
