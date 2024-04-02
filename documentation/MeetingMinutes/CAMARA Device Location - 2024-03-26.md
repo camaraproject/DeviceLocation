@@ -14,7 +14,8 @@ Rafal Artych (DT)
 
 Device Location minutes: [https://github.com/camaraproject/DeviceLocation/tree/main/documentation/MeetingMinutes](https://github.com/camaraproject/DeviceLocation/tree/main/documentation/MeetingMinutes)
 
-**Important notice** : Accordinly to our Linux Foundation Gouvernance, this is the last meeting minutes in markdown in the CAMARA GitHub. Next meeting minutes will be preparted/captured directly here: https://wiki.camaraproject.org/display/CAM/Device+Location 
+**Important notice** : Accordingly to our Linux Foundation Governance, this is the last meeting minutes in markdown in the CAMARA GitHub. Next meeting minutes will be prepared/captured directly here: https://wiki.camaraproject.org/display/CAM/Device+Location 
+
 
 
 
