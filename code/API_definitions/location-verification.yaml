@@ -11,8 +11,8 @@ info:
     The verification result depends on the network's ability and accuracy to locate the device at the requested area.
 
     * If the network's estimation of the device's location is fully contained within the requested area, the verification result is `TRUE`.
-    * If the network's estimation of the device's location does not overlap with the requested area at all, the verification result is `FALSE`.
-    * If the network's estimation of the device's location partially overlaps with the requested area, or it fully contains the requested area (because it is larger), the result is 'PARTIAL'. In this case, a `match_rate` may be included in the response, indicating an estimation of the likelihood of the match in percent.
+    * If the network's estimation of the device's location does not overlap with the requested area at all, the verification result is `FALSE` . 
+    * If the network's estimation of the device's location partially overlaps with the requested area, or it fully contains the requested area (because it is larger), the result is 'PARTIAL'. In this case, a `match_rate` is included in the response, indicating an estimation of the likelihood of the match in percent.
     * Lastly, the network may not be able to locate the device. In this case, the verification result is `UNKNOWN`.
 
     The client may optionally include a `maxAge` indication. If the location information known to the server is older than the specified `maxAge`, the verification result will be `UNKNOWN` and the `lastLocationTime` attribute may indicate the last available time for the device location.
@@ -49,7 +49,7 @@ info:
   license:
     name: Apache 2.0
     url: https://www.apache.org/licenses/LICENSE-2.0.html
-  version: 0.2.0
+  version: 0.3.0-wip
 externalDocs:
   description: Product documentation at CAMARA
   url: https://github.com/camaraproject/
@@ -71,6 +71,8 @@ paths:
       description: |
         Verify whether the location of a device is within a requested area. The operation returns a verification result and, optionally, a match rate estimation for the location verification in percent.
       operationId: verifyLocation
+      parameters:
+        - $ref: '#/components/parameters/x-correlator'
       requestBody:
         required: true
         content:
@@ -108,6 +110,9 @@ paths:
       responses:
         "200":
           description: Location verification result
+          headers:
+            x-correlator:
+              $ref: '#/components/headers/x-correlator'
           content:
             application/json:
               schema:
@@ -163,6 +168,18 @@ components:
     openId:
       type: openIdConnect
       openIdConnectUrl: https://example.org/.well-known/openid-configuration
+  parameters:
+    x-correlator:
+      name: x-correlator
+      in: header
+      description: Correlation id for the different services
+      schema:
+        type: string
+  headers:
+    x-correlator:
+      description: Correlation id for the different services
+      schema:
+        type: string
   schemas:
     Area:
       type: object
@@ -284,10 +301,10 @@ components:
       minProperties: 1
 
     PhoneNumber:
-      description: A public identifier addressing a telephone subscription. In mobile networks it corresponds to the MSISDN (Mobile Station International Subscriber Directory Number). In order to be globally unique it has to be formatted in international format, according to E.164 standard, optionally prefixed with '+'.
+      description: A public identifier addressing a telephone subscription. In mobile networks it corresponds to the MSISDN (Mobile Station International Subscriber Directory Number). In order to be globally unique it has to be formatted in international format, according to E.164 standard, prefixed with '+'.
       type: string
-      pattern: '^\+?[0-9]{5,15}$'
-      example: "123456789"
+      pattern: '^\+[1-9][0-9]{4,14}$'
+      example: "+123456789"
 
     NetworkAccessIdentifier:
       description: A public identifier addressing a subscription in a mobile network. In 3GPP terminology, it corresponds to the GPSI formatted with the External Identifier ({Local Identifier}@{Domain Identifier}). Unlike the telephone number, the network access identifier is not subjected to portability ruling in force, and is individually managed by each operator.
@@ -348,7 +365,7 @@ components:
           - `TRUE`: when the network locates the device within the requested area,
           - `FALSE`: when the requested area does not match the area where the network locates the device,
           - `UNKNOWN`: when the network cannot locate the device,
-          - `PARTIAL`: when the requested area partially match the area where the network locates the device. A `match_rate` could be included in the response.
+          - `PARTIAL`: when the requested area partially match the area where the network locates the device. A `match_rate` is included in the response.
       type: string
       enum:
         - "TRUE"
@@ -384,6 +401,9 @@ components:
   responses:
     Generic400:
       description: Invalid argument
+      headers:
+        x-correlator:
+          $ref: '#/components/headers/x-correlator'
       content:
         application/json:
           schema:
@@ -394,6 +414,9 @@ components:
             message: Invalid argument
     Generic401:
       description: Unauthenticated
+      headers:
+        x-correlator:
+          $ref: '#/components/headers/x-correlator'
       content:
         application/json:
           schema:
@@ -404,6 +427,9 @@ components:
             message: "Authorization failed: ..."
     Generic403:
       description: Permission denied
+      headers:
+        x-correlator:
+          $ref: '#/components/headers/x-correlator'
       content:
         application/json:
           schema:
@@ -414,6 +440,9 @@ components:
             message: "Operation not allowed: ..."
     Generic404:
       description: Not found
+      headers:
+        x-correlator:
+          $ref: '#/components/headers/x-correlator'
       content:
         application/json:
           schema:
@@ -424,6 +453,9 @@ components:
             message: "The specified resource is not found"
     Generic500:
       description: Internal server error
+      headers:
+        x-correlator:
+          $ref: '#/components/headers/x-correlator'
       content:
         application/json:
           schema:
@@ -434,6 +466,9 @@ components:
             message: "Internal server error"
     Generic503:
       description: Service unavailable
+      headers:
+        x-correlator:
+          $ref: '#/components/headers/x-correlator'
       content:
         application/json:
           schema:
