@@ -1,6 +1,6 @@
 openapi: 3.0.3
 info:
-  title: Device geofencing API
+  title: Device Geofencing
   description: |
     API to create, retrieve and delete event subscriptions to realize geofencing for a user device.
     

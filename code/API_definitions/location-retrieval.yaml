@@ -1,6 +1,6 @@
 openapi: 3.0.3
 info:
-  title: Location retrieval API
+  title: Device Location Retrieval
   description: |
     This API provides the ability to retrieve a device location. 
 

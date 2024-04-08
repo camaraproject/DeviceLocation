@@ -1,6 +1,6 @@
 openapi: 3.0.3
 info:
-  title: Device location verification API
+  title: Device Location Verification
   description: |
     This API provides the customer with the ability to verify the location of a device. 
 
