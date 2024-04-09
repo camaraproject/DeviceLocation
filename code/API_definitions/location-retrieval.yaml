@@ -2,22 +2,22 @@ openapi: 3.0.3
 info:
   title: Location retrieval API
   description: |
-    This API provides the ability to retrieve a device location. 
+    This API provides the ability to retrieve a device location.
 
     # Introduction
 
-    With this API, customers can retrieve the area where a certain user device is localized. 
+    With this API, customers can retrieve the area where a certain user device is localized.
     The area provided in the response could be described:
-    -  by a circle determined by coordinates (latitude and longitude) and a radius. 
+    -  by a circle determined by coordinates (latitude and longitude) and a radius.
     -  by a simple polygon delimited by segments connecting consecutively an array of coordinates (points). The last point connects to the first point to delimit a closed shape bounded with straight sides.
 
     The retrieved shape depends on the network conditions at the subscriber's location and any of the supported shapes could be received.
-    
+
     The requester could optionally ask for a freshness of the localization information by providing a maxAge ("I want a location not older than 600 seconds")
 
-    The result accuracy depends on the network's ability and accuracy to locate the device. 
-    
-    Additionally to location information, the answer will also provide indication about the location time. 
+    The result accuracy depends on the network's ability and accuracy to locate the device.
+
+    Additionally to location information, the answer will also provide indication about the location time.
 
     Location retrieval API could be useful in scenarios such as:
 
@@ -51,7 +51,7 @@ info:
 
     # Further info and support
 
-    (FAQs will be added in a later version of the documentation)    
+    (FAQs will be added in a later version of the documentation)
   termsOfService: http://swagger.io/terms/
   contact:
     email: project-email@sample.com
@@ -119,7 +119,7 @@ paths:
           $ref: '#/components/responses/Generic503'
       security:
         - openId:
-          - location-retrieval:read
+            - location-retrieval:read
 
 components:
   securitySchemes:
@@ -229,8 +229,6 @@ components:
       format: ipv6
       example: 2001:db8:85a3:8d3:1319:8a2e:370:7344
 
-
-
     Location:
       type: object
       description: Device location
@@ -238,13 +236,13 @@ components:
         - lastLocationTime
         - area
       properties:
-        lastLocationTime: 
+        lastLocationTime:
           description: Last date and time when the device was localized. It must follow RFC 3339 and must have time zone. Recommended format is yyyy-MM-dd'T'HH:mm:ss.SSSZ (i.e. which allows 2023-07-03T14:27:08.312+02:00 or 2023-07-03T12:27:08.312Z)
           type: string
           format: date-time
         area:
           $ref: '#/components/schemas/Area'
-        
+
     Area:
       type: object
       properties:
@@ -270,14 +268,14 @@ components:
 
     Circle:
       description: Circular area
-      allOf: 
+      allOf:
         - $ref: "#/components/schemas/Area"
         - type: object
           required:
             - center
             - radius
           properties:
-            center: 
+            center:
               $ref: "#/components/schemas/Point"
             radius:
               type: number
@@ -304,15 +302,15 @@ components:
     Point:
       type: object
       description: Coordinates (latitude, longitude) defining a location in a map
-      required: 
+      required:
         - latitude
         - longitude
-      properties: 
+      properties:
         latitude:
           $ref: "#/components/schemas/Latitude"
         longitude:
           $ref: "#/components/schemas/Longitude"
-      example: 
+      example:
         latitude: 50.735851
         longitude: 7.10066
 
@@ -322,7 +320,7 @@ components:
       format: double
       minimum: -90
       maximum: 90
-  
+
     Longitude:
       description: Longitude component of location
       type: number
@@ -440,7 +438,7 @@ components:
         lastLocationTime: 2023-10-17T13:18:23.682Z
         area:
           areaType: CIRCLE
-          center: 
+          center:
             latitude: 45.754114
             longitude: 4.860374
           radius: 800

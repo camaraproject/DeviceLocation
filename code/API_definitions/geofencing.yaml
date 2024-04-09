@@ -3,49 +3,49 @@ info:
   title: Device geofencing API
   description: |
     API to create, retrieve and delete event subscriptions to realize geofencing for a user device.
-    
+
     # Introduction
-    
+
     With this API, customers can create subscriptions for their devices to receive notifications when a device enters or exits a specified area.
-    
-    The area provided in the request is described by a circle determined by coordinates (latitude and longitude) and an accuracy defined by the radius. 
-    
+
+    The area provided in the request is described by a circle determined by coordinates (latitude and longitude) and an accuracy defined by the radius.
+
     Upon successfully creating a subscription, the API will provide an Event Subscription ID, and it will indicate the subscription's expiration date.
-    
+
     If the geofencing-state of a device changes, the event subscriber will be notified back to the provided Notification-Url given by the subscription-request.
-    
+
     Device geofencing API could be useful in scenarios such as:
-    
-    - Tracking devices for Presetting of Home-Settings 
+
+    - Tracking devices for Presetting of Home-Settings
     - Tracking of logistics
-    
+
     # Relevant terms and definitions
-    
+
     * **Device**: A device refers to any physical entity that can connect to a network and participate in network communication.
-    
+
     * **Area**: It specifies the geographical surface which a device is planned to enter or exit.
-    
+
     # API Functionality
-    
+
     The API exposes following capabilities:
-    
+
     ## Device Geofencing subscription
-    These endpoints allow to manage event subscription on geofencing device location event. 
-    
+    These endpoints allow to manage event subscription on geofencing device location event.
+
     The CAMARA subscription model is detailed in the CAMARA API design guideline document and follows CloudEvents specification.
 
-    It is mandatory in the subscription to provide the event `type` for which the client would like to subscribe.  
-    
+    It is mandatory in the subscription to provide the event `type` for which the client would like to subscribe.
+
     Following event ``type`` are managed for this API:
       - ``org.camaraproject.geofencing.v0.area-entered``  - Event triggered when the device enters the given area
-    
+
       - ``org.camaraproject.geofencing.v0.area-left``     - Event triggered when the device leaves the given area
-    
-    Note: Additionally to these list, ``org.camaraproject.geofencing.v0.subscription-ends`` notification `type` is sent when the subscription ends. 
-    This notification does not require dedicated subscription. 
+
+    Note: Additionally to these list, ``org.camaraproject.geofencing.v0.subscription-ends`` notification `type` is sent when the subscription ends.
+    This notification does not require dedicated subscription.
 
     It is used when:
-      - the subscription expire time (optionally set by the requester) has been reached 
+      - the subscription expire time (optionally set by the requester) has been reached
       - the maximum number of subscription events (optionally set by the requester) has been reached
       - the API server has to stop sending notification prematurely
 
@@ -55,11 +55,11 @@ info:
 
     _**WARNING**: This callback endpoint must be exposed on the consumer side as `POST /{$request.body#/webhook/notificationUrl}`.
       Developers may provide a callback URL on which notifications regarding geofencing can be received from the service provider.
-      If an event occurs the application will send events to the provided webhook - 'notificationUrl'._ 
-    
+      If an event occurs the application will send events to the provided webhook - 'notificationUrl'._
+
     # Further info and support
-    
-    (FAQs will be added in a later version of the documentation)    
+
+    (FAQs will be added in a later version of the documentation)
 
   termsOfService: http://swagger.io/terms/
   contact:
@@ -111,7 +111,7 @@ paths:
                 The Device Location server will call this endpoint whenever a device geofencing related event occurs.
               operationId: postNotification
               parameters:
-              - $ref: '#/components/parameters/x-correlator'
+                - $ref: '#/components/parameters/x-correlator'
               requestBody:
                 required: true
                 content:
@@ -130,7 +130,7 @@ paths:
                   description: Successful notification
                   headers:
                     x-correlator:
-                      $ref: '#/components/headers/x-correlator'                  
+                      $ref: '#/components/headers/x-correlator'
                 "400":
                   $ref: "#/components/responses/Generic400"
                 "401":
@@ -503,7 +503,7 @@ components:
       type: string
       description: |
         area-entered - Event triggered when the device enters the given area
-        
+
         area-left - Event triggered when the device leaves the given area
       enum:
         - org.camaraproject.geofencing.v0.area-entered
@@ -513,9 +513,9 @@ components:
       type: string
       description: |
         area-entered - Event triggered when the device enters the given area
-        
+
         area-left - Event triggered when the device leaves the given area
-        
+
         subscription-ends - Event triggered when the subscription ends
       enum:
         - org.camaraproject.geofencing.v0.area-entered
@@ -542,9 +542,9 @@ components:
           $ref: "#/components/schemas/SubscriptionDetail"
         subscriptionExpireTime:
           type: string
-          format: date-time         
-          description: The date time when the location-tracking has to be terminated. 
-            It must follow [RFC 3339](https://datatracker.ietf.org/doc/html/rfc3339#section-5.6) and must have time zone. 
+          format: date-time
+          description: The date time when the location-tracking has to be terminated.
+            It must follow [RFC 3339](https://datatracker.ietf.org/doc/html/rfc3339#section-5.6) and must have time zone.
             Recommended format is yyyy-MM-dd'T'HH:mm:ss.SSSZ (i.e. which allows 2023-07-03T14:27:08.312+02:00 or 2023-07-03T12:27:08.312Z)
         subscriptionMaxEvents:
           type: integer
@@ -568,26 +568,26 @@ components:
               type: string
               format: date-time
               description: The date time when the subscription started.
-                It must follow [RFC 3339](https://datatracker.ietf.org/doc/html/rfc3339#section-5.6) and must have time zone. 
+                It must follow [RFC 3339](https://datatracker.ietf.org/doc/html/rfc3339#section-5.6) and must have time zone.
                 Recommended format is yyyy-MM-dd'T'HH:mm:ss.SSSZ (i.e. which allows 2023-07-03T14:27:08.312+02:00 or 2023-07-03T12:27:08.312Z)
             expiresAt:
               type: string
               format: date-time
-              description: The date time when the subscription will expire or expired.                
-                It must follow [RFC 3339](https://datatracker.ietf.org/doc/html/rfc3339#section-5.6) and must have time zone. 
+              description: The date time when the subscription will expire or expired.
+                It must follow [RFC 3339](https://datatracker.ietf.org/doc/html/rfc3339#section-5.6) and must have time zone.
                 Recommended format is yyyy-MM-dd'T'HH:mm:ss.SSSZ (i.e. which allows 2023-07-03T14:27:08.312+02:00 or 2023-07-03T12:27:08.312Z)
           required:
-            - subscriptionId   
+            - subscriptionId
 
     EventTime:
       format: date-time
       type: string
       description: |
-        Timestamp of when the occurrence happened. 
-        If the time of the occurrence cannot be determined then this attribute MAY be set to some other time (such as the current time) by the CloudEvents producer, 
-        however all producers for the same source MUST be consistent in this respect. In other words, 
-        either they all use the actual time of the occurrence or they all use the same algorithm to determine the value used. 
-        It must follow [RFC 3339](https://datatracker.ietf.org/doc/html/rfc3339#section-5.6) and must have time zone. 
+        Timestamp of when the occurrence happened.
+        If the time of the occurrence cannot be determined then this attribute MAY be set to some other time (such as the current time) by the CloudEvents producer,
+        however all producers for the same source MUST be consistent in this respect. In other words,
+        either they all use the actual time of the occurrence or they all use the same algorithm to determine the value used.
+        It must follow [RFC 3339](https://datatracker.ietf.org/doc/html/rfc3339#section-5.6) and must have time zone.
         Recommended format is yyyy-MM-dd'T'HH:mm:ss.SSSZ (i.e. which allows 2023-07-03T14:27:08.312+02:00 or 2023-07-03T12:27:08.312Z)
 
     CloudEvent:
@@ -748,7 +748,7 @@ components:
             status: 400
             code: INVALID_ARGUMENT
             message: "Invalid argument"
-    
+
     Generic401:
       description: Unauthenticated
       headers:
@@ -762,7 +762,7 @@ components:
             status: 401
             code: UNAUTHENTICATED
             message: "Authorization failed: ..."
-    
+
     Generic403:
       description: Permission denied
       headers:
@@ -776,7 +776,7 @@ components:
             status: 403
             code: PERMISSION_DENIED
             message: "Operation not allowed: ..."
-    
+
     Generic404:
       description: Not found
       headers:
@@ -790,7 +790,7 @@ components:
             status: 404
             code: NOT_FOUND
             message: "The specified resource is not found"
-    
+
     Generic409:
       description: Conflict
       headers:
@@ -804,7 +804,7 @@ components:
             status: 409
             code: Conflict
             message: "There is conflict in the request"
-    
+
     Generic500:
       description: Internal server error
       headers:
@@ -818,7 +818,7 @@ components:
             status: 500
             code: INTERNAL
             message: "Internal server error"
-    
+
     Generic503:
       description: Service unavailable
       headers:
