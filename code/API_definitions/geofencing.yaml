@@ -842,7 +842,7 @@ components:
           notificationAuthToken: c8974e592c2fa383d4a3960714
         subscriptionDetail:
           device:
-            phoneNumber: +12345678912
+            phoneNumber: "+12345678912"
           area:
             areaType: CIRCLE
             center:
