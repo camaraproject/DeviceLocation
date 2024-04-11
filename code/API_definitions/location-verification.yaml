@@ -49,7 +49,7 @@ info:
   license:
     name: Apache 2.0
     url: https://www.apache.org/licenses/LICENSE-2.0.html
-  version: 0.3.0-wip
+  version: test
 externalDocs:
   description: Product documentation at CAMARA
   url: https://github.com/camaraproject/
@@ -62,7 +62,7 @@ servers:
 tags:
   - name: Location verification
     description: Verification the location of a device
-paths:
+paths_:
   /verify:
     post:
       tags:
