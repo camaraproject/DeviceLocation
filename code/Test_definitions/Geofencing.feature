@@ -30,7 +30,7 @@ Feature: Operations to manage event subscription on geofencing events for leavin
     When they create subscription
     Then Response code is 201
 
-  @geofencing_02_Operation_to_retrieve_list_of_subscriptions.--Not yet implemented
+  @geofencing_02_Operation_to_retrieve_list_of_subscriptions
   Scenario: Get a list of subscriptions.
     Given they use the geofencing url
     When they get all subscriptions
