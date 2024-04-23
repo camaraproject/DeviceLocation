@@ -13,7 +13,7 @@ info:
 
     The retrieved shape depends on the network conditions at the subscriber's location and any of the supported shapes could be received.
 
-    The requester could optionally ask for a freshness of the localization information by providing a maxAge ("I want a location not older than 600 seconds")
+    The requester could optionally ask for a freshness of the localization information by providing a maxAge ("I want a location not older than 600 seconds").
 
     The result accuracy depends on the network's ability and accuracy to locate the device.
 
@@ -36,6 +36,10 @@ info:
     * **Area**: It specifies the geographical surface where a device may be physically located.
 
     * **Max Age**: Maximum age of the location information which is accepted for the location retrieval (in seconds).
+
+      * Absence of maxAge means "any age" is acceptable for the client. In other words, this is like maxAge=infinite
+      * maxAge=0 means a fresh calculation is requested by the client. 
+      If the system does not support it, or fresh location cannot be calculated at that time for any reason, the API response will be "unknown". 
 
     * **Last Location Time** : Last date and time when the device was localized.
 
@@ -146,8 +150,7 @@ components:
           $ref: '#/components/schemas/Device'
         maxAge:
           type: integer
-          description: Maximum age of the location information which is accepted for the location retrieval (in seconds)
-          minimum: 60
+          description: Maximum age of the location information which is accepted for the location retrieval (in seconds). Absence of maxAge means "any age" and maxAge=0 means a fresh calculation.
       required:
         - device
 
