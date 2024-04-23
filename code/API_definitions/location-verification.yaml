@@ -34,10 +34,10 @@ info:
  
 
      * **Max Age**: Maximum age of the location information which is accepted for the location verification (in seconds).
-    
+     
         * Absence of maxAge means "any age" is acceptable for the client. In other words, this is like maxAge=infinite
-        * maxAge=0 means a fresh calculation is requested by the client. 
-          If the system does not support it, or fresh location cannot be checked at that time for any reason, the API response will be "unknown". 
+        * maxAge=0 means a fresh calculation is requested by the client.
+          If the system does not support it, or fresh location cannot be checked at that time for any reason, the API response will be "unknown".
 
 
     * **Verification**: Process triggered in the API server to confirm or contradict the expectation assumed by the API client about the device location.
