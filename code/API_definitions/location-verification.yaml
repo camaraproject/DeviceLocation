@@ -31,7 +31,6 @@ info:
     * **Device**: A device refers to any physical entity that can connect to a network and participate in network communication.
 
     * **Area**: It specifies the geographical surface where a device may be physically located.
- 
 
      * **Max Age**: Maximum age of the location information which is accepted for the location verification (in seconds).
      
