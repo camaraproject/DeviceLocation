@@ -1,23 +1,23 @@
 openapi: 3.0.3
 info:
-  title: Location retrieval API
+  title: Device Location Retrieval
   description: |
-    This API provides the ability to retrieve a device location. 
+    This API provides the ability to retrieve a device location.
 
     # Introduction
 
-    With this API, customers can retrieve the area where a certain user device is localized. 
+    With this API, customers can retrieve the area where a certain user device is localized.
     The area provided in the response could be described:
-    -  by a circle determined by coordinates (latitude and longitude) and a radius. 
+    -  by a circle determined by coordinates (latitude and longitude) and a radius.
     -  by a simple polygon delimited by segments connecting consecutively an array of coordinates (points). The last point connects to the first point to delimit a closed shape bounded with straight sides.
 
     The retrieved shape depends on the network conditions at the subscriber's location and any of the supported shapes could be received.
-    
+
     The requester could optionally ask for a freshness of the localization information by providing a maxAge ("I want a location not older than 600 seconds")
 
-    The result accuracy depends on the network's ability and accuracy to locate the device. 
-    
-    Additionally to location information, the answer will also provide indication about the location time. 
+    The result accuracy depends on the network's ability and accuracy to locate the device.
+
+    Additionally to location information, the answer will also provide indication about the location time.
 
     Location retrieval API could be useful in scenarios such as:
 
@@ -51,14 +51,14 @@ info:
 
     # Further info and support
 
-    (FAQs will be added in a later version of the documentation)    
+    (FAQs will be added in a later version of the documentation)
   termsOfService: http://swagger.io/terms/
   contact:
     email: project-email@sample.com
   license:
     name: Apache 2.0
     url: https://www.apache.org/licenses/LICENSE-2.0.html
-  version: 0.1.0-rc2
+  version: 0.2.0-wip
 externalDocs:
   description: Product documentation at Camara
   url: https://github.com/camaraproject/
@@ -70,13 +70,20 @@ servers:
         default: http://localhost:9091
         description: API root
 
+tags:
+  - name: Location retrieval
+    description: Retrieve the location of a device
+
 paths:
   /retrieve:
     post:
       tags:
         - Location retrieval
       summary: 'Execute location retrieval for a user equipment'
+      description: Retrieve the area where a certain user device is localized.
       operationId: retrieveLocation
+      parameters:
+        - $ref: '#/components/parameters/x-correlator'
       requestBody:
         content:
           application/json:
@@ -86,6 +93,9 @@ paths:
       responses:
         '200':
           description: Location retrieval result
+          headers:
+            x-correlator:
+              $ref: '#/components/headers/x-correlator'
           content:
             application/json:
               schema:
@@ -109,13 +119,25 @@ paths:
           $ref: '#/components/responses/Generic503'
       security:
         - openId:
-          - location-retrieval:read
+            - location-retrieval:read
 
 components:
   securitySchemes:
     openId:
       type: openIdConnect
       openIdConnectUrl: https://example.com/.well-known/openid-configuration
+  parameters:
+    x-correlator:
+      name: x-correlator
+      in: header
+      description: Correlation id for the different services
+      schema:
+        type: string
+  headers:
+    x-correlator:
+      description: Correlation id for the different services
+      schema:
+        type: string
   schemas:
     RetrievalLocationRequest:
       type: object
@@ -154,10 +176,10 @@ components:
       minProperties: 1
 
     PhoneNumber:
-      description: A public identifier addressing a telephone subscription. In mobile networks it corresponds to the MSISDN (Mobile Station International Subscriber Directory Number). In order to be globally unique it has to be formatted in international format, according to E.164 standard, optionally prefixed with '+'.
+      description: A public identifier addressing a telephone subscription. In mobile networks it corresponds to the MSISDN (Mobile Station International Subscriber Directory Number). In order to be globally unique it has to be formatted in international format, according to E.164 standard, prefixed with '+'.
       type: string
-      pattern: '^\+?[0-9]{5,15}$'
-      example: "123456789"
+      pattern: '^\+[1-9][0-9]{4,14}$'
+      example: "+123456789"
 
     NetworkAccessIdentifier:
       description: A public identifier addressing a subscription in a mobile network. In 3GPP terminology, it corresponds to the GPSI formatted with the External Identifier ({Local Identifier}@{Domain Identifier}). Unlike the telephone number, the network access identifier is not subjected to portability ruling in force, and is individually managed by each operator.
@@ -207,8 +229,6 @@ components:
       format: ipv6
       example: 2001:db8:85a3:8d3:1319:8a2e:370:7344
 
-
-
     Location:
       type: object
       description: Device location
@@ -216,13 +236,13 @@ components:
         - lastLocationTime
         - area
       properties:
-        lastLocationTime: 
+        lastLocationTime:
           description: Last date and time when the device was localized. It must follow RFC 3339 and must have time zone. Recommended format is yyyy-MM-dd'T'HH:mm:ss.SSSZ (i.e. which allows 2023-07-03T14:27:08.312+02:00 or 2023-07-03T12:27:08.312Z)
           type: string
           format: date-time
         area:
           $ref: '#/components/schemas/Area'
-        
+
     Area:
       type: object
       properties:
@@ -248,14 +268,14 @@ components:
 
     Circle:
       description: Circular area
-      allOf: 
+      allOf:
         - $ref: "#/components/schemas/Area"
         - type: object
           required:
             - center
             - radius
           properties:
-            center: 
+            center:
               $ref: "#/components/schemas/Point"
             radius:
               type: number
@@ -282,15 +302,15 @@ components:
     Point:
       type: object
       description: Coordinates (latitude, longitude) defining a location in a map
-      required: 
+      required:
         - latitude
         - longitude
-      properties: 
+      properties:
         latitude:
           $ref: "#/components/schemas/Latitude"
         longitude:
           $ref: "#/components/schemas/Longitude"
-      example: 
+      example:
         latitude: 50.735851
         longitude: 7.10066
 
@@ -300,7 +320,7 @@ components:
       format: double
       minimum: -90
       maximum: 90
-  
+
     Longitude:
       description: Longitude component of location
       type: number
@@ -329,6 +349,9 @@ components:
       description: |-
         Problem with the client request. In addition to regular scenario of `INVALID_ARGUMENT`, another scenarios may exist:
           - maxAge threshold cannot be satisfied
+      headers:
+        x-correlator:
+          $ref: '#/components/headers/x-correlator'
       content:
         application/json:
           schema:
@@ -346,6 +369,9 @@ components:
                 message: "maxAge threshold cannot be satisfied"
     Generic401:
       description: Unauthenticated
+      headers:
+        x-correlator:
+          $ref: '#/components/headers/x-correlator'
       content:
         application/json:
           schema:
@@ -356,6 +382,9 @@ components:
             message: "Authorization failed: ..."
     Generic403:
       description: Permission denied
+      headers:
+        x-correlator:
+          $ref: '#/components/headers/x-correlator'
       content:
         application/json:
           schema:
@@ -366,6 +395,9 @@ components:
             message: "Operation not allowed: ..."
     Generic404:
       description: Not found
+      headers:
+        x-correlator:
+          $ref: '#/components/headers/x-correlator'
       content:
         application/json:
           schema:
@@ -376,6 +408,9 @@ components:
             message: 'The specified resource is not found'
     Generic500:
       description: Internal server error
+      headers:
+        x-correlator:
+          $ref: '#/components/headers/x-correlator'
       content:
         application/json:
           schema:
@@ -386,6 +421,9 @@ components:
             message: "Internal server error"
     Generic503:
       description: Service unavailable
+      headers:
+        x-correlator:
+          $ref: '#/components/headers/x-correlator'
       content:
         application/json:
           schema:
@@ -400,7 +438,7 @@ components:
         lastLocationTime: 2023-10-17T13:18:23.682Z
         area:
           areaType: CIRCLE
-          center: 
+          center:
             latitude: 45.754114
             longitude: 4.860374
           radius: 800

@@ -1,21 +1,21 @@
 openapi: 3.0.3
 info:
-  title: Device location verification API
+  title: Device Location Verification
   description: |
-    This API provides the customer with the ability to verify the location of a device. 
+    This API provides the customer with the ability to verify the location of a device.
 
     # Introduction
 
     Customers are able to verify whether the location of certain user device is within the area specified. Currently the only area supported as input is a circle determined by the a set of coordinates (latitude and longitude) and some expected accuracy (radius).
 
-    The verification result depends on the network's ability and accuracy to locate the device at the requested area. 
-    
+    The verification result depends on the network's ability and accuracy to locate the device at the requested area.
+
     * If the network's estimation of the device's location is fully contained within the requested area, the verification result is `TRUE`.
-    * If the network's estimation of the device's location does not overlap with the requested area at all, the verification result is `FALSE` . 
-    * If the network's estimation of the device's location partially overlaps with the requested area, or it fully contains the requested area (because it is larger), the result is 'PARTIAL'. In this case, a `match_rate` may be included in the response, indicating an estimation of the likelihood of the match in percent.
+    * If the network's estimation of the device's location does not overlap with the requested area at all, the verification result is `FALSE`.
+    * If the network's estimation of the device's location partially overlaps with the requested area, or it fully contains the requested area (because it is larger), the result is 'PARTIAL'. In this case, a `match_rate` is included in the response, indicating an estimation of the likelihood of the match in percent.
     * Lastly, the network may not be able to locate the device. In this case, the verification result is `UNKNOWN`.
 
-    The client may optionally include a `maxAge` indication. If the location information known to the server is older than the specified `maxAge`, the verification result will be `UNKNOWN` and the `lastLocationTime` attribute may indicate the last available time for the device location. 
+    The client may optionally include a `maxAge` indication. If the location information known to the server is older than the specified `maxAge`, the verification result will be `UNKNOWN` and the `lastLocationTime` attribute may indicate the last available time for the device location.
 
     `lastLocationTime` will be always included in the response unless there is no historical location information available for the device. In this case, `UNKNOWN` will be returned without `lastLocationTime`.
 
@@ -42,14 +42,14 @@ info:
 
     # Further info and support
 
-    (FAQs will be added in a later version of the documentation)    
+    (FAQs will be added in a later version of the documentation)
   termsOfService: http://swagger.io/terms/
   contact:
     email: project-email@sample.com
   license:
     name: Apache 2.0
     url: https://www.apache.org/licenses/LICENSE-2.0.html
-  version: 0.2.0-rc2
+  version: 0.3.0-wip
 externalDocs:
   description: Product documentation at CAMARA
   url: https://github.com/camaraproject/
@@ -60,17 +60,19 @@ servers:
         default: http://localhost:9091
         description: API root
 tags:
-  - name: Location Verification
+  - name: Location verification
     description: Verification the location of a device
 paths:
   /verify:
     post:
       tags:
-        - Location Verification
+        - Location verification
       summary: Verify the location of a device
       description: |
         Verify whether the location of a device is within a requested area. The operation returns a verification result and, optionally, a match rate estimation for the location verification in percent.
       operationId: verifyLocation
+      parameters:
+        - $ref: '#/components/parameters/x-correlator'
       requestBody:
         required: true
         content:
@@ -108,11 +110,14 @@ paths:
       responses:
         "200":
           description: Location verification result
+          headers:
+            x-correlator:
+              $ref: '#/components/headers/x-correlator'
           content:
             application/json:
               schema:
                 $ref: "#/components/schemas/VerifyLocationResponse"
-              examples: 
+              examples:
                 VERIFICATION_TRUE:
                   summary: Match
                   description: The network locates the device within the requested area
@@ -124,7 +129,7 @@ paths:
                   description: The requested area does not match the area where the network locates the device
                   value:
                     verificationResult: "FALSE"
-                    lastLocationTime: 2023-09-07T10:40:52Z 
+                    lastLocationTime: 2023-09-07T10:40:52Z
                 VERIFICATION_UNKNOWN_WITH_LAST_LOCATION_TIME:
                   summary: Unknown with last location time
                   description: The network cannot locate the device after the requested maxAge
@@ -133,14 +138,14 @@ paths:
                     lastLocationTime: 2023-09-07T10:40:52Z
                 VERIFICATION_UNKNOWN_WITHOUT_LAST_LOCATION_TIME:
                   summary: Unknown without last location time
-                  description: The network cannot locate the device and there is no history available 
+                  description: The network cannot locate the device and there is no history available
                   value:
                     verificationResult: "UNKNOWN"
                 VERIFICATION_PARTIAL:
                   summary: Partial match
                   description: The requested area partially matches the area where the network locates the device
                   value:
-                    verificationResult: "PARTIAL" 
+                    verificationResult: "PARTIAL"
                     matchRate: 74
                     lastLocationTime: 2023-09-07T10:40:52Z
         "400":
@@ -157,12 +162,24 @@ paths:
           $ref: "#/components/responses/Generic503"
       security:
         - openId:
-          - location-verification:verify
+            - location-verification:verify
 components:
   securitySchemes:
     openId:
       type: openIdConnect
       openIdConnectUrl: https://example.org/.well-known/openid-configuration
+  parameters:
+    x-correlator:
+      name: x-correlator
+      in: header
+      description: Correlation id for the different services
+      schema:
+        type: string
+  headers:
+    x-correlator:
+      description: Correlation id for the different services
+      schema:
+        type: string
   schemas:
     Area:
       type: object
@@ -209,15 +226,15 @@ components:
     Point:
       type: object
       description: Coordinates (latitude, longitude) defining a location in a map
-      required: 
+      required:
         - latitude
         - longitude
-      properties: 
+      properties:
         latitude:
           $ref: "#/components/schemas/Latitude"
         longitude:
           $ref: "#/components/schemas/Longitude"
-      example: 
+      example:
         latitude: 50.735851
         longitude: 7.10066
     Latitude:
@@ -226,14 +243,14 @@ components:
       format: double
       minimum: -90
       maximum: 90
-      example: 50.735851      
+      example: 50.735851
     Longitude:
       description: Longitude component of location
       type: number
       format: double
       minimum: -180
       maximum: 180
-      example: 7.10066        
+      example: 7.10066
     VerifyLocationRequest:
       type: object
       properties:
@@ -284,10 +301,10 @@ components:
       minProperties: 1
 
     PhoneNumber:
-      description: A public identifier addressing a telephone subscription. In mobile networks it corresponds to the MSISDN (Mobile Station International Subscriber Directory Number). In order to be globally unique it has to be formatted in international format, according to E.164 standard, optionally prefixed with '+'.
+      description: A public identifier addressing a telephone subscription. In mobile networks it corresponds to the MSISDN (Mobile Station International Subscriber Directory Number). In order to be globally unique it has to be formatted in international format, according to E.164 standard, prefixed with '+'.
       type: string
-      pattern: '^\+?[0-9]{5,15}$'
-      example: "123456789"
+      pattern: '^\+[1-9][0-9]{4,14}$'
+      example: "+123456789"
 
     NetworkAccessIdentifier:
       description: A public identifier addressing a subscription in a mobile network. In 3GPP terminology, it corresponds to the GPSI formatted with the External Identifier ({Local Identifier}@{Domain Identifier}). Unlike the telephone number, the network access identifier is not subjected to portability ruling in force, and is individually managed by each operator.
@@ -336,7 +353,7 @@ components:
       type: string
       format: ipv6
       example: 2001:db8:85a3:8d3:1319:8a2e:370:7344
-      
+
     MaxAge:
       description: The maximum age (in seconds) of the available location, which is accepted for the verification.
       type: integer
@@ -345,10 +362,10 @@ components:
     VerificationResult:
       description: |
         Result of a verification request:
-          - `TRUE`: when the network locates the device within the requested area, 
+          - `TRUE`: when the network locates the device within the requested area,
           - `FALSE`: when the requested area does not match the area where the network locates the device,
           - `UNKNOWN`: when the network cannot locate the device,
-          - `PARTIAL`: when the requested area partially match the area where the network locates the device. A `match_rate` could be included in the response.
+          - `PARTIAL`: when the requested area partially match the area where the network locates the device. A `match_rate` is included in the response.
       type: string
       enum:
         - "TRUE"
@@ -384,6 +401,9 @@ components:
   responses:
     Generic400:
       description: Invalid argument
+      headers:
+        x-correlator:
+          $ref: '#/components/headers/x-correlator'
       content:
         application/json:
           schema:
@@ -394,6 +414,9 @@ components:
             message: Invalid argument
     Generic401:
       description: Unauthenticated
+      headers:
+        x-correlator:
+          $ref: '#/components/headers/x-correlator'
       content:
         application/json:
           schema:
@@ -404,6 +427,9 @@ components:
             message: "Authorization failed: ..."
     Generic403:
       description: Permission denied
+      headers:
+        x-correlator:
+          $ref: '#/components/headers/x-correlator'
       content:
         application/json:
           schema:
@@ -414,6 +440,9 @@ components:
             message: "Operation not allowed: ..."
     Generic404:
       description: Not found
+      headers:
+        x-correlator:
+          $ref: '#/components/headers/x-correlator'
       content:
         application/json:
           schema:
@@ -424,6 +453,9 @@ components:
             message: "The specified resource is not found"
     Generic500:
       description: Internal server error
+      headers:
+        x-correlator:
+          $ref: '#/components/headers/x-correlator'
       content:
         application/json:
           schema:
@@ -434,6 +466,9 @@ components:
             message: "Internal server error"
     Generic503:
       description: Service unavailable
+      headers:
+        x-correlator:
+          $ref: '#/components/headers/x-correlator'
       content:
         application/json:
           schema:

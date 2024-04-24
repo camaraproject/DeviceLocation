@@ -1,49 +1,53 @@
 openapi: 3.0.3
 info:
-  title: Device geofencing API
+  title: Device Geofencing
   description: |
     API to create, retrieve and delete event subscriptions to realize geofencing for a user device.
-    
+
     # Introduction
-    
+
     With this API, customers can create subscriptions for their devices to receive notifications when a device enters or exits a specified area.
-    
-    The area provided in the request is described by a circle determined by coordinates (latitude and longitude) and an accuracy defined by the radius. 
-    
+
+    The area provided in the request is described by a circle determined by coordinates (latitude and longitude) and an accuracy defined by the radius.
+
     Upon successfully creating a subscription, the API will provide an Event Subscription ID, and it will indicate the subscription's expiration date.
-    
+
     If the geofencing-state of a device changes, the event subscriber will be notified back to the provided Notification-Url given by the subscription-request.
-    
+
     Device geofencing API could be useful in scenarios such as:
-    
-    - Tracking devices for Presetting of Home-Settings 
+
+    - Tracking devices for Presetting of Home-Settings
     - Tracking of logistics
-    
+
     # Relevant terms and definitions
-    
+
     * **Device**: A device refers to any physical entity that can connect to a network and participate in network communication.
-    
+
     * **Area**: It specifies the geographical surface which a device is planned to enter or exit.
-    
+
     # API Functionality
-    
+
     The API exposes following capabilities:
-    
+
     ## Device Geofencing subscription
-    These endpoints allow to manage event subscription on geofencing device location event. 
-    
+    These endpoints allow to manage event subscription on geofencing device location event.
+
     The CAMARA subscription model is detailed in the CAMARA API design guideline document and follows CloudEvents specification.
 
-    It is mandatory in the subscription to provide the event `type` for which the client would like to subscribe.  
-    
+    It is mandatory in the subscription to provide the event `type` for which the client would like to subscribe.
+
     Following event ``type`` are managed for this API:
       - ``org.camaraproject.geofencing.v0.area-entered``  - Event triggered when the device enters the given area
-    
+
       - ``org.camaraproject.geofencing.v0.area-left``     - Event triggered when the device leaves the given area
-    
-    Note: Additionally to these list, ``org.camaraproject.geofencing.v0.subscription-ends`` notification `type` is sent when the subscription ends. 
-    This notification did not requires dedicated subscription. 
-    It is used when the subscription expire time (required by the requester) has been reached or if the API server has to stop sending notification prematurely. 
+
+    Note: Additionally to these list, ``org.camaraproject.geofencing.v0.subscription-ends`` notification `type` is sent when the subscription ends.
+    This notification does not require dedicated subscription.
+
+    It is used when:
+      - the subscription expire time (optionally set by the requester) has been reached
+      - the maximum number of subscription events (optionally set by the requester) has been reached
+      - the API server has to stop sending notification prematurely
 
     ### Notification callback
 
@@ -51,11 +55,11 @@ info:
 
     _**WARNING**: This callback endpoint must be exposed on the consumer side as `POST /{$request.body#/webhook/notificationUrl}`.
       Developers may provide a callback URL on which notifications regarding geofencing can be received from the service provider.
-      If an event occurs the application will send events to the provided webhook - 'notificationUrl'._ 
-    
+      If an event occurs the application will send events to the provided webhook - 'notificationUrl'._
+
     # Further info and support
-    
-    (FAQs will be added in a later version of the documentation)    
+
+    (FAQs will be added in a later version of the documentation)
 
   termsOfService: http://swagger.io/terms/
   contact:
@@ -63,7 +67,7 @@ info:
   license:
     name: Apache 2.0
     url: https://www.apache.org/licenses/LICENSE-2.0.html
-  version: 0.1.0-rc3
+  version: 0.2.0-wip
 externalDocs:
   description: Product documentation at Camara
   url: https://github.com/camaraproject/
@@ -77,19 +81,25 @@ servers:
 
 tags:
   - name: Geofencing subscriptions
-    description: Operation to manage event subscription on geofencing events for leaving and entering an area
+    description: Operations to manage event subscription on geofencing events for leaving and entering an area
 paths:
   /subscriptions:
     post:
       tags:
         - Geofencing subscriptions
       summary: "Create a geofencing subscription for a device"
+      description: Create a subscription for a device to receive notifications when a device enters or exits a specified area
       operationId: createSubscription
+      parameters:
+        - $ref: '#/components/parameters/x-correlator'
       requestBody:
         content:
           application/json:
             schema:
               $ref: "#/components/schemas/CreateSubscription"
+            examples:
+              CIRCLE_AREA_ENTERED:
+                $ref: "#/components/examples/REQUEST_CIRCLE_AREA_ENTERED"
         required: true
       callbacks:
         event-notifications:
@@ -100,6 +110,8 @@ paths:
                 Important: this endpoint is to be implemented by the API consumer.
                 The Device Location server will call this endpoint whenever a device geofencing related event occurs.
               operationId: postNotification
+              parameters:
+                - $ref: '#/components/parameters/x-correlator'
               requestBody:
                 required: true
                 content:
@@ -116,6 +128,9 @@ paths:
               responses:
                 "204":
                   description: Successful notification
+                  headers:
+                    x-correlator:
+                      $ref: '#/components/headers/x-correlator'
                 "400":
                   $ref: "#/components/responses/Generic400"
                 "401":
@@ -132,6 +147,9 @@ paths:
       responses:
         "201":
           description: Created (Successful creation of subscription)
+          headers:
+            x-correlator:
+              $ref: '#/components/headers/x-correlator'
           content:
             application/json:
               schema:
@@ -157,9 +175,14 @@ paths:
       summary: "Operation to retrieve a list of subscriptions."
       operationId: getSubscriptionList
       description: Operation to list subscriptions authorized to be retrieved by the provided access token.
+      parameters:
+        - $ref: '#/components/parameters/x-correlator'
       responses:
         "200":
           description: The list of subscriptions is retrieved.
+          headers:
+            x-correlator:
+              $ref: '#/components/headers/x-correlator'
           content:
             application/json:
               schema:
@@ -189,6 +212,7 @@ paths:
       operationId: getSubscription
       description: Retrieve a given subscription by ID
       parameters:
+        - $ref: '#/components/parameters/x-correlator'
         - name: subscriptionsId
           in: path
           description: Subscription identifier that was obtained from the create event subscription operation
@@ -198,6 +222,9 @@ paths:
       responses:
         "200":
           description: Contains information about Subscriptions
+          headers:
+            x-correlator:
+              $ref: '#/components/headers/x-correlator'
           content:
             application/json:
               schema:
@@ -223,7 +250,9 @@ paths:
       summary: "Operation to delete a subscription"
       operationId: deleteSubscription
       description: Delete a given subscription by ID
+
       parameters:
+        - $ref: '#/components/parameters/x-correlator'
         - name: subscriptionsId
           in: path
           description: subscription identifier
@@ -233,6 +262,9 @@ paths:
       responses:
         "204":
           description: Event subscription deleted
+          headers:
+            x-correlator:
+              $ref: '#/components/headers/x-correlator'
         "400":
           $ref: "#/components/responses/Generic400"
         "401":
@@ -254,7 +286,18 @@ components:
     openId:
       type: openIdConnect
       openIdConnectUrl: https://example.com/.well-known/openid-configuration
-
+  parameters:
+    x-correlator:
+      name: x-correlator
+      in: header
+      description: Correlation id for the different services
+      schema:
+        type: string
+  headers:
+    x-correlator:
+      description: Correlation id for the different services
+      schema:
+        type: string
   schemas:
     Area:
       type: object
@@ -355,10 +398,10 @@ components:
       minProperties: 1
 
     PhoneNumber:
-      description: A public identifier addressing a telephone subscription. In mobile networks it corresponds to the MSISDN (Mobile Station International Subscriber Directory Number). In order to be globally unique it has to be formatted in international format, according to E.164 standard, optionally prefixed with '+'.
+      description: A public identifier addressing a telephone subscription. In mobile networks it corresponds to the MSISDN (Mobile Station International Subscriber Directory Number). In order to be globally unique it has to be formatted in international format, according to E.164 standard, prefixed with '+'.
       type: string
-      pattern: '^\+?[0-9]{5,15}$'
-      example: "123456789"
+      pattern: '^\+[1-9][0-9]{4,14}$'
+      example: "+123456789"
 
     NetworkAccessIdentifier:
       description: A public identifier addressing a subscription in a mobile network. In 3GPP terminology, it corresponds to the GPSI formatted with the External Identifier ({Local Identifier}@{Domain Identifier}). Unlike the telephone number, the network access identifier is not subjected to portability ruling in force, and is individually managed by each operator.
@@ -460,7 +503,7 @@ components:
       type: string
       description: |
         area-entered - Event triggered when the device enters the given area
-        
+
         area-left - Event triggered when the device leaves the given area
       enum:
         - org.camaraproject.geofencing.v0.area-entered
@@ -470,9 +513,9 @@ components:
       type: string
       description: |
         area-entered - Event triggered when the device enters the given area
-        
+
         area-left - Event triggered when the device leaves the given area
-        
+
         subscription-ends - Event triggered when the subscription ends
       enum:
         - org.camaraproject.geofencing.v0.area-entered
@@ -499,10 +542,15 @@ components:
           $ref: "#/components/schemas/SubscriptionDetail"
         subscriptionExpireTime:
           type: string
-          format: date-time         
-          description: The date time when the location-tracking has to be terminated. 
-            It must follow [RFC 3339](https://datatracker.ietf.org/doc/html/rfc3339#section-5.6) and must have time zone. 
+          format: date-time
+          description: The date time when the location-tracking has to be terminated.
+            It must follow [RFC 3339](https://datatracker.ietf.org/doc/html/rfc3339#section-5.6) and must have time zone.
             Recommended format is yyyy-MM-dd'T'HH:mm:ss.SSSZ (i.e. which allows 2023-07-03T14:27:08.312+02:00 or 2023-07-03T12:27:08.312Z)
+        subscriptionMaxEvents:
+          type: integer
+          description: Identifies the maximum number of event reports to be generated (>=1) - Once this number is reached, the subscription ends.
+          minimum: 1
+          example: 5
       required:
         - webhook
         - subscriptionDetail
@@ -520,26 +568,26 @@ components:
               type: string
               format: date-time
               description: The date time when the subscription started.
-                It must follow [RFC 3339](https://datatracker.ietf.org/doc/html/rfc3339#section-5.6) and must have time zone. 
+                It must follow [RFC 3339](https://datatracker.ietf.org/doc/html/rfc3339#section-5.6) and must have time zone.
                 Recommended format is yyyy-MM-dd'T'HH:mm:ss.SSSZ (i.e. which allows 2023-07-03T14:27:08.312+02:00 or 2023-07-03T12:27:08.312Z)
             expiresAt:
               type: string
               format: date-time
-              description: The date time when the subscription will expire or expired.                
-                It must follow [RFC 3339](https://datatracker.ietf.org/doc/html/rfc3339#section-5.6) and must have time zone. 
+              description: The date time when the subscription will expire or expired.
+                It must follow [RFC 3339](https://datatracker.ietf.org/doc/html/rfc3339#section-5.6) and must have time zone.
                 Recommended format is yyyy-MM-dd'T'HH:mm:ss.SSSZ (i.e. which allows 2023-07-03T14:27:08.312+02:00 or 2023-07-03T12:27:08.312Z)
           required:
-            - subscriptionId   
+            - subscriptionId
 
     EventTime:
       format: date-time
       type: string
       description: |
-        Timestamp of when the occurrence happened. 
-        If the time of the occurrence cannot be determined then this attribute MAY be set to some other time (such as the current time) by the CloudEvents producer, 
-        however all producers for the same source MUST be consistent in this respect. In other words, 
-        either they all use the actual time of the occurrence or they all use the same algorithm to determine the value used. 
-        It must follow [RFC 3339](https://datatracker.ietf.org/doc/html/rfc3339#section-5.6) and must have time zone. 
+        Timestamp of when the occurrence happened.
+        If the time of the occurrence cannot be determined then this attribute MAY be set to some other time (such as the current time) by the CloudEvents producer,
+        however all producers for the same source MUST be consistent in this respect. In other words,
+        either they all use the actual time of the occurrence or they all use the same algorithm to determine the value used.
+        It must follow [RFC 3339](https://datatracker.ietf.org/doc/html/rfc3339#section-5.6) and must have time zone.
         Recommended format is yyyy-MM-dd'T'HH:mm:ss.SSSZ (i.e. which allows 2023-07-03T14:27:08.312+02:00 or 2023-07-03T12:27:08.312Z)
 
     CloudEvent:
@@ -679,14 +727,19 @@ components:
       type: string
       description: |
         NETWORK_TERMINATED - API server stopped sending notification
-        SUBSCRIPTION_EXPIRED - Subscription expire time (required by the requester) has been reached
+        SUBSCRIPTION_EXPIRED - Subscription expire time (optionally set by the requester) has been reached
+        MAX_EVENTS_REACHED - maximum number of events (optionally set by the requester) has been reached
       enum:
+        - MAX_EVENTS_REACHED
         - NETWORK_TERMINATED
         - SUBSCRIPTION_EXPIRED
 
   responses:
     Generic400:
       description: Invalid argument
+      headers:
+        x-correlator:
+          $ref: '#/components/headers/x-correlator'
       content:
         application/json:
           schema:
@@ -695,9 +748,12 @@ components:
             status: 400
             code: INVALID_ARGUMENT
             message: "Invalid argument"
-    
+
     Generic401:
       description: Unauthenticated
+      headers:
+        x-correlator:
+          $ref: '#/components/headers/x-correlator'
       content:
         application/json:
           schema:
@@ -706,9 +762,12 @@ components:
             status: 401
             code: UNAUTHENTICATED
             message: "Authorization failed: ..."
-    
+
     Generic403:
       description: Permission denied
+      headers:
+        x-correlator:
+          $ref: '#/components/headers/x-correlator'
       content:
         application/json:
           schema:
@@ -717,9 +776,12 @@ components:
             status: 403
             code: PERMISSION_DENIED
             message: "Operation not allowed: ..."
-    
+
     Generic404:
       description: Not found
+      headers:
+        x-correlator:
+          $ref: '#/components/headers/x-correlator'
       content:
         application/json:
           schema:
@@ -728,9 +790,12 @@ components:
             status: 404
             code: NOT_FOUND
             message: "The specified resource is not found"
-    
+
     Generic409:
       description: Conflict
+      headers:
+        x-correlator:
+          $ref: '#/components/headers/x-correlator'
       content:
         application/json:
           schema:
@@ -739,9 +804,12 @@ components:
             status: 409
             code: Conflict
             message: "There is conflict in the request"
-    
+
     Generic500:
       description: Internal server error
+      headers:
+        x-correlator:
+          $ref: '#/components/headers/x-correlator'
       content:
         application/json:
           schema:
@@ -750,9 +818,12 @@ components:
             status: 500
             code: INTERNAL
             message: "Internal server error"
-    
+
     Generic503:
       description: Service unavailable
+      headers:
+        x-correlator:
+          $ref: '#/components/headers/x-correlator'
       content:
         application/json:
           schema:
@@ -761,10 +832,28 @@ components:
             status: 503
             code: UNAVAILABLE
             message: "Service unavailable"
+
+
   examples:
+    REQUEST_CIRCLE_AREA_ENTERED:
+      value:
+        webhook:
+          notificationUrl: https://application-server.com
+          notificationAuthToken: c8974e592c2fa383d4a3960714
+        subscriptionDetail:
+          device:
+            phoneNumber: "+12345678912"
+          area:
+            areaType: CIRCLE
+            center:
+              latitude: 50.735851
+              longitude: 7.10066
+            radius: 2000
+          type: org.camaraproject.geofencing.v0.area-entered
+        subscriptionExpireTime: 2024-03-22T05:40:58.469Z
     CIRCLE_AREA_ENTERED:
       value:
-        id: 123655
+        id: "123655"
         source: https://notificationSendServer12.supertelco.com
         type: org.camaraproject.geofencing.v0.area-entered
         specversion: "1.0"
@@ -773,7 +862,7 @@ components:
         data:
           subscriptionId: 987654321
           device:
-            phoneNumber: 123456789
+            phoneNumber: +123456789
           area:
             areaType: CIRCLE
             center:
@@ -782,7 +871,7 @@ components:
             radius: 2000
     CIRCLE_AREA_LEFT:
       value:
-        id: 123655
+        id: "123655"
         source: https://notificationSendServer12.supertelco.com
         type: org.camaraproject.geofencing.v0.area-left
         specversion: "1.0"
@@ -791,7 +880,7 @@ components:
         data:
           subscriptionId: 987654321
           device:
-            phoneNumber: 123456789
+            phoneNumber: +123456789
           area:
             areaType: CIRCLE
             center:
@@ -801,7 +890,7 @@ components:
 
     SUBSCRIPTION_ENDS:
       value:
-        id: 123655
+        id: "123655"
         source: https://notificationSendServer12.supertelco.com
         type: org.camaraproject.geofencing.v0.subscription-ends
         specversion: "1.0"
@@ -810,5 +899,5 @@ components:
         data:
           subscriptionId: 987654321
           device:
-            phoneNumber: 123456789
+            phoneNumber: +123456789
           terminationReason: SUBSCRIPTION_EXPIRED
