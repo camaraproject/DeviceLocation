@@ -1,816 +1,338 @@
-Feature: Device location verification API - verifyLocation
+Feature: CAMARA Device location verification API, v0.2.0 - Operation verifyLocation
+  # Input to be provided by the imnplementation to the tester
+  #
+  # Implementation indications:
+  # * identifier_types_unsupported: List of device identifier types which are not supported, among: phoneNumber, networkAccessIdentifier, ipv4Address, ipv6Address
+  # * device_not_applicable: A device object identifying a device commercialized by the implemenation for which the service is not applicable
+  #
+  # Environment variables:
+  # * api_root: API root of the server URL
+  # * locatable_device: A device object which location is known by the network when connected. To test all scenarios, at least 2 valid devices are needed
+  # * known_latitude: The latitude where locatable_device is known to be located
+  # * known_longitude | The longitude where locatable_device is known to be located
+  #
+  # References to OAS spec schemas refer to schemas specifies in location-verification.yaml, version 0.2.0
 
-    Background: An environment where Kernel API GW exposes verifyLocation
-        Given an environment with Kernel API GW
-        And the endpoint "location/v0/verify"
-        And the method "post"
-        And the request body is set to:
-            """
-            {
-              "ueId": {
-                "msisdn": "123456789",
-                "ipv4Addr": "123.456.789.000"
-              },
-              "latitude": 0,
-              "longitude": 0,
-              "accuracy": 10
+  Background: Common verifyLocation setup
+    Given the resource "/location-verification/v0/verify"                                                              |
+    And the header "Content-Type" is set to "application/json"
+    And the header "Authorization" is set to a valid access token
+    And the header "x-correlator" is set to a UUID value
+    And the request body is set by default to a request body compliant with the schema
+
+  # Happy path scenarios
+
+  # This first scenario serves as a minimum, not testing any specific verificationResult
+  @location_verification_01_generic_success_scenario
+  Scenario: Common validations for any sucess scenario
+    # Valid testing device and default request body compliant with the schema
+    Given the request body property "$.device" is set to config_var: "locatable_device"
+    When the HTTP "POST" request is sent
+    Then the response status code is 200
+    And the response header "Content-Type" is "application/json"
+    And the response header "x-correlator" has same value as the request header "x-correlator"
+    # The response has to comply with the generic response schema which is part of the spec
+    And the response body complies with the OAS schema at "/components/schemas/VerifyLocationResponse"
+    # Additionally any success response has to comply with implementation guidelines
+    And if response property "$.lastLocationTime" does not exists then "$.verificationResult" is "UNKNOWN"
+    And the response property "$.matchRate" exists only if "$.verificationResult" is "PARTIAL"
+
+  # The following succeess scenarios test that service is working as expected in terms of quality
+  # TBD the level of testing for successs scenarios
+
+  @location_verification_02_known_location_for_device_no_maxAge
+  Scenario: Known location of a device without specifying maxAge
+    Given the testing device is connected to the network
+    And the request body property "$.device" is set to config_var: "locatable_device"
+    And the request body property "$.area.areaType" is set to: "CIRCLE"
+    And the request body property "$.area.center.latitude" is set to config_var: "known_latitude"
+    And the request body property "$.area.center.longitude" is set to config_var: "known_longitude"
+    And the request body property "$.area.radius" is set to: 10000
+    And the request body property "$.maxAge" is not included
+    When the HTTP "POST" request is sent
+    Then the response status code is 200
+    And the response header "Content-Type" is "application/json"
+    And the response header "x-correlator" has same value as the request header "x-correlator"
+    And the response body complies with the OAS schema at "/components/schemas/VerifyLocationResponse"
+    And the response property "$.verificationResult" is one of: ["TRUE", "PARTIAL"]
+    And the response property "$.lastLocationTime" exists
+    And the response property "$.matchRate" exists only if "$.verificationResult" is "PARTIAL"
+
+  @location_verification_03_known_location_for_device_with_maxAge
+  Scenario Outline: Known location of a device specifying maxAge
+    # Alternative, setting request body with a JSON object
+    # maxAge is set to fixed value, it could be tested with several values in an Scenario Outline
+    Given the testing device is connected to the network
+    And the request body is set to:
+      """
+      {
+        "device": <config_var:locatable_device>,
+        "area": {
+          "areaType": "CIRCLE",
+          "center": {
+            "latitude": <config_var:known_latitude>,
+            "longitude": <config_var:known_longitude>
+          },
+          "radius": 10000
+        },
+        "maxAge": 600
+      }
+      """
+    When the HTTP "POST" request is sent
+    Then the response status code is 200
+    And the response header "Content-Type" is "application/json"
+    And the response header "x-correlator" has same value as the request header "x-correlator"
+    And the response body complies with the OAS schema at "/components/schemas/VerifyLocationResponse"
+    # Alternative, specifying additional response validations with a JSON schema, which has to be complied additionally
+    And the response body complies with JSON schema:
+      """
+      {
+        "type": "object",
+        "properties": {
+          "verificationResult": {
+            "enum": [
+              "TRUE",
+              "PARTIAL"
+            ]
+          }
+        },
+        "required": [
+          "lastLocationTime"
+        ],
+        "dependentSchemas": {
+          "matchRate": {
+            "properties": {
+              "verificationResult": {
+                "enum": [
+                  "PARTIAL"
+                ]
+              }
             }
-            """
-        And the header "x-correlator" is set to "[UUIDv4]"
-
-    @verifyLocation_30.01_VerifyRightLocationGenericMsisdn
-    Scenario: Verify known location from MSISDN
-        Given I want to test "verifyLocation"
-        And a valid Kernel access_token
-        And the variable "[CONTEXT: msisdn]" is set to the MSISDN associated with the mobile device suitable for location verification
-        And the variable "[CONTEXT: latitude]" is set to the well known latitude where the device under test is located
-        And the variable "[CONTEXT: longitude]" is set to the well known longitude where the device under test is located
-        And the request body is set to:
-            """
-            {
-              "ueId": {
-                "msisdn": "[CONTEXT: msisdn]"
-              },
-              "latitude": [CONTEXT: latitude],
-              "longitude": [CONTEXT: longitude],
-              "accuracy": 200
-            }
-            """
-        When a "POST" request to "/location-verification/v0" is sent
-        Then the response status code is "200"
-        And the value of header "x-correlator" in response is the one set in request
-        And the response has header "Content-Type" set to "application/json"
-        And the response body complies with the JSON-Schema at "./schemas/_spec/verifyLocation_200.json"
-        And the value of response property "$.verificationResult" is true
-
-    @verifyLocation_E10.01
-    @kernel-apigw
-    Scenario: Error response for expired access token
-        Given I want to test "verifyLocation"
-        And an expired Kernel access_token
-        When a "POST" request to "/location-verification/v0" is sent
-        Then the response status code is "401"
-        And the response value for "$.status" is "401"
-        And the response value for "$.code" is "UNAUTHENTICATED"
-        And the response value for "$.message" is a human-friendly text
-
-
-    @verifyLocation_E10.02
-    @kernel-apigw
-    Scenario: Error response for invalid access token
-        Given I want to test "verifyLocation"
-        And an invalid Kernel access_token
-        When a "POST" request to "/location-verification/v0" is sent
-        Then the response status code is "401"
-        And the API returns the error code "UNAUTHENTICATED"
-        And the API returns a human readable error message
-
-
-    @verifyLocation_E10.03
-    @kernel-apigw
-    Scenario: Error response for no header "Authorization"
-        Given I want to test "verifyLocation"
-        And the header "Authorization" is not sent
-        When a "POST" request to "/location-verification/v0" is sent
-        Then the response status code is "401"
-        And the API returns the error code "UNAUTHENTICATED"
-        And the API returns a human readable error message
-
-
-    # API Specific Errors
-
-    # Provided location is correct but network information is not available
-    @verifyLocation_E19.01_VerifyUnknownLocationGenericMsisdn
-    @specific-user
-    Scenario: Verify location from MSISDN without location information
-        Given I want to test "verifyLocation" for a user of the OB which have an MSISDN not connected to the network
-        And a valid Kernel access_token
-        And the variable "[CONTEXT: msisdn]" is set to a valid MSISDN for a mobile device without recent location information
-        And the variable "[CONTEXT: latitude]" is set to the well known latitude where the device under test is located
-        And the variable "[CONTEXT: longitude]" is set to the well known longitude where the device under test is located
-        And the request body is set to:
-            """
-            {
-              "ueId": {
-                "msisdn": "[CONTEXT: msisdn]"
-              },
-              "latitude": [CONTEXT: latitude],
-              "longitude": [CONTEXT: longitude],
-              "accuracy": 200
-            }
-            """
-        When a "POST" request to "/location-verification/v0" is sent
-        Then the response status code is "404"
-        And the API returns the error code "NOT_FOUND"
-        And the API returns a human readable error message
-
-
-    @verifyLocation_E19.02_MissingUeId
-    @expand-by-user-type
-    Scenario: Error response for missing required property "ueId" in request body
-        Given I want to test "verifyLocation"
-        And a valid Kernel access_token
-        And the request body is set to:
-            """
-            {
-              "latitude": 0,
-              "longitude": 0,
-              "accuracy": 10
-            }
-            """
-        When a "POST" request to "/location-verification/v0" is sent
-        Then the response status code is "400"
-        And the API returns the error code "INVALID_INPUT"
-        And the API returns a human readable error message
-
-
-    @verifyLocation_E19.03_MissingLatitude
-    @expand-by-user-type
-    Scenario: Error response for missing required property "latitude" in request body
-        Given I want to test "verifyLocation"
-        And a valid Kernel access_token
-        And the variable "[CONTEXT: msisdn]" is set to the MSISDN associated with the mobile device suitable for location verification
-        And the request body is set to:
-            """
-            {
-              "ueId": {
-                "msisdn": "[CONTEXT: msisdn]"
-              },
-              "longitude": 0,
-              "accuracy": 10
-            }
-            """
-        When a "POST" request to "/location-verification/v0" is sent
-        Then the response status code is "400"
-        And the API returns the error code "INVALID_INPUT"
-        And the API returns a human readable error message
-
-
-    @verifyLocation_E19.04_MissingLongitude
-    @expand-by-user-type
-    Scenario: Error response for missing required property "longitude" in request body
-        Given I want to test "verifyLocation"
-        And a valid Kernel access_token
-        And the variable "[CONTEXT: msisdn]" is set to the MSISDN associated with the mobile device suitable for location verification
-        And the request body is set to:
-            """
-            {
-              "ueId": {
-                "msisdn": "[CONTEXT: msisdn]"
-              },
-              "latitude": 0,
-              "accuracy": 10
-            }
-            """
-        When a "POST" request to "/location-verification/v0" is sent
-        Then the response status code is "400"
-        And the API returns the error code "INVALID_INPUT"
-        And the API returns a human readable error message
-
-
-    @verifyLocation_E19.05_MissingAccuracy
-    @expand-by-user-type
-    Scenario: Error response for missing required property "accuracy" in request body
-        Given I want to test "verifyLocation"
-        And a valid Kernel access_token
-        And the variable "[CONTEXT: msisdn]" is set to the MSISDN associated with the mobile device suitable for location verification
-        And the request body is set to:
-            """
-            {
-              "ueId": {
-                "msisdn": "[CONTEXT: msisdn]"
-              },
-              "latitude": 0,
-              "longitude": 0
-            }
-            """
-        When a "POST" request to "/location-verification/v0" is sent
-        Then the response status code is "400"
-        And the API returns the error code "INVALID_INPUT"
-        And the API returns a human readable error message
-
-
-    @verifyLocation_E19.06_EmptyUeId
-    @expand-by-user-type
-    Scenario: Error response for empty required property "ueId" in request body
-        Given I want to test "verifyLocation"
-        And a valid Kernel access_token
-        And the request body is set to:
-            """
-            {
-              "ueId": {},
-              "latitude": 0,
-              "longitude": 0,
-              "accuracy": 10
-            }
-            """
-        When a "POST" request to "/location-verification/v0" is sent
-        Then the response status code is "400"
-        And the API returns the error code "INVALID_INPUT"
-        And the API returns a human readable error message
-
-
-    @verifyLocation_E19.07_WrongUeIdMsisdn
-    @expand-by-user-type
-    Scenario Outline: Error response for wrong property "$.ueId.msisdn" in request body
-        Given I want to test "verifyLocation"
-        And a valid Kernel access_token
-        And the variable "[CONTEXT: msisdn]" is set to "<wrong_msisdn>"
-        And the request body is set to:
-            """
-            {
-              "ueId": {
-                "msisdn": "[CONTEXT: msisdn]"
-              },
-              "latitude": 0,
-              "longitude": 0,
-              "accuracy": 10
-            }
-            """
-        When a "POST" request to "/location-verification/v0" is sent
-        Then the response status code is "400"
-        And the API returns the error code "INVALID_INPUT"
-        And the API returns a human readable error message
-
-        Examples:
-            | wrong_msisdn       |
-            | foo                |
-            | +00012230304913849 |
-            | 123                |
-            | ++49565456787      |
-
-
-    @verifyLocation_E19.08_WrongLatitude
-    @expand-by-user-type
-    Scenario Outline: Error response for wrong property "$.latitude" in request body
-        Given I want to test "verifyLocation"
-        And a valid Kernel access_token
-        And the variable "[CONTEXT: msisdn]" is set to the MSISDN associated with the mobile device suitable for location verification
-        And the variable "[CONTEXT: latitude]" is set to <wrong_latitude>
-        And the request body is set to:
-            """
-            {
-              "ueId": {
-                "msisdn": "[CONTEXT: msisdn]"
-              },
-              "latitude": [CONTEXT: latitude],
-              "longitude": 0,
-              "accuracy": 10
-            }
-            """
-        When a "POST" request to "/location-verification/v0" is sent
-        Then the response status code is "400"
-        And the API returns the error code "INVALID_INPUT"
-        And the API returns a human readable error message
-
-        Examples:
-            | wrong_latitude |
-            | foo            |
-            | -100           |
-            | 100            |
-            | 10.12.34       |
-
-
-    @verifyLocation_E19.09_WrongLongitude
-    @expand-by-user-type
-    Scenario Outline: Error response for wrong property "$.longitude" in request body
-        Given I want to test "verifyLocation"
-        And a valid Kernel access_token
-        And the variable "[CONTEXT: msisdn]" is set to the MSISDN associated with the mobile device suitable for location verification
-        And the variable "[CONTEXT: longitude]" is set to <wrong_longitude>
-        And the request body is set to:
-            """
-            {
-              "ueId": {
-                "msisdn": "[CONTEXT: msisdn]"
-              },
-              "latitude": 0,
-              "longitude": [CONTEXT: longitude],
-              "accuracy": 10
-            }
-            """
-        When a "POST" request to "/location-verification/v0" is sent
-        Then the response status code is "400"
-        And the API returns the error code "INVALID_INPUT"
-        And the API returns a human readable error message
-
-        Examples:
-            | wrong_longitude |
-            | foo             |
-            | -200            |
-            | 200             |
-            | 10.12.34        |
-
-
-    @verifyLocation_E19.10_WrongAccuracy
-    @expand-by-user-type
-    Scenario Outline: Error response for wrong property "$.accuracy" in request body
-        Given I want to test "verifyLocation"
-        And a valid Kernel access_token
-        And the variable "[CONTEXT: msisdn]" is set to the MSISDN associated with the mobile device suitable for location verification
-        And the variable "[CONTEXT: accuracy]" is set to <wrong_accuracy>
-        And the request body is set to:
-            """
-            {
-              "ueId": {
-                "msisdn": "[CONTEXT: msisdn]"
-              },
-              "latitude": 0,
-              "longitude": 0,
-              "accuracy": [CONTEXT: accuracy]
-            }
-            """
-        When a "POST" request to "/location-verification/v0" is sent
-        Then the response status code is "400"
-        And the API returns the error code "INVALID_INPUT"
-        And the API returns a human readable error message
-
-        Examples:
-            | wrong_accuracy |
-            | foo            |
-            | 0              |
-            | -5             |
-            | 250            |
-            | 2,5            |
-
-
-    @verifyLocation_E19.11_WrongUePort
-    @expand-by-user-type
-    Scenario Outline: Error response for wrong property "$.uePort" in request body
-        Given I want to test "verifyLocation"
-        And a valid Kernel access_token
-        And the variable "[CONTEXT: msisdn]" is set to the MSISDN associated with the mobile device suitable for location verification
-        And the variable "[CONTEXT: ipv4Addr]" is set to the public IPv4 address observed for the mobile device suitable for location verification
-        And the variable "[CONTEXT: uePort]" is set to <wrong_ue_port>
-        And the request body is set to:
-            """
-            {
-              "ueId": {
-                "msisdn": "[CONTEXT: msisdn]",
-                "ipv4Addr": [CONTEXT: ipv4Addr]"
-              },
-              "uePort": [CONTEXT: uePort]
-              "latitude": 0,
-              "longitude": 0,
-              "accuracy": 10
-            }
-            """
-        When a "POST" request to "/location-verification/v0" is sent
-        Then the response status code is "400"
-        And the API returns the error code "INVALID_INPUT"
-        And the API returns a human readable error message
-
-        Examples:
-            | wrong_ue_port |
-            | foo           |
-            | -5            |
-            | 70000         |
-            | 10.5          |
-
-
-    @verifyLocation_E19.12_WrongUeIdIPv4
-    @expand-by-user-type
-    Scenario Outline: Error response for wrong property "$.ueId.ipv4Addr" in request body
-        Given I want to test "verifyLocation"
-        And a valid Kernel access_token
-        And the variable "[CONTEXT: msisdn]" is set to the MSISDN associated with the mobile device suitable for location verification
-        And the variable "[CONTEXT: ipv4Addr]" is set to "<wrong_ip>"
-        And the request body is set to:
-            """
-            {
-              "ueId": {
-                "msisdn": "[CONTEXT: msisdn]",
-                "ipv4Addr": "[CONTEXT: ipv4Addr]"
-              },
-              "latitude": 0,
-              "longitude": 0,
-              "accuracy": 10
-            }
-            """
-        When a "POST" request to "/location-verification/v0" is sent
-        Then the response status code is "400"
-        And the API returns the error code "INVALID_INPUT"
-        And the API returns a human readable error message
-
-        Examples:
-            | wrong_ip        |
-            | foo             |
-            | 435.567.999.000 |
-            | 123.456.789.0.1 |
-            | 12345667890     |
-
-
-    @verifyLocation_E19.13_WrongUeIdIPv6
-    @expand-by-user-type
-    Scenario Outline: Error response for wrong property "$.ueId.ipv6addr" in request body
-        Given I want to test "verifyLocation"
-        And a valid Kernel access_token
-        And the variable "[CONTEXT: msisdn]" is set to the MSISDN associated with the mobile device suitable for location verification
-        And the variable "[CONTEXT: ipv6Addr]" is set to "<wrong_ip>"
-        And the request body is set to:
-            """
-            {
-              "ueId": {
-                "msisdn": "[CONTEXT: msisdn]",
-                "ipv6Addr": "[CONTEXT: ipv6Addr]"
-              },
-              "latitude": 0,
-              "longitude": 0,
-              "accuracy": 10
-            }
-            """
-        When a "POST" request to "/location-verification/v0" is sent
-        Then the response status code is "400"
-        And the API returns the error code "INVALID_INPUT"
-        And the API returns a human readable error message
-
-        Examples:
-            | wrong_ip                                 |
-            | foo                                      |
-            | 2001:0db8:3333:4444:55556666:7777:8888   |
-            | 2001:0db8:3333:4444:5555:6666:77:77:8888 |
-            | 2001:gdb8:3333:4444:5555:6666:7777:8888  |
-
-
-    @verifyLocation_E19.14_WrongUeIdExternalId
-    @expand-by-user-type
-    Scenario Outline: Error response for wrong property "$.ueId.externalId" in request body
-        Given I want to test "verifyLocation"
-        And a valid Kernel access_token
-        And the variable "[CONTEXT: msisdn]" is set to the MSISDN associated with the mobile device suitable for location verification
-        And the variable "[CONTEXT: externalId]" is set to "<wrong_externalId>"
-        And the request body is set to:
-            """
-            {
-              "ueId": {
-                "msisdn": "[CONTEXT: msisdn]",
-                "externalId": "[CONTEXT: externalId]"
-              },
-              "latitude": 0,
-              "longitude": 0,
-              "accuracy": 10
-            }
-            """
-        When a "POST" request to "/location-verification/v0" is sent
-        Then the response status code is "400"
-        And the API returns the error code "INVALID_INPUT"
-        And the API returns a human readable error message
-
-        Examples:
-            | wrong_externalId |
-            | foo              |
-
-
-    @verifyLocation_E19.15_IPNotBelongingToTheSameDeviceAsMSISDN
-    @expand-by-user-type
-    Scenario Outline: Error response when using an IP address with format IPv4 or IPv6 that does not belong to the device associated with the provided phone number
-        Given I want to test "verifyLocation"
-        And a valid Kernel access_token
-        And the variable "[CONTEXT: msisdn]" is set to the MSISDN associated with the mobile device suitable for location verification
-        And the variable "[CONTEXT: ipFormat]" is set to "<ip_format>"
-        And the variable "[CONTEXT: ipAddr]" is set to valid ip of format "[CONTEXT: ipFormat]" but not associated with the same mobile device that is associated with the msisdn of the variable "[CONTEXT: msisdn]"
-        And the variable "[CONTEXT: latitude]" is set to the well known latitude where the device under test is located
-        And the variable "[CONTEXT: longitude]" is set to the well known longitude where the device under test is located
-        And the request body is set to:
-            """
-            {
-              "ueId": {
-                "msisdn": "[CONTEXT: msisdn]",
-                "[CONTEXT: ipFormat]": "[CONTEXT: ipAddr]"
-              },
-              "latitude": [CONTEXT: latitude],
-              "longitude": [CONTEXT: longitude],
-              "accuracy": 200
-            }
-            """
-        When a "POST" request to "/location-verification/v0" is sent
-        Then the response status code is "400"
-        And the API returns the error code "INVALID_INPUT"
-        And the API returns a human readable error message
-
-        Examples:
-            | ip_format |
-            | ipv4Addr  |
-            | ipv6Addr  |
-
-
-    # API Specific validations
-
-    # Expected accuracy set to the maximun to relax the constraint
-    @verifyLocation_30.01_VerifyRightLocationGenericMsisdn
-    Scenario: Verify known location from MSISDN
-        Given I want to test "verifyLocation"
-        And a valid Kernel access_token
-        And the variable "[CONTEXT: msisdn]" is set to the MSISDN associated with the mobile device suitable for location verification
-        And the variable "[CONTEXT: latitude]" is set to the well known latitude where the device under test is located
-        And the variable "[CONTEXT: longitude]" is set to the well known longitude where the device under test is located
-        And the request body is set to:
-            """
-            {
-              "ueId": {
-                "msisdn": "[CONTEXT: msisdn]"
-              },
-              "latitude": [CONTEXT: latitude],
-              "longitude": [CONTEXT: longitude],
-              "accuracy": 200
-            }
-            """
-        When a "POST" request to "/location-verification/v0" is sent
-        Then the response status code is "200"
-        And the value of header "x-correlator" in response is the one set in request
-        And the response has header "Content-Type" set to "application/json"
-        And the response body complies with the JSON-Schema at "./schemas/_spec/verifyLocation_200.json"
-        And the value of response property "$.verificationResult" is true
-
-
-    # A public identifier addressing a subscription in a mobile network. In 3GPP terminology, it corresponds to the GPSI formatted with the External Identifier ({Local Identifier}@{Domain Identifier}). Unlike the telephone number, the network access identifier is not subjected to portability ruling in force, and is individually managed by each operator.
-    @verifyLocation_30.02_VerifyRightLocationGenericExternalId
-    @expand-by-user-type
-    Scenario: Verify known location from external id
-        Given I want to test "verifyLocation"
-        And a valid Kernel access_token
-        And the variable "[CONTEXT: externalId]" is set to the external identifier associated with the mobile device suitable for location verification
-        And the variable "[CONTEXT: latitude]" is set to the well known latitude where the device under test is located
-        And the variable "[CONTEXT: longitude]" is set to the well known longitude where the device under test is located
-        And the request body is set to:
-            """
-            {
-              "ueId": {
-                "externalId": "[CONTEXT: externalId]"
-              },
-              "latitude": [CONTEXT: latitude],
-              "longitude": [CONTEXT: longitude],
-              "accuracy": 200
-            }
-            """
-        When a "POST" request to "/location-verification/v0" is sent
-        Then the response status code is "200"
-        And the value of header "x-correlator" in response is the one set in request
-        And the response has header "Content-Type" set to "application/json"
-        And the response body complies with the JSON-Schema at "./schemas/_spec/verifyLocation_200.json"
-        And the value of response property "$.verificationResult" is true
-
-
-    @verifyLocation_30.03_VerifyRightLocationGenericIPV4AddressNoNAT
-    @expand-by-user-type
-    Scenario: Verify known location from public IPV4 Address, for deployments without NAT
-        Given I want to test "verifyLocation"
-        And a valid Kernel access_token
-        And the variable "[CONTEXT: ipv4Addr]" is set to the public IPv4 address observed for the mobile device suitable for location verification
-        And the variable "[CONTEXT: latitude]" is set to the well known latitude where the device under test is located
-        And the variable "[CONTEXT: longitude]" is set to the well known longitude where the device under test is located
-        And the request body is set to:
-            """
-            {
-              "ueId": {
-                "ipv4Addr": "[CONTEXT: ipv4Addr]"
-              },
-              "latitude": [CONTEXT: latitude],
-              "longitude": [CONTEXT: longitude],
-              "accuracy": 200
-            }
-            """
-        When a "POST" request to "/location-verification/v0" is sent
-        Then the response status code is "200"
-        And the value of header "x-correlator" in response is the one set in request
-        And the response has header "Content-Type" set to "application/json"
-        And the response body complies with the JSON-Schema at "./schemas/_spec/verifyLocation_200.json"
-        And the value of response property "$.verificationResult" is true
-
-
-    @verifyLocation_30.04_VerifyRightLocationGenericIPV6Address
-    @expand-by-user-type
-    Scenario: Verify known location from IPV6 Address
-        Given I want to test "verifyLocation"
-        And a valid Kernel access_token
-        And the variable "[CONTEXT: ipv6Addr]" is set to the IPv6 address associated with the mobile device suitable for location verification
-        And the variable "[CONTEXT: latitude]" is set to the well known latitude where the device under test is located
-        And the variable "[CONTEXT: longitude]" is set to the well known longitude where the device under test is located
-        And the request body is set to:
-            """
-            {
-              "ueId": {
-                "ipv6Addr": "[CONTEXT: ipv6Addr]"
-              },
-              "latitude": [CONTEXT: latitude],
-              "longitude": [CONTEXT: longitude],
-              "accuracy": 200
-            }
-            """
-        When a "POST" request to "/location-verification/v0" is sent
-        Then the response status code is "200"
-        And the value of header "x-correlator" in response is the one set in request
-        And the response has header "Content-Type" set to "application/json"
-        And the response body complies with the JSON-Schema at "./schemas/_spec/verifyLocation_200.json"
-        And the value of response property "$.verificationResult" is true
-
-
-    @verifyLocation_30.05_VerifyRightLocationGenericIPV4AddressNAT
-    @expand-by-user-type
-    Scenario: Verify known location from public IPV4 Address and Port, for deployments with NAT
-        Given I want to test "verifyLocation"
-        And a valid Kernel access_token
-        And the variable "[CONTEXT: ipv4Addr]" is set to the public IPv4 address observed for the mobile device suitable for location verification
-        And the variable "[CONTEXT: latitude]" is set to the well known latitude where the device under test is located
-        And the variable "[CONTEXT: longitude]" is set to the well known longitude where the device under test is located
-        And the variable "[CONTEXT: uePort]" is set to the Device port observed for the mobile device suitable for location verification
-        And the request body is set to:
-            """
-            {
-              "ueId": {
-                "ipv4Addr": "[CONTEXT: ipv4Addr]"
-              },
-              "latitude": [CONTEXT: latitude],
-              "longitude": [CONTEXT: longitude],
-              "accuracy": 200,
-              "uePort": [CONTEXT: uePort]
-            }
-            """
-        When a "POST" request to "/location-verification/v0" is sent
-        Then the response status code is "200"
-        And the value of header "x-correlator" in response is the one set in request
-        And the response has header "Content-Type" set to "application/json"
-        And the response body complies with the JSON-Schema at "./schemas/_spec/verifyLocation_200.json"
-        And the value of response property "$.verificationResult" is true
-
-
-    # If ipv6 is specified as ueId, the uePort can be specified although it is not necessary.
-    @verifyLocation_30.06_VerifyRightLocationGenericIPV6AddressAndPort
-    @expand-by-user-type
-    Scenario: Verify known location from public IPV6 Address and Port
-        Given I want to test "verifyLocation"
-        And a valid Kernel access_token
-        And the variable "[CONTEXT: ipv6Addr]" is set to the IPv6 address associated with the mobile device suitable for location verification
-        And the variable "[CONTEXT: latitude]" is set to the well known latitude where the device under test is located
-        And the variable "[CONTEXT: longitude]" is set to the well known longitude where the device under test is located
-        And the variable "[CONTEXT: uePort]" is set to the Device port observed for the mobile device suitable for location verification
-        And the request body is set to:
-            """
-            {
-              "ueId": {
-                "ipv6Addr": "[CONTEXT: ipv6Addr]"
-              },
-              "latitude": [CONTEXT: latitude],
-              "longitude": [CONTEXT: longitude],
-              "accuracy": 200,
-              "uePort": [CONTEXT: uePort]
-            }
-            """
-        When a "POST" request to "/location-verification/v0" is sent
-        Then the response status code is "200"
-        And the value of header "x-correlator" in response is the one set in request
-        And the response has header "Content-Type" set to "application/json"
-        And the response body complies with the JSON-Schema at "./schemas/_spec/verifyLocation_200.json"
-        And the value of response property "$.verificationResult" is true
-
-
-    @verifyLocation_30.07_VerifyRightLocationMsisdnIPV4NAT
-    @expand-by-user-type
-    Scenario: Verify known location of a device using msisdn and IPV4 address and port
-        Given I want to test "verifyLocation"
-        And a valid Kernel access_token
-        And the variable "[CONTEXT: msisdn]" is set to the MSISDN associated with the mobile device suitable for location verification
-        And the variable "[CONTEXT: ipv4Addr]" is set to the IPv4 address associated with the mobile device suitable for location verification
-        And the variable "[CONTEXT: latitude]" is set to the well known latitude where the device under test is located
-        And the variable "[CONTEXT: longitude]" is set to the well known longitude where the device under test is located
-        And the variable "[CONTEXT: uePort]" is set to the Device port observed for the mobile device suitable for location verification
-        And the request body is set to:
-            """
-            {
-              "ueId": {
-                "msisdn": "[CONTEXT: msisdn]",
-                "ipv4Addr": "[CONTEXT: ipv4Addr]"
-              },
-              "latitude": [CONTEXT: latitude],
-              "longitude": [CONTEXT: longitude],
-              "accuracy": 200,
-              "uePort": [CONTEXT: uePort]
-            }
-            """
-        When a "POST" request to "/location-verification/v0" is sent
-        Then the response status code is "200"
-        And the value of header "x-correlator" in response is the one set in request
-        And the response has header "Content-Type" set to "application/json"
-        And the response body complies with the JSON-Schema at "./schemas/_spec/verifyLocation_200.json"
-        And the value of response property "$.verificationResult" is true
-
-
-    @verifyLocation_30.08_VerifyRightLocationMsisdnIPV6
-    @expand-by-user-type
-    Scenario: Verify known location of a device using msisdn and IPV6 address
-        Given I want to test "verifyLocation"
-        And a valid Kernel access_token
-        And the variable "[CONTEXT: msisdn]" is set to the MSISDN associated with the mobile device suitable for location verification
-        And the variable "[CONTEXT: ipv6Addr]" is set to the IPv6 address associated with the mobile device suitable for location verification
-        And the variable "[CONTEXT: latitude]" is set to the well known latitude where the device under test is located
-        And the variable "[CONTEXT: longitude]" is set to the well known longitude where the device under test is located
-        And the request body is set to:
-            """
-            {
-              "ueId": {
-                "msisdn": "[CONTEXT: msisdn]",
-                "ipv6Addr": "[CONTEXT: ipv6Addr]"
-              },
-              "latitude": [CONTEXT: latitude],
-              "longitude": [CONTEXT: longitude],
-              "accuracy": 200
-            }
-            """
-        When a "POST" request to "/location-verification/v0" is sent
-        Then the response status code is "200"
-        And the value of header "x-correlator" in response is the one set in request
-        And the response has header "Content-Type" set to "application/json"
-        And the response body complies with the JSON-Schema at "./schemas/_spec/verifyLocation_200.json"
-        And the value of response property "$.verificationResult" is true
-
-
-    @verifyLocation_30.09_VerifyWrongLocationGenericMsisdn
-    @expand-by-user-type
-    Scenario: Verify wrong location from MSISDN
-        Given I want to test "verifyLocation"
-        And a valid Kernel access_token
-        And the variable "[CONTEXT: msisdn]" is set to the MSISDN associated with the mobile device suitable for location verification
-        And the variable "[CONTEXT: latitude]" is set to a value that does not match with the device location latitude
-        And the variable "[CONTEXT: longitude]" is set to a value that does not match with the device location longitude
-        And the request body is set to:
-            """
-            {
-              "ueId": {
-                "msisdn": "[CONTEXT: msisdn]"
-              },
-              "latitude": [CONTEXT: latitude],
-              "longitude": [CONTEXT: longitude],
-              "accuracy": 2
-            }
-            """
-        When a "POST" request to "/location-verification/v0" is sent
-        Then the response status code is "200"
-        And the value of header "x-correlator" in response is the one set in request
-        And the response has header "Content-Type" set to "application/json"
-        And the response body complies with the JSON-Schema at "./schemas/_spec/verifyLocation_200.json"
-        And the value of response property "$.verificationResult" is false
-
-
-    @verifyLocation_30.10_SuccessfulNonExistingQueryParam
-    @expand-by-user-type
-    Scenario: Success with a non-existing query param
-        Given I want to test "verifyLocation"
-        And a valid Kernel access_token
-        And the variable "[CONTEXT: msisdn]" is set to the MSISDN associated with the mobile device suitable for location verification
-        And the variable "[CONTEXT: latitude]" is set to the well known latitude where the device under test is located
-        And the variable "[CONTEXT: longitude]" is set to the well known longitude where the device under test is located
-        And the query params are set to
-            | param_name          | param_value |
-            | invalid_query_param | whatever    |
-        And the request body is set to:
-            """
-            {
-              "ueId": {
-                "msisdn": "[CONTEXT: msisdn]"
-              },
-              "latitude": [CONTEXT: latitude],
-              "longitude": [CONTEXT: longitude],
-              "accuracy": 200
-            }
-            """
-        When a "POST" request to "/location-verification/v0" is sent
-        Then the response status code is "200"
-        And the value of header "x-correlator" in response is the one set in request
-        And the response has header "Content-Type" set to "application/json"
-        And the response body complies with the JSON-Schema at "./schemas/_spec/verifyLocation_200.json"
-        And the value of response property "$.verificationResult" is true
-
-
-    @verifyLocation_30.11_CheckXCorrelator
-    @expand-by-user-type
-    Scenario Outline: Check consistency of x-correlator
-        Given I want to test "verifyLocation"
-        And a valid Kernel access_token
-        And the variable "[CONTEXT: msisdn]" is set to the MSISDN associated with the mobile device suitable for location verification
-        And the variable "[CONTEXT: latitude]" is set to the well known latitude where the device under test is located
-        And the variable "[CONTEXT: longitude]" is set to the well known longitude where the device under test is located
-        And the header "x-correlator" is set to "<value>"
-        And the request body is set to:
-            """
-            {
-              "ueId": {
-                "msisdn": "[CONTEXT: msisdn]"
-              },
-              "latitude": [CONTEXT: latitude],
-              "longitude": [CONTEXT: longitude],
-              "accuracy": 200
-            }
-            """
-        When a "POST" request to "/location-verification/v0" is sent
-        Then the response status code is "200"
-        And the value of header "x-correlator" in response is the one set in request
-        And the response has header "Content-Type" set to "application/json"
-        And the response body complies with the JSON-Schema at "./schemas/_spec/verifyLocation_200.json"
-        And the value of response property "$.verificationResult" is true
-
-        Examples:
-            | value              |
-            | [UUIDv4]           |
-            | [RANDOM: STR(64)]  |
-            | string with spaces |
-            | "quoted string"    |
+          }
+        }
+      }
+      """
+    And the response property "$.lastLocationTime" value is not older than 600 seconds from the request time
+
+  @location_verification_04_false_location_for_device_with_maxAge
+  # Input area  set to a value where the device is not located for sure
+  Scenario: False location of a device specifying maxAge
+    Given the testing device is connected to the network
+    And the request body property "$.device" is set to config_var: "locatable_device"
+    And the request body property "$.area.areaType" is set to: "CIRCLE"
+    And the request body property "$.area.center.latitude" is set to: 0
+    And the request body property "$.area.center.longitude" is set to: 0
+    And the request body property "$.area.radius" is set to: 10000
+    When the HTTP "POST" request is sent
+    Then the response status code is 200
+    And the response header "Content-Type" is "application/json"
+    And the response header "x-correlator" has same value as the request header "x-correlator"
+    And the response body complies with the OAS schema at "/components/schemas/VerifyLocationResponse"
+    And the response property "$.verificationResult" is "FALSE"
+    And the response property "$.lastLocationTime" exists
+    And the response property "$.matchRate" does not exist
+
+  @location_verification_05_unknown_location_for_device_with_maxAge
+  # Input area can be kept to the default value as recent device location is not known by the network
+  Scenario: Unknown location of a device specifying maxAge
+    Given the testing device is not connected to the network for more than 60 seconds
+    And request body property "$.device" is set to config_var: "locatable_device"
+    And the request body property "$.maxAge" is set to: 60
+    When the HTTP "POST" request is sent
+    Then the response status code is 200
+    And the response header "Content-Type" is "application/json"
+    And the response header "x-correlator" has same value as the request header "x-correlator"
+    And the response body complies with the OAS schema at "/components/schemas/VerifyLocationResponse"
+    And the response property "$.verificationResult" is "UNKNOWN"
+    And the response property "$.lastLocationTime" if exists has a value older than 60 seconds from the request time
+    And the response property "$.matchRate" does not exist
+
+  # Generic device errors. Scenarios common to several APIs could be maintained in Commonalities
+  # And get specific test numbers
+
+  @location_verification_10_device_empty
+  Scenario Outline: The device value is an empty object
+    Given the request body property "$.device" is set to: {}
+    When the HTTP "POST" request is sent
+    Then the response status code is 400
+    And the response property "$.status" is 400
+    And the response property "$.code" is "INVALID_ARGUMENT"
+    And the response property "$.message" contains a user friendly text
+
+  @location_verification_11_device_schema_compliant
+  # Test every type of identifier even if not supported by the implementation
+  Scenario Outline: Some device identifier value does not comply with the schema
+    Given the request body property "<device_identifier>" does not comply with the OAS schema at "<oas_spec_schema>"
+    When the HTTP "POST" request is sent
+    Then the response status code is 400
+    And the response property "$.status" is 400
+    And the response property "$.code" is "INVALID_ARGUMENT"
+    And the response property "$.message" contains a user friendly text
+
+    Examples:
+      | device_identifier          | oas_spec_schema                             |
+      | $.device.phoneNumber       | /components/schemas/PhoneNumber             |
+      | $.device.ipv4Address       | /components/schemas/NetworkAccessIdentifier |
+      | $.device.ipv6Address       | /components/schemas/DeviceIpv4Addr          |
+      | $.device.networkIdentifier | /components/schemas/DeviceIpv6Address       |
+
+  @location_verification_11.1_device_phoneNumber_schema_compliant
+  # Example of the scenario above with a higher level of specification
+  # TBD if test plan has to provide specific testing values to provoke an error
+  Scenario Outline: Device identifier phoneNumber value does not comply with the schema
+    Given the request body property "$.device.phoneNumber" is set to: <phone_number_value>
+    When the HTTP "POST" request is sent
+    Then the response status code is 400
+    And the response property "$.status" is 400
+    And the response property "$.code" is "INVALID_ARGUMENT"
+    And the response property "$.message" contains a user friendly text
+
+    Examples:
+      | phone_number_value |
+      | string_value       |
+      | 1234567890         |
+      | +12334foo22222     |
+      | +00012230304913849 |
+      | 123                |
+      | ++49565456787      |
+
+  @location_verification_12_device_identifiers_unsupported
+  Scenario: None of the provided device identifiers is supported by the implementation
+    Given that config_var "identifier_types_unsupported" is not empty
+    And the request body property "$.device" only includes properties in config_var "identifier_types_unsupported"
+    When the HTTP "POST" request is sent
+    Then the response status code is 422
+    And the response property "$.status" is 422
+    And the response property "$.code" is "UNSUPPORTED_DEVICE_IDENTIFIERS"
+    And the response property "$.message" contains a user friendly text
+
+  @location_verification_13_device_not_found
+  Scenario: Some identifier cannot be matched to a device
+    Given the request body property "$.device" is set to a value compliant to the OAS schema at "/components/schemas/Device" which does not identify a valid device
+    When the HTTP "POST" request is sent
+    Then the response status code is 404
+    And the response property "$.status" is 404
+    And the response property "$.code" is "DEVICE_NOT_FOUND"
+    And the response property "$.message" contains a user friendly text
+
+  @location_verification_14_device_identifiers_mismatch
+  Scenario: Device identifiers mismatch
+    # To test this, at least 2 types of identifiers have to be provided, e.g. a phoneNumber and the IP address of a device associated to a different phoneNumber
+    Given that config_var "identifier_types_unsupported" contains at most 2 items
+    And the request body property "$.device" is set to several identifiers, each of them identifying a valid device
+    When the HTTP "POST" request is sent
+    Then the response status code is 422
+    And the response property "$.status" is 422
+    And the response property "$.code" is "DEVICE_IDENTIFIERS_MISMATCH"
+    And the response property "$.message" contains a user friendly text
+
+  @location_verification_15_device_token_mismatch
+  Scenario: Inconsistent access token context for the device
+    # To test this, a token have to be obtained for a different device
+    Given the request body property "$.device" is set to config_var: "locatable_device"
+    And the header "Authorization" is set to a valid access token identifying a different device
+    When the HTTP "POST" request is sent
+    Then the response status code is 403
+    And the response property "$.status" is 403
+    And the response property "$.code" is "DEVICE_INVALID_TOKEN_CONTEXT"
+    And the response property "$.message" contains a user friendly text
+
+  @location_verification_16_device_not_supported
+  Scenario: Service not available for the device
+    Given that config_var "device_not_applicable" is not empty
+    And the request body property "$.device" is set to config_var: "device_not_applicable"
+    And the header "Authorization" is set to a valid access token identifying a different device
+    When the HTTP "POST" request is sent
+    Then the response status code is 422
+    And the response property "$.status" is 422
+    And the response property "$.code" is "DEVICE_NOT_APPLICABLE"
+    And the response property "$.message" contains a user friendly text
+
+  # Generic 400 errors
+
+  @location_verification_400.1_no_request_body
+  Scenario: Missing request body
+    Given the request body is not included
+    When the HTTP "POST" request is sent
+    Then the response status code is 400
+    And the response property "$.status" is 400
+    And the response property "$.code" is "INVALID_ARGUMENT"
+    And the response property "$.message" contains a user friendly text
+
+  @location_verification_400.2_empty_request_body
+  Scenario: Empty object as request body
+    Given the request body is set to "{}"
+    When the HTTP "POST" request is sent
+    Then the response status code is 400
+    And the response property "$.status" is 400
+    And the response property "$.code" is "INVALID_ARGUMENT"
+    And the response property "$.message" contains a user friendly text
+
+  # Other specific 400 errors
+
+  @location_verification_400.3_other_input_properties_schema_compliant
+  # Test other input properties in addition to device
+  Scenario Outline: Input property values doe not comply with the schema
+    Given the request body property "<input_property>" does not comply with the OAS schema at <oas_spec_schema>
+    When the HTTP "POST" request is sent
+    Then the response status code is 400
+    And the response property "$.status" is 400
+    And the response property "$.code" is "INVALID_ARGUMENT"
+    And the response property "$.message" contains a user friendly text
+
+    Examples:
+      | input_property          | oas_spec_schema                                      |
+      | $.area.areaType         | /components/schemas/AreaType                         |
+      | $.area.center.latitude  | /components/schemas/Latitude                         |
+      | $.area.center.longitude | /components/schemas/Longitude                        |
+      | $.area.radius           | /components/schemas/Circle/allOf/1/properties/radius |
+      | $.maxAge                | /components/schemas/MaxAge                           |
+
+  @location_verification_400.4_required_input_properties_missing
+  Scenario Outline: Required input properties are missing
+    Given the request body property "<input_property>" is not included
+    When the HTTP "POST" request is sent
+    Then the response status code is 400
+    And the response property "$.status" is 400
+    And the response property "$.code" is "INVALID_ARGUMENT"
+    And the response property "$.message" contains a user friendly text
+
+    Examples:
+      | input_property          |
+      | $.device                |
+      | $.area                  |
+      | $.area.areaType         |
+      | $.area.center           |
+      | $.area.center.latitude  |
+      | $.area.center.longitude |
+      | $.area.radius           |
+
+  # Generic 401 errors
+
+  @location_verification_401.1_no_authorization_header
+  Scenario: No Authorization header
+    Given the header "Authorization" is removed
+    When the HTTP "POST" request is sent
+    Then the response status code is 401
+    And the response property "$.status" is 401
+    And the response property "$.code" is "UNAUTHENTICATED"
+    And the response property "$.message" contains a user friendly text
+
+  @location_verification_401.2_expired_access_token
+  Scenario: Expired access token
+    Given the header "Authorization" is set to an expired access token
+    When the HTTP "POST" request is sent
+    Then the response status code is 401
+    And the response property "$.status" is 401
+    And the response property "$.code" is "UNAUTHENTICATED"
+    And the response property "$.message" contains a user friendly text
+
+  @location_verification_401.3_invalid_access_token
+  Scenario: Invalid access token
+    Given the header "Authorization" is set to an invalid access token
+    When the HTTP "POST" request is sent
+    Then the response status code is 401
+    And the response header "Content-Type" is "application/json"
+    And the response property "$.status" is 401
+    And the response property "$.code" is "UNAUTHENTICATED"
+    And the response property "$.message" contains a user friendly text
