@@ -38,7 +38,7 @@ info:
     * **Max Age**: Maximum age of the location information which is accepted for the location retrieval (in seconds).
 
       * Absence of maxAge means "any age" is acceptable for the client. In other words, this is like maxAge=infinite. In this case the system may still return lastLocationTime, if available. If the system is not able to provide location a error 404 with code LOCATION_RETRIEVAL.DEVICE_NOT_FOUND is send back.
-      * maxAge=0 means a fresh calculation is requested by the client. If the system is not able to provide fresh location (current time - location time > maxDate) an error 422 with code LOCATION_RETRIEVAL.UNABLE_TO_FULFILL_MAX_AGE is send back.
+      * maxAge=0 means a fresh calculation is requested by the client. If the system is not able to provide fresh location an error 422 with code LOCATION_RETRIEVAL.UNABLE_TO_FULFILL_MAX_AGE is send back.
 
     * **Last Location Time** : Last date and time when the device was localized.
 
