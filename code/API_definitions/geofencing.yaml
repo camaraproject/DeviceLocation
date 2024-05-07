@@ -67,13 +67,13 @@ info:
   license:
     name: Apache 2.0
     url: https://www.apache.org/licenses/LICENSE-2.0.html
-  version: 0.2.0-wip
+  version: wip
 externalDocs:
   description: Product documentation at Camara
   url: https://github.com/camaraproject/
 
 servers:
-  - url: "{apiRoot}/geofencing/v0"
+  - url: "{apiRoot}/geofencing-subscriptions/v0"
     variables:
       apiRoot:
         default: http://localhost:9091
