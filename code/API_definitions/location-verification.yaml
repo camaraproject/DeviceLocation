@@ -32,6 +32,12 @@ info:
 
     * **Area**: It specifies the geographical surface where a device may be physically located.
 
+     * **Max Age**: Maximum age of the location information which is accepted for the location verification (in seconds).
+        * Absence of maxAge means "any age" is acceptable for the client. In other words, this is like maxAge=infinite. In this case the system may still return lastLocationTime, if available.
+        * maxAge=0 means a fresh calculation is requested by the client.
+          If the system does not support it, or fresh location cannot be checked at that time for any reason, the API response will be "UNKNOWN" and the `lastLocationTime` attribute may indicate the last available time for the device location.
+
+
     * **Verification**: Process triggered in the API server to confirm or contradict the expectation assumed by the API client about the device location.
 
     # API Functionality
@@ -355,9 +361,8 @@ components:
       example: 2001:db8:85a3:8d3:1319:8a2e:370:7344
 
     MaxAge:
-      description: The maximum age (in seconds) of the available location, which is accepted for the verification.
+      description: The maximum age (in seconds) of the available location, which is accepted for the verification. Absence of maxAge means "any age" and maxAge=0 means a fresh calculation.
       type: integer
-      minimum: 60
       example: 120
     VerificationResult:
       description: |

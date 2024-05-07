@@ -13,7 +13,7 @@ info:
 
     The retrieved shape depends on the network conditions at the subscriber's location and any of the supported shapes could be received.
 
-    The requester could optionally ask for a freshness of the localization information by providing a maxAge ("I want a location not older than 600 seconds")
+    The requester could optionally ask for a freshness of the localization information by providing a maxAge ("I want a location not older than 600 seconds").
 
     The result accuracy depends on the network's ability and accuracy to locate the device.
 
@@ -36,6 +36,9 @@ info:
     * **Area**: It specifies the geographical surface where a device may be physically located.
 
     * **Max Age**: Maximum age of the location information which is accepted for the location retrieval (in seconds).
+
+      * Absence of maxAge means "any age" is acceptable for the client. In other words, this is like maxAge=infinite. In this case the system may still return lastLocationTime, if available. If the system is not able to provide location a error 404 with code LOCATION_RETRIEVAL.DEVICE_NOT_FOUND is send back.
+      * maxAge=0 means a fresh calculation is requested by the client. If the system is not able to provide fresh location an error 422 with code LOCATION_RETRIEVAL.UNABLE_TO_FULFILL_MAX_AGE is send back.
 
     * **Last Location Time** : Last date and time when the device was localized.
 
@@ -112,7 +115,9 @@ paths:
         '403':
           $ref: '#/components/responses/Generic403'
         '404':
-          $ref: '#/components/responses/Generic404'
+          $ref: '#/components/responses/RetrieveLocationNotFound404'
+        '422':
+          $ref: '#/components/responses/RetrieveLocationUnprocessableEntity422'
         '500':
           $ref: '#/components/responses/Generic500'
         '503':
@@ -146,8 +151,7 @@ components:
           $ref: '#/components/schemas/Device'
         maxAge:
           type: integer
-          description: Maximum age of the location information which is accepted for the location retrieval (in seconds)
-          minimum: 60
+          description: Maximum age of the location information which is accepted for the location retrieval (in seconds). Absence of maxAge means "any age" and maxAge=0 means a fresh calculation.
       required:
         - device
 
@@ -393,7 +397,7 @@ components:
             status: 403
             code: PERMISSION_DENIED
             message: "Operation not allowed: ..."
-    Generic404:
+    RetrieveLocationNotFound404:
       description: Not found
       headers:
         x-correlator:
@@ -402,10 +406,30 @@ components:
         application/json:
           schema:
             $ref: '#/components/schemas/ErrorInfo'
+          examples:
+            notFound:
+              value:
+                status: 404
+                code: NOT_FOUND
+                message: 'The specified resource is not found'
+            deviceNotFound:
+              value:
+                status: 404
+                code: LOCATION_RETRIEVAL.DEVICE_NOT_FOUND
+                message: 'The location server is not able to locate the mobile'
+    RetrieveLocationUnprocessableEntity422:
+      description: Unprocessable Entity
+      headers:
+        x-correlator:
+          $ref: '#/components/headers/x-correlator'
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorInfo'
           example:
-            status: 404
-            code: NOT_FOUND
-            message: 'The specified resource is not found'
+            status: 422
+            code: LOCATION_RETRIEVAL.UNABLE_TO_FULFILL_MAX_AGE
+            message: "Unable to provide expected frehsness for location"
     Generic500:
       description: Internal server error
       headers:
