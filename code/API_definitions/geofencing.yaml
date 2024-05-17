@@ -100,6 +100,8 @@ paths:
             examples:
               CIRCLE_AREA_ENTERED:
                 $ref: "#/components/examples/REQUEST_CIRCLE_AREA_ENTERED"
+              POLYGON_AREA_ENTERED:
+                $ref: "#/components/examples/REQUEST_POLYGON_AREA_ENTERED"
         required: true
       callbacks:
         event-notifications:
@@ -123,6 +125,8 @@ paths:
                         $ref: "#/components/examples/CIRCLE_AREA_ENTERED"
                       CIRCLE_AREA_LEFT:
                         $ref: "#/components/examples/CIRCLE_AREA_LEFT"
+                      POLYGON_AREA_ENTERED:
+                        $ref: "#/components/examples/POLYGON_AREA_ENTERED"
                       SUBSCRIPTION_ENDS:
                         $ref: "#/components/examples/SUBSCRIPTION_ENDS"
               responses:
@@ -310,14 +314,17 @@ components:
         propertyName: areaType
         mapping:
           CIRCLE: "#/components/schemas/Circle"
+          POLYGON: "#/components/schemas/Polygon"
 
     AreaType:
       type: string
       description: |
         Type of this area.
         CIRCLE - The area is defined as a circle.
+        POLYGON - The area is defined as polygon.
       enum:
         - CIRCLE
+        - POLYGON
 
     Circle:
       description: Circular area
@@ -341,6 +348,33 @@ components:
           latitude: 50.735851
           longitude: 7.10066
         radius: 50000
+
+    Polygon:
+      description: Polygon based area defined by an ordered geo points array
+      type: object
+      allOf:
+        - $ref: "#/components/schemas/Area"
+        - type: object
+          properties:
+            coordinates:
+              type: array
+              items:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Point"
+                minItems: 3
+                maxItems: 16
+      example:
+        areaType: POLYGON
+        coordinates:
+          - latitude: 52.516770
+            longitude: 13.378156
+          - latitude: 52.516841
+            longitude: 13.379433
+          - latitude: 52.515917
+            longitude: 13.37959
+          - latitude: 52.515849
+            longitude: 13.378308
 
     Point:
       type: object
@@ -901,3 +935,48 @@ components:
           device:
             phoneNumber: +123456789
           terminationReason: SUBSCRIPTION_EXPIRED
+
+    REQUEST_POLYGON_AREA_ENTERED:
+      value:
+        webhook:
+          notificationUrl: https://application-server.com
+          notificationAuthToken: c8974e592c2fa383d4a3960714
+        subscriptionDetail:
+          device:
+            phoneNumber: "+12345678912"
+          area:
+            areaType: POLYGON
+            coordinates:
+              - latitude: 52.516770
+                longitude: 13.378156
+              - latitude: 52.516841
+                longitude: 13.379433
+              - latitude: 52.515917
+                longitude: 13.37959
+              - latitude: 52.515849
+                longitude: 13.378308
+          type: org.camaraproject.geofencing.v0.area-entered
+        subscriptionExpireTime: 2024-03-22T05:40:58.469Z
+    POLYGON_AREA_ENTERED:
+      value:
+        id: "123655"
+        source: https://notificationSendServer12.supertelco.com
+        type: org.camaraproject.geofencing.v0.area-entered
+        specversion: "1.0"
+        datacontenttype: application/json
+        time: 2023-03-22T05:40:23.682Z
+        data:
+          subscriptionId: 987654321
+          device:
+            phoneNumber: +123456789
+          area:
+            areaType: POLYGON
+            coordinates:
+              - latitude: 52.516770
+                longitude: 13.378156
+              - latitude: 52.516841
+                longitude: 13.379433
+              - latitude: 52.515917
+                longitude: 13.37959
+              - latitude: 52.515849
+                longitude: 13.378308
