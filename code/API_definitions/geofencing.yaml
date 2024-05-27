@@ -355,18 +355,14 @@ components:
       allOf:
         - $ref: "#/components/schemas/Area"
         - type: object
+          required:
+            - boundary
           properties:
-            coordinates:
-              type: array
-              items:
-                type: array
-                items:
-                  $ref: "#/components/schemas/Point"
-                minItems: 3
-                maxItems: 16
+            boundary:
+              $ref: "#/components/schemas/PointList"
       example:
         areaType: POLYGON
-        coordinates:
+        boundary:
           - latitude: 52.516770
             longitude: 13.378156
           - latitude: 52.516841
@@ -375,6 +371,13 @@ components:
             longitude: 13.37959
           - latitude: 52.515849
             longitude: 13.378308
+
+    PointList:
+      type: array
+      items:
+        $ref: "#/components/schemas/Point"
+      minItems: 3
+      maxItems: 15
 
     Point:
       type: object
@@ -946,7 +949,7 @@ components:
             phoneNumber: "+12345678912"
           area:
             areaType: POLYGON
-            coordinates:
+            boundary:
               - latitude: 52.516770
                 longitude: 13.378156
               - latitude: 52.516841
@@ -971,7 +974,7 @@ components:
             phoneNumber: +123456789
           area:
             areaType: POLYGON
-            coordinates:
+            boundary:
               - latitude: 52.516770
                 longitude: 13.378156
               - latitude: 52.516841
