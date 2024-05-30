@@ -37,11 +37,11 @@ info:
     It is mandatory in the subscription to provide the event `type` for which the client would like to subscribe.
 
     Following event ``type`` are managed for this API:
-      - ``org.camaraproject.geofencing.v0.area-entered``  - Event triggered when the device enters the given area
+      - ``org.camaraproject.geofencing-subscriptions.v0.area-entered``  - Event triggered when the device enters the given area
 
-      - ``org.camaraproject.geofencing.v0.area-left``     - Event triggered when the device leaves the given area
+      - ``org.camaraproject.geofencing-subscriptions.v0.area-left``     - Event triggered when the device leaves the given area
 
-    Note: Additionally to these list, ``org.camaraproject.geofencing.v0.subscription-ends`` notification `type` is sent when the subscription ends.
+    Note: Additionally to these list, ``org.camaraproject.geofencing-subscriptions.v0.subscription-ends`` notification `type` is sent when the subscription ends.
     This notification does not require dedicated subscription.
 
     It is used when:
@@ -100,6 +100,8 @@ paths:
             examples:
               CIRCLE_AREA_ENTERED:
                 $ref: "#/components/examples/REQUEST_CIRCLE_AREA_ENTERED"
+              POLYGON_AREA_ENTERED:
+                $ref: "#/components/examples/REQUEST_POLYGON_AREA_ENTERED"
         required: true
       callbacks:
         event-notifications:
@@ -123,6 +125,8 @@ paths:
                         $ref: "#/components/examples/CIRCLE_AREA_ENTERED"
                       CIRCLE_AREA_LEFT:
                         $ref: "#/components/examples/CIRCLE_AREA_LEFT"
+                      POLYGON_AREA_ENTERED:
+                        $ref: "#/components/examples/POLYGON_AREA_ENTERED"
                       SUBSCRIPTION_ENDS:
                         $ref: "#/components/examples/SUBSCRIPTION_ENDS"
               responses:
@@ -310,14 +314,17 @@ components:
         propertyName: areaType
         mapping:
           CIRCLE: "#/components/schemas/Circle"
+          POLYGON: "#/components/schemas/Polygon"
 
     AreaType:
       type: string
       description: |
         Type of this area.
         CIRCLE - The area is defined as a circle.
+        POLYGON - The area is defined as polygon.
       enum:
         - CIRCLE
+        - POLYGON
 
     Circle:
       description: Circular area
@@ -341,6 +348,36 @@ components:
           latitude: 50.735851
           longitude: 7.10066
         radius: 50000
+
+    Polygon:
+      description: Polygon based area defined by an ordered geo points array
+      type: object
+      allOf:
+        - $ref: "#/components/schemas/Area"
+        - type: object
+          required:
+            - boundary
+          properties:
+            boundary:
+              $ref: "#/components/schemas/PointList"
+      example:
+        areaType: POLYGON
+        boundary:
+          - latitude: 52.516770
+            longitude: 13.378156
+          - latitude: 52.516841
+            longitude: 13.379433
+          - latitude: 52.515917
+            longitude: 13.37959
+          - latitude: 52.515849
+            longitude: 13.378308
+
+    PointList:
+      type: array
+      items:
+        $ref: "#/components/schemas/Point"
+      minItems: 3
+      maxItems: 15
 
     Point:
       type: object
@@ -506,8 +543,8 @@ components:
 
         area-left - Event triggered when the device leaves the given area
       enum:
-        - org.camaraproject.geofencing.v0.area-entered
-        - org.camaraproject.geofencing.v0.area-left
+        - org.camaraproject.geofencing-subscriptions.v0.area-entered
+        - org.camaraproject.geofencing-subscriptions.v0.area-left
 
     NotificationEventType:
       type: string
@@ -518,9 +555,9 @@ components:
 
         subscription-ends - Event triggered when the subscription ends
       enum:
-        - org.camaraproject.geofencing.v0.area-entered
-        - org.camaraproject.geofencing.v0.area-left
-        - org.camaraproject.geofencing.v0.subscription-ends
+        - org.camaraproject.geofencing-subscriptions.v0.area-entered
+        - org.camaraproject.geofencing-subscriptions.v0.area-left
+        - org.camaraproject.geofencing-subscriptions.v0.subscription-ends
 
     NotificationUrl:
       type: string
@@ -622,9 +659,9 @@ components:
       discriminator:
         propertyName: "type"
         mapping:
-          org.camaraproject.geofencing.v0.area-left: "#/components/schemas/EventAreaLeft"
-          org.camaraproject.geofencing.v0.area-entered: "#/components/schemas/EventAreaEntered"
-          org.camaraproject.geofencing.v0.subscription-ends: "#/components/schemas/EventSubscriptionEnds"
+          org.camaraproject.geofencing-subscriptions.v0.area-left: "#/components/schemas/EventAreaLeft"
+          org.camaraproject.geofencing-subscriptions.v0.area-entered: "#/components/schemas/EventAreaEntered"
+          org.camaraproject.geofencing-subscriptions.v0.subscription-ends: "#/components/schemas/EventSubscriptionEnds"
 
     EventAreaLeft:
       description: event structure for event when the device leaves the area
@@ -849,13 +886,13 @@ components:
               latitude: 50.735851
               longitude: 7.10066
             radius: 2000
-          type: org.camaraproject.geofencing.v0.area-entered
+          type: org.camaraproject.geofencing-subscriptions.v0.area-entered
         subscriptionExpireTime: 2024-03-22T05:40:58.469Z
     CIRCLE_AREA_ENTERED:
       value:
         id: "123655"
         source: https://notificationSendServer12.supertelco.com
-        type: org.camaraproject.geofencing.v0.area-entered
+        type: org.camaraproject.geofencing-subscriptions.v0.area-entered
         specversion: "1.0"
         datacontenttype: application/json
         time: 2023-03-22T05:40:23.682Z
@@ -873,7 +910,7 @@ components:
       value:
         id: "123655"
         source: https://notificationSendServer12.supertelco.com
-        type: org.camaraproject.geofencing.v0.area-left
+        type: org.camaraproject.geofencing-subscriptions.v0.area-left
         specversion: "1.0"
         datacontenttype: application/json
         time: 2023-03-22T05:40:23.682Z
@@ -892,7 +929,7 @@ components:
       value:
         id: "123655"
         source: https://notificationSendServer12.supertelco.com
-        type: org.camaraproject.geofencing.v0.subscription-ends
+        type: org.camaraproject.geofencing-subscriptions.v0.subscription-ends
         specversion: "1.0"
         datacontenttype: application/json
         time: 2023-03-22T05:40:23.682Z
@@ -901,3 +938,48 @@ components:
           device:
             phoneNumber: +123456789
           terminationReason: SUBSCRIPTION_EXPIRED
+
+    REQUEST_POLYGON_AREA_ENTERED:
+      value:
+        webhook:
+          notificationUrl: https://application-server.com
+          notificationAuthToken: c8974e592c2fa383d4a3960714
+        subscriptionDetail:
+          device:
+            phoneNumber: "+12345678912"
+          area:
+            areaType: POLYGON
+            boundary:
+              - latitude: 52.516770
+                longitude: 13.378156
+              - latitude: 52.516841
+                longitude: 13.379433
+              - latitude: 52.515917
+                longitude: 13.37959
+              - latitude: 52.515849
+                longitude: 13.378308
+          type: org.camaraproject.geofencing-subscriptions.v0.area-entered
+        subscriptionExpireTime: 2024-03-22T05:40:58.469Z
+    POLYGON_AREA_ENTERED:
+      value:
+        id: "123655"
+        source: https://notificationSendServer12.supertelco.com
+        type: org.camaraproject.geofencing-subscriptions.v0.area-entered
+        specversion: "1.0"
+        datacontenttype: application/json
+        time: 2023-03-22T05:40:23.682Z
+        data:
+          subscriptionId: 987654321
+          device:
+            phoneNumber: +123456789
+          area:
+            areaType: POLYGON
+            boundary:
+              - latitude: 52.516770
+                longitude: 13.378156
+              - latitude: 52.516841
+                longitude: 13.379433
+              - latitude: 52.515917
+                longitude: 13.37959
+              - latitude: 52.515849
+                longitude: 13.378308
