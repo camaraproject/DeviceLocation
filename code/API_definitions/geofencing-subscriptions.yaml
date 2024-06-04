@@ -1,6 +1,6 @@
 openapi: 3.0.3
 info:
-  title: Device Geofencing
+  title: Device Geofencing Subscriptions
   description: |
     API to create, retrieve and delete event subscriptions to realize geofencing for a user device.
 
@@ -37,11 +37,11 @@ info:
     It is mandatory in the subscription to provide the event `type` for which the client would like to subscribe.
 
     Following event ``type`` are managed for this API:
-      - ``org.camaraproject.geofencing.v0.area-entered``  - Event triggered when the device enters the given area
+      - ``org.camaraproject.geofencing-subscriptions.v0.area-entered``  - Event triggered when the device enters the given area
 
-      - ``org.camaraproject.geofencing.v0.area-left``     - Event triggered when the device leaves the given area
+      - ``org.camaraproject.geofencing-subscriptions.v0.area-left``     - Event triggered when the device leaves the given area
 
-    Note: Additionally to these list, ``org.camaraproject.geofencing.v0.subscription-ends`` notification `type` is sent when the subscription ends.
+    Note: Additionally to these list, ``org.camaraproject.geofencing-subscriptions.v0.subscription-ends`` notification `type` is sent when the subscription ends.
     This notification does not require dedicated subscription.
 
     It is used when:
@@ -67,13 +67,13 @@ info:
   license:
     name: Apache 2.0
     url: https://www.apache.org/licenses/LICENSE-2.0.html
-  version: 0.2.0-wip
+  version: wip
 externalDocs:
   description: Product documentation at Camara
   url: https://github.com/camaraproject/
 
 servers:
-  - url: "{apiRoot}/geofencing/v0"
+  - url: "{apiRoot}/geofencing-subscriptions/v0"
     variables:
       apiRoot:
         default: http://localhost:9091
@@ -168,7 +168,8 @@ paths:
           $ref: "#/components/responses/Generic503"
       security:
         - openId:
-            - geofencing:subscriptions:write
+            - geofencing-subscriptions:org.camaraproject.geofencing-subscriptions.v0.area-entered:create
+            - geofencing-subscriptions:org.camaraproject.geofencing-subscriptions.v0.area-left:create
     get:
       tags:
         - Geofencing subscriptions
@@ -202,7 +203,7 @@ paths:
           $ref: "#/components/responses/Generic503"
       security:
         - openId:
-            - geofencing:subscriptions:read
+            - geofencing-subscriptions:read
 
   /subscriptions/{subscriptionsId}:
     get:
@@ -243,7 +244,7 @@ paths:
           $ref: "#/components/responses/Generic503"
       security:
         - openId:
-            - geofencing:subscriptions:read
+            - geofencing-subscriptions:read
     delete:
       tags:
         - Geofencing subscriptions
@@ -279,7 +280,7 @@ paths:
           $ref: "#/components/responses/Generic503"
       security:
         - openId:
-            - geofencing:subscriptions:delete
+            - geofencing-subscriptions:delete
 
 components:
   securitySchemes:
@@ -506,8 +507,8 @@ components:
 
         area-left - Event triggered when the device leaves the given area
       enum:
-        - org.camaraproject.geofencing.v0.area-entered
-        - org.camaraproject.geofencing.v0.area-left
+        - org.camaraproject.geofencing-subscriptions.v0.area-entered
+        - org.camaraproject.geofencing-subscriptions.v0.area-left
 
     NotificationEventType:
       type: string
@@ -518,9 +519,9 @@ components:
 
         subscription-ends - Event triggered when the subscription ends
       enum:
-        - org.camaraproject.geofencing.v0.area-entered
-        - org.camaraproject.geofencing.v0.area-left
-        - org.camaraproject.geofencing.v0.subscription-ends
+        - org.camaraproject.geofencing-subscriptions.v0.area-entered
+        - org.camaraproject.geofencing-subscriptions.v0.area-left
+        - org.camaraproject.geofencing-subscriptions.v0.subscription-ends
 
     NotificationUrl:
       type: string
@@ -622,9 +623,9 @@ components:
       discriminator:
         propertyName: "type"
         mapping:
-          org.camaraproject.geofencing.v0.area-left: "#/components/schemas/EventAreaLeft"
-          org.camaraproject.geofencing.v0.area-entered: "#/components/schemas/EventAreaEntered"
-          org.camaraproject.geofencing.v0.subscription-ends: "#/components/schemas/EventSubscriptionEnds"
+          org.camaraproject.geofencing-subscriptions.v0.area-left: "#/components/schemas/EventAreaLeft"
+          org.camaraproject.geofencing-subscriptions.v0.area-entered: "#/components/schemas/EventAreaEntered"
+          org.camaraproject.geofencing-subscriptions.v0.subscription-ends: "#/components/schemas/EventSubscriptionEnds"
 
     EventAreaLeft:
       description: event structure for event when the device leaves the area
@@ -849,13 +850,13 @@ components:
               latitude: 50.735851
               longitude: 7.10066
             radius: 2000
-          type: org.camaraproject.geofencing.v0.area-entered
+          type: org.camaraproject.geofencing-subscriptions.v0.area-entered
         subscriptionExpireTime: 2024-03-22T05:40:58.469Z
     CIRCLE_AREA_ENTERED:
       value:
         id: "123655"
         source: https://notificationSendServer12.supertelco.com
-        type: org.camaraproject.geofencing.v0.area-entered
+        type: org.camaraproject.geofencing-subscriptions.v0.area-entered
         specversion: "1.0"
         datacontenttype: application/json
         time: 2023-03-22T05:40:23.682Z
@@ -873,7 +874,7 @@ components:
       value:
         id: "123655"
         source: https://notificationSendServer12.supertelco.com
-        type: org.camaraproject.geofencing.v0.area-left
+        type: org.camaraproject.geofencing-subscriptions.v0.area-left
         specversion: "1.0"
         datacontenttype: application/json
         time: 2023-03-22T05:40:23.682Z
@@ -892,7 +893,7 @@ components:
       value:
         id: "123655"
         source: https://notificationSendServer12.supertelco.com
-        type: org.camaraproject.geofencing.v0.subscription-ends
+        type: org.camaraproject.geofencing-subscriptions.v0.subscription-ends
         specversion: "1.0"
         datacontenttype: application/json
         time: 2023-03-22T05:40:23.682Z
