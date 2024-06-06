@@ -1298,6 +1298,7 @@ components:
                 message: "Expected property is missing: subscriptionId"
   examples:
     REQUEST_CIRCLE_AREA_ENTERED:
+      description: A sample geofence for entering for a circle area
       value:
         protocol: "HTTP"
         sink: https://notificationSendServer12.supertelco.com
@@ -1315,8 +1316,9 @@ components:
               radius: 2000
           initialEvent: "true"
           subscriptionMaxEvents: 10
-        subscriptionExpireTime: 2024-03-22T05:40:58.469Z
+          subscriptionExpireTime: 2024-03-22T05:40:58.469Z
     CIRCLE_AREA_ENTERED:
+      description: The cloud event when a geofence area was entered
       value:
         id: "123655"
         source: https://notificationSendServer12.supertelco.com
@@ -1335,6 +1337,7 @@ components:
               longitude: 7.10066
             radius: 2000
     CIRCLE_AREA_LEFT:
+      description: The cloud event when a geofence area was left
       value:
         id: "123655"
         source: https://notificationSendServer12.supertelco.com
@@ -1354,6 +1357,7 @@ components:
             radius: 2000
 
     SUBSCRIPTION_ENDS:
+      description: The cloud event when a geofence subscription ends
       value:
         id: "123655"
         source: https://notificationSendServer12.supertelco.com
