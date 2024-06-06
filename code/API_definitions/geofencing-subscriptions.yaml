@@ -51,7 +51,7 @@ info:
 
     ### Notification callback
 
-    This endpoint describes the event notification received on subscription listener side when the event occurred. 
+    This endpoint describes the event notification received on subscription listener side when the event occurred.
     As for subscription, detailed description of the event notification is provided in the CAMARA API design guideline document.
 
     _**WARNING**: This callback endpoint must be exposed on the consumer side as `POST /{$request.body#/sink}`.
@@ -681,8 +681,8 @@ components:
         publicPort:
           $ref: "#/components/schemas/Port"
       anyOf:
-        - required: [ publicAddress, privateAddress ]
-        - required: [ publicAddress, publicPort ]
+        - required: [publicAddress, privateAddress]
+        - required: [publicAddress, publicPort]
       example:
         publicAddress: "84.125.93.10"
         publicPort: 59765
