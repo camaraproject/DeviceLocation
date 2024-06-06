@@ -35,8 +35,6 @@ info:
     The CAMARA subscription model is detailed in the CAMARA API design guideline document and follows CloudEvents specification.
 
     It is mandatory in the subscription to provide the event `type` for which the client would like to subscribe.
-    
-    _Note: An array of types could be passed but as of now only one value MUST passed. Use of multiple value will be open later at API level._
 
 
     Following event ``type`` are managed for this API:
