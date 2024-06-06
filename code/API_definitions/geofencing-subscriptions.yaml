@@ -1314,7 +1314,7 @@ components:
                 latitude: 50.735851
                 longitude: 7.10066
               radius: 2000
-          initialEvent: "true"
+          initialEvent: true
           subscriptionMaxEvents: 10
           subscriptionExpireTime: 2024-03-22T05:40:58.469Z
     CIRCLE_AREA_ENTERED:
