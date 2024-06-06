@@ -36,7 +36,6 @@ info:
 
     It is mandatory in the subscription to provide the event `type` for which the client would like to subscribe.
 
-
     Following event ``type`` are managed for this API:
       - ``org.camaraproject.geofencing-subscriptions.v0.area-entered``  - Event triggered when the device enters the given area
 
@@ -93,7 +92,7 @@ paths:
       description: Create a subscription for a device to receive notifications when a device enters or exits a specified area
       operationId: createSubscription
       parameters:
-        - $ref: '#/components/parameters/x-correlator'
+        - $ref: "#/components/parameters/x-correlator"
       security:
         - openId:
             - geofencing-subscriptions:org.camaraproject.geofencing-subscriptions.v0.area-entered:create
@@ -215,7 +214,7 @@ paths:
                 type: array
                 minItems: 0
                 items:
-                  $ref: '#/components/schemas/Subscription'
+                  $ref: "#/components/schemas/Subscription"
         "400":
           $ref: "#/components/responses/Generic400"
         "401":
@@ -571,7 +570,7 @@ components:
           description: The address to which events shall be delivered using the selected protocol.
           example: "https://endpoint.example.com/sink"
         sinkCredential:
-          $ref: '#/components/schemas/SinkCredential'
+          $ref: "#/components/schemas/SinkCredential"
         types:
           description: |
             Camara Event types eligible to be delivered by this subscription.
@@ -579,11 +578,11 @@ components:
           items:
             type: string
         config:
-          $ref: '#/components/schemas/Config'
+          $ref: "#/components/schemas/Config"
         id:
           type: string
           description: The unique identifier of the subscription in the scope of the subscription manager. When this information is contained within an event notification, this concept SHALL be referred as `subscriptionId` as per [Commonalities Event Notification Model](https://github.com/camaraproject/Commonalities/blob/main/documentation/API-design-guidelines.md#122-event-notification).
-          example: '1119920371'
+          example: "1119920371"
         startsAt:
           type: string
           format: date-time
@@ -610,12 +609,12 @@ components:
       discriminator:
         propertyName: protocol
         mapping:
-          HTTP: '#/components/schemas/HTTPSubscriptionResponse'
-          MQTT3: '#/components/schemas/MQTTSubscriptionResponse'
-          MQTT5: '#/components/schemas/MQTTSubscriptionResponse'
-          AMQP: '#/components/schemas/AMQPSubscriptionResponse'
-          NATS: '#/components/schemas/NATSSubscriptionResponse'
-          KAFKA: '#/components/schemas/ApacheKafkaSubscriptionResponse'
+          HTTP: "#/components/schemas/HTTPSubscriptionResponse"
+          MQTT3: "#/components/schemas/MQTTSubscriptionResponse"
+          MQTT5: "#/components/schemas/MQTTSubscriptionResponse"
+          AMQP: "#/components/schemas/AMQPSubscriptionResponse"
+          NATS: "#/components/schemas/NATSSubscriptionResponse"
+          KAFKA: "#/components/schemas/ApacheKafkaSubscriptionResponse"
 
     SubscriptionAsync:
       description: Response for a event-type subscription request managed asynchronously (Creation or Deletion)
