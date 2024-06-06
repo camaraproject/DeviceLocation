@@ -193,7 +193,7 @@ paths:
           $ref: "#/components/responses/Generic503"
     get:
       tags:
-        - Geofencing Subscription
+        - Geofencing subscriptions
       summary: "Retrieve a list of geofencing event subscription"
       description: Retrieve a list of geofencing event subscription(s)
       operationId: retrieveGeofencingSubscriptionList
@@ -329,6 +329,7 @@ components:
         type: string
   schemas:
     ErrorInfo:
+      description: The error info object for possible error cases
       type: object
       required:
         - status
@@ -521,12 +522,9 @@ components:
           $ref: "#/components/schemas/Device"
         area:
           $ref: "#/components/schemas/Area"
-        type:
-          $ref: "#/components/schemas/SubscriptionEventType"
       required:
         - device
         - area
-        - type
 
     SubscriptionEventType:
       type: string
