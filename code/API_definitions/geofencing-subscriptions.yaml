@@ -121,7 +121,7 @@ paths:
               requestBody:
                 required: true
                 content:
-                  application/json:
+                  application/cloudevents+json:
                     schema:
                       $ref: "#/components/schemas/CloudEvent"
                     examples:
