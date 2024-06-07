@@ -598,7 +598,7 @@ components:
               - `ACTIVE`: Subscription creation process is completed. Subscription is fully operative.
               - `DEACTIVE`: Subscription is temporarily inactive, but its workflow logic is not deleted.
               - `EXPIRED`: Subscription is ended (no longer active). This status applies when subscription is ended due to `SUBSCRIPTION_EXPIRED` or `ACCESS_TOKEN_EXPIRED` event.
-              - `DELETED`: Subscription is ended as deleted (no longer active). This status applies when subscription information is kept (i.e. subscription workflow is no longer active but its metainformation is kept).
+              - `DELETED`: Subscription is ended as deleted (no longer active). This status applies when subscription information is kept (i.e. subscription workflow is no longer active but its meta-information is kept).
           enum:
             - ACTIVATION_REQUESTED
             - ACTIVE
@@ -1154,7 +1154,7 @@ components:
             TokenMismatch:
               value:
                 status: 403
-                code: "SUSBCRIPTION_MISMATCH"
+                code: "SUBSCRIPTION_MISMATCH"
                 message: "Inconsistent access token for requested events subscription"
     Generic403:
       description: Client does not have sufficient permission
