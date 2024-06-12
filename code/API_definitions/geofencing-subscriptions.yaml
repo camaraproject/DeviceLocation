@@ -47,7 +47,7 @@ info:
     It is used when:
       - the subscription expire time (optionally set by the requester) has been reached
       - the maximum number of subscription events (optionally set by the requester) has been reached
-      - the Access Token sinkCredential (optionally set by the requester) expiration time has been reached
+      - the Access Token `sinkCredential` (optionally set by the requester) expiration time has been reached
       - the API server has to stop sending notification prematurely
 
     ### Notification callback
