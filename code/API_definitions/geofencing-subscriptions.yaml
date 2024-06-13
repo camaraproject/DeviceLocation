@@ -400,7 +400,7 @@ components:
         - subscriptionDetail
       properties:
         subscriptionDetail:
-          $ref: "#/components/schemas/CreateSubscriptionDetail"
+          $ref: "#/components/schemas/SubscriptionDetail"
         subscriptionExpireTime:
           type: string
           format: date-time
@@ -508,10 +508,6 @@ components:
         - refreshTokenEndpoint
 
     SubscriptionDetail:
-      description: The detail of the requested event subscription
-      type: object
-
-    CreateSubscriptionDetail:
       description: The detail of the requested event subscription
       type: object
       properties:
