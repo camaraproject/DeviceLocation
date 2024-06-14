@@ -1,7 +1,6 @@
 | Org                 | Name                 | GitHub Username |
 |---------------------|----------------------|-----------------|
 | Deutsche Telekom AG | Maximilian Laue      | maxl2287        |
-| Deutsche Telekom AG | Noel Wirzius         | NoelWirzius     |
 | Ericsson            | Joachim Dahlgren     | JoachimDahlgren |
 | Orange              | Ludovic Robert       | bigludo7        |
 | Orange              | Sylvain Morel        | SylMOREL        |
