@@ -368,6 +368,7 @@ components:
             Camara Event types eligible to be delivered by this subscription.
             Note: As of now we enforce to have only event type per subscription.
           type: array
+          minItems: 1
           maxItems: 1
           items:
             $ref: "#/components/schemas/SubscriptionEventType"
