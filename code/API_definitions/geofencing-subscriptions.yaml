@@ -780,6 +780,7 @@ components:
         - specversion
         - type
         - time
+        - data
       properties:
         id:
           type: string
