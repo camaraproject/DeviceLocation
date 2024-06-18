@@ -36,7 +36,7 @@ info:
 
     It is mandatory in the subscription to provide the event `type` for which the client would like to subscribe.
 
-    Following event ``type`` are managed for this API:
+    Following event ``types`` are managed for this API:
       - ``org.camaraproject.geofencing-subscriptions.v0.area-entered``  - Event triggered when the device enters the given area
 
       - ``org.camaraproject.geofencing-subscriptions.v0.area-left``     - Event triggered when the device leaves the given area
