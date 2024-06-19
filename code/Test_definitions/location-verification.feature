@@ -1,6 +1,5 @@
 Feature: CAMARA Device location verification API, vwip - Operation verifyLocation
   # Input to be provided by the implementation to the tester
-
   #
   # Implementation indications:
   # * List of device identifier types which are not supported, among: phoneNumber, networkAccessIdentifier, ipv4Address, ipv6Address
