@@ -8,7 +8,7 @@ Feature: CAMARA Device location verification API, vwip - Operation verifyLocatio
   # Testing assets:
   # * A device object which location is known by the network when connected. To test all scenarios, at least 2 valid devices are needed
   # * The known location of the testing devices
-  # * A device object identifying a device commercialized by the implemenation for which the service is not applicable, if any
+  # * A device object identifying a device commercialized by the implementation for which the service is not applicable, if any
   #
   # References to OAS spec schemas refer to schemas specifies in location-verification.yaml, version 0.2.0
 
