@@ -248,7 +248,7 @@ components:
       example:
         latitude: 50.735851
         longitude: 7.10066
-  
+
     Latitude:
       description: Latitude component of a location
       type: number
@@ -418,7 +418,7 @@ components:
         message:
           type: string
           description: Detailed error description
-  
+
   responses:
     Generic400:
       description: Bad Request
