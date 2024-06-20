@@ -249,7 +249,7 @@ Feature: CAMARA Device location verification API, vwip - Operation verifyLocatio
     When the HTTP "POST" request is sent
     Then the response status code is 401
     And the response property "$.status" is 401
-    And the response property "$.code" is "AUTHENTICATION_REQUIRED"
+    And the response property "$.code" is "UNAUTHENTICATED"
     And the response property "$.message" contains a user friendly text
 
   @location_verification_401.3_invalid_access_token
