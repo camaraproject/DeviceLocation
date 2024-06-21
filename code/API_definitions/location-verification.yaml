@@ -49,7 +49,7 @@ info:
     # Further info and support
 
     (FAQs will be added in a later version of the documentation)
-  termsOfService: http://swagger.io/terms/
+  termsOfService: https://swagger.io/terms/
   contact:
     email: project-email@sample.com
   license:
@@ -162,6 +162,8 @@ paths:
           $ref: "#/components/responses/Generic403"
         "404":
           $ref: "#/components/responses/Generic404"
+        "422":
+          $ref: "#/components/responses/RetrieveLocationUnprocessableEntity422"
         "500":
           $ref: "#/components/responses/Generic500"
         "503":
@@ -456,6 +458,19 @@ components:
             status: 404
             code: NOT_FOUND
             message: "The specified resource is not found"
+    RetrieveLocationUnprocessableEntity422:
+      description: Unprocessable Entity
+      headers:
+        x-correlator:
+          $ref: '#/components/headers/x-correlator'
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorInfo'
+          example:
+            status: 422
+            code: LOCATION_RETRIEVAL.UNABLE_TO_FULFILL_MAX_AGE
+            message: "Unable to provide expected freshness for location"
     Generic500:
       description: Internal server error
       headers:
