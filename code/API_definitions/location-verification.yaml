@@ -163,7 +163,7 @@ paths:
         "404":
           $ref: "#/components/responses/Generic404"
         "422":
-          $ref: "#/components/responses/RetrieveLocationUnprocessableEntity422"
+          $ref: "#/components/responses/VerifyLocationUnprocessableEntity422"
         "500":
           $ref: "#/components/responses/Generic500"
         "503":
@@ -458,7 +458,7 @@ components:
             status: 404
             code: NOT_FOUND
             message: "The specified resource is not found"
-    RetrieveLocationUnprocessableEntity422:
+    VerifyLocationUnprocessableEntity422:
       description: Unprocessable Entity
       headers:
         x-correlator:
