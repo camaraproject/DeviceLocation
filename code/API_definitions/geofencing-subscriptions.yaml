@@ -179,17 +179,23 @@ paths:
         "401":
           $ref: "#/components/responses/Generic401"
         "403":
-          $ref: "#/components/responses/CreateSubscription403"
+          $ref: "#/components/responses/Generic403"
+        "405":
+          $ref: "#/components/responses/Generic405"
         "409":
           $ref: "#/components/responses/Generic409"
         "415":
           $ref: "#/components/responses/Generic415"
         "422":
-          $ref: "#/components/responses/CreateSubscription422"
+          $ref: "#/components/responses/Generic422"
         "429":
           $ref: "#/components/responses/Generic429"
         "500":
           $ref: "#/components/responses/Generic500"
+        "501":
+          $ref: "#/components/responses/Generic501"
+        "502":
+          $ref: "#/components/responses/Generic502"
         "503":
           $ref: "#/components/responses/Generic503"
     get:
@@ -222,8 +228,16 @@ paths:
           $ref: "#/components/responses/Generic401"
         "403":
           $ref: "#/components/responses/Generic403"
+        "405":
+          $ref: "#/components/responses/Generic405"
+        "406":
+          $ref: "#/components/responses/Generic406"
         "500":
           $ref: "#/components/responses/Generic500"
+        "501":
+          $ref: "#/components/responses/Generic501"
+        "502":
+          $ref: "#/components/responses/Generic502"
         "503":
           $ref: "#/components/responses/Generic503"
   /subscriptions/{subscriptionId}:
@@ -257,8 +271,16 @@ paths:
           $ref: "#/components/responses/Generic403"
         "404":
           $ref: "#/components/responses/Generic404"
+        "405":
+          $ref: "#/components/responses/Generic405"
+        "406":
+          $ref: "#/components/responses/Generic406"
         "500":
           $ref: "#/components/responses/Generic500"
+        "501":
+          $ref: "#/components/responses/Generic501"
+        "502":
+          $ref: "#/components/responses/Generic502"
         "503":
           $ref: "#/components/responses/Generic503"
     delete:
@@ -296,8 +318,14 @@ paths:
           $ref: "#/components/responses/Generic403"
         "404":
           $ref: "#/components/responses/Generic404"
+        "405":
+          $ref: "#/components/responses/Generic405"
         "500":
           $ref: "#/components/responses/Generic500"
+        "501":
+          $ref: "#/components/responses/Generic501"
+        "502":
+          $ref: "#/components/responses/Generic502"
         "503":
           $ref: "#/components/responses/Generic503"
 components:
@@ -1083,55 +1111,28 @@ components:
           schema:
             $ref: "#/components/schemas/ErrorInfo"
           examples:
-            InvalidArgument:
+            INVALID_ARGUMENT:
               value:
                 status: 400
-                code: "INVALID_ARGUMENT"
-                message: "Client specified an invalid argument, request body or query param"
-            InvalidProtocol:
+                code: INVALID_ARGUMENT
+                message: Client specified an invalid argument, request body or query param
+            INVALID_PROTOCOL:
               value:
                 status: 400
-                code: "INVALID_PROTOCOL"
-                message: "Only HTTP is supported"
-            InvalidCredential:
+                code: INVALID_PROTOCOL
+                message: Only HTTP is supported
+            INVALID_CREDENTIAL:
               value:
                 status: 400
-                code: "INVALID_CREDENTIAL"
-                message: "Only Access token is supported"
-            InvalidToken:
+                code: INVALID_CREDENTIAL
+                message: Only Access token is supported
+            INVALID_TOKEN:
               value:
                 status: 400
-                code: "INVALID_TOKEN"
-                message: "Only bearer token is supported"
+                code: INVALID_TOKEN
+                message: Only bearer token is supported
     Generic400:
-      description: Problem with the client request
-      headers:
-        x-correlator:
-          $ref: "#/components/headers/x-correlator"
-      content:
-        application/json:
-          schema:
-            $ref: "#/components/schemas/ErrorInfo"
-          example:
-            status: 400
-            code: "INVALID_ARGUMENT"
-            message: "Client specified an invalid argument, request body or query param"
-    Generic401:
-      description: Authentication problem with the client request
-      headers:
-        x-correlator:
-          $ref: "#/components/headers/x-correlator"
-      content:
-        application/json:
-          schema:
-            $ref: "#/components/schemas/ErrorInfo"
-          example:
-            status: 401
-            code: "UNAUTHENTICATED"
-            message: "Request not authenticated due to missing, invalid, or expired credentials"
-
-    CreateSubscription403:
-      description: Client does not have sufficient permission
+      description: Bad Request
       headers:
         x-correlator:
           $ref: "#/components/headers/x-correlator"
@@ -1140,18 +1141,42 @@ components:
           schema:
             $ref: "#/components/schemas/ErrorInfo"
           examples:
-            PermissionDenied:
+            GENERIC_400_INVALID_ARGUMENT:
+              description: Invalid Argument. Generic Syntax Exception
               value:
-                status: 403
-                code: "PERMISSION_DENIED"
-                message: "Client does not have sufficient permissions to perform this action"
-            TokenMismatch:
+                status: 400
+                code: INVALID_ARGUMENT
+                message: Client specified an invalid argument, request body or query param.
+            GENERIC_400_OUT_OF_RANGE:
+              description: Out of Range. Specific Syntax Exception used when a given field has a pre-defined range or a invalid filter criteria combination is requested
               value:
-                status: 403
-                code: "SUBSCRIPTION_MISMATCH"
-                message: "Inconsistent access token for requested events subscription"
+                status: 400
+                code: OUT_OF_RANGE
+                message: Client specified an invalid range.
+    Generic401:
+      description: Unauthorized
+      headers:
+        x-correlator:
+          $ref: "#/components/headers/x-correlator"
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/ErrorInfo"
+          examples:
+            GENERIC_401_UNAUTHENTICATED:
+              description: Request cannot be authenticated
+              value:
+                status: 401
+                code: UNAUTHENTICATED
+                message: Request not authenticated due to missing, invalid, or expired credentials.
+            GENERIC_401_AUTHENTICATION_REQUIRED:
+              description: New authentication is needed, authentication is no longer valid
+              value:
+                status: 401
+                code: AUTHENTICATION_REQUIRED
+                message: New authentication is required.
     Generic403:
-      description: Client does not have sufficient permission
+      description: Forbidden
       headers:
         x-correlator:
           $ref: "#/components/headers/x-correlator"
@@ -1159,12 +1184,21 @@ components:
         application/json:
           schema:
             $ref: "#/components/schemas/ErrorInfo"
-          example:
-            status: 403
-            code: "PERMISSION_DENIED"
-            message: "Client does not have sufficient permissions to perform this action"
+          examples:
+            GENERIC_403_PERMISSION_DENIED:
+              description: Permission denied. OAuth2 token access does not have the required scope or when the user fails operational security
+              value:
+                status: 403
+                code: PERMISSION_DENIED
+                message: Client does not have sufficient permissions to perform this action.
+            GENERIC_403_INVALID_TOKEN_CONTEXT:
+              description: Reflect some inconsistency between information in some field of the API and the related OAuth2 Token
+              value:
+                status: 403
+                code: INVALID_TOKEN_CONTEXT
+                message: "{{field}} is not consistent with access token."
     Generic404:
-      description: Resource Not Found
+      description: Not found
       headers:
         x-correlator:
           $ref: "#/components/headers/x-correlator"
@@ -1172,10 +1206,45 @@ components:
         application/json:
           schema:
             $ref: "#/components/schemas/ErrorInfo"
-          example:
-            status: 404
-            code: NOT_FOUND
-            message: "The specified resource is not found"
+          examples:
+            GENERIC_404_NOT_FOUND:
+              description: Resource is not found
+              value:
+                status: 404
+                code: NOT_FOUND
+                message: The specified resource is not found.
+    Generic405:
+      description: Method Not Allowed
+      headers:
+        x-correlator:
+          $ref: "#/components/headers/x-correlator"
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/ErrorInfo"
+          examples:
+            GENERIC_405_METHOD_NOT_ALLOWED:
+              description: Invalid HTTP verb used with a given endpoint
+              value:
+                status: 405
+                code: METHOD_NOT_ALLOWED
+                message: The requested method is not allowed/supported on the target resource.
+    Generic406:
+      description: Not Acceptable
+      headers:
+        x-correlator:
+          $ref: "#/components/headers/x-correlator"
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/ErrorInfo"
+          examples:
+            GENERIC_406_NOT_ACCEPTABLE:
+              description: API Server does not accept the media type (`Accept-*` header) indicated by API client
+              value:
+                status: 406
+                code: NOT_ACCEPTABLE
+                message: The server cannot produce a response matching the content requested by the client through `Accept-*` headers.
     Generic409:
       description: Conflict
       headers:
@@ -1185,10 +1254,13 @@ components:
         application/json:
           schema:
             $ref: "#/components/schemas/ErrorInfo"
-          example:
-            status: 409
-            code: CONFLICT
-            message: "The specified resource is in a conflict"
+          examples:
+            GENERIC_409_CONFLICT:
+              description: Duplication of an existing resource
+              value:
+                status: 409
+                code: CONFLICT
+                message: A specified resource duplicate entry found.
     Generic410:
       description: Gone
       headers:
@@ -1198,25 +1270,15 @@ components:
         application/json:
           schema:
             $ref: "#/components/schemas/ErrorInfo"
-          example:
-            status: 410
-            code: GONE
-            message: "The specified resource is no longer available at the requested address"
-    Generic415:
-      description: Unsupported Media Type
-      headers:
-        X-Correlator:
-          $ref: "#/components/headers/x-correlator"
-      content:
-        application/json:
-          schema:
-            $ref: "#/components/schemas/ErrorInfo"
-          example:
-            status: 415
-            code: UNSUPPORTED_MEDIA_TYPE
-            message: "The specified media type is not supported"
-    CreateSubscription422:
-      description: Unprocessable Entity
+          examples:
+            GENERIC_410_GONE:
+              description: Use in notifications flow to allow API Consumer to indicate that its callback is no longer available
+              value:
+                status: 410
+                code: GONE
+                message: Access to the target resource is no longer available.
+    Generic412:
+      description: Failed precondition
       headers:
         x-correlator:
           $ref: "#/components/headers/x-correlator"
@@ -1225,26 +1287,74 @@ components:
           schema:
             $ref: "#/components/schemas/ErrorInfo"
           examples:
-            PermissionDenied:
+            GENERIC_412_FAILED_PRECONDITION:
+              description: Use in notifications flow to allow API Consumer to indicate that its callback is no longer available
+              value:
+                status: 412
+                code: FAILED_PRECONDITION
+                message: Request cannot be executed in the current system state.
+    Generic415:
+      description: Unsupported Media Type
+      headers:
+        x-correlator:
+          $ref: "#/components/headers/x-correlator"
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/ErrorInfo"
+          examples:
+            GENERIC_415_UNSUPPORTED_MEDIA_TYPE:
+              description: Payload format of the request is in an unsupported format by the Server. Should not happen
+              value:
+                status: 415
+                code: UNSUPPORTED_MEDIA_TYPE
+                message: The server refuses to accept the request because the payload format is in an unsupported format.
+    Generic422:
+      description: Unprocessable Content
+      headers:
+        x-correlator:
+          $ref: "#/components/headers/x-correlator"
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/ErrorInfo"
+          examples:
+            GENERIC_422_DEVICE_IDENTIFIERS_MISMATCH:
+              description: Inconsistency between device identifiers not pointing to the same device
               value:
                 status: 422
-                code: "MULTIEVENT_SUBSCRIPTION_NOT_SUPPORTED"
-                message: "Multi event types subscription not managed"
+                code: DEVICE_IDENTIFIERS_MISMATCH
+                message: Provided device identifiers are not consistent.
+            GENERIC_422_DEVICE_NOT_APPLICABLE:
+              description: Service is not available for the provided device
+              value:
+                status: 422
+                code: DEVICE_NOT_APPLICABLE
+                message: The service is not available for the provided device.
     Generic429:
       description: Too Many Requests
       headers:
-        X-Correlator:
+        x-correlator:
           $ref: "#/components/headers/x-correlator"
       content:
         application/json:
           schema:
             $ref: "#/components/schemas/ErrorInfo"
-          example:
-            status: 429
-            code: TOO_MANY_REQUESTS
-            message: "Endpoint does not support as many requests per time slot"
+          examples:
+            GENERIC_429_QUOTA_EXCEEDED:
+              description: Request is rejected due to exceeding a business quota limit
+              value:
+                status: 429
+                code: QUOTA_EXCEEDED
+                message: Either out of resource quota or reaching rate limiting.
+            GENERIC_429_TOO_MANY_REQUESTS:
+              description: API Server request limit is overpassed
+              value:
+                status: 429
+                code: TOO_MANY_REQUESTS
+                message: Either out of resource quota or reaching rate limiting.
     Generic500:
-      description: Server error
+      description: Internal Server Error
       headers:
         x-correlator:
           $ref: "#/components/headers/x-correlator"
@@ -1252,12 +1362,47 @@ components:
         application/json:
           schema:
             $ref: "#/components/schemas/ErrorInfo"
-          example:
-            status: 500
-            code: "INTERNAL"
-            message: "Server error"
+          examples:
+            GENERIC_500_INTERNAL:
+              description: Problem in Server side. Regular Server Exception
+              value:
+                status: 500
+                code: INTERNAL
+                message: Unknown server error. Typically a server bug.
+    Generic501:
+      description: Not Implemented
+      headers:
+        x-correlator:
+          $ref: "#/components/headers/x-correlator"
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/ErrorInfo"
+          examples:
+            GENERIC_501_NOT_IMPLEMENTED:
+              description: Service not implemented. The use of this code should be avoided as far as possible to get the objective to reach aligned implementations
+              value:
+                status: 501
+                code: NOT_IMPLEMENTED
+                message: This functionality is not implemented yet.
+    Generic502:
+      description: Bad Gateway
+      headers:
+        x-correlator:
+          $ref: "#/components/headers/x-correlator"
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/ErrorInfo"
+          examples:
+            GENERIC_502_BAD_GATEWAY:
+              description: Internal routing problem in the Server side that blocks to manage the service properly
+              value:
+                status: 502
+                code: BAD_GATEWAY
+                message: An upstream internal service cannot be reached.
     Generic503:
-      description: Service unavailable. Typically the server is down.
+      description: Service Unavailable
       headers:
         x-correlator:
           $ref: "#/components/headers/x-correlator"
@@ -1265,10 +1410,13 @@ components:
         application/json:
           schema:
             $ref: "#/components/schemas/ErrorInfo"
-          example:
-            status: 503
-            code: "UNAVAILABLE"
-            message: "Service unavailable"
+          examples:
+            GENERIC_503_UNAVAILABLE:
+              description: Service is not available. Temporary situation usually related to maintenance process in the server side
+              value:
+                status: 503
+                code: UNAVAILABLE
+                message: Service Unavailable.
     SubscriptionIdRequired:
       description: Problem with the client request
       headers:
