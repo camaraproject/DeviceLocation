@@ -173,7 +173,7 @@ Feature: CAMARA Device location retrieval  API, v0.2.0 - Operation retrieveLocat
     When the HTTP "POST" request is sent
     Then the response status code is 403
     And the response property "$.status" is 403
-    And the response property "$.code" is "DEVICE_INVALID_TOKEN_CONTEXT"
+    And the response property "$.code" is "INVALID_TOKEN_CONTEXT"
     And the response property "$.message" contains a user friendly text
 
   @location_retrieval_16_device_not_supported
@@ -248,7 +248,7 @@ Feature: CAMARA Device location retrieval  API, v0.2.0 - Operation retrieveLocat
     When the HTTP "POST" request is sent
     Then the response status code is 401
     And the response property "$.status" is 401
-    And the response property "$.code" is "UNAUTHENTICATED"
+    And the response property "$.code" is "AUTHENTICATION_REQUIRED"
     And the response property "$.message" contains a user friendly text
 
 
