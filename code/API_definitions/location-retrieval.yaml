@@ -52,7 +52,8 @@ info:
         * a localization defined with a circle with center specified by the latitude and longitude, and radius for answer accuracy,
         * a timestamp about location information freshness.
 
-    ### Authorization and authentication
+    # Authorization and authentication
+
 
     [Camara Security and Interoperability Profile](https://github.com/camaraproject/IdentityAndConsentManagement/blob/main/documentation/CAMARA-Security-Interoperability.md) provides details on how a client requests an access token.
 
