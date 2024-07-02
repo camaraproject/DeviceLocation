@@ -57,7 +57,7 @@ info:
       Developers may provide a callback URL on which notifications regarding geofencing can be received from the service provider.
       If an event occurs the application will send events to the provided webhook - 'notificationUrl'._
 
-    ### Authorization and authentication
+    # Authorization and authentication
 
     [Camara Security and Interoperability Profile](https://github.com/camaraproject/IdentityAndConsentManagement/blob/main/documentation/CAMARA-Security-Interoperability.md) provides details on how a client requests an access token.
 
