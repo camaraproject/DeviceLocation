@@ -46,7 +46,7 @@ info:
 
     - Verify whether the device location is within a requested area, currently a circle with center specified by the latitude and longitude, and radius specified by the accuracy. The operation returns a verification result and, optionally, a match rate estimation for the location verification in percent.
 
-    ### Authorization and authentication
+    # Authorization and authentication
 
     [Camara Security and Interoperability Profile](https://github.com/camaraproject/IdentityAndConsentManagement/blob/main/documentation/CAMARA-Security-Interoperability.md) provides details on how a client requests an access token.
 
