@@ -1106,11 +1106,6 @@ components:
                 status: 400
                 code: "INVALID_TOKEN"
                 message: "Only bearer token is supported"
-            AreaNotCovered:
-              value:
-                status: 400
-                code: "AREA_NOT_COVERED"
-                message: "The specified area cannot be covered or is too small to be valid"
 
     Generic400:
       description: Problem with the client request
@@ -1239,6 +1234,11 @@ components:
                 status: 422
                 code: "MULTIEVENT_SUBSCRIPTION_NOT_SUPPORTED"
                 message: "Multi event types subscription not managed"
+            AreaNotCovered:
+              value:
+                status: 422
+                code: "AREA_NOT_COVERED"
+                message: "The specified area cannot be covered or is too small to be valid"
     Generic429:
       description: Too Many Requests
       headers:
