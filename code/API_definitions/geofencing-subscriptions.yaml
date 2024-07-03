@@ -913,7 +913,7 @@ components:
       type: string
       description: |
         - NETWORK_TERMINATED - API server stopped sending notification
-        - SUBSCRIPTION_CREATION_ABORTED - Subscription cannot be created because the specified area cannot be managed (for asynchronous subscription creation) 
+        - SUBSCRIPTION_CREATION_ABORTED - Subscription cannot be created because the specified area cannot be managed (for asynchronous subscription creation)
         - SUBSCRIPTION_EXPIRED - Subscription expire time (optionally set by the requester) has been reached
         - MAX_EVENTS_REACHED - Maximum number of events (optionally set by the requester) has been reached
         - ACCESS_TOKEN_EXPIRED - Access Token sinkCredential (optionally set by the requester) expiration time has been reached
