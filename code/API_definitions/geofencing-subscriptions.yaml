@@ -49,6 +49,7 @@ info:
       - the maximum number of subscription events (optionally set by the requester) has been reached
       - the Access Token `sinkCredential` (optionally set by the requester) expiration time has been reached
       - the API server has to stop sending notification prematurely
+      - the specified geofence-`area` cannot be covered or is too small to be managed
 
     ### Notification callback
 
@@ -912,12 +913,14 @@ components:
       type: string
       description: |
         - NETWORK_TERMINATED - API server stopped sending notification
+        - SUBSCRIPTION_CREATION_ABORTED - Subscription cannot be created because the specified area cannot be managed (for asynchronous subscription creation) 
         - SUBSCRIPTION_EXPIRED - Subscription expire time (optionally set by the requester) has been reached
         - MAX_EVENTS_REACHED - Maximum number of events (optionally set by the requester) has been reached
         - ACCESS_TOKEN_EXPIRED - Access Token sinkCredential (optionally set by the requester) expiration time has been reached
       enum:
         - MAX_EVENTS_REACHED
         - NETWORK_TERMINATED
+        - SUBSCRIPTION_CREATION_ABORTED
         - SUBSCRIPTION_EXPIRED
         - ACCESS_TOKEN_EXPIRED
 
@@ -1103,6 +1106,12 @@ components:
                 status: 400
                 code: "INVALID_TOKEN"
                 message: "Only bearer token is supported"
+            AreaNotCovered:
+              value:
+                status: 400
+                code: "AREA_NOT_COVERED"
+                message: "The specified area cannot be covered or is too small to be valid"
+
     Generic400:
       description: Problem with the client request
       headers:
@@ -1364,4 +1373,30 @@ components:
           subscriptionId: 987654321
           device:
             phoneNumber: +123456789
+          area:
+            areaType: CIRCLE
+            center:
+              latitude: 50.735851
+              longitude: 7.10066
+            radius: 2000
           terminationReason: SUBSCRIPTION_EXPIRED
+
+    SUBSCRIPTION_CREATION_ABORTED:
+      description: The cloud event when the subscription process was aborted.
+      value:
+        id: "123655"
+        source: https://notificationSendServer12.supertelco.com
+        type: org.camaraproject.geofencing-subscriptions.v0.subscription-ends
+        specversion: "1.0"
+        datacontenttype: application/json
+        time: 2023-03-22T05:40:23.682Z
+        data:
+          device:
+            phoneNumber: +123456789
+          area:
+            areaType: CIRCLE
+            center:
+              latitude: 50.735851
+              longitude: 7.10066
+            radius: 2000
+          terminationReason: SUBSCRIPTION_CREATION_ABORTED
