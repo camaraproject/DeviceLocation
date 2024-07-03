@@ -1106,7 +1106,6 @@ components:
                 status: 400
                 code: "INVALID_TOKEN"
                 message: "Only bearer token is supported"
-
     Generic400:
       description: Problem with the client request
       headers:
