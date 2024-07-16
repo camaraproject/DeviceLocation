@@ -436,8 +436,8 @@ components:
             $ref: '#/components/schemas/ErrorInfo'
           examples:
             LOCATION_RETRIEVAL_404_UNABLE_TO_LOCATE_DEVICE:
-              summary: The location server is not able to locate the mobile
-              description: The location server is not able to locate the mobile
+              summary: The location server is not able to locate the device
+              description: The location server is not able to locate the device
               value:
                 status: 404
                 code: LOCATION_RETRIEVAL.DEVICE_NOT_FOUND
