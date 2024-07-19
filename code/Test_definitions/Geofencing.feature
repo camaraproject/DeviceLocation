@@ -1,28 +1,17 @@
-#-
-# ---license-start
-# CAMARA Project
-# ---
-# Copyright (C) 2023 - 2024 Contributors | Deutsche Telekom AG to CAMARA a Series
-#
-# The contributor of this file confirms his sign-off for the
-# Developer Certificate of Origin
-#             (http://developercertificate.org).
-# ---
-# Licensed under the Apache License, Version 2.0 (the "License");
-# you may not use this file except in compliance with the License.
-# You may obtain a copy of the License at
-#
-#      http://www.apache.org/licenses/LICENSE-2.0
-#
-# Unless required by applicable law or agreed to in writing, software
-# distributed under the License is distributed on an "AS IS" BASIS,
-# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-# See the License for the specific language governing permissions and
-# limitations under the License.
-# ---license-end
 
- @Geofencing 
-Feature: Operations to manage event subscription on geofencing events for leaving and entering in an area
+
+@Geofencing 
+Feature: Camara Geofencing Subscriptions API ,0.2.0-rc3 Operations on subscriptions 
+
+# Input to be provided by the implementation to the tests
+# References to OAS spec schemas refer to schemas specified in geofencing-subscriptions.yaml, version v0.2.0-rc3
+
+  Background: Common Geofencing Subscriptions setup
+    Given the resource "/geofencing-subscriptions/v0/subscriptions"  as geofencing Url                                                            |
+    And the header "Content-Type" is set to "application/json"
+    And the header "Authorization" is set to a valid access token
+    And the header "x-correlator" is set to a UUID value
+    And the request body is set by default to a request body compliant with the schema
 
   @geofencing_01_Create_geofencing_subscription_for_a_device
   Scenario:  Create geofencing subscription
@@ -100,19 +89,19 @@ Feature: Operations to manage event subscription on geofencing events for leavin
   Scenario: Subscription creation when service have area-left event
     Given they use the geofencing url
     When they create subscription with event have area-left with at "Boon"
-	When they create subscription with event have area-left with at "Berlin" and device left "Boon"
+    When they create subscription with event have area-left with at "Berlin" and device left "Boon"
     Then they get event details from notifications-url
     Then Response code is 200
 
   @geofencing_13_Getting_of_subscription_when_service_unavailable
-  Scenario: Getting Subscription when service unavailable
+  Scenario: Getting Subscription when service is unavailable
     Given they use the geofencing url
     When they get subscription when service is unavailable
     Then Response code is not  503
 
 
   @geofencing_14_Deletion_of_subscription_when_service_unavailable
-  Scenario: Deletion Subscription when service unavailable
+  Scenario: Deletion of Subscription when service unavailable
     Given they use the geofencing url
     When they delete subscription when service is unavailable
     Then Response code is not  503
