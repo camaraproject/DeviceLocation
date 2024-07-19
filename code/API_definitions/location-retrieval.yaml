@@ -496,13 +496,12 @@ components:
                 code: UNSUPPORTED_DEVICE_IDENTIFIERS
                 message: "Supported device supported are: ..."
             GENERIC_422_UNIDENTIFIABLE_DEVICE:
-              summary: No identifier provided  
+              summary: No identifier provided
               description: No device identifier provided for the device to be located
               value:
                 status: 422
                 code: UNIDENTIFIABLE_DEVICE
                 message: "A device must be provided"
-
     Generic500:
       description: Internal server error
       headers:
