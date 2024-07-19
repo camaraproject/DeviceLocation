@@ -107,7 +107,7 @@ Feature: Camara Geofencing Subscriptions API ,0.2.0-rc3 Operations on subscripti
     Then Response code is 503
 
     
-  @geofencing_subscriptions_06_Get_invalid_geofencing_subscription_for_a_device
+  @geofencing_subscriptions_15_Get_invalid_geofencing_subscription_for_a_device
   Scenario:  Get geofencing subscription with invalid subscription-id format
     Given they use the geofencing url
     When they get subscription with invalid subscription-id which is in invalid format
