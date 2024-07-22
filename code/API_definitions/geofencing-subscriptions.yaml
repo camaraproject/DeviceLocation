@@ -144,10 +144,6 @@ paths:
                   $ref: "#/components/responses/Generic401"
                 "403":
                   $ref: "#/components/responses/Generic403"
-                "410":
-                  $ref: "#/components/responses/Generic410"
-                "429":
-                  $ref: "#/components/responses/Generic429"
                 "500":
                   $ref: "#/components/responses/Generic500"
                 "503":
@@ -180,16 +176,8 @@ paths:
           $ref: "#/components/responses/Generic401"
         "403":
           $ref: "#/components/responses/Generic403"
-        "405":
-          $ref: "#/components/responses/Generic405"
-        "409":
-          $ref: "#/components/responses/Generic409"
-        "415":
-          $ref: "#/components/responses/Generic415"
         "422":
           $ref: "#/components/responses/Generic422"
-        "429":
-          $ref: "#/components/responses/Generic429"
         "500":
           $ref: "#/components/responses/Generic500"
         "501":
@@ -228,10 +216,6 @@ paths:
           $ref: "#/components/responses/Generic401"
         "403":
           $ref: "#/components/responses/Generic403"
-        "405":
-          $ref: "#/components/responses/Generic405"
-        "406":
-          $ref: "#/components/responses/Generic406"
         "500":
           $ref: "#/components/responses/Generic500"
         "501":
@@ -271,10 +255,6 @@ paths:
           $ref: "#/components/responses/Generic403"
         "404":
           $ref: "#/components/responses/Generic404"
-        "405":
-          $ref: "#/components/responses/Generic405"
-        "406":
-          $ref: "#/components/responses/Generic406"
         "500":
           $ref: "#/components/responses/Generic500"
         "501":
@@ -318,8 +298,6 @@ paths:
           $ref: "#/components/responses/Generic403"
         "404":
           $ref: "#/components/responses/Generic404"
-        "405":
-          $ref: "#/components/responses/Generic405"
         "500":
           $ref: "#/components/responses/Generic500"
         "501":
@@ -1213,102 +1191,6 @@ components:
                 status: 404
                 code: NOT_FOUND
                 message: The specified resource is not found.
-    Generic405:
-      description: Method Not Allowed
-      headers:
-        x-correlator:
-          $ref: "#/components/headers/x-correlator"
-      content:
-        application/json:
-          schema:
-            $ref: "#/components/schemas/ErrorInfo"
-          examples:
-            GENERIC_405_METHOD_NOT_ALLOWED:
-              description: Invalid HTTP verb used with a given endpoint
-              value:
-                status: 405
-                code: METHOD_NOT_ALLOWED
-                message: The requested method is not allowed/supported on the target resource.
-    Generic406:
-      description: Not Acceptable
-      headers:
-        x-correlator:
-          $ref: "#/components/headers/x-correlator"
-      content:
-        application/json:
-          schema:
-            $ref: "#/components/schemas/ErrorInfo"
-          examples:
-            GENERIC_406_NOT_ACCEPTABLE:
-              description: API Server does not accept the media type (`Accept-*` header) indicated by API client
-              value:
-                status: 406
-                code: NOT_ACCEPTABLE
-                message: The server cannot produce a response matching the content requested by the client through `Accept-*` headers.
-    Generic409:
-      description: Conflict
-      headers:
-        x-correlator:
-          $ref: "#/components/headers/x-correlator"
-      content:
-        application/json:
-          schema:
-            $ref: "#/components/schemas/ErrorInfo"
-          examples:
-            GENERIC_409_CONFLICT:
-              description: Duplication of an existing resource
-              value:
-                status: 409
-                code: CONFLICT
-                message: A specified resource duplicate entry found.
-    Generic410:
-      description: Gone
-      headers:
-        x-correlator:
-          $ref: "#/components/headers/x-correlator"
-      content:
-        application/json:
-          schema:
-            $ref: "#/components/schemas/ErrorInfo"
-          examples:
-            GENERIC_410_GONE:
-              description: Use in notifications flow to allow API Consumer to indicate that its callback is no longer available
-              value:
-                status: 410
-                code: GONE
-                message: Access to the target resource is no longer available.
-    Generic412:
-      description: Failed precondition
-      headers:
-        x-correlator:
-          $ref: "#/components/headers/x-correlator"
-      content:
-        application/json:
-          schema:
-            $ref: "#/components/schemas/ErrorInfo"
-          examples:
-            GENERIC_412_FAILED_PRECONDITION:
-              description: Use in notifications flow to allow API Consumer to indicate that its callback is no longer available
-              value:
-                status: 412
-                code: FAILED_PRECONDITION
-                message: Request cannot be executed in the current system state.
-    Generic415:
-      description: Unsupported Media Type
-      headers:
-        x-correlator:
-          $ref: "#/components/headers/x-correlator"
-      content:
-        application/json:
-          schema:
-            $ref: "#/components/schemas/ErrorInfo"
-          examples:
-            GENERIC_415_UNSUPPORTED_MEDIA_TYPE:
-              description: Payload format of the request is in an unsupported format by the Server. Should not happen
-              value:
-                status: 415
-                code: UNSUPPORTED_MEDIA_TYPE
-                message: The server refuses to accept the request because the payload format is in an unsupported format.
     Generic422:
       description: Unprocessable Content
       headers:
@@ -1331,28 +1213,6 @@ components:
                 status: 422
                 code: DEVICE_NOT_APPLICABLE
                 message: The service is not available for the provided device.
-    Generic429:
-      description: Too Many Requests
-      headers:
-        x-correlator:
-          $ref: "#/components/headers/x-correlator"
-      content:
-        application/json:
-          schema:
-            $ref: "#/components/schemas/ErrorInfo"
-          examples:
-            GENERIC_429_QUOTA_EXCEEDED:
-              description: Request is rejected due to exceeding a business quota limit
-              value:
-                status: 429
-                code: QUOTA_EXCEEDED
-                message: Either out of resource quota or reaching rate limiting.
-            GENERIC_429_TOO_MANY_REQUESTS:
-              description: API Server request limit is overpassed
-              value:
-                status: 429
-                code: TOO_MANY_REQUESTS
-                message: Either out of resource quota or reaching rate limiting.
     Generic500:
       description: Internal Server Error
       headers:
