@@ -1,6 +1,6 @@
 # API Readiness Checklist
 
-Checklist for geofencing-subscriptions api-version in 1.0.0
+Checklist for geofencing-subscriptions api-version in v0.3
 
 As we target an **initial** maturity level release, the column **Status** is filled accordingly: NA: Not Applicable, TBD: To Be Done
 
