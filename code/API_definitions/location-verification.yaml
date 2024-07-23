@@ -469,7 +469,7 @@ components:
             $ref: '#/components/schemas/ErrorInfo'
           example:
             status: 422
-            code: LOCATION_RETRIEVAL.UNABLE_TO_FULFILL_MAX_AGE
+            code: LOCATION_VERIFICATION.UNABLE_TO_FULFILL_MAX_AGE
             message: "Unable to provide expected freshness for location"
     Generic500:
       description: Internal server error
