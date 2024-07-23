@@ -66,7 +66,8 @@ info:
     (FAQs will be added in a later version of the documentation)
   contact:
     email: project-email@sample.com
-  version: 0.2.0-wip
+  version: 0.3.0-rc.1
+
   x-camara-commonalities: 0.4.0
 externalDocs:
   description: Product documentation at Camara
