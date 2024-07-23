@@ -85,7 +85,7 @@ paths:
         Verify whether the location of a device is within a requested area. The operation returns a verification result and, optionally, a match rate estimation for the location verification in percent.
       operationId: verifyLocation
       parameters:
-        - $ref: '#/components/parameters/x-correlator'
+        - $ref: "#/components/parameters/x-correlator"
       requestBody:
         required: true
         content:
@@ -125,7 +125,7 @@ paths:
           description: Location verification result
           headers:
             x-correlator:
-              $ref: '#/components/headers/x-correlator'
+              $ref: "#/components/headers/x-correlator"
           content:
             application/json:
               schema:
@@ -531,11 +531,11 @@ components:
       description: Unprocessable Entity
       headers:
         x-correlator:
-          $ref: '#/components/headers/x-correlator'
+          $ref: "#/components/headers/x-correlator"
       content:
         application/json:
           schema:
-            $ref: '#/components/schemas/ErrorInfo'
+            $ref: "#/components/schemas/ErrorInfo"
           example:
             status: 422
             code: LOCATION_VERIFICATION.UNABLE_TO_FULFILL_MAX_AGE
