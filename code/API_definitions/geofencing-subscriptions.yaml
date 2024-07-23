@@ -1116,10 +1116,9 @@ components:
           schema:
             $ref: "#/components/schemas/ErrorInfo"
           example:
-            value:
-              status: 401
-              code: UNAUTHENTICATED
-              message: Request not authenticated due to missing, invalid, or expired credentials.
+            status: 401
+            code: UNAUTHENTICATED
+            message: Request not authenticated due to missing, invalid, or expired credentials.
     CreateSubscription403:
       description: Client does not have sufficient permission
       headers:
