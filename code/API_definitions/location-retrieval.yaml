@@ -64,13 +64,11 @@ info:
     # Further info and support
 
     (FAQs will be added in a later version of the documentation)
-  termsOfService: http://swagger.io/terms/
-  contact:
-    email: project-email@sample.com
   license:
     name: Apache 2.0
     url: https://www.apache.org/licenses/LICENSE-2.0.html
-  version: 0.2.0-wip
+  version: 0.3.0-rc.1
+  x-camara-commonalities: 0.4.0
 externalDocs:
   description: Product documentation at Camara
   url: https://github.com/camaraproject/
@@ -118,7 +116,7 @@ paths:
                 LOCATION_POLYGON:
                   $ref: "#/components/examples/RETRIEVAL_POLYGON"
         '400':
-          $ref: '#/components/responses/RetrieveLocationBadRequest400'
+          $ref: '#/components/responses/Generic400'
         '401':
           $ref: '#/components/responses/Generic401'
         '403':
@@ -357,55 +355,83 @@ components:
         message:
           type: string
           description: Detailed error description
+
   responses:
-    RetrieveLocationBadRequest400:
-      description: |-
-        Problem with the client request. In addition to regular scenario of `INVALID_ARGUMENT`, another scenarios may exist:
-          - maxAge threshold cannot be satisfied
+    Generic400:
+      description: Bad Request
       headers:
         x-correlator:
-          $ref: '#/components/headers/x-correlator'
+          $ref: "#/components/headers/x-correlator"
       content:
         application/json:
           schema:
-            $ref: '#/components/schemas/ErrorInfo'
+            $ref: "#/components/schemas/ErrorInfo"
           examples:
-            InvalidArgument:
+            GENERIC_400_INVALID_ARGUMENT:
+              summary: Generic Invalid Argument
+              description: Invalid Argument. Generic Syntax Exception
               value:
                 status: 400
                 code: INVALID_ARGUMENT
-                message: "Invalid argument"
-            MaxAgeIssue:
+                message: Client specified an invalid argument, request body or query param.
+            GENERIC_400_OUT_OF_RANGE:
+              summary: Generic Out of Range
+              description: Out of Range. Specific Syntax Exception used when a given field has a pre-defined range or a invalid filter criteria combination is requested
               value:
                 status: 400
-                code: LOCATION_RETRIEVAL.MAXAGE_INVALID_ARGUMENT
-                message: "maxAge threshold cannot be satisfied"
+                code: OUT_OF_RANGE
+                message: Client specified an invalid range.
+
     Generic401:
-      description: Unauthenticated
+      description: Unauthorized
       headers:
         x-correlator:
-          $ref: '#/components/headers/x-correlator'
+          $ref: "#/components/headers/x-correlator"
       content:
         application/json:
           schema:
-            $ref: '#/components/schemas/ErrorInfo'
-          example:
-            status: 401
-            code: UNAUTHENTICATED
-            message: "Authorization failed: ..."
+            $ref: "#/components/schemas/ErrorInfo"
+          examples:
+            GENERIC_401_UNAUTHENTICATED:
+              summary: Generic Unauthenticated
+              description: Request cannot be authenticated
+              value:
+                status: 401
+                code: UNAUTHENTICATED
+                message: Request not authenticated due to missing, invalid, or expired credentials.
+            GENERIC_401_AUTHENTICATION_REQUIRED:
+              summary: Generic Authentication Required
+              description: New authentication is needed, authentication is no longer valid
+              value:
+                status: 401
+                code: AUTHENTICATION_REQUIRED
+                message: New authentication is required.
+
     Generic403:
-      description: Permission denied
+      description: Forbidden
       headers:
         x-correlator:
-          $ref: '#/components/headers/x-correlator'
+          $ref: "#/components/headers/x-correlator"
       content:
         application/json:
           schema:
-            $ref: '#/components/schemas/ErrorInfo'
-          example:
-            status: 403
-            code: PERMISSION_DENIED
-            message: "Operation not allowed: ..."
+            $ref: "#/components/schemas/ErrorInfo"
+          examples:
+            GENERIC_403_PERMISSION_DENIED:
+              summary: Generic Permission Denied
+              description: Permission denied. OAuth2 token access does not have the required scope or when the user fails operational security
+              value:
+                status: 403
+                code: PERMISSION_DENIED
+                message: Client does not have sufficient permissions to perform this action.
+            GENERIC_403_INVALID_TOKEN_CONTEXT:
+              summary: Invalid access token context
+              description: Reflects some inconsistency between information in some field of the API and the related OAuth2 Token
+              value:
+                status: 403
+                code: INVALID_TOKEN_CONTEXT
+                message: "{{field}} is not consistent with access token."
+
     RetrieveLocationNotFound404:
       description: Not found
       headers:
@@ -416,16 +442,21 @@ components:
           schema:
             $ref: '#/components/schemas/ErrorInfo'
           examples:
-            notFound:
-              value:
-                status: 404
-                code: NOT_FOUND
-                message: 'The specified resource is not found'
-            deviceNotFound:
+            LOCATION_RETRIEVAL_404_UNABLE_TO_LOCATE_DEVICE:
+              summary: The location server is not able to locate the device
+              description: The location server is not able to locate the device
               value:
                 status: 404
                 code: LOCATION_RETRIEVAL.DEVICE_NOT_FOUND
                 message: 'The location server is not able to locate the mobile'
+            GENERIC_404_DEVICE_NOT_FOUND:
+              summary: Some identifier cannot be matched to a device
+              description: One or more of the provided device identifiers do not match any device
+              value:
+                status: 404
+                code: DEVICE_NOT_FOUND
+                message: "No device found for a provided identifier"
+
     RetrieveLocationUnprocessableEntity422:
       description: Unprocessable Entity
       headers:
@@ -435,38 +466,88 @@ components:
         application/json:
           schema:
             $ref: '#/components/schemas/ErrorInfo'
-          example:
-            status: 422
-            code: LOCATION_RETRIEVAL.UNABLE_TO_FULFILL_MAX_AGE
-            message: "Unable to provide expected frehsness for location"
+          examples:
+            LOCATION_RETRIEVAL_422_UNABLE_TO_FULFILL_MAX_AGE:
+              summary: Unable to provide expected frehsness
+              description: Unable to provide expected frehsness for location retrieval request
+              value:
+                status: 422
+                code: LOCATION_RETRIEVAL.UNABLE_TO_FULFILL_MAX_AGE
+                message: "Unable to provide expected frehsness for location"
+            GENERIC_422_UNPROCESSABLE_ENTITY:
+              summary: Unprocessable entity
+              description: The request was well-formed but was unable to be processed due to semantic errors or not applicable values. This is the generic error code for 422 responses.
+              value:
+                status: 422
+                code: UNPROCESSABLE_ENTITY
+                message: "Value not acceptable: ..."
+            GENERIC_422_DEVICE_NOT_APPLICABLE:
+              summary: Service not applicable to the device
+              description: The provided device is not compatible with the requested operation, according to the service provider rules.
+              value:
+                status: 422
+                code: DEVICE_NOT_APPLICABLE
+                message: "The device is not applicable for the requested operation"
+            GENERIC_422_DEVICE_IDENTIFIERS_MISMATCH:
+              summary: Device identifiers mismatch
+              description: Several device identifiers are provided but do not match the same device
+              value:
+                status: 422
+                code: DEVICE_IDENTIFIERS_MISMATCH
+                message: "The provided device identifiers do not match the same device"
+            GENERIC_422_UNSUPPORTED_DEVICE_IDENTIFIERS:
+              summary: None of the provided device identifiers is supported by the implementation
+              description: Message may list the supported device identifiers
+              value:
+                status: 422
+                code: UNSUPPORTED_DEVICE_IDENTIFIERS
+                message: "Supported device supported are: ..."
+            GENERIC_422_UNIDENTIFIABLE_DEVICE:
+              summary: No identifier provided
+              description: No device identifier provided for the device to be located
+              value:
+                status: 422
+                code: UNIDENTIFIABLE_DEVICE
+                message: "A device must be provided"
     Generic500:
       description: Internal server error
       headers:
         x-correlator:
-          $ref: '#/components/headers/x-correlator'
+          $ref: "#/components/headers/x-correlator"
       content:
         application/json:
           schema:
-            $ref: '#/components/schemas/ErrorInfo'
-          example:
-            status: 500
-            code: INTERNAL
-            message: "Internal server error"
+            $ref: "#/components/schemas/ErrorInfo"
+          examples:
+            GENERIC_500_INTERNAL:
+              summary: Generic Internal
+              description: Problem in Server side. Regular Server Exception
+              value:
+                status: 500
+                code: INTERNAL
+                message: "Internal server error"
+
     Generic503:
-      description: Service unavailable
+      description: Service Unavailable
       headers:
         x-correlator:
-          $ref: '#/components/headers/x-correlator'
+          $ref: "#/components/headers/x-correlator"
       content:
         application/json:
           schema:
-            $ref: '#/components/schemas/ErrorInfo'
-          example:
-            status: 503
-            code: UNAVAILABLE
-            message: "Service unavailable"
+            $ref: "#/components/schemas/ErrorInfo"
+          examples:
+            GENERIC_503_UNAVAILABLE:
+              summary: Generic Unavailable
+              description: Service is not available. Temporary situation usually related to maintenance process in the server side
+              value:
+                status: 503
+                code: UNAVAILABLE
+                message: Service Unavailable.
+
   examples:
     RETRIEVAL_CIRCLE:
+      summary: circle-based device location retrieval
       value:
         lastLocationTime: 2023-10-17T13:18:23.682Z
         area:
@@ -476,6 +557,7 @@ components:
             longitude: 4.860374
           radius: 800
     RETRIEVAL_POLYGON:
+      summary: polygon-based device location retrieval
       value:
         lastLocationTime: 2023-10-17T13:18:23.682Z
         area:
