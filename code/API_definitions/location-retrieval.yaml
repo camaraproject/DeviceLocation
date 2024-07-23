@@ -73,7 +73,8 @@ externalDocs:
   description: Product documentation at Camara
   url: https://github.com/camaraproject/
 servers:
-  - url: '{apiRoot}/location-retrieval/v0'
+  - url: '{apiRoot}/location-retrieval/v0.3rc1'
+
     variables:
       apiRoot:
         default: http://localhost:9091
