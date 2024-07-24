@@ -11,7 +11,7 @@ Checklist for location-verification v1.0.0 in rx.y.
 |  5 | API documentation                            |   M   |         M         |    M    |    M   |Y|      |
 |  6 | User stories                                 |   O   |         O         |    O    |    M   |TBC| link |
 |  7 | Basic API test cases & documentation         |   O   |         M         |    M    |    M   |Y| [Gherkin](https://github.com/camaraproject/DeviceLocation/blob/main/code/Test_definitions/location-verification.feature) |
-|  8 | Enhanced API test cases & documentation      |   O   |         O         |    O    |    M   |Y | [Gherkin](https://github.com/camaraproject/DeviceLocation/blob/main/code/Test_definitions/location-verification.feature) |
+|  8 | Enhanced API test cases & documentation      |   O   |         O         |    O    |    M   |Y | [Gherkin](/code/Test_definitions/location-verification.feature) |
 |  9 | Test result statement                        |   O   |         O         |    O    |    M   |TBC| link |
 | 10 | API release numbering convention applied     |   M   |         M         |    M    |    M   |TBC|      |
 | 11 | Change log updated                           |   M   |         M         |    M    |    M   |TBC| link |
