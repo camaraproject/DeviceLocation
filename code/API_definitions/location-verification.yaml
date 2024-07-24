@@ -539,7 +539,7 @@ components:
           examples:
             LOCATION_VERIFICATION_422_UNABLE_TO_FULFILL_MAX_AGE:
               summary: Unable to fulfill maxAge
-              description: the system is not able to provide the fresh location required by the client
+              description: The system is not able to provide the fresh location required by the client
               value:
                 status: 422
                 code: LOCATION_VERIFICATION.UNABLE_TO_FULFILL_MAX_AGE
