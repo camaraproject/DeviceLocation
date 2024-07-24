@@ -4,7 +4,7 @@ Checklist for location-verification v1.0.0 in rx.y.
 
 | Nr | API release assets  | alpha | release-candidate |  initial<br>public | stable<br> public | Status | Comments |
 |----|----------------------------------------------|:-----:|:-----------------:|:-------:|:------:|:----:|:----:|
-|  1 | API definition                               |   M   |         M         |    M    |    M   |Y| [OAS](https://github.com/camaraproject/DeviceLocation/blob/main/code/API_definitions/location-verification.yaml) |
+|  1 | API definition                               |   M   |         M         |    M    |    M   |Y| [OAS](/code/API_definitions/location-verification.yaml) |
 |  2 | Design guidelines from Commonalities applied |   O   |         M         |    M    |    M   |Y| [r0.4.0-rc.1](https://github.com/camaraproject/Commonalities/tree/r0.4.0-rc.1)     |
 |  3 | Guidelines from ICM applied                  |   O   |         M         |    M    |    M   |Y| [r0.2.0-rc.1](https://github.com/camaraproject/IdentityAndConsentManagement/tree/v0.2.0-rc.1)     |
 |  4 | API versioning convention applied            |   M   |         M         |    M    |    M   |Y| v1.0.0 |
