@@ -383,7 +383,11 @@ components:
                 status: 400
                 code: OUT_OF_RANGE
                 message: Client specified an invalid range.
-
+            GENERIC_400_MAX_AGE_NOT_SATISFIABLE:
+              value:
+                status: 400
+                code: LOCATION_RETRIEVAL.MAXAGE_INVALID_ARGUMENT
+                message: "maxAge threshold cannot be satisfied"
     Generic401:
       description: Unauthorized
       headers:
@@ -475,7 +479,7 @@ components:
               value:
                 status: 422
                 code: LOCATION_RETRIEVAL.UNABLE_TO_FULFILL_MAX_AGE
-                message: "Unable to provide expected frehsness for location"
+                message: "Unable to provide expected freshness for location"
             GENERIC_422_UNPROCESSABLE_ENTITY:
               summary: Unprocessable entity
               description: The request was well-formed but was unable to be processed due to semantic errors or not applicable values. This is the generic error code for 422 responses.

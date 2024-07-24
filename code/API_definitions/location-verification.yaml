@@ -34,8 +34,7 @@ info:
 
      * **Max Age**: Maximum age of the location information which is accepted for the location verification (in seconds).
         * Absence of maxAge means "any age" is acceptable for the client. In other words, this is like maxAge=infinite. In this case the system may still return lastLocationTime, if available.
-        * maxAge=0 means a fresh calculation is requested by the client.
-          If the system does not support it, or fresh location cannot be checked at that time for any reason, the API response will be "UNKNOWN" and the `lastLocationTime` attribute may indicate the last available time for the device location.
+        * maxAge=0 means a fresh calculation is requested by the client. If the system is not able to provide the fresh location, an error 422 with code LOCATION_VERIFICATION.UNABLE_TO_FULFILL_MAX_AGE is sent back.
 
 
     * **Verification**: Process triggered in the API server to confirm or contradict the expectation assumed by the API client about the device location.
@@ -86,7 +85,7 @@ paths:
         Verify whether the location of a device is within a requested area. The operation returns a verification result and, optionally, a match rate estimation for the location verification in percent.
       operationId: verifyLocation
       parameters:
-        - $ref: '#/components/parameters/x-correlator'
+        - $ref: "#/components/parameters/x-correlator"
       requestBody:
         required: true
         content:
@@ -126,7 +125,7 @@ paths:
           description: Location verification result
           headers:
             x-correlator:
-              $ref: '#/components/headers/x-correlator'
+              $ref: "#/components/headers/x-correlator"
           content:
             application/json:
               schema:
@@ -171,7 +170,7 @@ paths:
         "404":
           $ref: "#/components/responses/Generic404"
         "422":
-          $ref: "#/components/responses/Generic422"
+          $ref: "#/components/responses/VerifyLocationUnprocessableEntity422"
         "500":
           $ref: "#/components/responses/Generic500"
         "503":
@@ -528,8 +527,8 @@ components:
                 code: DEVICE_NOT_FOUND
                 message: "No device found for a provided identifier"
 
-    Generic422:
-      description: Unprocessable entity
+    VerifyLocationUnprocessableEntity422:
+      description: Unprocessable Entity
       headers:
         x-correlator:
           $ref: "#/components/headers/x-correlator"
@@ -538,6 +537,13 @@ components:
           schema:
             $ref: "#/components/schemas/ErrorInfo"
           examples:
+            LOCATION_VERIFICATION_422_UNABLE_TO_FULFILL_MAX_AGE:
+              summary: Unable to fulfill maxAge
+              description: The system is not able to provide the fresh location required by the client
+              value:
+                status: 422
+                code: LOCATION_VERIFICATION.UNABLE_TO_FULFILL_MAX_AGE
+                message: "Unable to provide expected freshness for location"
             GENERIC_422_UNPROCESSABLE_ENTITY:
               summary: Unprocessable entity
               description: The request was well-formed but was unable to be processed due to semantic errors or not applicable values. This is the generic error code for 422 responses.
@@ -566,6 +572,13 @@ components:
                 status: 422
                 code: UNSUPPORTED_DEVICE_IDENTIFIERS
                 message: "Supported device supported are: ..."
+            GENERIC_422_UNIDENTIFIABLE_DEVICE:
+              summary: No identifier provided
+              description: No device identifier provided for the device to be located
+              value:
+                status: 422
+                code: UNIDENTIFIABLE_DEVICE
+                message: "A device must be provided"
 
     Generic500:
       description: Internal server error
