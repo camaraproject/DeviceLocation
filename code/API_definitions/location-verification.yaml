@@ -53,6 +53,30 @@ info:
 
     It is important to remark that in cases where personal user data is processed by the API, and users can exercise their rights through mechanisms such as opt-in and/or opt-out, the use of 3-legged access tokens becomes mandatory. This measure ensures that the API remains in strict compliance with user privacy preferences and regulatory obligations, upholding the principles of transparency and user-centric data control.
 
+    # Identifying a device from the access token
+
+    This specification defines the `device` object field as optional in API requests, specifically in cases where the API is accessed using a 3-legged access token, and the device can be uniquely identified by the token. This approach simplifies API usage for API consumers by relying on the device information associated with the access token used to invoke the API.
+
+    ## Handling of device information:
+
+    ### Optional device object for 3-legged tokens:
+
+    - When using a 3-legged access token, the device associated with the access token must be considered as the device for the API request. This means that the device object is not required in the request, and if included it must identify the same device, therefore **it is recommended NOT to include it in these scenarios** to simplify the API usage and avoid additional validations.
+
+    ### Validation mechanism:
+
+    - The server will extract the device identification from the access token, if available.
+    - If the API request additionally includes a `device` object when using a 3-legged access token, the API will validate that the device identifier provided matches the one associated with the access token.
+    - If there is a mismatch, the API will respond with a 403 - INVALID_TOKEN_CONTEXT error, indicating that the device information in the request does not match the token.
+
+    ### Error handling for unidentifiable devices:
+
+    - If the `device` object is not included in the request and the device information cannot be derived from the 3-legged access token, the server will return a 422 `UNIDENTIFIABLE_DEVICE` error.
+
+    ### Restrictions for tokens without an associated authenticated identifier:
+
+    - For scenarios which do not have a single device identifier associated to the token during the authentication flow, e.g. 2-legged access tokens, the `device` object MUST be provided in the API request. This ensures that the device identification is explicit and valid for each API call made with these tokens.
+
     # Further info and support
 
     (FAQs will be added in a later version of the documentation)
@@ -114,6 +138,16 @@ paths:
                     ipv4Address:
                       publicAddress: 123.234.1.2
                       publicPort: 1234
+                  area:
+                    areaType: CIRCLE
+                    center:
+                      latitude: 50.735851
+                      longitude: 7.10066
+                    radius: 50000
+              INPUT_NO_DEVICE:
+                summary: Device not provided
+                description: The device has to be deducted from token
+                value:
                   area:
                     areaType: CIRCLE
                     center:
@@ -283,7 +317,6 @@ components:
         maxAge:
           $ref: "#/components/schemas/MaxAge"
       required:
-        - device
         - area
 
     VerifyLocationResponse:
