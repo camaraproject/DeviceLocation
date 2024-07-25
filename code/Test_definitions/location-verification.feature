@@ -1,4 +1,4 @@
-Feature: CAMARA Device location verification API, vwip - Operation verifyLocation
+Feature: CAMARA Device location verification API, v1.0.0-rc.1 - Operation verifyLocation
   # Input to be provided by the implementation to the tester
   #
   # Implementation indications:
@@ -12,7 +12,7 @@ Feature: CAMARA Device location verification API, vwip - Operation verifyLocatio
   # References to OAS spec schemas refer to schemas specifies in location-verification.yaml, version 0.2.0
 
   Background: Common verifyLocation setup
-    Given the resource "/location-verification/v0/verify"                                                              |
+    Given the resource "/location-verification/v1/verify"                                                              |
     And the header "Content-Type" is set to "application/json"
     And the header "Authorization" is set to a valid access token
     And the header "x-correlator" is set to a UUID value
@@ -22,7 +22,7 @@ Feature: CAMARA Device location verification API, vwip - Operation verifyLocatio
   @location_verification_01_generic_success_scenario
   Scenario: Common validations for any sucess scenario
     # Valid testing device and default request body compliant with the schema
-    Given the request body property "$.device" is set to a valid testing device supported by the service
+    Given a valid testing device supported by the service, identified by the token or provided in the request body
     And the request body is set to a valid request body
     When the HTTP "POST" request is sent
     Then the response status code is 200
@@ -38,7 +38,7 @@ Feature: CAMARA Device location verification API, vwip - Operation verifyLocatio
 
   @location_verification_02_known_location_for_device_no_maxAge
   Scenario: Known location of a device without specifying maxAge
-    Given the request body property "$.device" is set to a valid testing device located by the network
+    Given a valid testing device supported by the service, identified by the token or provided in the request body
     And the request body property "$.area" is set to the known location of the device
     And the request body property "$.maxAge" is not included
     When the HTTP "POST" request is sent
@@ -53,7 +53,7 @@ Feature: CAMARA Device location verification API, vwip - Operation verifyLocatio
 
   @location_verification_03_known_location_for_device_with_maxAge
   Scenario Outline: Known location of a device specifying maxAge
-    Given the request body property "$.device" is set to a valid testing device located by the network
+    Given a valid testing device supported by the service identified, by the token or provided in the request body
     And the request body property "$.area" is set to the known location of the device
     And the request body property "$.maxAge" is included
     When the HTTP "POST" request is sent
@@ -68,7 +68,7 @@ Feature: CAMARA Device location verification API, vwip - Operation verifyLocatio
 
   @location_verification_04_false_location_for_device
   Scenario: False location of a device
-    Given the request body property "$.device" is set to a valid testing device located by the network
+    Given a valid testing device supported by the service identified, by the token or provided in the request body
     And the request body property "$.area" is set to a wrong location of the device
     When the HTTP "POST" request is sent
     Then the response status code is 200
@@ -82,7 +82,7 @@ Feature: CAMARA Device location verification API, vwip - Operation verifyLocatio
 
   @location_verification_05_unknown_location_for_device
   Scenario: Unknown location of a device specifying maxAge
-    Given the request body property "$.device" is set to a valid testing device which is not connected to the network for some time
+    Given a valid testing device supported by the service, identified by the token or provided in the request body, which is not connected to the network for some time
     And the request body property "$.maxAge" is set to a value shorter than that time
     When the HTTP "POST" request is sent
     Then the response status code is 200
@@ -171,6 +171,16 @@ Feature: CAMARA Device location verification API, vwip - Operation verifyLocatio
     And the response property "$.code" is "DEVICE_NOT_APPLICABLE"
     And the response property "$.message" contains a user friendly text
 
+  @location_verification_17_unidentifiable_device
+  Scenario: Device not inlcuded and cannot be deducted from the access token
+    Given the header "Authorization" is set to a valid access which does not identifiy a single device 
+    And the request body property "$.device" is not included
+    When the HTTP "POST" request is sent
+    Then the response status code is 422
+    And the response property "$.status" is 422
+    And the response property "$.code" is "UNIDENTIFIABLE_DEVICE"
+    And the response property "$.message" contains a user friendly text
+
   # Generic 400 errors
 
   @location_verification_400.1_no_request_body
@@ -222,7 +232,6 @@ Feature: CAMARA Device location verification API, vwip - Operation verifyLocatio
 
     Examples:
       | input_property          |
-      | $.device                |
       | $.area                  |
       | $.area.areaType         |
       | $.area.center           |

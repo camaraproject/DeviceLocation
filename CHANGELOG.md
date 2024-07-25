@@ -2,10 +2,61 @@
 
 ## Table of Contents
 
+- [r1.1](#r11)
 - [v0.2.0](#v020)
 - [v0.1.0](#v010)
 
 **Please be aware that the project will have frequent updates to the main branch. There are no compatibility guarantees associated with code in any branch, including main, until it has been released. For example, changes may be reverted before a release is published. For the best results, use the latest published release.**
+
+The below sections record the changes for each API version in each release as follows:
+
+* for each first alpha or release-candidate API version, all changes since the release of the previous public API version
+* for subsequent alpha or release-candidate API versions, the delta with respect to the previous pre-release
+* for a public API version, the consolidated changes since the release of the previous public API version
+
+# r1.1
+
+## Release Notes
+
+This release contains the definition and documentation of
+* location-verification v1.0.0-rc.1
+* location-retrieval v0.3.0-rc.1
+* geofencing-subscriptions v0.3.0-rc.1
+
+The API definition(s) are based on
+* Commonalities v0.4.0-rc.1
+* Identity and Consent Management v0.2.0-rc.1
+
+## location-verification v1.0.0-rc.1
+
+### Added
+
+### Changed
+
+### Fixed
+
+### Removed
+
+
+## location-retrieval v0.3.0-rc.1
+
+### Added
+
+### Changed
+
+### Fixed
+
+### Removed
+
+## geofencing-subscriptions v0.3.0-rc.1
+
+### Added
+
+### Changed
+
+### Fixed
+
+### Removed
 
 # v0.2.0
 
