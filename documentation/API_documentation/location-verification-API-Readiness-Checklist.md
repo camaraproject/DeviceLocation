@@ -14,5 +14,5 @@ Checklist for location-verification v1.0.0-rc.1 in r1.1.
 |  8 | Enhanced API test cases & documentation      |   O   |         O         |    O    |    M   |Y | /code/Test_definitions/location-verification.feature |
 |  9 | Test result statement                        |   O   |         O         |    O    |    M   |TBC| link TBC |
 | 10 | API release numbering convention applied     |   M   |         M         |    M    |    M   |TBC|      |
-| 11 | Change log updated                           |   M   |         M         |    M    |    M   |TBC| ./CHANGELOG.md |
+| 11 | Change log updated                           |   M   |         M         |    M    |    M   |TBC| /CHANGELOG.md |
 | 12 | Previous public release was certified        |   O   |         O         |    O    |    M   |Y|      |
