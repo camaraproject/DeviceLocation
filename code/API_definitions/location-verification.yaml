@@ -630,7 +630,7 @@ components:
                 status: 429
                 code: TOO_MANY_REQUESTS
                 message: Either out of resource quota or reaching rate limiting.
-                
+
     Generic500:
       description: Internal server error
       headers:
