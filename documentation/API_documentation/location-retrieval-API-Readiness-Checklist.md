@@ -1,6 +1,7 @@
 # API Readiness Checklist
 
-Checklist for location-retrieval api-version in v0.3
+Checklist for location-retrieval 0.3.0-rc.1 in r1.1
+
 
 As we target an **initial** maturity level release the column **Status** is filled accordingly: NA: Not Applicable, TBD: To Be Done
 
