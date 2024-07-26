@@ -27,36 +27,61 @@ The API definition(s) are based on
 * Commonalities v0.4.0-rc.1
 * Identity and Consent Management v0.2.0-rc.1
 
+**Full Changelog** with the list of PRs and contributors: https://github.com/camaraproject/DeviceLocation/compare/v0.2.0...r1.1
+
 ## location-verification v1.0.0-rc.1
 
 ### Added
 
+* Added x-correlator to requests and headers
+* Enhancements in documentation
+* Testing plan
+
 ### Changed
+
+* Make `device` optional in requests, with related documentation
+* Make '+' mandatory for phoneNumber
+* Adjust `maxAge` behaviour and minimum, and adjust documentation
+* Alignment of errors with Commonalities
 
 ### Fixed
 
-### Removed
-
+* Update the PARTIAL case description: `match_rate` is set in the response
 
 ## location-retrieval v0.3.0-rc.1
 
 ### Added
 
+* Added x-correlator to requests and headers
+* Enhancements in documentation
+* Testing plan
+
 ### Changed
+
+* Make `device` optional in requests, with related documentation
+* Make '+' mandatory for phoneNumber
+* Adjust `maxAge` behaviour and minimum, and adjust documentation
+* Alignment of errors with Commonalities
 
 ### Fixed
 
-### Removed
+* Clarify that `lastLocationTime` is mandatory in responses
 
 ## geofencing-subscriptions v0.3.0-rc.1
 
 ### Added
 
+* Adopt Commonalities guidelines for subscriptions (based on CloudEvents)
+* Add `subscriptionMaxEvents` for maximum number of notifications 
+* Added x-correlator to requests and headers
+* Enhancements in documentation
+* Testing plan
+
 ### Changed
 
-### Fixed
-
-### Removed
+* Change base path to `geofencing-subscriptions` and adapt security scopes 
+* Make '+' mandatory for phoneNumber
+* Alignment of errors with Commonalities
 
 # v0.2.0
 
