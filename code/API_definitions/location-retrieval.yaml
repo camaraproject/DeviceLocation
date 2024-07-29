@@ -87,28 +87,24 @@ info:
     # Further info and support
 
     (FAQs will be added in a later version of the documentation)
-  termsOfService: http://swagger.io/terms/
   contact:
     email: project-email@sample.com
-  license:
-    name: Apache 2.0
-    url: https://www.apache.org/licenses/LICENSE-2.0.html
-  version: 0.2.0-wip
+  version: wip
+
+  x-camara-commonalities: 0.4.0
 externalDocs:
   description: Product documentation at Camara
   url: https://github.com/camaraproject/
-
 servers:
-  - url: '{apiRoot}/location-retrieval/v0'
+  - url: '{apiRoot}/location-retrieval/vwip'
+
     variables:
       apiRoot:
         default: http://localhost:9091
-        description: API root
-
+        description: API root, defined by the service provider, e.g. `api.example.com` or `api.example.com/somepath`
 tags:
   - name: Location retrieval
     description: Retrieve the location of a device
-
 paths:
   /retrieve:
     post:
