@@ -96,7 +96,7 @@ externalDocs:
   description: Product documentation at Camara
   url: https://github.com/camaraproject/
 servers:
-  - url: '{apiRoot}/location-retrieval/v0.3rc1'
+  - url: '{apiRoot}/location-retrieval/vwip'
 
     variables:
       apiRoot:
