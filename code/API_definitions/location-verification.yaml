@@ -6,7 +6,7 @@ info:
 
     # Introduction
 
-    Customers are able to verify whether the location of certain user device is within the area specified. Currently the only area supported as input is a circle determined by the a set of coordinates (latitude and longitude) and some expected accuracy (radius).
+    Customers are able to verify whether the location of certain user device is within the area specified. Currently the only area supported as input is a circle determined by a set of coordinates (latitude and longitude) and some expected accuracy (radius).
 
     The verification result depends on the network's ability and accuracy to locate the device at the requested area.
 
@@ -15,9 +15,9 @@ info:
     * If the network's estimation of the device's location partially overlaps with the requested area, or it fully contains the requested area (because it is larger), the result is 'PARTIAL'. In this case, a `match_rate` is included in the response, indicating an estimation of the likelihood of the match in percent.
     * Lastly, the network may not be able to locate the device. In this case, the verification result is `UNKNOWN`.
 
-    The client may optionally include a `maxAge` indication. If the location information known to the server is older than the specified `maxAge`, the verification result will be `UNKNOWN` and the `lastLocationTime` attribute may indicate the last available time for the device location.
+    The client may optionally include a `maxAge` indication. If the location information known to the server is older than the specified `maxAge`, an error 422 with code LOCATION_VERIFICATION.UNABLE_TO_FULFILL_MAX_AGE is sent back.
 
-    `lastLocationTime` will be always included in the response unless there is no historical location information available for the device. In this case, `UNKNOWN` will be returned without `lastLocationTime`.
+    `lastLocationTime` will be always included in the success response unless there is no historical location information available for the device. In this case, `UNKNOWN` will be returned without `lastLocationTime`.
 
     Location Verification could be useful in scenarios such as:
 
@@ -33,7 +33,7 @@ info:
     * **Area**: It specifies the geographical surface where a device may be physically located.
 
      * **Max Age**: Maximum age of the location information which is accepted for the location verification (in seconds).
-        * Absence of maxAge means "any age" is acceptable for the client. In other words, this is like maxAge=infinite. In this case the system may still return lastLocationTime, if available.
+        * Absence of maxAge means "any age" is acceptable for the client. In other words, this is like maxAge=infinite. In this case the system will still return lastLocationTime, if available.
         * maxAge=0 means a fresh calculation is requested by the client. If the system is not able to provide the fresh location, an error 422 with code LOCATION_VERIFICATION.UNABLE_TO_FULFILL_MAX_AGE is sent back.
 
 
@@ -80,25 +80,23 @@ info:
     # Further info and support
 
     (FAQs will be added in a later version of the documentation)
-  termsOfService: http://swagger.io/terms/
-  contact:
-    email: project-email@sample.com
+  version: wip
   license:
     name: Apache 2.0
     url: https://www.apache.org/licenses/LICENSE-2.0.html
-  version: 0.3.0-wip
+  x-camara-commonalities: 0.4.0
 externalDocs:
   description: Product documentation at CAMARA
   url: https://github.com/camaraproject/
 servers:
-  - url: "{apiRoot}/location-verification/v0"
+  - url: "{apiRoot}/location-verification/vwip"
     variables:
       apiRoot:
         default: http://localhost:9091
         description: API root
 tags:
   - name: Location verification
-    description: Verification the location of a device
+    description: Verification of the location of a device
 paths:
   /verify:
     post:
@@ -132,7 +130,7 @@ paths:
                   maxAge: 120
               INPUT_IP_ADDRESS_V4_CIRCLE:
                 summary: IPv4 address, circle, without maxAge
-                description: Verify if device identified by an IPv4 address is within a circle
+                description: Verify if device identified by an IPv4 address is within a circle, not indicating a maxAge
                 value:
                   device:
                     ipv4Address:
@@ -154,6 +152,7 @@ paths:
                       latitude: 50.735851
                       longitude: 7.10066
                     radius: 50000
+                  maxAge: 120
       responses:
         "200":
           description: Location verification result
@@ -177,15 +176,9 @@ paths:
                   value:
                     verificationResult: "FALSE"
                     lastLocationTime: 2023-09-07T10:40:52Z
-                VERIFICATION_UNKNOWN_WITH_LAST_LOCATION_TIME:
-                  summary: Unknown with last location time
-                  description: The network cannot locate the device after the requested maxAge
-                  value:
-                    verificationResult: "UNKNOWN"
-                    lastLocationTime: 2023-09-07T10:40:52Z
-                VERIFICATION_UNKNOWN_WITHOUT_LAST_LOCATION_TIME:
-                  summary: Unknown without last location time
-                  description: The network cannot locate the device and there is no history available
+                VERIFICATION_UNKNOWN:
+                  summary: Unknown
+                  description: The network cannot locate the device
                   value:
                     verificationResult: "UNKNOWN"
                 VERIFICATION_PARTIAL:
@@ -205,6 +198,8 @@ paths:
           $ref: "#/components/responses/Generic404"
         "422":
           $ref: "#/components/responses/VerifyLocationUnprocessableEntity422"
+        "429":
+          $ref: "#/components/responses/Generic429"
         "500":
           $ref: "#/components/responses/Generic500"
         "503":
@@ -262,7 +257,7 @@ components:
               $ref: "#/components/schemas/Point"
             radius:
               type: integer
-              description: Expected accuracy for the verification in meters, from location (radius)
+              description: Expected accuracy for the verification in meters, from center
               minimum: 2000
               maximum: 200000
           required:
@@ -307,7 +302,7 @@ components:
       example: 7.10066
 
     VerifyLocationRequest:
-      description: Request to verify the location of a device
+      description: Request to verify the location of a device. Device is not required when using a 3-legged access token, following the rules in the description.
       type: object
       properties:
         device:
@@ -411,7 +406,7 @@ components:
       example: 2001:db8:85a3:8d3:1319:8a2e:370:7344
 
     MaxAge:
-      description: The maximum age (in seconds) of the available location, which is accepted for the verification. Absence of maxAge means "any age" and maxAge=0 means a fresh calculation.
+      description: The maximum age (in seconds) for the location known by the implementation, which is accepted for the verification. Absence of maxAge means "any age" and maxAge=0 means a fresh calculation.
       type: integer
       example: 120
 
@@ -612,6 +607,29 @@ components:
                 status: 422
                 code: UNIDENTIFIABLE_DEVICE
                 message: "A device must be provided"
+
+    Generic429:
+      description: Too Many Requests
+      headers:
+        x-correlator:
+          $ref: "#/components/headers/x-correlator"
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/ErrorInfo"
+          examples:
+            GENERIC_429_QUOTA_EXCEEDED:
+              description: Request is rejected due to exceeding a business quota limit
+              value:
+                status: 429
+                code: QUOTA_EXCEEDED
+                message: Either out of resource quota or reaching rate limiting.
+            GENERIC_429_TOO_MANY_REQUESTS:
+              description: API Server request limit is overpassed
+              value:
+                status: 429
+                code: TOO_MANY_REQUESTS
+                message: Either out of resource quota or reaching rate limiting.
 
     Generic500:
       description: Internal server error
