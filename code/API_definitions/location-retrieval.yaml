@@ -13,7 +13,7 @@ info:
 
     The retrieved shape depends on the network conditions at the subscriber's location and any of the supported shapes could be received.
 
-    The requester could optionally ask for a freshness of the localization information by providing a maxAge ("I want a location not older than 600 seconds").
+    The requester could optionally ask for a freshness of the localization information by providing a `maxAge` ("I want a location not older than 600 seconds").
 
     The result accuracy depends on the network's ability and accuracy to locate the device.
 
@@ -49,8 +49,8 @@ info:
 
     - `/retrieve` : Retrieve where the device is localized.
      The operation returns:
-        * a localization defined with a circle with center specified by the latitude and longitude, and radius for answer accuracy,
-        * a timestamp about location information freshness.
+        * a localization defined either as a circle, with the center specified by the latitude and longitude, and a radius for answer accuracy, or as polygon defined by the array of points delimiting its boundary.
+        * a timestamp with the location information freshness.
 
     # Authorization and authentication
 
@@ -87,21 +87,20 @@ info:
     # Further info and support
 
     (FAQs will be added in a later version of the documentation)
-  contact:
-    email: project-email@sample.com
   version: wip
-
+  license:
+    name: Apache 2.0
+    url: https://www.apache.org/licenses/LICENSE-2.0.html
   x-camara-commonalities: 0.4.0
 externalDocs:
   description: Product documentation at Camara
   url: https://github.com/camaraproject/
 servers:
   - url: '{apiRoot}/location-retrieval/vwip'
-
     variables:
       apiRoot:
         default: http://localhost:9091
-        description: API root, defined by the service provider, e.g. `api.example.com` or `api.example.com/somepath`
+        description: API root
 tags:
   - name: Location retrieval
     description: Retrieve the location of a device
@@ -179,6 +178,7 @@ paths:
 components:
   securitySchemes:
     openId:
+      description: OpenID Connect authentication
       type: openIdConnect
       openIdConnectUrl: https://example.com/.well-known/openid-configuration
   parameters:
@@ -195,6 +195,7 @@ components:
         type: string
   schemas:
     RetrievalLocationRequest:
+      description: Request to retrieve the location of a device. Device is not required when using a 3-legged access token, following the rules in the description.
       type: object
       properties:
         device:
@@ -214,7 +215,8 @@ components:
         * `phoneNumber`
         * `networkAccessIdentifier`
 
-        NOTE: the MNO might support only a subset of these options. The API invoker can provide multiple identifiers to be compatible across different MNOs. In this case the identifiers MUST belong to the same device.
+        NOTE1: the MNO might support only a subset of these options. The API invoker can provide multiple identifiers to be compatible across different MNOs. In this case the identifiers MUST belong to the same device
+        NOTE2: for the Commonalities release v0.4, we are enforcing that the networkAccessIdentifier is only part of the schema for future-proofing, and CAMARA does not currently allow its use. After the CAMARA meta-release work is concluded and the relevant issues are resolved, its use will need to be explicitly documented in the guidelines.
       type: object
       properties:
         phoneNumber:
@@ -296,6 +298,7 @@ components:
           $ref: '#/components/schemas/Area'
 
     Area:
+      description: Base schema for all areas
       type: object
       properties:
         areaType:
@@ -335,6 +338,7 @@ components:
               minimum: 1
 
     Polygon:
+      description: Polygonal area
       allOf:
         - $ref: "#/components/schemas/Area"
         - type: object
@@ -345,6 +349,7 @@ components:
               $ref: "#/components/schemas/PointList"
 
     PointList:
+      description: List of points defining a polygon
       type: array
       items:
         $ref: "#/components/schemas/Point"
@@ -381,6 +386,7 @@ components:
       maximum: 180
 
     ErrorInfo:
+      description: Common schema for errors
       type: object
       required:
         - status
@@ -593,6 +599,7 @@ components:
   examples:
     RETRIEVAL_CIRCLE:
       summary: circle-based device location retrieval
+      description: The device is localized within a circle with a center at the specified coordinates and a radius of 800 meters.
       value:
         lastLocationTime: 2023-10-17T13:18:23.682Z
         area:
@@ -603,6 +610,7 @@ components:
           radius: 800
     RETRIEVAL_POLYGON:
       summary: polygon-based device location retrieval
+      description: The device is localized within a polygon delimited by the provided coordinates.
       value:
         lastLocationTime: 2023-10-17T13:18:23.682Z
         area:
