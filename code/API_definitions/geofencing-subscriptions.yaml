@@ -72,19 +72,17 @@ info:
 
     (FAQs will be added in a later version of the documentation)
 
-  termsOfService: https://swagger.io/terms/
-  contact:
-    email: project-email@sample.com
+  version: wip
   license:
     name: Apache 2.0
     url: https://www.apache.org/licenses/LICENSE-2.0.html
-  version: wip
+  x-camara-commonalities: 0.4.0
 externalDocs:
   description: Product documentation at Camara
   url: https://github.com/camaraproject/
 
 servers:
-  - url: "{apiRoot}/geofencing-subscriptions/v0"
+  - url: "{apiRoot}/geofencing-subscriptions/vwip"
     variables:
       apiRoot:
         default: http://localhost:9091
@@ -310,6 +308,7 @@ paths:
 components:
   securitySchemes:
     openId:
+      description: OpenID Connect authentication
       type: openIdConnect
       openIdConnectUrl: https://example.com/.well-known/openid-configuration
   parameters:
@@ -638,7 +637,8 @@ components:
         * `phoneNumber`
         * `networkAccessIdentifier`
 
-        NOTE: the MNO might support only a subset of these options. The API invoker can provide multiple identifiers to be compatible across different MNOs. In this case the identifiers MUST belong to the same device.
+        NOTE1: the MNO might support only a subset of these options. The API invoker can provide multiple identifiers to be compatible across different MNOs. In this case the identifiers MUST belong to the same device. When returned as part of a response, the device object must include the same identifier values that were provided originally. Please note that IP addresses of devices can change and get reused, so the original values may no longer identify the same device. They identified the device at the time of the subscription request.
+        NOTE2: for the Commonalities release v0.4, we are enforcing that the networkAccessIdentifier is only part of the schema for future-proofing, and CAMARA does not currently allow its use. After the CAMARA meta-release work is concluded and the relevant issues are resolved, its use will need to be explicitly documented in the guidelines.
       type: object
       properties:
         phoneNumber:
