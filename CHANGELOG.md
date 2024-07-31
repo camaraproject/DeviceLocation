@@ -2,10 +2,86 @@
 
 ## Table of Contents
 
+- [r1.1](#r11)
 - [v0.2.0](#v020)
 - [v0.1.0](#v010)
 
 **Please be aware that the project will have frequent updates to the main branch. There are no compatibility guarantees associated with code in any branch, including main, until it has been released. For example, changes may be reverted before a release is published. For the best results, use the latest published release.**
+
+The below sections record the changes for each API version in each release as follows:
+
+* for each first alpha or release-candidate API version, all changes since the release of the previous public API version
+* for subsequent alpha or release-candidate API versions, the delta with respect to the previous pre-release
+* for a public API version, the consolidated changes since the release of the previous public API version
+
+# r1.1m
+
+## Release Notes
+
+This release contains the definition and documentation of
+* location-verification v1.0.0-rc.1
+* location-retrieval v0.3.0-rc.1
+* geofencing-subscriptions v0.3.0-rc.1
+
+The API definition(s) are based on
+* Commonalities v0.4.0-rc.1
+* Identity and Consent Management v0.2.0-rc.1
+
+**Full Changelog** with the list of PRs and contributors: https://github.com/camaraproject/DeviceLocation/compare/v0.2.0...r1.1
+
+## location-verification v1.0.0-rc.1
+
+### Added
+
+* Added x-correlator to requests and headers
+* Enhancements in documentation
+* Testing plan
+
+### Changed
+
+* Make `device` optional in requests, with related documentation
+* Make '+' mandatory for phoneNumber
+* Adjust `maxAge` behaviour and minimum, and adjust documentation
+* Alignment of errors with Commonalities
+
+### Fixed
+
+* Update the PARTIAL case description: `match_rate` is set in the response
+
+## location-retrieval v0.3.0-rc.1
+
+### Added
+
+* Added x-correlator to requests and headers
+* Enhancements in documentation
+* Testing plan
+
+### Changed
+
+* Make `device` optional in requests, with related documentation
+* Make '+' mandatory for phoneNumber
+* Adjust `maxAge` behaviour and minimum, and adjust documentation
+* Alignment of errors with Commonalities
+
+### Fixed
+
+* Clarify that `lastLocationTime` is mandatory in responses
+
+## geofencing-subscriptions v0.3.0-rc.1
+
+### Added
+
+* Adopt Commonalities guidelines for subscriptions (based on CloudEvents)
+* Add `subscriptionMaxEvents` for maximum number of notifications 
+* Added x-correlator to requests and headers
+* Enhancements in documentation
+* Testing plan
+
+### Changed
+
+* Change base path to `geofencing-subscriptions` and adapt security scopes 
+* Make '+' mandatory for phoneNumber
+* Alignment of errors with Commonalities
 
 # v0.2.0
 
