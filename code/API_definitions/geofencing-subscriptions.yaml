@@ -78,8 +78,8 @@ info:
     url: https://www.apache.org/licenses/LICENSE-2.0.html
   x-camara-commonalities: 0.4.0
 externalDocs:
-  description: Product documentation at Camara
-  url: https://github.com/camaraproject/
+  description: Project documentation at Camara
+  url: https://github.com/camaraproject/DeviceLocation
 
 servers:
   - url: "{apiRoot}/geofencing-subscriptions/v0.3rc1"
