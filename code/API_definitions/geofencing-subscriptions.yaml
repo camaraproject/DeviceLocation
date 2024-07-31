@@ -308,6 +308,7 @@ paths:
 components:
   securitySchemes:
     openId:
+      description: OpenID Connect authentication
       type: openIdConnect
       openIdConnectUrl: https://example.com/.well-known/openid-configuration
   parameters:
