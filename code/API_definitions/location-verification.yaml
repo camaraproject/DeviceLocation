@@ -86,8 +86,8 @@ info:
     url: https://www.apache.org/licenses/LICENSE-2.0.html
   x-camara-commonalities: 0.4.0
 externalDocs:
-  description: Product documentation at CAMARA
-  url: https://github.com/camaraproject/
+  description: Project documentation at CAMARA
+  url: https://github.com/camaraproject/DeviceLocation
 servers:
   - url: "{apiRoot}/location-verification/vwip"
     variables:
