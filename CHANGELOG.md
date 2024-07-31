@@ -72,7 +72,8 @@ The API definition(s) are based on
 ### Added
 
 * Adopt Commonalities guidelines for subscriptions (based on CloudEvents)
-* Add `subscriptionMaxEvents` for maximum number of notifications 
+* Add `subscriptionMaxEvents` for maximum number of notifications
+* Add `SUBSCRIPTION_DELETED` as termination-reason
 * Added x-correlator to requests and headers
 * Enhancements in documentation
 * Testing plan
