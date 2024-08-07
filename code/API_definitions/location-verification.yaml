@@ -6,7 +6,7 @@ info:
 
     # Introduction
 
-    Customers are able to verify whether the location of certain user device is within the area specified. Currently the only area supported as input is a circle determined by the a set of coordinates (latitude and longitude) and some expected accuracy (radius).
+    Customers are able to verify whether the location of certain user device is within the area specified. Currently the only area supported as input is a circle determined by a set of coordinates (latitude and longitude) and some expected accuracy (radius).
 
     The verification result depends on the network's ability and accuracy to locate the device at the requested area.
 
@@ -15,9 +15,9 @@ info:
     * If the network's estimation of the device's location partially overlaps with the requested area, or it fully contains the requested area (because it is larger), the result is 'PARTIAL'. In this case, a `match_rate` is included in the response, indicating an estimation of the likelihood of the match in percent.
     * Lastly, the network may not be able to locate the device. In this case, the verification result is `UNKNOWN`.
 
-    The client may optionally include a `maxAge` indication. If the location information known to the server is older than the specified `maxAge`, the verification result will be `UNKNOWN` and the `lastLocationTime` attribute may indicate the last available time for the device location.
+    The client may optionally include a `maxAge` indication. If the location information known to the server is older than the specified `maxAge`, an error 422 with code LOCATION_VERIFICATION.UNABLE_TO_FULFILL_MAX_AGE is sent back.
 
-    `lastLocationTime` will be always included in the response unless there is no historical location information available for the device. In this case, `UNKNOWN` will be returned without `lastLocationTime`.
+    `lastLocationTime` will be always included in the success response unless there is no historical location information available for the device. In this case, `UNKNOWN` will be returned without `lastLocationTime`.
 
     Location Verification could be useful in scenarios such as:
 
@@ -33,9 +33,8 @@ info:
     * **Area**: It specifies the geographical surface where a device may be physically located.
 
      * **Max Age**: Maximum age of the location information which is accepted for the location verification (in seconds).
-        * Absence of maxAge means "any age" is acceptable for the client. In other words, this is like maxAge=infinite. In this case the system may still return lastLocationTime, if available.
-        * maxAge=0 means a fresh calculation is requested by the client.
-          If the system does not support it, or fresh location cannot be checked at that time for any reason, the API response will be "UNKNOWN" and the `lastLocationTime` attribute may indicate the last available time for the device location.
+        * Absence of maxAge means "any age" is acceptable for the client. In other words, this is like maxAge=infinite. In this case the system will still return lastLocationTime, if available.
+        * maxAge=0 means a fresh calculation is requested by the client. If the system is not able to provide the fresh location, an error 422 with code LOCATION_VERIFICATION.UNABLE_TO_FULFILL_MAX_AGE is sent back.
 
 
     * **Verification**: Process triggered in the API server to confirm or contradict the expectation assumed by the API client about the device location.
@@ -46,28 +45,58 @@ info:
 
     - Verify whether the device location is within a requested area, currently a circle with center specified by the latitude and longitude, and radius specified by the accuracy. The operation returns a verification result and, optionally, a match rate estimation for the location verification in percent.
 
+    # Authorization and authentication
+
+    [Camara Security and Interoperability Profile](https://github.com/camaraproject/IdentityAndConsentManagement/blob/main/documentation/CAMARA-Security-Interoperability.md) provides details on how a client requests an access token.
+
+    Which specific authorization flows are to be used will be determined during onboarding process, happening between the API Client and the Telco Operator exposing the API, taking into account the declared purpose for accessing the API, while also being subject to the prevailing legal framework dictated by local legislation.
+
+    It is important to remark that in cases where personal user data is processed by the API, and users can exercise their rights through mechanisms such as opt-in and/or opt-out, the use of 3-legged access tokens becomes mandatory. This measure ensures that the API remains in strict compliance with user privacy preferences and regulatory obligations, upholding the principles of transparency and user-centric data control.
+
+    # Identifying a device from the access token
+
+    This specification defines the `device` object field as optional in API requests, specifically in cases where the API is accessed using a 3-legged access token, and the device can be uniquely identified by the token. This approach simplifies API usage for API consumers by relying on the device information associated with the access token used to invoke the API.
+
+    ## Handling of device information:
+
+    ### Optional device object for 3-legged tokens:
+
+    - When using a 3-legged access token, the device associated with the access token must be considered as the device for the API request. This means that the device object is not required in the request, and if included it must identify the same device, therefore **it is recommended NOT to include it in these scenarios** to simplify the API usage and avoid additional validations.
+
+    ### Validation mechanism:
+
+    - The server will extract the device identification from the access token, if available.
+    - If the API request additionally includes a `device` object when using a 3-legged access token, the API will validate that the device identifier provided matches the one associated with the access token.
+    - If there is a mismatch, the API will respond with a 403 - INVALID_TOKEN_CONTEXT error, indicating that the device information in the request does not match the token.
+
+    ### Error handling for unidentifiable devices:
+
+    - If the `device` object is not included in the request and the device information cannot be derived from the 3-legged access token, the server will return a 422 `UNIDENTIFIABLE_DEVICE` error.
+
+    ### Restrictions for tokens without an associated authenticated identifier:
+
+    - For scenarios which do not have a single device identifier associated to the token during the authentication flow, e.g. 2-legged access tokens, the `device` object MUST be provided in the API request. This ensures that the device identification is explicit and valid for each API call made with these tokens.
+
     # Further info and support
 
     (FAQs will be added in a later version of the documentation)
-  termsOfService: http://swagger.io/terms/
-  contact:
-    email: project-email@sample.com
+  version: wip
   license:
     name: Apache 2.0
     url: https://www.apache.org/licenses/LICENSE-2.0.html
-  version: 0.3.0-wip
+  x-camara-commonalities: 0.4.0
 externalDocs:
-  description: Product documentation at CAMARA
-  url: https://github.com/camaraproject/
+  description: Project documentation at CAMARA
+  url: https://github.com/camaraproject/DeviceLocation
 servers:
-  - url: "{apiRoot}/location-verification/v0"
+  - url: "{apiRoot}/location-verification/vwip"
     variables:
       apiRoot:
         default: http://localhost:9091
         description: API root
 tags:
   - name: Location verification
-    description: Verification the location of a device
+    description: Verification of the location of a device
 paths:
   /verify:
     post:
@@ -78,7 +107,7 @@ paths:
         Verify whether the location of a device is within a requested area. The operation returns a verification result and, optionally, a match rate estimation for the location verification in percent.
       operationId: verifyLocation
       parameters:
-        - $ref: '#/components/parameters/x-correlator'
+        - $ref: "#/components/parameters/x-correlator"
       requestBody:
         required: true
         content:
@@ -101,7 +130,7 @@ paths:
                   maxAge: 120
               INPUT_IP_ADDRESS_V4_CIRCLE:
                 summary: IPv4 address, circle, without maxAge
-                description: Verify if device identified by an IPv4 address is within a circle
+                description: Verify if device identified by an IPv4 address is within a circle, not indicating a maxAge
                 value:
                   device:
                     ipv4Address:
@@ -113,12 +142,23 @@ paths:
                       latitude: 50.735851
                       longitude: 7.10066
                     radius: 50000
+              INPUT_NO_DEVICE:
+                summary: Device not provided
+                description: The device has to be deducted from token
+                value:
+                  area:
+                    areaType: CIRCLE
+                    center:
+                      latitude: 50.735851
+                      longitude: 7.10066
+                    radius: 50000
+                  maxAge: 120
       responses:
         "200":
           description: Location verification result
           headers:
             x-correlator:
-              $ref: '#/components/headers/x-correlator'
+              $ref: "#/components/headers/x-correlator"
           content:
             application/json:
               schema:
@@ -136,15 +176,9 @@ paths:
                   value:
                     verificationResult: "FALSE"
                     lastLocationTime: 2023-09-07T10:40:52Z
-                VERIFICATION_UNKNOWN_WITH_LAST_LOCATION_TIME:
-                  summary: Unknown with last location time
-                  description: The network cannot locate the device after the requested maxAge
-                  value:
-                    verificationResult: "UNKNOWN"
-                    lastLocationTime: 2023-09-07T10:40:52Z
-                VERIFICATION_UNKNOWN_WITHOUT_LAST_LOCATION_TIME:
-                  summary: Unknown without last location time
-                  description: The network cannot locate the device and there is no history available
+                VERIFICATION_UNKNOWN:
+                  summary: Unknown
+                  description: The network cannot locate the device
                   value:
                     verificationResult: "UNKNOWN"
                 VERIFICATION_PARTIAL:
@@ -162,6 +196,10 @@ paths:
           $ref: "#/components/responses/Generic403"
         "404":
           $ref: "#/components/responses/Generic404"
+        "422":
+          $ref: "#/components/responses/VerifyLocationUnprocessableEntity422"
+        "429":
+          $ref: "#/components/responses/Generic429"
         "500":
           $ref: "#/components/responses/Generic500"
         "503":
@@ -172,6 +210,7 @@ paths:
 components:
   securitySchemes:
     openId:
+      description: OpenID Connect authentication
       type: openIdConnect
       openIdConnectUrl: https://example.org/.well-known/openid-configuration
   parameters:
@@ -188,6 +227,7 @@ components:
         type: string
   schemas:
     Area:
+      description: Base schema for all areas
       type: object
       properties:
         areaType:
@@ -217,7 +257,7 @@ components:
               $ref: "#/components/schemas/Point"
             radius:
               type: integer
-              description: Expected accuracy for the verification in meters, from location (radius)
+              description: Expected accuracy for the verification in meters, from center
               minimum: 2000
               maximum: 200000
           required:
@@ -229,6 +269,7 @@ components:
           latitude: 50.735851
           longitude: 7.10066
         radius: 50000
+
     Point:
       type: object
       description: Coordinates (latitude, longitude) defining a location in a map
@@ -243,6 +284,7 @@ components:
       example:
         latitude: 50.735851
         longitude: 7.10066
+
     Latitude:
       description: Latitude component of a location
       type: number
@@ -250,6 +292,7 @@ components:
       minimum: -90
       maximum: 90
       example: 50.735851
+
     Longitude:
       description: Longitude component of location
       type: number
@@ -257,7 +300,9 @@ components:
       minimum: -180
       maximum: 180
       example: 7.10066
+
     VerifyLocationRequest:
+      description: Request to verify the location of a device. Device is not required when using a 3-legged access token, following the rules in the description.
       type: object
       properties:
         device:
@@ -267,10 +312,10 @@ components:
         maxAge:
           $ref: "#/components/schemas/MaxAge"
       required:
-        - device
         - area
 
     VerifyLocationResponse:
+      description: Response to a location verification request
       type: object
       required:
         - verificationResult
@@ -293,7 +338,8 @@ components:
         * `phoneNumber`
         * `networkAccessIdentifier`
 
-        NOTE: the MNO might support only a subset of these options. The API invoker can provide multiple identifiers to be compatible across different MNOs. In this case the identifiers MUST belong to the same device.
+        NOTE1: the MNO might support only a subset of these options. The API invoker can provide multiple identifiers to be compatible across different MNOs. In this case the identifiers MUST belong to the same device
+        NOTE2: for the Commonalities release v0.4, we are enforcing that the networkAccessIdentifier is only part of the schema for future-proofing, and CAMARA does not currently allow its use. After the CAMARA meta-release work is concluded and the relevant issues are resolved, its use will need to be explicitly documented in the guidelines.
       type: object
       properties:
         phoneNumber:
@@ -361,9 +407,10 @@ components:
       example: 2001:db8:85a3:8d3:1319:8a2e:370:7344
 
     MaxAge:
-      description: The maximum age (in seconds) of the available location, which is accepted for the verification. Absence of maxAge means "any age" and maxAge=0 means a fresh calculation.
+      description: The maximum age (in seconds) for the location known by the implementation, which is accepted for the verification. Absence of maxAge means "any age" and maxAge=0 means a fresh calculation.
       type: integer
       example: 120
+
     VerificationResult:
       description: |
         Result of a verification request:
@@ -377,17 +424,21 @@ components:
         - "FALSE"
         - "UNKNOWN"
         - "PARTIAL"
+
     MatchRate:
       description: Estimation of the match rate between the area in the request (R), and area where the network locates the device (N), calculated as the percent value of the intersection of both areas divided by the network area, that is (R ∩ N) / N * 100. Included only if VerificationResult is PARTIAL.
       type: integer
       minimum: 1
       maximum: 99
+
     LastLocationTime:
       description: Timestamp of the last location information. It must follow RFC 3339 and must have time zone. Recommended format is yyyy-MM-dd'T'HH:mm:ss.SSSZ (i.e. which allows 2023-07-03T14:27:08.312+02:00 or 2023-07-03T12:27:08.312Z)
       example: "2023-09-07T10:40:52Z"
       format: date-time
       type: string
+
     ErrorInfo:
+      description: Common schema for errors
       type: object
       required:
         - status
@@ -403,82 +454,216 @@ components:
         message:
           type: string
           description: Detailed error description
+
   responses:
     Generic400:
-      description: Invalid argument
+      description: Bad Request
       headers:
         x-correlator:
-          $ref: '#/components/headers/x-correlator'
+          $ref: "#/components/headers/x-correlator"
       content:
         application/json:
           schema:
             $ref: "#/components/schemas/ErrorInfo"
-          example:
-            status: 400
-            code: INVALID_ARGUMENT
-            message: Invalid argument
+          examples:
+            GENERIC_400_INVALID_ARGUMENT:
+              summary: Generic Invalid Argument
+              description: Invalid Argument. Generic Syntax Exception
+              value:
+                status: 400
+                code: INVALID_ARGUMENT
+                message: Client specified an invalid argument, request body or query param.
+            GENERIC_400_OUT_OF_RANGE:
+              summary: Generic Out of Range
+              description: Out of Range. Specific Syntax Exception used when a given field has a pre-defined range or a invalid filter criteria combination is requested
+              value:
+                status: 400
+                code: OUT_OF_RANGE
+                message: Client specified an invalid range.
+
     Generic401:
-      description: Unauthenticated
+      description: Unauthorized
       headers:
         x-correlator:
-          $ref: '#/components/headers/x-correlator'
+          $ref: "#/components/headers/x-correlator"
       content:
         application/json:
           schema:
             $ref: "#/components/schemas/ErrorInfo"
-          example:
-            status: 401
-            code: UNAUTHENTICATED
-            message: "Authorization failed: ..."
+          examples:
+            GENERIC_401_UNAUTHENTICATED:
+              summary: Generic Unauthenticated
+              description: Request cannot be authenticated
+              value:
+                status: 401
+                code: UNAUTHENTICATED
+                message: Request not authenticated due to missing, invalid, or expired credentials.
+            GENERIC_401_AUTHENTICATION_REQUIRED:
+              summary: Generic Authentication Required
+              description: New authentication is needed, authentication is no longer valid
+              value:
+                status: 401
+                code: AUTHENTICATION_REQUIRED
+                message: New authentication is required.
+
     Generic403:
-      description: Permission denied
+      description: Forbidden
       headers:
         x-correlator:
-          $ref: '#/components/headers/x-correlator'
+          $ref: "#/components/headers/x-correlator"
       content:
         application/json:
           schema:
             $ref: "#/components/schemas/ErrorInfo"
-          example:
-            status: 403
-            code: PERMISSION_DENIED
-            message: "Operation not allowed: ..."
+          examples:
+            GENERIC_403_PERMISSION_DENIED:
+              summary: Generic Permission Denied
+              description: Permission denied. OAuth2 token access does not have the required scope or when the user fails operational security
+              value:
+                status: 403
+                code: PERMISSION_DENIED
+                message: Client does not have sufficient permissions to perform this action.
+            GENERIC_403_INVALID_TOKEN_CONTEXT:
+              summary: Invalid access token context
+              description: Reflects some inconsistency between information in some field of the API and the related OAuth2 Token
+              value:
+                status: 403
+                code: INVALID_TOKEN_CONTEXT
+                message: "{{field}} is not consistent with access token."
+
     Generic404:
       description: Not found
       headers:
         x-correlator:
-          $ref: '#/components/headers/x-correlator'
+          $ref: "#/components/headers/x-correlator"
       content:
         application/json:
           schema:
             $ref: "#/components/schemas/ErrorInfo"
-          example:
-            status: 404
-            code: NOT_FOUND
-            message: "The specified resource is not found"
+          examples:
+            GENERIC_404_NOT_FOUND:
+              summary: Generic Not Found
+              description: Resource is not found
+              value:
+                status: 404
+                code: NOT_FOUND
+                message: "{{resource}} is not found"
+            GENERIC_404_DEVICE_NOT_FOUND:
+              summary: Some identifier cannot be matched to a device
+              description: One or more of the provided device identifiers do not match any device
+              value:
+                status: 404
+                code: DEVICE_NOT_FOUND
+                message: "No device found for a provided identifier"
+
+    VerifyLocationUnprocessableEntity422:
+      description: Unprocessable Entity
+      headers:
+        x-correlator:
+          $ref: "#/components/headers/x-correlator"
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/ErrorInfo"
+          examples:
+            LOCATION_VERIFICATION_422_UNABLE_TO_FULFILL_MAX_AGE:
+              summary: Unable to fulfill maxAge
+              description: The system is not able to provide the fresh location required by the client
+              value:
+                status: 422
+                code: LOCATION_VERIFICATION.UNABLE_TO_FULFILL_MAX_AGE
+                message: "Unable to provide expected freshness for location"
+            GENERIC_422_UNPROCESSABLE_ENTITY:
+              summary: Unprocessable entity
+              description: The request was well-formed but was unable to be processed due to semantic errors or not applicable values. This is the generic error code for 422 responses.
+              value:
+                status: 422
+                code: UNPROCESSABLE_ENTITY
+                message: "Value not acceptable: ..."
+            GENERIC_422_DEVICE_NOT_APPLICABLE:
+              summary: Service not applicable to the device
+              description: The provided device is not compatible with the requested operation, according to the service provider rules.
+              value:
+                status: 422
+                code: DEVICE_NOT_APPLICABLE
+                message: "The device is not applicable for the requested operation"
+            GENERIC_422_DEVICE_IDENTIFIERS_MISMATCH:
+              summary: Device identifiers mismatch
+              description: Several device identifiers are provided but do not match the same device
+              value:
+                status: 422
+                code: DEVICE_IDENTIFIERS_MISMATCH
+                message: "The provided device identifiers do not match the same device"
+            GENERIC_422_UNSUPPORTED_DEVICE_IDENTIFIERS:
+              summary: None of the provided device identifiers is supported by the implementation
+              description: Message may list the supported device identifiers
+              value:
+                status: 422
+                code: UNSUPPORTED_DEVICE_IDENTIFIERS
+                message: "Supported device supported are: ..."
+            GENERIC_422_UNIDENTIFIABLE_DEVICE:
+              summary: No identifier provided
+              description: No device identifier provided for the device to be located
+              value:
+                status: 422
+                code: UNIDENTIFIABLE_DEVICE
+                message: "A device must be provided"
+
+    Generic429:
+      description: Too Many Requests
+      headers:
+        x-correlator:
+          $ref: "#/components/headers/x-correlator"
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/ErrorInfo"
+          examples:
+            GENERIC_429_QUOTA_EXCEEDED:
+              description: Request is rejected due to exceeding a business quota limit
+              value:
+                status: 429
+                code: QUOTA_EXCEEDED
+                message: Either out of resource quota or reaching rate limiting.
+            GENERIC_429_TOO_MANY_REQUESTS:
+              description: API Server request limit is overpassed
+              value:
+                status: 429
+                code: TOO_MANY_REQUESTS
+                message: Either out of resource quota or reaching rate limiting.
+
     Generic500:
       description: Internal server error
       headers:
         x-correlator:
-          $ref: '#/components/headers/x-correlator'
+          $ref: "#/components/headers/x-correlator"
       content:
         application/json:
           schema:
             $ref: "#/components/schemas/ErrorInfo"
-          example:
-            status: 500
-            code: INTERNAL
-            message: "Internal server error"
+          examples:
+            GENERIC_500_INTERNAL:
+              summary: Generic Internal
+              description: Problem in Server side. Regular Server Exception
+              value:
+                status: 500
+                code: INTERNAL
+                message: "Internal server error"
+
     Generic503:
       description: Service unavailable
       headers:
         x-correlator:
-          $ref: '#/components/headers/x-correlator'
+          $ref: "#/components/headers/x-correlator"
       content:
         application/json:
           schema:
             $ref: "#/components/schemas/ErrorInfo"
-          example:
-            status: 503
-            code: UNAVAILABLE
-            message: "Service unavailable"
+          examples:
+            GENERIC_503_UNAVAILABLE:
+              summary: Generic Unavailable
+              description: Service is not available. Temporary situation usually related to maintenance process in the server side
+              value:
+                status: 503
+                code: UNAVAILABLE
+                message: "Service unavailable"

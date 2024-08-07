@@ -47,6 +47,7 @@ info:
     It is used when:
       - the subscription expire time (optionally set by the requester) has been reached
       - the maximum number of subscription events (optionally set by the requester) has been reached
+      - the subscription was deleted by the requester
       - the Access Token `sinkCredential` (optionally set by the requester) expiration time has been reached
       - the API server has to stop sending notification prematurely
       - the specified geofence-`area` cannot be covered or is too small to be managed
@@ -60,23 +61,29 @@ info:
       Developers may provide a callback URL on which notifications regarding geofencing can be received from the service provider.
       If an event occurs the application will send events to the provided webhook - 'sink'._
 
+    # Authorization and authentication
+
+    [Camara Security and Interoperability Profile](https://github.com/camaraproject/IdentityAndConsentManagement/blob/main/documentation/CAMARA-Security-Interoperability.md) provides details on how a client requests an access token.
+
+    Which specific authorization flows are to be used will be determined during onboarding process, happening between the API Client and the Telco Operator exposing the API, taking into account the declared purpose for accessing the API, while also being subject to the prevailing legal framework dictated by local legislation.
+
+    It is important to remark that in cases where personal user data is processed by the API, and users can exercise their rights through mechanisms such as opt-in and/or opt-out, the use of 3-legged access tokens becomes mandatory. This measure ensures that the API remains in strict compliance with user privacy preferences and regulatory obligations, upholding the principles of transparency and user-centric data control.
+
     # Further info and support
 
     (FAQs will be added in a later version of the documentation)
 
-  termsOfService: https://swagger.io/terms/
-  contact:
-    email: project-email@sample.com
+  version: wip
   license:
     name: Apache 2.0
     url: https://www.apache.org/licenses/LICENSE-2.0.html
-  version: wip
+  x-camara-commonalities: 0.4.0
 externalDocs:
-  description: Product documentation at Camara
-  url: https://github.com/camaraproject/
+  description: Project documentation at Camara
+  url: https://github.com/camaraproject/DeviceLocation
 
 servers:
-  - url: "{apiRoot}/geofencing-subscriptions/v0"
+  - url: "{apiRoot}/geofencing-subscriptions/vwip"
     variables:
       apiRoot:
         default: http://localhost:9091
@@ -145,10 +152,6 @@ paths:
                   $ref: "#/components/responses/Generic401"
                 "403":
                   $ref: "#/components/responses/Generic403"
-                "410":
-                  $ref: "#/components/responses/Generic410"
-                "429":
-                  $ref: "#/components/responses/Generic429"
                 "500":
                   $ref: "#/components/responses/Generic500"
                 "503":
@@ -180,13 +183,9 @@ paths:
         "401":
           $ref: "#/components/responses/Generic401"
         "403":
-          $ref: "#/components/responses/CreateSubscription403"
-        "409":
-          $ref: "#/components/responses/Generic409"
-        "415":
-          $ref: "#/components/responses/Generic415"
+          $ref: "#/components/responses/Generic403"
         "422":
-          $ref: "#/components/responses/CreateSubscription422"
+          $ref: "#/components/responses/CreateSubscriptionUnprocessableEntity422"
         "429":
           $ref: "#/components/responses/Generic429"
         "500":
@@ -223,6 +222,8 @@ paths:
           $ref: "#/components/responses/Generic401"
         "403":
           $ref: "#/components/responses/Generic403"
+        "429":
+          $ref: "#/components/responses/Generic429"
         "500":
           $ref: "#/components/responses/Generic500"
         "503":
@@ -258,6 +259,8 @@ paths:
           $ref: "#/components/responses/Generic403"
         "404":
           $ref: "#/components/responses/Generic404"
+        "429":
+          $ref: "#/components/responses/Generic429"
         "500":
           $ref: "#/components/responses/Generic500"
         "503":
@@ -297,6 +300,8 @@ paths:
           $ref: "#/components/responses/Generic403"
         "404":
           $ref: "#/components/responses/Generic404"
+        "429":
+          $ref: "#/components/responses/Generic429"
         "500":
           $ref: "#/components/responses/Generic500"
         "503":
@@ -304,6 +309,7 @@ paths:
 components:
   securitySchemes:
     openId:
+      description: OpenID Connect authentication
       type: openIdConnect
       openIdConnectUrl: https://example.com/.well-known/openid-configuration
   parameters:
@@ -632,7 +638,8 @@ components:
         * `phoneNumber`
         * `networkAccessIdentifier`
 
-        NOTE: the MNO might support only a subset of these options. The API invoker can provide multiple identifiers to be compatible across different MNOs. In this case the identifiers MUST belong to the same device.
+        NOTE1: the MNO might support only a subset of these options. The API invoker can provide multiple identifiers to be compatible across different MNOs. In this case the identifiers MUST belong to the same device. When returned as part of a response, the device object must include the same identifier values that were provided originally. Please note that IP addresses of devices can change and get reused, so the original values may no longer identify the same device. They identified the device at the time of the subscription request.
+        NOTE2: for the Commonalities release v0.4, we are enforcing that the networkAccessIdentifier is only part of the schema for future-proofing, and CAMARA does not currently allow its use. After the CAMARA meta-release work is concluded and the relevant issues are resolved, its use will need to be explicitly documented in the guidelines.
       type: object
       properties:
         phoneNumber:
@@ -915,6 +922,7 @@ components:
         - NETWORK_TERMINATED - API server stopped sending notification
         - SUBSCRIPTION_CREATION_ABORTED - Subscription cannot be created because the specified area cannot be managed (for asynchronous subscription creation)
         - SUBSCRIPTION_EXPIRED - Subscription expire time (optionally set by the requester) has been reached
+        - SUBSCRIPTION_DELETED - Subscription was deleted by the requester
         - MAX_EVENTS_REACHED - Maximum number of events (optionally set by the requester) has been reached
         - ACCESS_TOKEN_EXPIRED - Access Token sinkCredential (optionally set by the requester) expiration time has been reached
       enum:
@@ -922,6 +930,7 @@ components:
         - NETWORK_TERMINATED
         - SUBSCRIPTION_CREATION_ABORTED
         - SUBSCRIPTION_EXPIRED
+        - SUBSCRIPTION_DELETED
         - ACCESS_TOKEN_EXPIRED
 
     HTTPSubscriptionRequest:
@@ -1089,25 +1098,25 @@ components:
             InvalidArgument:
               value:
                 status: 400
-                code: "INVALID_ARGUMENT"
-                message: "Client specified an invalid argument, request body or query param"
+                code: INVALID_ARGUMENT
+                message: Client specified an invalid argument, request body or query param
             InvalidProtocol:
               value:
                 status: 400
-                code: "INVALID_PROTOCOL"
-                message: "Only HTTP is supported"
+                code: INVALID_PROTOCOL
+                message: Only HTTP is supported
             InvalidCredential:
               value:
                 status: 400
-                code: "INVALID_CREDENTIAL"
-                message: "Only Access token is supported"
+                code: INVALID_CREDENTIAL
+                message: Only Access token is supported
             InvalidToken:
               value:
                 status: 400
-                code: "INVALID_TOKEN"
-                message: "Only bearer token is supported"
+                code: INVALID_TOKEN
+                message: Only bearer token is supported
     Generic400:
-      description: Problem with the client request
+      description: Bad Request
       headers:
         x-correlator:
           $ref: "#/components/headers/x-correlator"
@@ -1117,8 +1126,8 @@ components:
             $ref: "#/components/schemas/ErrorInfo"
           example:
             status: 400
-            code: "INVALID_ARGUMENT"
-            message: "Client specified an invalid argument, request body or query param"
+            code: INVALID_ARGUMENT
+            message: Client specified an invalid argument, request body or query param
     Generic401:
       description: Authentication problem with the client request
       headers:
@@ -1130,9 +1139,8 @@ components:
             $ref: "#/components/schemas/ErrorInfo"
           example:
             status: 401
-            code: "UNAUTHENTICATED"
-            message: "Request not authenticated due to missing, invalid, or expired credentials"
-
+            code: UNAUTHENTICATED
+            message: Request not authenticated due to missing, invalid, or expired credentials.
     CreateSubscription403:
       description: Client does not have sufficient permission
       headers:
@@ -1146,15 +1154,15 @@ components:
             PermissionDenied:
               value:
                 status: 403
-                code: "PERMISSION_DENIED"
-                message: "Client does not have sufficient permissions to perform this action"
+                code: PERMISSION_DENIED
+                message: Client does not have sufficient permissions to perform this action
             TokenMismatch:
               value:
                 status: 403
-                code: "SUBSCRIPTION_MISMATCH"
-                message: "Inconsistent access token for requested events subscription"
+                code: SUBSCRIPTION_MISMATCH
+                message: Inconsistent access token for requested events subscription
     Generic403:
-      description: Client does not have sufficient permission
+      description: Forbidden
       headers:
         x-correlator:
           $ref: "#/components/headers/x-correlator"
@@ -1164,10 +1172,10 @@ components:
             $ref: "#/components/schemas/ErrorInfo"
           example:
             status: 403
-            code: "PERMISSION_DENIED"
-            message: "Client does not have sufficient permissions to perform this action"
+            code: PERMISSION_DENIED
+            message: Client does not have sufficient permissions to perform this action
     Generic404:
-      description: Resource Not Found
+      description: Not found
       headers:
         x-correlator:
           $ref: "#/components/headers/x-correlator"
@@ -1175,50 +1183,14 @@ components:
         application/json:
           schema:
             $ref: "#/components/schemas/ErrorInfo"
-          example:
-            status: 404
-            code: NOT_FOUND
-            message: "The specified resource is not found"
-    Generic409:
-      description: Conflict
-      headers:
-        x-correlator:
-          $ref: "#/components/headers/x-correlator"
-      content:
-        application/json:
-          schema:
-            $ref: "#/components/schemas/ErrorInfo"
-          example:
-            status: 409
-            code: CONFLICT
-            message: "The specified resource is in a conflict"
-    Generic410:
-      description: Gone
-      headers:
-        x-correlator:
-          $ref: "#/components/headers/x-correlator"
-      content:
-        application/json:
-          schema:
-            $ref: "#/components/schemas/ErrorInfo"
-          example:
-            status: 410
-            code: GONE
-            message: "The specified resource is no longer available at the requested address"
-    Generic415:
-      description: Unsupported Media Type
-      headers:
-        X-Correlator:
-          $ref: "#/components/headers/x-correlator"
-      content:
-        application/json:
-          schema:
-            $ref: "#/components/schemas/ErrorInfo"
-          example:
-            status: 415
-            code: UNSUPPORTED_MEDIA_TYPE
-            message: "The specified media type is not supported"
-    CreateSubscription422:
+          examples:
+            GENERIC_404_NOT_FOUND:
+              description: Resource is not found
+              value:
+                status: 404
+                code: NOT_FOUND
+                message: The specified resource is not found.
+    CreateSubscriptionUnprocessableEntity422:
       description: Unprocessable Entity
       headers:
         x-correlator:
@@ -1231,8 +1203,20 @@ components:
             PermissionDenied:
               value:
                 status: 422
-                code: "MULTIEVENT_SUBSCRIPTION_NOT_SUPPORTED"
-                message: "Multi event types subscription not managed"
+                code: MULTIEVENT_SUBSCRIPTION_NOT_SUPPORTED
+                message: Multi event types subscription not managed
+            DeviceIdentifierMismatch:
+              description: Inconsistency between device identifiers not pointing to the same device
+              value:
+                status: 422
+                code: DEVICE_IDENTIFIERS_MISMATCH
+                message: Provided device identifiers are not consistent.
+            DeviceNotApplicable:
+              description: Service is not available for the provided device
+              value:
+                status: 422
+                code: DEVICE_NOT_APPLICABLE
+                message: The service is not available for the provided device.
             AreaNotCovered:
               value:
                 status: 422
@@ -1247,10 +1231,20 @@ components:
         application/json:
           schema:
             $ref: "#/components/schemas/ErrorInfo"
-          example:
-            status: 429
-            code: TOO_MANY_REQUESTS
-            message: "Endpoint does not support as many requests per time slot"
+          examples:
+            GENERIC_429_QUOTA_EXCEEDED:
+              description: Request is rejected due to exceeding a business quota limit
+              value:
+                status: 429
+                code: QUOTA_EXCEEDED
+                message: Either out of resource quota or reaching rate limiting.
+            GENERIC_429_TOO_MANY_REQUESTS:
+              description: API Server request limit is overpassed
+              value:
+                status: 429
+                code: TOO_MANY_REQUESTS
+                message: Either out of resource quota or reaching rate limiting.
+
     Generic500:
       description: Server error
       headers:
@@ -1262,8 +1256,8 @@ components:
             $ref: "#/components/schemas/ErrorInfo"
           example:
             status: 500
-            code: "INTERNAL"
-            message: "Server error"
+            code: INTERNAL
+            message: Server error
     Generic503:
       description: Service unavailable. Typically the server is down.
       headers:
@@ -1273,10 +1267,13 @@ components:
         application/json:
           schema:
             $ref: "#/components/schemas/ErrorInfo"
-          example:
-            status: 503
-            code: "UNAVAILABLE"
-            message: "Service unavailable"
+          examples:
+            GENERIC_503_UNAVAILABLE:
+              description: Service is not available. Temporary situation usually related to maintenance process in the server side
+              value:
+                status: 503
+                code: UNAVAILABLE
+                message: Service Unavailable.
     SubscriptionIdRequired:
       description: Problem with the client request
       headers:
