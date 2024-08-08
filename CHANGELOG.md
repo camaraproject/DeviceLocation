@@ -14,7 +14,7 @@ The below sections record the changes for each API version in each release as fo
 * for subsequent alpha or release-candidate API versions, the delta with respect to the previous pre-release
 * for a public API version, the consolidated changes since the release of the previous public API version
 
-# r1.1m
+# r1.1
 
 ## Release Notes
 
