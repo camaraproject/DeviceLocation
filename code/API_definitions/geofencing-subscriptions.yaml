@@ -62,7 +62,7 @@ info:
 
     # Authorization and authentication
 
-    [Camara Security and Interoperability Profile](https://github.com/camaraproject/IdentityAndConsentManagement/blob/main/documentation/CAMARA-Security-Interoperability.md) provides details on how a client requests an access token.
+    The "Camara Security and Interoperability Profile" provides details on how a client requests an access token. Please refer to Identify and Consent Management (https://github.com/camaraproject/IdentityAndConsentManagement/) for the released version of the Profile.
 
     Which specific authorization flows are to be used will be determined during onboarding process, happening between the API Client and the Telco Operator exposing the API, taking into account the declared purpose for accessing the API, while also being subject to the prevailing legal framework dictated by local legislation.
 
@@ -72,7 +72,7 @@ info:
 
     (FAQs will be added in a later version of the documentation)
 
-  version: wip
+  version: 0.3.0-rc.1
   license:
     name: Apache 2.0
     url: https://www.apache.org/licenses/LICENSE-2.0.html
@@ -82,7 +82,7 @@ externalDocs:
   url: https://github.com/camaraproject/DeviceLocation
 
 servers:
-  - url: "{apiRoot}/geofencing-subscriptions/vwip"
+  - url: "{apiRoot}/geofencing-subscriptions/v0.3rc1"
     variables:
       apiRoot:
         default: http://localhost:9091
