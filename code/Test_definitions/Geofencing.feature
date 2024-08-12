@@ -113,7 +113,6 @@ Feature: Camara Geofencing Subscriptions API ,0.3.0 Operations on subscriptions
     When they get subscription with invalid subscription-id which is in invalid format
     Then Response code is 400
 
-
  @geofencing_subscriptions_16_Delete_invalid_geofencing_subscription_for_a_device
   Scenario:  Get geofencing subscription with invalid subscription-id format
     Given they use the geofencing url
