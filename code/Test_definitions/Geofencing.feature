@@ -1,13 +1,13 @@
 
 
 @Geofencing 
-Feature: Camara Geofencing Subscriptions API ,0.2.0-rc3 Operations on subscriptions 
+Feature: Camara Geofencing Subscriptions API ,0.3.0 Operations on subscriptions 
 
 # Input to be provided by the implementation to the tests
-# References to OAS spec schemas refer to schemas specified in geofencing-subscriptions.yaml, version v0.2.0-rc3
+# References to OAS spec schemas refer to schemas specified in geofencing-subscriptions.yaml, version v0.3.0
 
   Background: Common Geofencing Subscriptions setup
-    Given the resource "/geofencing-subscriptions/v0/subscriptions"  as geofencing Url                                                            |
+    Given the resource "/geofencing-subscriptions/v0.3/subscriptions"  as geofencing Url                                                            |
     And the header "Content-Type" is set to "application/json"
     And the header "Authorization" is set to a valid access token
     And the header "x-correlator" is set to a UUID value
@@ -26,10 +26,10 @@ Feature: Camara Geofencing Subscriptions API ,0.2.0-rc3 Operations on subscripti
     Then Response code is 200
 
 
-  @geofencing_subscriptions_03_Operation_to_retrieve_subscription_based_on_the_provided_ID
-  Scenario: Get a subscription based on provided id.
+  @geofencing_subscriptions_03_Operation_to_retrieve_subscription_based_on_the_existing-subcription_ID
+  Scenario: Get a subscription based on existing-subcription id.
     Given they use the geofencing url
-    When they get subscription for subscription-id
+    When they get subscription for  existing subscription-id
     Then Response code is 200
 
   @geofencing_subscriptions_04_Operation_to_delete_subscription_based_on_the_provided_ID
@@ -80,16 +80,16 @@ Feature: Camara Geofencing Subscriptions API ,0.2.0-rc3 Operations on subscripti
   @geofencing_subscriptions_11_Get_Event-Details_of_subscription_entered
   Scenario: Subscription creation when service have area-entered event
     Given they use the geofencing url
-    When they create subscription with event have area-entered at "Boon"
-    When they create subscription with event have area-entered at "Berlin" and device enters "Berlin"
+    When they create subscription with event have area-entered at "Place1"
+    When they create subscription with event have area-entered at "Place2" and device enters "Place2"
     Then they get event details from notifications-url
     Then Response code is 200
 
   @geofencing_subscriptions_12_Get_Event-Details_of_subscription_left
   Scenario: Subscription creation when service have area-left event
     Given they use the geofencing url
-    When they create subscription with event have area-left with at "Boon"
-    When they create subscription with event have area-left with at "Berlin" and device left "Boon"
+    When they create subscription with event have area-left with at "Place1"
+    When they create subscription with event have area-left with at "Place2" and device left "Place1"
     Then they get event details from notifications-url
     Then Response code is 200
 
