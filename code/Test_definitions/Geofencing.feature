@@ -16,7 +16,7 @@ Feature: Camara Geofencing Subscriptions API ,0.3.0 Operations on subscriptions
   @geofencing_subscriptions_01_Create_geofencing_subscription_for_a_device
   Scenario:  Create geofencing subscription
     Given the appropriate values are used for geofencing 
-    When the creation of subscription is performed
+    When the creation of subscription method is triggered  is performed
     Then the response code is 201
     And the response header "Content-Type" is "application/json"
     And the response header "x-correlator" has same value as the request header "x-correlator"
@@ -27,8 +27,8 @@ Feature: Camara Geofencing Subscriptions API ,0.3.0 Operations on subscriptions
   @geofencing_subscriptions_02_Operation_to_retrieve_list_of_subscriptions
   Scenario: Get a list of subscriptions.
     Given the appropriate values are used for geofencing
-    When they get all subscriptions
-    Then Response code is 200
+    When the get all subscriptions method is triggered 
+    Then the response  code is 200
     And the response header "Content-Type" is "application/json"
     And the response header "x-correlator" has same value as the request header "x-correlator"
     # The response has to comply with the generic response schema which is part of the spec
@@ -38,8 +38,8 @@ Feature: Camara Geofencing Subscriptions API ,0.3.0 Operations on subscriptions
   @geofencing_subscriptions_03_Operation_to_retrieve_subscription_based_on_the_existing-subcription_ID
   Scenario: Get a subscription based on existing-subcription id.
     Given the appropriate values are used for geofencing
-    When they get subscription for  existing subscription-id
-    Then Response code is 200
+    When the  get subscription method is triggered  for  existing subscription-id
+    Then the response  code is 200
     And the response header "Content-Type" is "application/json"
     And the response header "x-correlator" has same value as the request header "x-correlator"
     # The response has to comply with the generic response schema which is part of the spec
@@ -49,8 +49,8 @@ Feature: Camara Geofencing Subscriptions API ,0.3.0 Operations on subscriptions
   @geofencing_subscriptions_04_Operation_to_delete_subscription_based_on_the_provided_ID
   Scenario: Delete a subscription based on provided id.
     Given the appropriate values are used for geofencing
-    When they delete subscription for subscription-id
-    Then Response code is 204
+    When the  delete subscription method is triggered  for subscription-id
+    Then the response  code is 204
     And the response header "Content-Type" is "application/json"
     And the response header "x-correlator" has same value as the request header "x-correlator"
     # The response has to comply with the generic response schema which is part of the spec
@@ -60,8 +60,8 @@ Feature: Camara Geofencing Subscriptions API ,0.3.0 Operations on subscriptions
   @geofencing_subscriptions_05_Create_invalid_geofencing_subscription_for_a_device
   Scenario:  Create geofencing subscription with invalid parameter
     Given  the appropriate values are used for geofencing
-    When they create subscription with invalid parameter
-    Then Response code is 400
+    When the  create subscription method is triggered  with invalid parameter
+    Then the response  code is 400
     And the response property "$.status" is 400
     And the response property "$.code" is "INVALID_ARGUMENT"
     And the response property "$.message" contains a user friendly text
@@ -69,8 +69,8 @@ Feature: Camara Geofencing Subscriptions API ,0.3.0 Operations on subscriptions
   @geofencing_subscriptions_06_Get_unknown_geofencing_subscription_for_a_device
   Scenario:  Get geofencing subscription with invalid subscription-id which is not available
     Given  the appropriate values are used for geofencing
-    When the get subscription with invalid subscription-id which is not available
-    Then Response code is 404
+    When the get subscription method is triggered  with invalid subscription-id which is not available
+    Then the response  code is 404
     And the response property "$.status" is 404
     And the response property "$.code" is "NOT_FOUND"
     And the response property "$.message" contains a user friendly text
@@ -79,8 +79,8 @@ Feature: Camara Geofencing Subscriptions API ,0.3.0 Operations on subscriptions
   @geofencing_subscriptions_07_Delete_invalid_geofencing_subscription_for_a_device
   Scenario:  Delete geofencing subscription with invalid parameter
     Given  the appropriate values are used for geofencing
-    When they delete subscription with invalid subscription-id
-    Then Response code is 404
+    When the  delete subscription method is triggered  with invalid subscription-id
+    Then the response  code is 404
     And the response property "$.status" is 404
     And the response property "$.code" is "NOT_FOUND"
     And the response property "$.message" contains a user friendly text
@@ -88,8 +88,8 @@ Feature: Camara Geofencing Subscriptions API ,0.3.0 Operations on subscriptions
   @geofencing_subscriptions_08_Invalid_method_geofencing_subscription_for_a_device
   Scenario:  Update geofencing subscription
     Given  the appropriate values are used for geofencing
-    When they update subscription
-    Then Response code is 405
+    When the  update subscription method is triggered 
+    Then the response  code is 405
     And the response property "$.status" is 405
     And the response property "$.code" is "METHOD_NOT_ALLOWED"
     And the response property "$.message" contains a user friendly text
@@ -98,8 +98,8 @@ Feature: Camara Geofencing Subscriptions API ,0.3.0 Operations on subscriptions
   @geofencing_subscriptions_09_creation_of_subscription_for_subscribed_expired_time_in_past
   Scenario:  Subscribed expire time in past for geofencing subscription
     Given  the appropriate values are used for geofencing
-    When they create subscription with expire time in past
-    Then Response code is 400
+    When the create subscription method is triggered with expire time in past
+    Then the response  code is 400
     And the response property "$.status" is 400
     And the response property "$.code" is "INVALID_ARGUMENT"
     And the response property "$.message" contains a user friendly text
@@ -108,16 +108,19 @@ Feature: Camara Geofencing Subscriptions API ,0.3.0 Operations on subscriptions
   @geofencing_subscriptions_10_creation_of_subscription_when_service_unavailable
   Scenario: Subscription creation when service unavailable
     Given  the appropriate values are used for geofencing
-    When they create subscription when service is unavailable
-    Then Response code is not  503
+    When the create subscription method is triggered when service is unavailable
+    Then the response  code is not  503
+	And the response property "$.status" is 503
+    And the response property "$.code" is "UNAVAILABLE"
+    And the response property "$.message" contains a user friendly text
 
   @geofencing_subscriptions_11_Get_Event-Details_of_subscription_entered
   Scenario: Subscription creation when service have area-entered event
     Given  the appropriate values are used for geofencing
-    When they create subscription with event have area-entered at "Place1"
-    When they create subscription with event have area-entered at "Place2" and device enters "Place2"
-    Then they get event details from notifications-url
-    Then Response code is 200
+    When the create subscription with event have area-entered at "Place1"
+    When the create subscription with event have area-entered at "Place2" and device enters "Place2"
+    Then the get event details from notifications-url
+    Then the response  code is 200
     And the response header "Content-Type" is "application/json"
     And the response header "x-correlator" has same value as the request header "x-correlator"
     # The response has to comply with the generic response schema which is part of the spec
@@ -126,10 +129,10 @@ Feature: Camara Geofencing Subscriptions API ,0.3.0 Operations on subscriptions
   @geofencing_subscriptions_12_Get_Event-Details_of_subscription_left
   Scenario: Subscription creation when service have area-left event
     Given  the appropriate values are used for geofencing
-    When they create subscription with event have area-left with at "Place1"
-    When they create subscription with event have area-left with at "Place2" and device left "Place1"
+    When the create subscription with event have area-left with at "Place1"
+    When the create subscription with event have area-left with at "Place2" and device left "Place1"
     Then they get event details from notifications-url
-    Then Response code is 200
+    Then the response  code is 200
     And the response header "Content-Type" is "application/json"
     And the response header "x-correlator" has same value as the request header "x-correlator"
     # The response has to comply with the generic response schema which is part of the spec
@@ -138,31 +141,37 @@ Feature: Camara Geofencing Subscriptions API ,0.3.0 Operations on subscriptions
   @geofencing_subscriptions_13_Getting_of_subscription_when_service_unavailable
   Scenario: Getting Subscription when service is unavailable
     Given  the appropriate values are used for geofencing
-    When they get subscription when service is unavailable
-    Then Response code is 503
+    When the  get subscription method is triggered  when service is unavailable
+    Then the response  code is 503
+	And the response property "$.status" is 503
+    And the response property "$.code" is "UNAVAILABLE"
+    And the response property "$.message" contains a user friendly text
 
 
   @geofencing_subscriptions_14_Deletion_of_subscription_when_service_unavailable
   Scenario: Deletion of Subscription when service unavailable
     Given  the appropriate values are used for geofencing
-    When they delete subscription when service is unavailable
-    Then Response code is 503
+    When the delete subscription method is triggered when service is unavailable
+    Then the response  code is 503
+	And the response property "$.status" is 503
+    And the response property "$.code" is "UNAVAILABLE"
+    And the response property "$.message" contains a user friendly text
 
     
   @geofencing_subscriptions_15_Get_invalid_geofencing_subscription_for_a_device
   Scenario:  Get geofencing subscription with invalid subscription-id format
     Given the appropriate values are used for geofencing
-    When they get subscription with invalid subscription-id which is in invalid format
-    Then Response code is 400
+    When the  get subscription method is triggered with invalid subscription-id which is in invalid format
+    Then the response  code is 400
     And the response property "$.status" is 400
     And the response property "$.code" is "INVALID_ARGUMENT"
     And the response property "$.message" contains a user friendly text
 
- @geofencing_subscriptions_16_Delete_invalid_geofencing_subscription_for_a_device
+  @geofencing_subscriptions_16_Delete_invalid_geofencing_subscription_for_a_device
   Scenario:  Get geofencing subscription with invalid subscription-id format
     Given the appropriate values are used for geofencing
-    When they delete subscription with invalid subscription-id which is in invalid format
-    Then Response code is 400
+    When the  delete subscription method is triggered  with invalid subscription-id which is in invalid format
+    Then the response  code is 400
     And the response property "$.status" is 400
     And the response property "$.code" is "INVALID_ARGUMENT"
     And the response property "$.message" contains a user friendly text
@@ -200,9 +209,53 @@ Feature: Camara Geofencing Subscriptions API ,0.3.0 Operations on subscriptions
     And the response property "$.code" is "UNAUTHENTICATED"
     And the response property "$.message" contains a user friendly text
 
+     @geofencing_subscriptions_20_sink_credentials
+  Scenario:   Validate that the subscribed events are received in the sink, with the right sinkCredential, for those situations specified in the API.
+    Given the appropriate values are used for geofencing
+    When the  create subscription method is triggered  for subscription-id
+    Then the response  code is 201
+	  Then the get event details observed on notifications-url
+	  Then the subscribed event  received on notifications-url & sink credentials are as expected
+	  Then the response  code is 201
+	  And the response header "Content-Type" is "application/json"
+    And the response header "x-correlator" has same value as the request header "x-correlator"
+    # The response has to comply with the generic response schema which is part of the spec
+    And the response body complies with the OAS schema at "/components/schemas/Subscription"
+
+
+
+   @geofencing_subscriptions_21_subscriptionExpireTime
+  Scenario:   For subscriptions that provide subscriptionExpireTime, validate that the subscribed events are not longer received after the expiration time.
+    Given the appropriate values are used for geofencing
+    When the  create subscription method is triggered  for subscription-id with subscriptionExpireTime after 5 seconds
+	  Then the subscriptionExpireTime value is reached
+	  Then the get event details observed on notifications-url
+	  Then the response  code is 404
+    And the response property "$.status" is 404
+    And the response property "$.code" is "NOT_FOUND"
+    And the response property "$.message" contains a user friendly text
     
 
-    Validate that the subscribed events are received in the sink, with the right sinkCredential, for those situations specified in the API.
-For subscriptions that provide subscriptionExpireTime, validate that the subscribed events are not longer received after the expiration time.
-For subscriptions that provide subscriptionMaxEvents, validate that the subscribed events are not longer received after the maximum events limit is reached.
-Validate that after a subscription is deleted, the subscribed events are not longer received.
+  @geofencing_subscriptions_22_subscriptionMaxEvents
+  Scenario: For subscriptions that provide subscriptionMaxEvents, validate that the subscribed events are not longer received after the maximum events limit is reached.
+    Given the appropriate values are used for geofencing
+    When the  create subscription method is triggered  for subscription-id
+    Then the response  code is 201
+	  Then the  create subscription method is triggered  for subscription-id
+	  Then the subscriptionMaxEvents value is exceeded
+	  Then the get event details observed on notifications-url
+	  Then the response  code is 404
+    And the response property "$.status" is 404
+    And the response property "$.code" is "NOT_FOUND"
+    And the response property "$.message" contains a user friendly text
+    
+  @geofencing_subscriptions_23_subscription_deleted_event_validation
+  Scenario: Validate that after a subscription is deleted, the subscribed events are not longer received.
+	  Given the appropriate values are used for geofencing
+    When the  delete subscription method is triggered  for subscription-id
+    Then the response  code is 204
+	  Then the get event details observed on notifications-url
+	  Then the response  code is 404
+    And the response property "$.status" is 404
+    And the response property "$.code" is "NOT_FOUND"
+    And the response property "$.message" contains a user friendly text
