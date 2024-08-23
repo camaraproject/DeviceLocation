@@ -32,7 +32,7 @@ Feature: Camara Geofencing Subscriptions API ,0.3.0 Operations on subscriptions
     And the response header "Content-Type" is "application/json"
     And the response header "x-correlator" has same value as the request header "x-correlator"
     # The response has to comply with the generic response schema which is part of the spec
-    And the response body complies with the OAS schema at "/components/schemas/Subscription"
+    And each item in the response body, if any, complies with the OAS schema at "/components/schemas/Subscription"
 
 
   @geofencing_subscriptions_03_Operation_to_retrieve_subscription_based_on_the_existing-subcription_ID
