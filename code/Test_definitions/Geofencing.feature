@@ -5,7 +5,7 @@ Feature: Camara Geofencing Subscriptions API ,v0.3.0 - Operations on subscriptio
 # References to OAS spec schemas refer to schemas specified in geofencing-subscriptions.yaml, version v0.3.0
 
   Background: Common Geofencing Subscriptions setup
-    Given the resource "{apiroot}/geofencing-subscriptions/v0.3/"  as geofencing base-url                                                            |
+    Given the resource "{apiroot}/geofencing-subscriptions/v0.3/"  as geofencing base-url                                                           
     And the header "Authorization" is set to a valid access token
     And the header "x-correlator" is set to a UUID value
 
@@ -56,8 +56,8 @@ Feature: Camara Geofencing Subscriptions API ,v0.3.0 - Operations on subscriptio
     And the response property "$.message" contains a user friendly text
 
   @geofencing_subscriptions_06_Get_unknown_geofencing_subscription_for_a_device
-  Scenario:  Get geofencing subscription with invalid subscription-id which is not available
-    Given the request body is not available and path parameter "subscriptionId" is set to the identifier of a non-existing subscription
+  Scenario:  Get geofencing subscription with subscription-id unknown to the system  
+    Given the request body is not available and path parameter "subscriptionId" is set to the identifier of a uknown to subscription
     When the request "retrieveGeofencingSubscription" is sent
     Then the response  code is 404
     And the response property "$.status" is 404
@@ -66,7 +66,7 @@ Feature: Camara Geofencing Subscriptions API ,v0.3.0 - Operations on subscriptio
 
   @geofencing_subscriptions_07_Delete_invalid_geofencing_subscription_for_a_device
   Scenario:  Delete geofencing subscription with invalid parameter
-    Given the request body is not available and path parameter "subscriptionId" is set to the identifier of an existing non-subscription
+    Given the request body is not available and path parameter "subscriptionId" is set to the identifier of an non-existing subscription
     When the request "deleteGeofencingSubscription" is sent
     Then the response  code is 404
     And the response property "$.status" is 404
