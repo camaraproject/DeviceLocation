@@ -7,11 +7,10 @@ Feature: Camara Geofencing Subscriptions API ,0.3.0 Operations on subscriptions
 # References to OAS spec schemas refer to schemas specified in geofencing-subscriptions.yaml, version v0.3.0
 
   Background: Common Geofencing Subscriptions setup
-    Given the resource "/geofencing-subscriptions/v0.3/subscriptions"  as geofencing Url                                                            |
+    Given the resource "/geofencing-subscriptions/v0.3/"  as geofencing base-url                                                            |
     And the header "Content-Type" is set to "application/json"
     And the header "Authorization" is set to a valid access token
     And the header "x-correlator" is set to a UUID value
-    And the request body is set by default to a request body compliant with the schema
 
   @geofencing_subscriptions_01_Create_geofencing_subscription_for_a_device
   Scenario:  Create geofencing subscription
@@ -224,38 +223,36 @@ Feature: Camara Geofencing Subscriptions API ,0.3.0 Operations on subscriptions
 
 
 
-   @geofencing_subscriptions_21_subscriptionExpireTime
+ @geofencing_subscriptions_21_subscriptionExpireTime
   Scenario:   For subscriptions that provide subscriptionExpireTime, validate that the subscribed events are not longer received after the expiration time.
-    Given the appropriate values are used for geofencing
-    When the  create subscription method is triggered  for subscription-id with subscriptionExpireTime after 5 seconds
-	  Then the subscriptionExpireTime value is reached
-	  Then the get event details observed on notifications-url
-	  Then the response  code is 404
-    And the response property "$.status" is 404
-    And the response property "$.code" is "NOT_FOUND"
-    And the response property "$.message" contains a user friendly text
+    Given the appropriate values are used for geofencing base-url
+    When the  create subscription method is triggered for less $.duration
+    Then the subscriptionExpireTime value is reached and subscription is expired
+    Then the get method called for checking event details on notifications-callback-url when device enters geofence
+    Then no event received on notifications-callback-url
+    Then the get method called for checking event details on notifications-url when device leaves geofence
+    Then no event received on notifications-callback-url
     
 
   @geofencing_subscriptions_22_subscriptionMaxEvents
   Scenario: For subscriptions that provide subscriptionMaxEvents, validate that the subscribed events are not longer received after the maximum events limit is reached.
-    Given the appropriate values are used for geofencing
-    When the  create subscription method is triggered  for subscription-id
+    Given the appropriate values are used for geofencing base-url
+    When the  create subscription method is triggered 
     Then the response  code is 201
-	  Then the  create subscription method is triggered  for subscription-id
-	  Then the subscriptionMaxEvents value is exceeded
-	  Then the get event details observed on notifications-url
-	  Then the response  code is 404
-    And the response property "$.status" is 404
-    And the response property "$.code" is "NOT_FOUND"
-    And the response property "$.message" contains a user friendly text
-    
-  @geofencing_subscriptions_23_subscription_deleted_event_validation
+    Then the  maxevents are already triggered for available subscription
+    Then the get method called for checking event details on notifications-callback-url when device enters geofence
+    Then no event received on notifications-callback-url
+    Then the get method called for checking event details on notifications-url when device leaves geofence
+    Then no event received on notifications-callback-url
+	
+	
+  @geofencing_subscriptions_23_subscription_delete_event_validation
   Scenario: Validate that after a subscription is deleted, the subscribed events are not longer received.
-	  Given the appropriate values are used for geofencing
-    When the  delete subscription method is triggered  for subscription-id
+    Given the appropriate values are used for geofencing base-url
+    When the  delete subscription method is triggered
     Then the response  code is 204
-	  Then the get event details observed on notifications-url
-	  Then the response  code is 404
-    And the response property "$.status" is 404
-    And the response property "$.code" is "NOT_FOUND"
-    And the response property "$.message" contains a user friendly text
+    Then the get method called for checking event details on notifications-callback-url when device enters geofence
+    Then no event received on notifications-callback-url
+    Then the get method called for checking event details on notifications-url when device leaves geofence
+    Then no event received on notifications-callback-url
+	
