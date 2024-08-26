@@ -7,7 +7,7 @@ Feature: Camara Geofencing Subscriptions API ,0.3.0 Operations on subscriptions
 # References to OAS spec schemas refer to schemas specified in geofencing-subscriptions.yaml, version v0.3.0
 
   Background: Common Geofencing Subscriptions setup
-    Given the resource "/geofencing-subscriptions/v0.3/"  as geofencing base-url                                                            |
+    Given the resource "{apiroot}/geofencing-subscriptions/v0.3/"  as geofencing base-url                                                            |
     And the header "Content-Type" is set to "application/json"
     And the header "Authorization" is set to a valid access token
     And the header "x-correlator" is set to a UUID value
@@ -152,7 +152,7 @@ Feature: Camara Geofencing Subscriptions API ,0.3.0 Operations on subscriptions
     Given  the appropriate values are used for geofencing
     When the delete subscription method is triggered when service is unavailable
     Then the response  code is 503
-	And the response property "$.status" is 503
+    And the response property "$.status" is 503
     And the response property "$.code" is "UNAVAILABLE"
     And the response property "$.message" contains a user friendly text
 
@@ -208,20 +208,13 @@ Feature: Camara Geofencing Subscriptions API ,0.3.0 Operations on subscriptions
     And the response property "$.code" is "UNAUTHENTICATED"
     And the response property "$.message" contains a user friendly text
 
-     @geofencing_subscriptions_20_sink_credentials
+   @geofencing_subscriptions_20_sink_credentials
   Scenario:   Validate that the subscribed events are received in the sink, with the right sinkCredential, for those situations specified in the API.
-    Given the appropriate values are used for geofencing
-    When the  create subscription method is triggered  for subscription-id
-    Then the response  code is 201
-	  Then the get event details observed on notifications-url
-	  Then the subscribed event  received on notifications-url & sink credentials are as expected
-	  Then the response  code is 201
-	  And the response header "Content-Type" is "application/json"
-    And the response header "x-correlator" has same value as the request header "x-correlator"
-    # The response has to comply with the generic response schema which is part of the spec
-    And the response body complies with the OAS schema at "/components/schemas/Subscription"
-
-
+    Given the appropriate values are used for geofencing base-url
+    When the  create subscription method is triggered  with "sink" and "sinkcredentials" 
+    Then the response  code is 201 and subscription is created
+    Then the  event details are observed on notifications-url
+    And the subscribed event  received on notifications-callback-url & sink credentials are as expected
 
  @geofencing_subscriptions_21_subscriptionExpireTime
   Scenario:   For subscriptions that provide subscriptionExpireTime, validate that the subscribed events are not longer received after the expiration time.
