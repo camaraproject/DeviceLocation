@@ -140,6 +140,8 @@ paths:
                         $ref: "#/components/examples/CIRCLE_AREA_LEFT"
                       SUBSCRIPTION_ENDS:
                         $ref: "#/components/examples/SUBSCRIPTION_ENDS"
+                      SUBSCRIPTION_UNPROCESSABLE:
+                        $ref: "#/components/examples/SUBSCRIPTION_UNPROCESSABLE"
               responses:
                 "204":
                   description: Successful notification
@@ -923,7 +925,7 @@ components:
       type: string
       description: |
         - NETWORK_TERMINATED - API server stopped sending notification
-        - SUBSCRIPTION_CREATION_ABORTED - Subscription cannot be created because the specified area cannot be managed (for asynchronous subscription creation)
+        - SUBSCRIPTION_UNPROCESSABLE - Subscription cannot be processed because the specified area cannot be managed (for asynchronous subscription creation)
         - SUBSCRIPTION_EXPIRED - Subscription expire time (optionally set by the requester) has been reached
         - SUBSCRIPTION_DELETED - Subscription was deleted by the requester
         - MAX_EVENTS_REACHED - Maximum number of events (optionally set by the requester) has been reached
@@ -931,7 +933,7 @@ components:
       enum:
         - MAX_EVENTS_REACHED
         - NETWORK_TERMINATED
-        - SUBSCRIPTION_CREATION_ABORTED
+        - SUBSCRIPTION_UNPROCESSABLE
         - SUBSCRIPTION_EXPIRED
         - SUBSCRIPTION_DELETED
         - ACCESS_TOKEN_EXPIRED
@@ -1380,7 +1382,7 @@ components:
             radius: 2000
           terminationReason: SUBSCRIPTION_EXPIRED
 
-    SUBSCRIPTION_CREATION_ABORTED:
+    SUBSCRIPTION_UNPROCESSABLE:
       description: The cloud event when the subscription process was aborted.
       value:
         id: "123655"
@@ -1398,5 +1400,5 @@ components:
               latitude: 50.735851
               longitude: 7.10066
             radius: 2000
-          terminationReason: SUBSCRIPTION_CREATION_ABORTED
+          terminationReason: SUBSCRIPTION_UNPROCESSABLE
           terminationDescription: The requested area cannot be covered by the network.
