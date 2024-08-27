@@ -43,7 +43,8 @@ Feature: Camara Geofencing Subscriptions API ,v0.3.0 - Operations on subscriptio
     When the request "deleteGeofencingSubscription" is sent
     Then the response code is 202 or 204
     And the response header "x-correlator" has same value as the request header "x-correlator"
-    And if response property $.status is 204 then response body is not available 
+    And if response property $.status is 204 then response body is not available
+    And if the response property $.status is 202 then response body complies with the OAS schema at "/components/schemas/SubscriptionAsync"	
 	
 
   @geofencing_subscriptions_05_Create_invalid_geofencing_subscription_for_a_device
@@ -90,7 +91,10 @@ Feature: Camara Geofencing Subscriptions API ,v0.3.0 - Operations on subscriptio
     ##Geofence should be created
     When the request "createSubscription" is sent
     Then the device entered to  "Place2" from "Place1"
-    Then event notification "area-entered" is received on callback-url 
+    Then event notification "area-entered" is received on callback-url
+    And notification body complies with the OAS schema at "##/components/schemas/CloudEvent"
+    And type="org.camaraproject.geofencing-subscriptions.v0.area-entered"
+	
   
  @geofencing_subscriptions_10_Get_Event_Details_of_subscription_left
   Scenario: Subscription creation when service have area-left event
@@ -98,6 +102,8 @@ Feature: Camara Geofencing Subscriptions API ,v0.3.0 - Operations on subscriptio
     When the request "createSubscription" is sent
     Then the device left from  "Place1" to "Place2"
     Then event notification "area-left" is received on callback-url
+    And notification body complies with the OAS schema at "##/components/schemas/CloudEvent"
+    And type="org.camaraproject.geofencing-subscriptions.v0.area-left"
 
     
   @geofencing_subscriptions_11_Get_invalid_geofencing_subscription_for_a_device
@@ -110,7 +116,7 @@ Feature: Camara Geofencing Subscriptions API ,v0.3.0 - Operations on subscriptio
     And the response property "$.message" contains a user friendly text
 
   @geofencing_subscriptions_12_Delete_invalid_geofencing_subscription_for_a_device
-  Scenario:  Get geofencing subscription with invalid subscription-id format
+  Scenario:  Get geofencing subscription with subscription-id in invalid format
     Given the request body is not available and path parameter "subscriptionId" is set to the identifier of a non-existing subscription which is in invalid format
     When the request "deleteGeofencingSubscription" is sent
     Then the response  code is 400
@@ -161,14 +167,18 @@ Feature: Camara Geofencing Subscriptions API ,v0.3.0 - Operations on subscriptio
     Given a valid subscription request body and for less $.duration
     When the request "createSubscription" is sent
     Then the subscription is expired
-    And no event notifications received on callback-url when device enters or leaves geofence
+    And The callback notification application receives subscription-ends event at provided callbackUrl
+    And notification body complies with the OAS schema at "##/components/schemas/CloudEvent"
+    And type="org.camaraproject.geofencing-subscriptions.v0.subscription-ends"
     
   @geofencing_subscriptions_18_subscriptionMaxEvents
    Scenario: For subscriptions that provide subscriptionMaxEvents, validate that the subscribed events are not longer received after the maximum events limit is reached.
     Given a valid subscription request body 
     When the  request "createSubscription" is sent
     Then the  maxevents are already triggered for available subscription
-    And no event notifications received on callback-url when device enters or leaves geofence
+    And The callback notification application receives subscription-ends event at provided callbackUrl
+    And notification body complies with the OAS schema at "##/components/schemas/CloudEvent"
+    And type="org.camaraproject.geofencing-subscriptions.v0.subscription-ends
 	
 	
   @geofencing_subscriptions_19_subscription_delete_event_validation
@@ -176,4 +186,7 @@ Feature: Camara Geofencing Subscriptions API ,v0.3.0 - Operations on subscriptio
     Given the request body is not available and path parameter "subscriptionId" is set to the identifier of an existing subscription
     When the request "deleteGeofencingSubscription" is sent
     Then no event notifications received on callback-url for the device
+    And The callback notification application receives subscription-ends event at provided callbackUrl
+    And notification body complies with the OAS schema at "##/components/schemas/CloudEvent"
+    And type="org.camaraproject.geofencing-subscriptions.v0.subscription-ends"
    
