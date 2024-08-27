@@ -11,7 +11,7 @@ Feature: Camara Geofencing Subscriptions API, v0.3.0 - Operations on subscriptio
 
 ############################ Happy Path Scenarios########################
   @geofencing_subscriptions_01_Create_geofencing_subscription_for_a_device
-  Scenario:  Create geofencing subscription
+  Scenario:  Create geofencing subscription (sync creation)
     Given a valid subscription request body 
     When the request "createSubscription" is sent 
     Then the response code is 201
