@@ -3,6 +3,7 @@
 ## Table of Contents
 
 - **[r1.2](#r12)**
+- [r1.1](#r11)
 - [v0.2.0](#v020)
 - [v0.1.0](#v010)
 
@@ -27,7 +28,9 @@ The API definition(s) are based on
 * Commonalities v0.4.0
 * Identity and Consent Management v0.2.0
 
-**Full Changelog** with the list of PRs and contributors: https://github.com/camaraproject/DeviceLocation/compare/v0.2.0...r1.2
+**Changelog since v0.2.0**
+
+* Full Changelog with the list of PRs and contributors: https://github.com/camaraproject/DeviceLocation/compare/v0.2.0...r1.2
 
 ## location-verification v1.0.0
 
@@ -84,6 +87,77 @@ The API definition(s) are based on
 * Make '+' mandatory for phoneNumber
 * Alignment of errors with Commonalities
 
+# r1.1
+
+## Release Notes
+
+This **pre-release** contains the definition and documentation of
+* location-verification v1.0.0-rc.1
+* location-retrieval v0.3.0-rc.1
+* geofencing-subscriptions v0.3.0-rc.1
+
+The API definition(s) are based on
+* Commonalities v0.4.0-rc.1
+* Identity and Consent Management v0.2.0-rc.1
+
+**Changelog since v0.2.0**
+
+* Full Changelog with the list of PRs and contributors: https://github.com/camaraproject/DeviceLocation/compare/v0.2.0...r1.1
+
+## location-verification v1.0.0-rc.1
+
+### Added
+
+* Added x-correlator to requests and headers
+* Enhancements in documentation
+* Testing plan
+
+### Changed
+
+* Make `device` optional in requests, with related documentation
+* Make '+' mandatory for phoneNumber
+* Adjust `maxAge` behaviour and minimum, and adjust documentation
+* Alignment of errors with Commonalities
+
+### Fixed
+
+* Update the PARTIAL case description: `match_rate` is set in the response
+
+## location-retrieval v0.3.0-rc.1
+
+### Added
+
+* Added x-correlator to requests and headers
+* Enhancements in documentation
+* Testing plan
+
+### Changed
+
+* Make `device` optional in requests, with related documentation
+* Make '+' mandatory for phoneNumber
+* Adjust `maxAge` behaviour and minimum, and adjust documentation
+* Alignment of errors with Commonalities
+
+### Fixed
+
+* Clarify that `lastLocationTime` is mandatory in responses
+
+## geofencing-subscriptions v0.3.0-rc.1
+
+### Added
+
+* Adopt Commonalities guidelines for subscriptions (based on CloudEvents)
+* Add `subscriptionMaxEvents` for maximum number of notifications
+* Add `SUBSCRIPTION_DELETED` as termination-reason
+* Added x-correlator to requests and headers
+* Enhancements in documentation
+* Testing plan
+
+### Changed
+
+* Change base path to `geofencing-subscriptions` and adapt security scopes 
+* Make '+' mandatory for phoneNumber
+* Alignment of errors with Commonalities
 
 # v0.2.0
 
