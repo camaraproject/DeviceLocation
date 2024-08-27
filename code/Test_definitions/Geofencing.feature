@@ -84,23 +84,20 @@ Feature: Camara Geofencing Subscriptions API ,v0.3.0 - Operations on subscriptio
     And the response property "$.message" contains a user friendly text
 
 
-  @geofencing_subscriptions_09_Get_Event-Details_of_subscription_entered
+  @geofencing_subscriptions_09_Get_Event_Details_of_subscription_entered
   Scenario: Subscription creation when service have area-entered event
     Given a valid subscription request body 
-    When the create subscription with event have area-entered at "Place1"
-    When the create subscription with event have area-entered at "Place2" and device enters "Place2"
-    Then event notification is received
+    ##Geofence should be created
+    When the request "createSubscription" is sent
+    Then the device entered to  "Place2" from "Place1"
+    Then event notification "area-entered" is received on callback-url 
   
- @geofencing_subscriptions_10_Get_Event-Details_of_subscription_left
+ @geofencing_subscriptions_10_Get_Event_Details_of_subscription_left
   Scenario: Subscription creation when service have area-left event
-    Given  a valid subscription request body 
-    When the create subscription with event have area-left with at "Place1"
-    When the create subscription with event have area-left with at "Place2" and device left "Place1"
-    Then event notification is received
-    And the response header "Content-Type" is "application/json"
-    And the response header "x-correlator" has same value as the request header "x-correlator"
-    # The response has to comply with the generic response schema which is part of the spec
-    And the response body complies with the OAS schema at "/components/schemas/Subscription"
+    Given a valid subscription request body 
+    When the request "createSubscription" is sent
+    Then the device left from  "Place1" to "Place2"
+    Then event notification "area-left" is received on callback-url
 
     
   @geofencing_subscriptions_11_Get_invalid_geofencing_subscription_for_a_device
