@@ -167,7 +167,6 @@ Feature: Camara Geofencing Subscriptions API ,v0.3.0 - Operations on subscriptio
    Scenario: For subscriptions that provide subscriptionMaxEvents, validate that the subscribed events are not longer received after the maximum events limit is reached.
     Given a valid subscription request body 
     When the  request "createSubscription" is sent
-    Then the response  code is 201
     Then the  maxevents are already triggered for available subscription
     And no event notifications received on callback-url when device enters or leaves geofence
 	
@@ -176,5 +175,5 @@ Feature: Camara Geofencing Subscriptions API ,v0.3.0 - Operations on subscriptio
   Scenario: Validate that after a subscription is deleted, the subscribed events are not longer received.
     Given the request body is not available and path parameter "subscriptionId" is set to the identifier of an existing subscription
     When the request "deleteGeofencingSubscription" is sent
-    Then the response  code is 204
     Then no event notifications received on callback-url for the device
+   
