@@ -116,6 +116,7 @@ Feature: Camara Geofencing Subscriptions API, v0.3.0 - Operations on subscriptio
     Given a valid subscription request body 
     When the request "createSubscription" is sent
     Then the response code is 201 
+    And 
     When the request "deleteGeofencingSubscription" is sent
     Then the response code is 202 or 204	
     Then event notification "subscription-ends" is received on callback-url
@@ -123,7 +124,7 @@ Feature: Camara Geofencing Subscriptions API, v0.3.0 - Operations on subscriptio
     And type="org.camaraproject.geofencing-subscriptions.v0.subscription-ends"
     And the response property "$.terminationReason" is "SUBSCRIPTION_DELETED"
 	
-########################### Error response scenarios############################################
+########################### Error response scenarios ############################################
 @geofencing_subscriptions_11_create_geofencing_subscription_for_a_device_with_invalid_parameter
   Scenario:  Create geofencing subscription with invalid parameter
     Given the request body is not compliant with the schema "/components/schemas/SubscriptionRequest"
@@ -288,7 +289,7 @@ Feature: Camara Geofencing Subscriptions API, v0.3.0 - Operations on subscriptio
     And the response property "$.message" contains a user friendly text
 
  @geofencing_subscriptions_27_delete_invalid_geofencing_subscription_for_a_device
-  Scenario:  Delete geofencing subscription with unknown subscription-id to the system
+  Scenario:  Delete geofencing subscription with subscription-id unknown to the system
     Given the request body is not available and path parameter "subscriptionId" is set to the value which is unknown to system
     When the request "deleteGeofencingSubscription" is sent
     Then the response code is 404
