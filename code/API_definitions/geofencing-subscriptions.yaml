@@ -50,6 +50,7 @@ info:
       - the subscription was deleted by the requester
       - the Access Token `sinkCredential` (optionally set by the requester) expiration time has been reached
       - the API server has to stop sending notification prematurely
+      - the specified geofence-`area` cannot be covered or is too small to be managed
 
     ### Notification callback
 
@@ -139,6 +140,8 @@ paths:
                         $ref: "#/components/examples/CIRCLE_AREA_LEFT"
                       SUBSCRIPTION_ENDS:
                         $ref: "#/components/examples/SUBSCRIPTION_ENDS"
+                      SUBSCRIPTION_UNPROCESSABLE:
+                        $ref: "#/components/examples/SUBSCRIPTION_UNPROCESSABLE"
               responses:
                 "204":
                   description: Successful notification
@@ -912,6 +915,9 @@ components:
           $ref: "#/components/schemas/Area"
         terminationReason:
           $ref: "#/components/schemas/TerminationReason"
+        terminationDescription:
+          description: Explanation why a subscription ended or had to end.
+          type: string
         subscriptionId:
           $ref: "#/components/schemas/SubscriptionId"
 
@@ -919,6 +925,7 @@ components:
       type: string
       description: |
         - NETWORK_TERMINATED - API server stopped sending notification
+        - SUBSCRIPTION_UNPROCESSABLE - Subscription cannot be processed due to some reason, e.g. because the specified area cannot be managed. Useful for asynchronous subscription creation.
         - SUBSCRIPTION_EXPIRED - Subscription expire time (optionally set by the requester) has been reached
         - SUBSCRIPTION_DELETED - Subscription was deleted by the requester
         - MAX_EVENTS_REACHED - Maximum number of events (optionally set by the requester) has been reached
@@ -926,6 +933,7 @@ components:
       enum:
         - MAX_EVENTS_REACHED
         - NETWORK_TERMINATED
+        - SUBSCRIPTION_UNPROCESSABLE
         - SUBSCRIPTION_EXPIRED
         - SUBSCRIPTION_DELETED
         - ACCESS_TOKEN_EXPIRED
@@ -1214,6 +1222,11 @@ components:
                 status: 422
                 code: DEVICE_NOT_APPLICABLE
                 message: The service is not available for the provided device.
+            AreaNotCovered:
+              value:
+                status: 422
+                code: "AREA_NOT_COVERED"
+                message: "The specified area cannot be covered or is too small to be valid"
     Generic429:
       description: Too Many Requests
       headers:
@@ -1361,4 +1374,31 @@ components:
           subscriptionId: 987654321
           device:
             phoneNumber: +123456789
+          area:
+            areaType: CIRCLE
+            center:
+              latitude: 50.735851
+              longitude: 7.10066
+            radius: 2000
           terminationReason: SUBSCRIPTION_EXPIRED
+
+    SUBSCRIPTION_UNPROCESSABLE:
+      description: The cloud event when the subscription process was aborted.
+      value:
+        id: "123655"
+        source: https://notificationSendServer12.supertelco.com
+        type: org.camaraproject.geofencing-subscriptions.v0.subscription-ends
+        specversion: "1.0"
+        datacontenttype: application/json
+        time: 2023-03-22T05:40:23.682Z
+        data:
+          device:
+            phoneNumber: +123456789
+          area:
+            areaType: CIRCLE
+            center:
+              latitude: 50.735851
+              longitude: 7.10066
+            radius: 2000
+          terminationReason: SUBSCRIPTION_UNPROCESSABLE
+          terminationDescription: The requested area cannot be covered by the network.
