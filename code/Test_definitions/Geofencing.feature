@@ -10,7 +10,7 @@ Feature: Camara Geofencing Subscriptions API, v0.3.0 - Operations on subscriptio
     And the header "x-correlator" is set to a UUID value
 
 ############################ Happy Path Scenarios ########################
-  @geofencing_subscriptions_01_Create_geofencing_subscription_for_a_device
+  @geofencing_subscriptions_01_Create_geofencing_subscription_for_a_device_sync
    Scenario:  Create geofencing subscription (sync creation)
     Given that subscriptions are created synchronously
     And a valid subscription request body 
