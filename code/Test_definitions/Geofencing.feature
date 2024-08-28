@@ -143,7 +143,7 @@ Feature: Camara Geofencing Subscriptions API, v0.3.0 - Operations on subscriptio
     And the response property "$.message" contains a user friendly text
 	  	
  @geofencing_subscription_13_creation_with_invalid_eventType
-   Scenario: subscription creation with invalid event type
+   Scenario: Subscription creation with invalid event type
     Given a valid subscription request body 
     And the request body property "$.types" is set to invalid value  
     When the request "createSubscription" is sent
@@ -152,7 +152,7 @@ Feature: Camara Geofencing Subscriptions API, v0.3.0 - Operations on subscriptio
     And the response property "$.message" contains a user friendly text
     
   @geofencing_subscription_14_invalid_protocol
-   Scenario: subscription creation with invalid protocol
+   Scenario: Subscription creation with invalid protocol
     Given a valid subscription request body 
     When the request "createSubscription" is sent
     And "$.types"="org.camaraproject.geofencing-subscriptions.v0.area-entered"
@@ -164,7 +164,7 @@ Feature: Camara Geofencing Subscriptions API, v0.3.0 - Operations on subscriptio
     And the response property "$.message" contains a user friendly text
 
   @geofencing_subscription_15_invalid_credential
-  Scenario: subscription creation with invalid credential
+  Scenario: Subscription creation with invalid credential
     Given a valid subscription request body 
     When the request "createSubscription" is sent
     And "$.types"="org.camaraproject.geofencing-subscriptions.v0.area-entered"
@@ -180,7 +180,7 @@ Feature: Camara Geofencing Subscriptions API, v0.3.0 - Operations on subscriptio
     And the response property "$.message" contains a user friendly text
 
   @geofencing_subscription_16_invalid_token
-  Scenario: subscription creation with invalid token
+  Scenario: Subscription creation with invalid token
     Given a valid subscription request body
     When the request "createSubscription" is sent
     And "$.types"="org.camaraproject.geofencing-subscriptions.v0.area-entered"
@@ -279,7 +279,7 @@ Feature: Camara Geofencing Subscriptions API, v0.3.0 - Operations on subscriptio
     And the response property "$.message" contains a user friendly text
 
 @geofencing_subscriptions_26_get_unknown_geofencing_subscription_for_a_device
-  Scenario:  Get geofencing subscription with subscription-id unknown to the system  
+  Scenario:  Get method for geofencing subscription with subscription-id unknown to the system  
     Given the request body is not available and path parameter "subscriptionId" is set to the value which is unknown to system
     When the request "retrieveGeofencingSubscription" is sent
     Then the response  code is 404
@@ -288,7 +288,7 @@ Feature: Camara Geofencing Subscriptions API, v0.3.0 - Operations on subscriptio
     And the response property "$.message" contains a user friendly text
 
  @geofencing_subscriptions_27_delete_invalid_geofencing_subscription_for_a_device
-  Scenario:  Delete geofencing subscription with invalid parameter
+  Scenario:  Delete geofencing subscription with unknown subscription-id to the system
     Given the request body is not available and path parameter "subscriptionId" is set to the identifier for an non-existing subscription
     When the request "deleteGeofencingSubscription" is sent
     Then the response code is 404
