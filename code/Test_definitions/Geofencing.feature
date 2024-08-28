@@ -116,7 +116,7 @@ Feature: Camara Geofencing Subscriptions API, v0.3.0 - Operations on subscriptio
 ########################### Error response scenarios############################################
 @geofencing_subscriptions_10_create_geofencing_subscription_for_a_device_with_invalid_parameter
   Scenario:  Create geofencing subscription with invalid parameter
-    Given a valid subscription request body with invalid parameter
+    Given the request body is not compliant with the schema "/components/schemas/SubscriptionRequest"
     When the  request "createSubscription" is sent 
     Then the response code is 400
     And the response property "$.status" is 400
