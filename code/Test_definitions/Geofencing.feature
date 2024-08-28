@@ -289,7 +289,7 @@ Feature: Camara Geofencing Subscriptions API, v0.3.0 - Operations on subscriptio
 
  @geofencing_subscriptions_27_delete_invalid_geofencing_subscription_for_a_device
   Scenario:  Delete geofencing subscription with unknown subscription-id to the system
-    Given the request body is not available and path parameter "subscriptionId" is set to the identifier for an non-existing subscription
+    Given the request body is not available and path parameter "subscriptionId" is set to the value which is unknown to system
     When the request "deleteGeofencingSubscription" is sent
     Then the response code is 404
     And the response property "$.status" is 404
