@@ -1,4 +1,4 @@
-Feature: CAMARA Device location verification API, v1.0-rc1 - Operation verifyLocation
+Feature: CAMARA Device location verification API, v1.0 - Operation verifyLocation
   # Input to be provided by the implementation to the tester
   #
   # Implementation indications:
@@ -12,7 +12,7 @@ Feature: CAMARA Device location verification API, v1.0-rc1 - Operation verifyLoc
   # References to OAS spec schemas refer to schemas specifies in location-verification.yaml, version 0.2.0
 
   Background: Common verifyLocation setup
-    Given the resource "/location-verification/v1rc1/verify"                                                              |
+    Given the resource "/location-verification/v1/verify"                                                              |
 
     And the header "Content-Type" is set to "application/json"
     And the header "Authorization" is set to a valid access token
