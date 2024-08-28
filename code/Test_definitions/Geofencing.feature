@@ -88,7 +88,7 @@ Feature: Camara Geofencing Subscriptions API, v0.3.0 - Operations on subscriptio
     Given a valid subscription request body 
     And the request body property "$.area" is set to circle which covers location "Place1" 
     And the request body property "$.type" is "area-left"
-    And the request body property "$.subscriptionExpireTime" set to smaller value
+    And the request body property "$.subscriptionExpireTime" is set to a value in the near future
     When the request "createSubscription" is sent
     Then the response code is 201 
     Then the subscription is expired
