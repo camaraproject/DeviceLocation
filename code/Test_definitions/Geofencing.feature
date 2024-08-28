@@ -20,7 +20,7 @@ Feature: Camara Geofencing Subscriptions API, v0.3.0 - Operations on subscriptio
     And the response header "x-correlator" has same value as the request header "x-correlator"
     And the response body complies with the OAS schema at "/components/schemas/Subscription"
 
-  @geofencing_subscriptions_02_Create_geofencing_subscription_for_a_device
+  @geofencing_subscriptions_02_Create_geofencing_subscription_for_a_device_async
    Scenario:  Create geofencing subscription (async creation)
     Given that subscriptions are created asynchronously
     And a valid subscription request body 
