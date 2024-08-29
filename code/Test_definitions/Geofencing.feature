@@ -50,7 +50,7 @@ Feature: Camara Geofencing Subscriptions API, v0.3.0 - Operations on subscriptio
 
   @geofencing_subscriptions_05_Operation_to_retrieve_subscription_based_on_an_existing_subscription-id
    Scenario: Get a subscription based on existing subscription-id.
-    Given the request body is not available and path parameter "subscriptionId" is set to the identifier of an existing subscription
+    Given the path parameter "subscriptionId" is set to the identifier of an existing subscription
     When the request "retrieveGeofencingSubscription" is sent
     Then the response code is 200
     And the response header "Content-Type" is "application/json"
