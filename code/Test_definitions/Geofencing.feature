@@ -225,7 +225,8 @@ Feature: Camara Geofencing Subscriptions API, v0.3.0 - Operations on subscriptio
 
   @geofencing_subscriptions_20_invalid_access_token_for_create_subscription
   Scenario: Invalid access token for create subscription
-    Given a valid subscription request body and header "Authorization" set to an invalid access token
+    Given a valid subscription request body 
+    And header "Authorization" set to an invalid access token
     When the request "createSubscription" is sent
     Then the response status code is 401
     And the response header "Content-Type" is "application/json"
@@ -235,7 +236,7 @@ Feature: Camara Geofencing Subscriptions API, v0.3.0 - Operations on subscriptio
 		
 @geofencing_subscriptions_21_no_authorization_header_for_get_subscription
   Scenario: No Authorization header for get subscription
-    Given the request body & header "Authorization" is not set to valid token
+    Given header "Authorization" is not set to valid token
     And path parameter "subscriptionId" is set to the identifier of an existing subscription
     When the request "retrieveGeofencingSubscription" is sent 
     Then the response status code is 401
@@ -264,7 +265,7 @@ Feature: Camara Geofencing Subscriptions API, v0.3.0 - Operations on subscriptio
     
 @geofencing_subscriptions_23_no_authorization_header_for_delete_subscription
   Scenario: No Authorization header for delete subscription
-    Given a the request body and header "Authorization" is set without a token
+    Given header "Authorization" is set without a token
     When the request "deleteGeofencingSubscription" is sent 
     Then the response status code is 401
     And the response property "$.status" is 401
@@ -273,7 +274,7 @@ Feature: Camara Geofencing Subscriptions API, v0.3.0 - Operations on subscriptio
 
 @geofencing_subscriptions_24_expired_access_token_for_delete_subscription
   Scenario: Expired access token for delete subscription
-    Given a valid subscription request body and header "Authorization" is set with an expired token
+    Given header "Authorization" is set with an expired token
     When the request "deleteGeofencingSubscription" is sent
     Then the response status code is 401
     And the response property "$.status" is 401
@@ -282,7 +283,7 @@ Feature: Camara Geofencing Subscriptions API, v0.3.0 - Operations on subscriptio
 
 @geofencing_subscriptions_25_invalid_access_token_for_delete_subscription
   Scenario: Invalid access token for delete subscription
-    Given a valid subscription request body and header "Authorization" set to an invalid access token
+    Given header "Authorization" set to an invalid access token
     When the request "deleteGeofencingSubscription" is sent
     Then the response status code is 401
     And the response header "Content-Type" is "application/json"
