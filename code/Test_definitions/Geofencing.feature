@@ -59,7 +59,7 @@ Feature: Camara Geofencing Subscriptions API, v0.3.0 - Operations on subscriptio
 
   @geofencing_subscriptions_06_Operation_to_delete_subscription_based_on_an_existing_subscription-id
    Scenario: Delete a subscription based on existing subscription-id.
-    Given the request body is not available and path parameter "subscriptionId" is set to the identifier of an existing subscription
+    Given the path parameter "subscriptionId" is set to the identifier of an existing subscription
     When the request "deleteGeofencingSubscription" is sent
     Then the response code is 202 or 204
     And the response header "x-correlator" has same value as the request header "x-correlator"
