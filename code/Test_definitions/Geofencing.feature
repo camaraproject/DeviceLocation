@@ -37,7 +37,7 @@ Feature: Camara Geofencing Subscriptions API, v0.3.0 - Operations on subscriptio
     Then the response code is 200
     And the response header "Content-Type" is "application/json"
     And the response header "x-correlator" has same value as the request header "x-correlator"
-    And each item in the response body, if any, complies with the OAS schema at "/components/schemas/Subscription"
+    And the response body is an empty array
 
   @geofencing_subscriptions_04_Operation_to_retrieve_list_of_subscriptions
    Scenario: Get a list of subscriptions  
