@@ -254,7 +254,7 @@ Feature: Camara Geofencing Subscriptions API, v0.3.0 - Operations on subscriptio
     
 @geofencing_subscriptions_23_invalid_access_token_for_get_subscription
   Scenario: Invalid access token for get subscription
-    Given the request body is not available and header "Authorization" set to an invalid access token
+    Given the header "Authorization" set to an invalid access token
     When the request "retrieveGeofencingSubscription" is sent
     Then the response status code is 401
     And the response header "Content-Type" is "application/json"
