@@ -46,7 +46,7 @@ Feature: Camara Geofencing Subscriptions API, v0.3.0 - Operations on subscriptio
     Then the response code is 200
     And the response header "Content-Type" is "application/json"
     And the response header "x-correlator" has same value as the request header "x-correlator"
-    And the response body has an array of itenms and complies with the OAS schema at "/components/schemas/Subscription"
+    And the response body has an array of items and each item complies with the OAS schema at "/components/schemas/Subscription"
 
   @geofencing_subscriptions_05_Operation_to_retrieve_subscription_based_on_an_existing_subscription-id
    Scenario: Get a subscription based on existing subscription-id.
