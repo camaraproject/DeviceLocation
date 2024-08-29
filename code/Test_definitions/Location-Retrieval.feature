@@ -46,9 +46,8 @@ Feature: CAMARA Device location retrieval  API, v0.3-rc.1 - Operation retrieveLo
     And the response header "x-correlator" has same value as the request header "x-correlator"
     And the response body complies with the OAS schema at "/components/schemas/Location"
 
-
   @location_retrieval_03_location_retrieval_for_device_with_maxAge
-  Scenario Outline: Retrieve location of a device specifying maxAge
+  Scenario: Retrieve location of a device specifying maxAge
     # maxAge could be tested with several values with scenario variable
     Given the testing device is connected to the network
     And the request body property "$.device" is set to a valid testing device supported by the service
@@ -59,7 +58,6 @@ Feature: CAMARA Device location retrieval  API, v0.3-rc.1 - Operation retrieveLo
     And the response header "x-correlator" has same value as the request header "x-correlator"
     And the response body complies with the OAS schema at "/components/schemas/Location"
     And the response property "$.lastLocationTime" value is not older than the value of "$.maxAge" the request time
-
 
   @location_retrieval_04_location_retrieval_unable_to_locate_device
   # Input set to a device that could not be located
@@ -218,7 +216,6 @@ Feature: CAMARA Device location retrieval  API, v0.3-rc.1 - Operation retrieveLo
     And the response property "$.code" is "INVALID_ARGUMENT"
     And the response property "$.message" contains a user friendly text
 
-
   @location_retrieval_400.4_required_device_identifier_missing
   Scenario: Required device identifier is  missing
     Given the request body property "$.device" is not included
@@ -240,7 +237,6 @@ Feature: CAMARA Device location retrieval  API, v0.3-rc.1 - Operation retrieveLo
     And the response property "$.code" is "UNAUTHENTICATED"
     And the response property "$.message" contains a user friendly text
 
-
   @location_retrieval_401.2_expired_access_token
   Scenario: Expired access token
     Given the header "Authorization" is set to an expired access token
@@ -250,7 +246,6 @@ Feature: CAMARA Device location retrieval  API, v0.3-rc.1 - Operation retrieveLo
     And the response property "$.status" is 401
     And the response property "$.code" is "UNAUTHENTICATED"
     And the response property "$.message" contains a user friendly text
-
 
   @location_retrieval_401.3_invalid_access_token
   Scenario: Invalid access token
