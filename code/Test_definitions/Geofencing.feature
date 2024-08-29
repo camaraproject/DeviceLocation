@@ -245,7 +245,7 @@ Feature: Camara Geofencing Subscriptions API, v0.3.0 - Operations on subscriptio
 
 @geofencing_subscriptions_22_expired_access_token_for_get_subscription
   Scenario: Expired access token for get subscription
-    Given the request body is not available and header "Authorization" is set to expired token
+    Given the header "Authorization" is set to expired token
     When the request "retrieveGeofencingSubscription" is sent
     Then the response status code is 401
     And the response property "$.status" is 401
