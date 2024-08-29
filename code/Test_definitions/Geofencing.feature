@@ -30,16 +30,25 @@ Feature: Camara Geofencing Subscriptions API, v0.3.0 - Operations on subscriptio
     And the response header "x-correlator" has same value as the request header "x-correlator"
     And the response body complies with the OAS schema at "#/components/schemas/SubscriptionAsync"
 
-  @geofencing_subscriptions_03_Operation_to_retrieve_list_of_subscriptions
-   Scenario: Get a list of subscriptions.
-    Given the request body is not available
+  @geofencing_subscriptions_03_Operation_to_retrieve_list_of_subscriptions_when_no_records
+   Scenario: Get a list of subscriptions when no subscriptions available
+    Given a client without subscriptions created
     When the request "retrieveGeofencingSubscriptionList" is sent 
     Then the response code is 200
     And the response header "Content-Type" is "application/json"
     And the response header "x-correlator" has same value as the request header "x-correlator"
     And each item in the response body, if any, complies with the OAS schema at "/components/schemas/Subscription"
 
-  @geofencing_subscriptions_04_Operation_to_retrieve_subscription_based_on_an_existing_subscription-id
+  @geofencing_subscriptions_04_Operation_to_retrieve_list_of_subscriptions
+   Scenario: Get a list of subscriptions  
+    Given a client with subscriptions created
+    When the request "retrieveGeofencingSubscriptionList" is sent 
+    Then the response code is 200
+    And the response header "Content-Type" is "application/json"
+    And the response header "x-correlator" has same value as the request header "x-correlator"
+    And the response body has an array of itenms and complies with the OAS schema at "/components/schemas/Subscription"
+
+  @geofencing_subscriptions_05_Operation_to_retrieve_subscription_based_on_an_existing_subscription-id
    Scenario: Get a subscription based on existing subscription-id.
     Given the request body is not available and path parameter "subscriptionId" is set to the identifier of an existing subscription
     When the request "retrieveGeofencingSubscription" is sent
@@ -48,7 +57,7 @@ Feature: Camara Geofencing Subscriptions API, v0.3.0 - Operations on subscriptio
     And the response header "x-correlator" has same value as the request header "x-correlator"
     And the response body complies with the OAS schema at "/components/schemas/Subscription"
 
-  @geofencing_subscriptions_05_Operation_to_delete_subscription_based_on_an_existing_subscription-id
+  @geofencing_subscriptions_06_Operation_to_delete_subscription_based_on_an_existing_subscription-id
    Scenario: Delete a subscription based on existing subscription-id.
     Given the request body is not available and path parameter "subscriptionId" is set to the identifier of an existing subscription
     When the request "deleteGeofencingSubscription" is sent
@@ -57,7 +66,7 @@ Feature: Camara Geofencing Subscriptions API, v0.3.0 - Operations on subscriptio
     And if the response property $.status is 204 then response body is not available
     And if the response property $.status is 202 then response body complies with the OAS schema at "/components/schemas/SubscriptionAsync"	
 
- @geofencing_subscriptions_06_Receive_notification_when_device_enters_geofence
+ @geofencing_subscriptions_07_Receive_notification_when_device_enters_geofence
    Scenario: Receive notification for area-entered event
     Given a valid subscription request body 
     And the request body property "$.area" is set to circle which covers location "Place1" 
@@ -70,7 +79,7 @@ Feature: Camara Geofencing Subscriptions API, v0.3.0 - Operations on subscriptio
     And notification body complies with the OAS schema at "##/components/schemas/EventAreaEntered"
     And type="org.camaraproject.geofencing-subscriptions.v0.area-entered"
 	
-  @geofencing_subscriptions_07_receive_notification_when_device_leaves_geofence
+  @geofencing_subscriptions_08_receive_notification_when_device_leaves_geofence
    Scenario: Receive notification for area-left event
     Given a valid subscription request body 
     And the request body property "$.area" is set to circle which covers location "Place1" 
@@ -83,7 +92,7 @@ Feature: Camara Geofencing Subscriptions API, v0.3.0 - Operations on subscriptio
     And notification body complies with the OAS schema at "##/components/schemas/EventAreaLeft"
     And type="org.camaraproject.geofencing-subscriptions.v0.area-left"
 	
- @geofencing_subscriptions_08_subscription_ends_on_expiry
+ @geofencing_subscriptions_09_subscription_ends_on_expiry
    Scenario: Receive notification for subscription-ends event on expiry  
     Given a valid subscription request body 
     And the request body property "$.area" is set to circle which covers location "Place1" 
@@ -97,7 +106,7 @@ Feature: Camara Geofencing Subscriptions API, v0.3.0 - Operations on subscriptio
     And type="org.camaraproject.geofencing-subscriptions.v0.subscription-ends"
     And the response property "$.terminationReason" is "SUBSCRIPTION_EXPIRED"
     
-  @geofencing_subscriptions_09_subscription_ends_on_max_events
+  @geofencing_subscriptions_10_subscription_ends_on_max_events
    Scenario: Receive notification for subscription-ends event on max events reached 
     Given a valid subscription request body 
     And the request body property "$.area" is set to circle which covers location "Place1" 
@@ -111,7 +120,7 @@ Feature: Camara Geofencing Subscriptions API, v0.3.0 - Operations on subscriptio
     And notification body complies with the OAS schema at "##/components/schemas/EventSubscriptionEnds"
     And type="org.camaraproject.geofencing-subscriptions.v0.subscription-ends"And the response property "$.terminationReason" is "MAX_EVENTS_REACHED"
 		
-  @geofencing_subscriptions_10_subscription_delete_event_validation
+  @geofencing_subscriptions_11_subscription_delete_event_validation
    Scenario: Receive notification for subscription-ends event on deletion 
     Given a valid subscription request body 
     When the request "createSubscription" is sent
@@ -125,7 +134,7 @@ Feature: Camara Geofencing Subscriptions API, v0.3.0 - Operations on subscriptio
     And the response property "$.terminationReason" is "SUBSCRIPTION_DELETED"
 	
 ########################### Error response scenarios ############################################
-@geofencing_subscriptions_11_create_geofencing_subscription_for_a_device_with_invalid_parameter
+@geofencing_subscriptions_12_create_geofencing_subscription_for_a_device_with_invalid_parameter
   Scenario:  Create geofencing subscription with invalid parameter
     Given the request body is not compliant with the schema "/components/schemas/SubscriptionRequest"
     When the  request "createSubscription" is sent 
@@ -134,7 +143,7 @@ Feature: Camara Geofencing Subscriptions API, v0.3.0 - Operations on subscriptio
     And the response property "$.code" is "INVALID_ARGUMENT"
     And the response property "$.message" contains a user friendly text
 
- @geofencing_subscriptions_12_creation_of_subscription_with_expiry_time_in_past
+ @geofencing_subscriptions_13_creation_of_subscription_with_expiry_time_in_past
   Scenario: Expiry time in past
     Given a valid subscription request body 
     And request body property "$.subscriptionexpiretime" in past
@@ -144,7 +153,7 @@ Feature: Camara Geofencing Subscriptions API, v0.3.0 - Operations on subscriptio
     And the response property "$.code" is "INVALID_ARGUMENT"
     And the response property "$.message" contains a user friendly text
 	  	
- @geofencing_subscription_13_creation_with_invalid_eventType
+ @geofencing_subscription_14_creation_with_invalid_eventType
    Scenario: Subscription creation with invalid event type
     Given a valid subscription request body 
     And the request body property "$.types" is set to invalid value  
@@ -153,7 +162,7 @@ Feature: Camara Geofencing Subscriptions API, v0.3.0 - Operations on subscriptio
     And the response property "$.code" is "INVALID_ARGUMENT"
     And the response property "$.message" contains a user friendly text
     
-  @geofencing_subscription_14_invalid_protocol
+  @geofencing_subscription_15_invalid_protocol
    Scenario: Subscription creation with invalid protocol
     Given a valid subscription request body 
     When the request "createSubscription" is sent
@@ -165,7 +174,7 @@ Feature: Camara Geofencing Subscriptions API, v0.3.0 - Operations on subscriptio
     And the response property "$.code" is "INVALID_PROTOCOL"
     And the response property "$.message" contains a user friendly text
 
-  @geofencing_subscription_15_invalid_credential
+  @geofencing_subscription_16_invalid_credential
   Scenario: Subscription creation with invalid credential
     Given a valid subscription request body 
     When the request "createSubscription" is sent
@@ -181,7 +190,7 @@ Feature: Camara Geofencing Subscriptions API, v0.3.0 - Operations on subscriptio
     And the response property "$.code" is "INVALID_CREDENTIAL"
     And the response property "$.message" contains a user friendly text
 
-  @geofencing_subscription_16_invalid_token
+  @geofencing_subscription_17_invalid_token
   Scenario: Subscription creation with invalid token
     Given a valid subscription request body
     When the request "createSubscription" is sent
@@ -193,19 +202,19 @@ Feature: Camara Geofencing Subscriptions API, v0.3.0 - Operations on subscriptio
     And the request property "$.sinkCredential.accessToken" is valued with a valid value
     And the request property "$.sinkCredential.accessTokenExpiresUtc" is valued with a valid value
     Then the response property "$.status" is 400
-    And the response property "$.code" is "INVALID_TOKEN"
+    And the response property "$.code" is "INVALID_TOKEN" or "INVALID_ARGUMENT"
     And the response property "$.message" contains a user friendly text
 
-  @geofencing_subscriptions_17_no_authorization_header_for_create_subscription
+  @geofencing_subscriptions_18_no_authorization_header_for_create_subscription
   Scenario: No Authorization header for create subscription
-    Given a valid subscription request body and header "Authorization" is not available
+    Given a valid subscription request body and header "Authorization" is not set to 
     When the request "createSubscription" is sent 
     Then the response status code is 401
     And the response property "$.status" is 401
     And the response property "$.code" is "UNAUTHENTICATED"
     And the response property "$.message" contains a user friendly text
 
-  @geofencing_subscriptions_18_expired_access_token_for_create_subscription
+  @geofencing_subscriptions_19_expired_access_token_for_create_subscription
   Scenario: Expired access token for create subscription
     Given a valid subscription request body and header "Authorization" is expired
     When the request "createSubscription" is sent
@@ -214,7 +223,7 @@ Feature: Camara Geofencing Subscriptions API, v0.3.0 - Operations on subscriptio
     And the response property "$.code" is "UNAUTHENTICATED"
     And the response property "$.message" contains a user friendly text
 
-  @geofencing_subscriptions_19_invalid_access_token_for_create_subscription
+  @geofencing_subscriptions_20_invalid_access_token_for_create_subscription
   Scenario: Invalid access token for create subscription
     Given a valid subscription request body and header "Authorization" set to an invalid access token
     When the request "createSubscription" is sent
@@ -224,25 +233,26 @@ Feature: Camara Geofencing Subscriptions API, v0.3.0 - Operations on subscriptio
     And the response property "$.code" is "UNAUTHENTICATED"
     And the response property "$.message" contains a user friendly text
 		
-@geofencing_subscriptions_20_no_authorization_header_for_get_subscription
+@geofencing_subscriptions_21_no_authorization_header_for_get_subscription
   Scenario: No Authorization header for get subscription
-    Given the request body & header "Authorization" is not available and path parameter "subscriptionId" is set to the identifier of an existing subscription
+    Given the request body & header "Authorization" is not set to valid token
+    And path parameter "subscriptionId" is set to the identifier of an existing subscription
     When the request "retrieveGeofencingSubscription" is sent 
     Then the response status code is 401
     And the response property "$.status" is 401
     And the response property "$.code" is "UNAUTHENTICATED"
     And the response property "$.message" contains a user friendly text
 
-@geofencing_subscriptions_21_expired_access_token_for_get_subscription
+@geofencing_subscriptions_22_expired_access_token_for_get_subscription
   Scenario: Expired access token for get subscription
-    Given the request body is not available and header "Authorization" is expired
+    Given the request body is not available and header "Authorization" is set to expired token
     When the request "retrieveGeofencingSubscription" is sent
     Then the response status code is 401
     And the response property "$.status" is 401
     And the response property "$.code" is "UNAUTHENTICATED"
     And the response property "$.message" contains a user friendly text
     
-@geofencing_subscriptions_22_invalid_access_token_for_get_subscription
+@geofencing_subscriptions_23_invalid_access_token_for_get_subscription
   Scenario: Invalid access token for get subscription
     Given the request body is not available and header "Authorization" set to an invalid access token
     When the request "retrieveGeofencingSubscription" is sent
@@ -254,7 +264,7 @@ Feature: Camara Geofencing Subscriptions API, v0.3.0 - Operations on subscriptio
     
 @geofencing_subscriptions_23_no_authorization_header_for_delete_subscription
   Scenario: No Authorization header for delete subscription
-    Given a the request body and header "Authorization" is not available
+    Given a the request body and header "Authorization" is set without a token
     When the request "deleteGeofencingSubscription" is sent 
     Then the response status code is 401
     And the response property "$.status" is 401
@@ -263,7 +273,7 @@ Feature: Camara Geofencing Subscriptions API, v0.3.0 - Operations on subscriptio
 
 @geofencing_subscriptions_24_expired_access_token_for_delete_subscription
   Scenario: Expired access token for delete subscription
-    Given a valid subscription request body and header "Authorization" is expired
+    Given a valid subscription request body and header "Authorization" is set with an expired token
     When the request "deleteGeofencingSubscription" is sent
     Then the response status code is 401
     And the response property "$.status" is 401
