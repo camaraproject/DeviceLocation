@@ -35,7 +35,7 @@ Feature: CAMARA Device location verification API, v1.0 - Operation verifyLocatio
     And if the response property "$.lastLocationTime" does not exists then "$.verificationResult" is "UNKNOWN"
     And the response property "$.matchRate" exists only if "$.verificationResult" is "PARTIAL"
 
-  # Scenarios testing specific situations for the device location 
+  # Scenarios testing specific situations for the device location
 
   @location_verification_02_known_location_for_device_no_maxAge
   Scenario: Known location of a device without specifying maxAge
@@ -51,9 +51,8 @@ Feature: CAMARA Device location verification API, v1.0 - Operation verifyLocatio
     And the response property "$.lastLocationTime" exists
     And the response property "$.matchRate" exists only if "$.verificationResult" is "PARTIAL"
 
-
   @location_verification_03_known_location_for_device_with_maxAge
-  Scenario Outline: Known location of a device specifying maxAge
+  Scenario: Known location of a device specifying maxAge
     Given a valid testing device supported by the service identified, by the token or provided in the request body
     And the request body property "$.area" is set to the known location of the device
     And the request body property "$.maxAge" is included
@@ -65,7 +64,6 @@ Feature: CAMARA Device location verification API, v1.0 - Operation verifyLocatio
     And the response property "$.verificationResult" is one of: ["TRUE", "PARTIAL"]
     And the response property "$.matchRate" exists only if "$.verificationResult" is "PARTIAL"
     And the response property "$.lastLocationTime" value is not older than the value of "$.maxAge" in the request
-
 
   @location_verification_04_false_location_for_device
   Scenario: False location of a device
@@ -79,7 +77,6 @@ Feature: CAMARA Device location verification API, v1.0 - Operation verifyLocatio
     And the response property "$.verificationResult" is "FALSE"
     And the response property "$.lastLocationTime" exists
     And the response property "$.matchRate" does not exist
-
 
   @location_verification_05_unknown_location_for_device
   Scenario: Unknown location of a device specifying maxAge
@@ -97,7 +94,7 @@ Feature: CAMARA Device location verification API, v1.0 - Operation verifyLocatio
   # Error scenarios for object device
 
   @location_verification_10_device_empty
-  Scenario Outline: The device value is an empty object
+  Scenario: The device value is an empty object
     Given the request body property "$.device" is set to: {}
     When the HTTP "POST" request is sent
     Then the response status code is 400
@@ -164,7 +161,7 @@ Feature: CAMARA Device location verification API, v1.0 - Operation verifyLocatio
 
   @location_verification_16_device_not_supported
   Scenario: Service not available for the device
-    Given that service is not supported for all devices commercialized by the operator 
+    Given that service is not supported for all devices commercialized by the operator
     And the request body property "$.device" is set to a valid device for which the service is not applicable
     When the HTTP "POST" request is sent
     Then the response status code is 422
@@ -174,7 +171,7 @@ Feature: CAMARA Device location verification API, v1.0 - Operation verifyLocatio
 
   @location_verification_17_unidentifiable_device
   Scenario: Device not inlcuded and cannot be deducted from the access token
-    Given the header "Authorization" is set to a valid access which does not identifiy a single device 
+    Given the header "Authorization" is set to a valid access which does not identifiy a single device
     And the request body property "$.device" is not included
     When the HTTP "POST" request is sent
     Then the response status code is 422
