@@ -9,7 +9,7 @@ Feature: CAMARA Device location retrieval  API, v0.3 - Operation retrieveLocatio
   # * A device object identifying a device commercialized by the implementation for which the service is not applicable
   # * A device object which location cannot be provided during test by the network.
   #
-  # References to OAS spec schemas refer to schemas specifies in location-retrieval.yaml, version 0.2.0
+  # References to OAS spec schemas refer to schemas specifies in location-retrieval.yaml
 
   Background: Common retrieveLocation setup
     Given the resource "/location-retrieval/v0.3/retrieve"                                                              |

@@ -6,12 +6,12 @@ info:
 
     # Introduction
 
-    With this API, customers can retrieve the area where a certain user device is localized.
+    With this API, API consumers can retrieve the area where a certain user device is localized.
     The area provided in the response could be described:
     -  by a circle determined by coordinates (latitude and longitude) and a radius.
     -  by a simple polygon delimited by segments connecting consecutively an array of coordinates (points). The last point connects to the first point to delimit a closed shape bounded with straight sides.
 
-    The retrieved shape depends on the network conditions at the subscriber's location and any of the supported shapes could be received.
+    The retrieved shape depends on the network conditions at the device's location and any of the supported shapes could be received.
 
     The requester could optionally ask for a freshness of the localization information by providing a `maxAge` ("I want a location not older than 600 seconds").
 
@@ -56,7 +56,7 @@ info:
 
     The "Camara Security and Interoperability Profile" provides details on how a client requests an access token. Please refer to Identify and Consent Management (https://github.com/camaraproject/IdentityAndConsentManagement/) for the released version of the Profile.
 
-    Which specific authorization flows are to be used will be determined during onboarding process, happening between the API Client and the Telco Operator exposing the API, taking into account the declared purpose for accessing the API, while also being subject to the prevailing legal framework dictated by local legislation.
+    Which specific authorization flows are to be used will be determined during onboarding process, happening between the API Client and the API Provider, taking into account the declared purpose for accessing the API, while also being subject to the prevailing legal framework dictated by local legislation.
 
     It is important to remark that in cases where personal user data is processed by the API, and users can exercise their rights through mechanisms such as opt-in and/or opt-out, the use of 3-legged access tokens becomes mandatory. This measure ensures that the API remains in strict compliance with user privacy preferences and regulatory obligations, upholding the principles of transparency and user-centric data control.
 

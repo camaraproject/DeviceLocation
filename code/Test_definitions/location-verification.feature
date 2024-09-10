@@ -9,7 +9,7 @@ Feature: CAMARA Device location verification API, v1.0 - Operation verifyLocatio
   # * The known location of the testing devices
   # * A device object identifying a device commercialized by the implementation for which the service is not applicable, if any
   #
-  # References to OAS spec schemas refer to schemas specifies in location-verification.yaml, version 0.2.0
+  # References to OAS spec schemas refer to schemas specifies in location-verification.yaml
 
   Background: Common verifyLocation setup
     Given the resource "/location-verification/v1/verify"                                                              |
