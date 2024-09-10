@@ -1,4 +1,4 @@
-Feature: CAMARA Device location verification API, v1.0 - Operation verifyLocation
+Feature: CAMARA Device location verification API, v1.0.0 - Operation verifyLocation
   # Input to be provided by the implementation to the tester
   #
   # Implementation indications:
