@@ -4,6 +4,7 @@
 <a href="https://github.com/camaraproject/DeviceLocation/graphs/contributors" title="Contributors"><img src="https://img.shields.io/github/contributors/camaraproject/DeviceLocation?style=plastic"></a>
 <a href="https://github.com/camaraproject/DeviceLocation" title="Repo Size"><img src="https://img.shields.io/github/repo-size/camaraproject/DeviceLocation?style=plastic"></a>
 <a href="https://github.com/camaraproject/DeviceLocation/blob/main/LICENSE" title="License"><img src="https://img.shields.io/badge/License-Apache%202.0-green.svg?style=plastic"></a>
+<a href="https://github.com/camaraproject/DeviceLocation/releases/latest" title="Latest Release"><img src="https://img.shields.io/github/release/camaraproject/DeviceLocation?style=plastic">
 
 # DeviceLocation
 Repository to describe, develop, document and test the DeviceLocation API family
