@@ -548,11 +548,11 @@ components:
                 message: "The provided device identifiers do not match the same device"
             GENERIC_422_UNSUPPORTED_DEVICE_IDENTIFIERS:
               summary: None of the provided device identifiers is supported by the implementation
-              description: Message identifies that none of the provided device identifiers are supported
+              description: Message may list the supported device identifiers
               value:
                 status: 422
                 code: UNSUPPORTED_DEVICE_IDENTIFIERS
-                message: None of the provided device identifiers is supported by the implementation
+                message: "Supported device identifiers are: ..."
             GENERIC_422_UNIDENTIFIABLE_DEVICE:
               summary: No identifier provided
               description: No device identifier provided for the device to be located
