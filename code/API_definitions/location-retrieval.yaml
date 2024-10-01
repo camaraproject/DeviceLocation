@@ -13,7 +13,9 @@ info:
 
     The retrieved shape depends on the network conditions at the device's location and any of the supported shapes could be received.
 
-    The requester could optionally ask for a freshness of the localization information by providing a `maxAge` ("I want a location not older than 600 seconds").
+    The requester could optionally ask for
+     * a freshness of the localization information by providing a `maxAge` ("I want a location not older than 600 seconds").
+     * an accuracy of the localization information by providing a `maxSurface` ("I want a location not larger than 1000000 meters square").
 
     The result accuracy depends on the network's ability and accuracy to locate the device.
 
@@ -41,6 +43,11 @@ info:
       * `maxAge`=0 means that a fresh calculation is requested by the client. If the system is not able to provide the fresh location, an error 422 with code LOCATION_RETRIEVAL.UNABLE_TO_FULFILL_MAX_AGE is sent back.
 
     * **Last Location Time** : Last date and time when the device was localized.
+
+    * **Max Surface**: Maximum surface in square meters which is accepted by the client for the location retrieval.
+
+      * absence of `maxSurface` means that "any surface size" is acceptable for the client. 
+      * If the system is not able to provide an area with a surface acceptable with the client request, an error 422 with code LOCATION_RETRIEVAL.UNABLE_TO_FULFILL_MAX_SURFACE is sent back.
 
 
     # API Functionality
@@ -87,7 +94,7 @@ info:
     # Further info and support
 
     (FAQs will be added in a later version of the documentation)
-  version: 0.3.0
+  version: wip
   license:
     name: Apache 2.0
     url: https://www.apache.org/licenses/LICENSE-2.0.html
@@ -96,7 +103,7 @@ externalDocs:
   description: Project documentation at Camara
   url: https://github.com/camaraproject/DeviceLocation
 servers:
-  - url: '{apiRoot}/location-retrieval/v0.3'
+  - url: '{apiRoot}/location-retrieval/wip'
     variables:
       apiRoot:
         default: http://localhost:9091
@@ -128,6 +135,15 @@ paths:
                   device:
                     phoneNumber: "+123456789"
                   maxAge: 120
+              INPUT_PHONE_NUMBER_MAX_AGE_AND_SURFACE:
+                summary: Phone number, maxAge and maxSurface
+                description: Retrieve location for a device identified by a phone number, providing a maxAge and maxSurface
+                value:
+                  device:
+                    phoneNumber: "+123456789"
+                  maxAge: 120
+                  maxSurface: 1000000
+
               INPUT_IP_ADDRESS_V4:
                 summary: IPv4 address without maxAge
                 description: Retrieve location for a device identified by an IPv4 address, without an indication for maxAge
@@ -203,7 +219,11 @@ components:
         maxAge:
           type: integer
           description: Maximum age of the location information which is accepted for the location retrieval (in seconds). Absence of maxAge means "any age" and maxAge=0 means a fresh calculation.
-
+        maxSurface:
+          type: integer
+          minimum: 1
+          description: Maximum surface in square meters which is accepted by the client for the location retrieval. Absence of maxSurface means "any surface size".
+          example: 1000000
     Device:
       description: |
         End-user equipment able to connect to a mobile network. Examples of devices include smartphones or IoT sensors/actuators.
@@ -525,6 +545,13 @@ components:
                 status: 422
                 code: LOCATION_RETRIEVAL.UNABLE_TO_FULFILL_MAX_AGE
                 message: "Unable to provide expected freshness for location"
+            LOCATION_RETRIEVAL_422_UNABLE_TO_FULFILL_MAX_SURFACE:
+              summary: Unable to provide expected surface maximum
+              description: Unable to provide expected surface for location retrieval request
+              value:
+                status: 422
+                code: LOCATION_RETRIEVAL.UNABLE_TO_FULFILL_MAX_SURFACE
+                message: "Unable to provide requested surface size maximum for location"
             GENERIC_422_UNPROCESSABLE_ENTITY:
               summary: Unprocessable entity
               description: The request was well-formed but was unable to be processed due to semantic errors or not applicable values. This is the generic error code for 422 responses.
