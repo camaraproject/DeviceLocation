@@ -48,7 +48,7 @@ info:
 
       * absence of `maxSurface` means that "any surface size" is acceptable for the client.
       * If the system is not able to provide an area with a surface acceptable with the client request, an error 422 with code LOCATION_RETRIEVAL.UNABLE_TO_FULFILL_MAX_SURFACE is sent back.
-      * Note: if both `maxAge` and `maxSurface` requirements fail, the system can either send back one or the other error code.  
+      * Note: if both `maxAge` and `maxSurface` requirements fail, the system can either send back one or the other error code.
 
 
     # API Functionality
