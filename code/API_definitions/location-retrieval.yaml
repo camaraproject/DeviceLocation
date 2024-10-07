@@ -15,7 +15,8 @@ info:
 
     The requester could optionally ask for
      * a freshness of the localization information by providing a `maxAge` ("I want a location not older than 600 seconds").
-     * an accuracy of the localization information by providing a `maxSurface` ("I want a location not larger than 1000000 meters square").
+     * an accuracy of the localization information by providing a `maxSurface` ("I want a location not larger than 1000000 square meters").
+
 
     The result accuracy depends on the network's ability and accuracy to locate the device.
 
