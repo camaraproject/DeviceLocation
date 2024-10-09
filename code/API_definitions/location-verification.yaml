@@ -80,7 +80,7 @@ info:
     # Further info and support
 
     (FAQs will be added in a later version of the documentation)
-  version: 1.0.0
+  version: wip
   license:
     name: Apache 2.0
     url: https://www.apache.org/licenses/LICENSE-2.0.html
