@@ -369,9 +369,7 @@ components:
           description: The address to which events shall be delivered using the selected protocol.
           example: "https://endpoint.example.com/sink"
         sinkCredential:
-          allOf:
-            - description: A sink credential provides authentication or authorization information necessary to enable delivery of events to a target.
-            - $ref: "#/components/schemas/SinkCredential"
+          $ref: "#/components/schemas/SinkCredential"
         types:
           description: |
             Camara Event types are eligible to be delivered by this subscription.
@@ -429,6 +427,7 @@ components:
 
     SinkCredential:
       type: object
+      description: A sink credential provides authentication or authorization information necessary to enable delivery of events to a target.
       properties:
         credentialType:
           type: string
