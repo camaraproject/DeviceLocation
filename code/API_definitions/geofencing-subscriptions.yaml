@@ -372,7 +372,7 @@ components:
           $ref: "#/components/schemas/SinkCredential"
         types:
           description: |
-            Camara Event types are eligible to be delivered by this subscription.
+            Camara Event types which are eligible to be delivered by this subscription.
             Note: As of now we enforce to have only event type per subscription.
           type: array
           minItems: 1
