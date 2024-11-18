@@ -83,7 +83,7 @@ externalDocs:
   url: https://github.com/camaraproject/DeviceLocation
 
 servers:
-  - url: "{apiRoot}/geofencing-subscriptions/v0.3"
+  - url: "{apiRoot}/geofencing-subscriptions/vwip"
     variables:
       apiRoot:
         default: http://localhost:9091
