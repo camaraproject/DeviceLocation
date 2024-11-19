@@ -73,7 +73,7 @@ info:
 
     (FAQs will be added in a later version of the documentation)
 
-  version: 0.3.0
+  version: wip
   license:
     name: Apache 2.0
     url: https://www.apache.org/licenses/LICENSE-2.0.html
@@ -83,7 +83,7 @@ externalDocs:
   url: https://github.com/camaraproject/DeviceLocation
 
 servers:
-  - url: "{apiRoot}/geofencing-subscriptions/v0.3"
+  - url: "{apiRoot}/geofencing-subscriptions/vwip"
     variables:
       apiRoot:
         default: http://localhost:9091
@@ -91,14 +91,14 @@ servers:
 
 tags:
   - name: Geofencing subscriptions
-    description: Operations to manage event subscription on geofencing events for leaving and entering an area
+    description: Operations to manage event subscriptions on geofencing events for leaving and entering an area.
 paths:
   /subscriptions:
     post:
       tags:
         - Geofencing subscriptions
       summary: "Create a geofencing subscription for a device"
-      description: Create a subscription for a device to receive notifications when a device enters or exits a specified area
+      description: Create a subscription for a device to receive notifications when the device enters or exits a specified area.
       operationId: createSubscription
       parameters:
         - $ref: "#/components/parameters/x-correlator"
@@ -121,9 +121,9 @@ paths:
             post:
               summary: "notifications callback"
               description: |
-                Important: this endpoint is to be implemented by the API consumer.
+                Important: This endpoint is to be implemented by the API consumer.
                 The Geofencing server will call this endpoint whenever a Geofencing event occurs.
-                `operationId` value will have to be replaced accordingly with WG API specific semantic
+                The `operationId` value will have to be replaced accordingly with WG API specific semantics.
               operationId: postNotification
               parameters:
                 - $ref: "#/components/parameters/x-correlator"
@@ -144,7 +144,7 @@ paths:
                         $ref: "#/components/examples/SUBSCRIPTION_UNPROCESSABLE"
               responses:
                 "204":
-                  description: Successful notification
+                  description: Successful notification.
                   headers:
                     x-correlator:
                       $ref: "#/components/headers/x-correlator"
@@ -163,7 +163,7 @@ paths:
                 - notificationsBearerAuth: []
       responses:
         "201":
-          description: Created (Successful creation of subscription)
+          description: Created (Successful creation of subscription).
           headers:
             x-correlator:
               $ref: "#/components/headers/x-correlator"
@@ -198,7 +198,7 @@ paths:
       tags:
         - Geofencing subscriptions
       summary: "Retrieve a list of geofencing event subscription"
-      description: Retrieve a list of geofencing event subscription(s)
+      description: Retrieve a list of geofencing event subscription(s).
       operationId: retrieveGeofencingSubscriptionList
       parameters:
         - $ref: "#/components/parameters/x-correlator"
@@ -207,7 +207,7 @@ paths:
             - geofencing-subscriptions:read
       responses:
         "200":
-          description: List of event subscription details
+          description: List of event subscription details.
           headers:
             x-correlator:
               $ref: "#/components/headers/x-correlator"
@@ -235,7 +235,7 @@ paths:
       tags:
         - Geofencing subscriptions
       summary: "Operation to retrieve a subscription based on the provided ID"
-      description: retrieve Geofencing subscription information for a given subscription ID.
+      description: Retrieve Geofencing subscription information for a given subscription ID.
       operationId: retrieveGeofencingSubscription
       security:
         - openId:
@@ -272,7 +272,7 @@ paths:
         - Geofencing subscriptions
       summary: "Delete a Geofencing event subscription"
       operationId: deleteGeofencingSubscription
-      description: delete a given Geofencing subscription.
+      description: Delete a given Geofencing subscription.
       security:
         - openId:
             - geofencing-subscriptions:delete
@@ -281,7 +281,7 @@ paths:
         - $ref: "#/components/parameters/x-correlator"
       responses:
         "204":
-          description: Geofencing subscription deleted
+          description: Geofencing subscription deleted.
           headers:
             x-correlator:
               $ref: "#/components/headers/x-correlator"
@@ -311,31 +311,31 @@ paths:
 components:
   securitySchemes:
     openId:
-      description: OpenID Connect authentication
+      description: OpenID Connect authentication.
       type: openIdConnect
       openIdConnectUrl: https://example.com/.well-known/openid-configuration
   parameters:
     SubscriptionId:
       name: subscriptionId
       in: path
-      description: Subscription identifier that was obtained from the create event subscription operation
+      description: Subscription identifier that was obtained from the create event subscription operation.
       required: true
       schema:
         $ref: "#/components/schemas/SubscriptionId"
     x-correlator:
       name: x-correlator
       in: header
-      description: Correlation id for the different services
+      description: Correlation id for the different services.
       schema:
         type: string
   headers:
     x-correlator:
-      description: Correlation id for the different services
+      description: Correlation id for the different services.
       schema:
         type: string
   schemas:
     ErrorInfo:
-      description: The error info object for possible error cases
+      description: The error info object for possible error cases.
       type: object
       required:
         - status
@@ -344,16 +344,16 @@ components:
       properties:
         status:
           type: integer
-          description: HTTP response status code
+          description: HTTP response status code.
         code:
           type: string
-          description: Code given to this error
+          description: Code given to this error.
         message:
           type: string
-          description: Detailed error description
+          description: Detailed error description.
 
     SubscriptionRequest:
-      description: The request for creating a event-type event subscription
+      description: The request for creating an event-type event subscription.
       type: object
       required:
         - sink
@@ -372,7 +372,7 @@ components:
           $ref: "#/components/schemas/SinkCredential"
         types:
           description: |
-            Camara Event types eligible to be delivered by this subscription.
+            Camara Event types which are eligible to be delivered by this subscription.
             Note: As of now we enforce to have only event type per subscription.
           type: array
           minItems: 1
@@ -394,15 +394,15 @@ components:
     Protocol:
       type: string
       enum: ["HTTP", "MQTT3", "MQTT5", "AMQP", "NATS", "KAFKA"]
-      description: Identifier of a delivery protocol. Only HTTP is allowed for now
+      description: Identifier of a delivery protocol. Only HTTP is allowed for now.
       example: "HTTP"
 
     Config:
       description: |
-        Implementation-specific configuration parameters needed by the subscription manager for acquiring events.
-        In CAMARA we have predefined attributes like `subscriptionExpireTime`, `subscriptionMaxEvents`, `initialEvent`
-        Specific event type attributes must be defined in `subscriptionDetail`
-        Note: if a request is performed for several event type, all subscribed event will use same `config` parameters.
+        Implementation-specific configuration parameters are needed by the subscription manager for acquiring events.
+        In CAMARA we have predefined attributes like `subscriptionExpireTime`, `subscriptionMaxEvents`, `initialEvent`.
+        Specific event type attributes must be defined in `subscriptionDetail`.
+        Note: If a request is performed for several event types, all subscribed events will use the same `config` parameters.
       type: object
       required:
         - subscriptionDetail
@@ -423,7 +423,7 @@ components:
           type: boolean
           description: |
             Set to `true` by API consumer if consumer wants to get an event as soon as the subscription is created and current situation reflects event request.
-            Example: Consumer request area entered event. If consumer sets initialEvent to true and device is already in the geofence, an event is triggered
+            Example: Consumer request area entered event. If consumer sets initialEvent to true and device is already in the geofence, an event is triggered.
 
     SinkCredential:
       type: object
@@ -517,7 +517,7 @@ components:
         - refreshTokenEndpoint
 
     SubscriptionDetail:
-      description: The detail of the requested event subscription
+      description: The detail of the requested event subscription.
       type: object
       properties:
         device:
@@ -586,11 +586,11 @@ components:
         startsAt:
           type: string
           format: date-time
-          description: Date when the event subscription will begin/began
+          description: Date when the event subscription will begin/began.
         expiresAt:
           type: string
           format: date-time
-          description: Date when the event subscription will expire. Only provided when `subscriptionExpireTime` is indicated by API client or Telco Operator has specific policy about that.
+          description: Date when the event subscription will expire. Only provided when `subscriptionExpireTime` is indicated by API client or Telco Operator has a specific policy about that.
         status:
           type: string
           description: |-
@@ -617,7 +617,7 @@ components:
           KAFKA: "#/components/schemas/ApacheKafkaSubscriptionResponse"
 
     SubscriptionAsync:
-      description: Response for a event-type subscription request managed asynchronously (Creation or Deletion)
+      description: Response for an event-type subscription request managed asynchronously (Creation or Deletion).
       type: object
       properties:
         id:
@@ -639,7 +639,7 @@ components:
         * `phoneNumber`
         * `networkAccessIdentifier`
 
-        NOTE1: the MNO might support only a subset of these options. The API invoker can provide multiple identifiers to be compatible across different MNOs. In this case the identifiers MUST belong to the same device. When returned as part of a response, the device object must include the same identifier values that were provided originally. Please note that IP addresses of devices can change and get reused, so the original values may no longer identify the same device. They identified the device at the time of the subscription request.
+        NOTE1: the MNO might support only a subset of these options. The API invoker can provide multiple identifiers to be compatible across different MNOs. In this case, the identifiers MUST belong to the same device. When returned as part of a response, the device object must include the same identifier values that were provided originally. Please note that IP addresses of devices can change and get reused, so the original values may no longer identify the same device. They identified the device at the time of the subscription request.
         NOTE2: for the Commonalities release v0.4, we are enforcing that the networkAccessIdentifier is only part of the schema for future-proofing, and CAMARA does not currently allow its use. After the CAMARA meta-release work is concluded and the relevant issues are resolved, its use will need to be explicitly documented in the guidelines.
       type: object
       properties:
@@ -654,7 +654,7 @@ components:
       minProperties: 1
 
     PhoneNumber:
-      description: A public identifier addressing a telephone subscription. In mobile networks it corresponds to the MSISDN (Mobile Station International Subscriber Directory Number). In order to be globally unique it has to be formatted in international format, according to E.164 standard, prefixed with '+'.
+      description: A public identifier addressing a telephone subscription. In mobile networks, it corresponds to the MSISDN (Mobile Station International Subscriber Directory Number). In order to be globally unique it has to be formatted in international format, according to E.164 standard, prefixed with '+'.
       type: string
       pattern: '^\+[1-9][0-9]{4,14}$'
       example: "+123456789"
@@ -689,13 +689,13 @@ components:
         publicPort: 59765
 
     SingleIpv4Addr:
-      description: A single IPv4 address with no subnet mask
+      description: A single IPv4 address with no subnet mask.
       type: string
       format: ipv4
       example: "84.125.93.10"
 
     Port:
-      description: TCP or UDP port number
+      description: TCP or UDP port number.
       type: integer
       minimum: 0
       maximum: 65535
@@ -737,7 +737,7 @@ components:
               $ref: "#/components/schemas/Point"
             radius:
               type: integer
-              description: Expected accuracy for the subscription event of device location in m, from location (radius)
+              description: Expected accuracy for the subscription event of device location in m, from location (radius).
               minimum: 2000
               maximum: 200000
           required:
@@ -752,7 +752,7 @@ components:
 
     Point:
       type: object
-      description: Coordinates (latitude, longitude) defining a location in a map
+      description: Coordinates (latitude, longitude) defining a location in a map.
       required:
         - latitude
         - longitude
@@ -766,7 +766,7 @@ components:
         longitude: 7.10066
 
     Latitude:
-      description: Latitude component of a location
+      description: Latitude component of a location.
       type: number
       format: double
       minimum: -90
@@ -774,7 +774,7 @@ components:
       example: 50.735851
 
     Longitude:
-      description: Longitude component of location
+      description: Longitude component of location.
       type: number
       format: double
       minimum: -180
@@ -782,7 +782,7 @@ components:
       example: 7.10066
 
     CloudEvent:
-      description: The notification callback
+      description: The notification callback.
       required:
         - id
         - source
@@ -793,14 +793,14 @@ components:
       properties:
         id:
           type: string
-          description: identifier of this event, that must be unique in the source context.
+          description: Identifier of this event, that must be unique in the source context.
         source:
           $ref: "#/components/schemas/Source"
         type:
           $ref: "#/components/schemas/NotificationEventType"
         specversion:
           type: string
-          description: Version of the specification to which this event conforms (must be 1.0 if it conforms to cloudevents 1.0.2 version)
+          description: Version of the specification to which this event conforms (must be 1.0 if it conforms to cloudevents 1.0.2 version).
           enum:
             - "1.0"
         datacontenttype:
@@ -810,7 +810,7 @@ components:
             - application/json
         data:
           type: object
-          description: Event details payload described in each CAMARA API and referenced by its type
+          description: Event details payload described in each CAMARA API and referenced by its type.
         time:
           $ref: "#/components/schemas/DateTime"
       discriminator:
@@ -843,7 +843,7 @@ components:
       example: "2018-04-05T17:31:00Z"
 
     EventAreaLeft:
-      description: event structure for event when the device leaves the area
+      description: Event structure for event when the device leaves the area.
       allOf:
         - $ref: "#/components/schemas/CloudEvent"
         - type: object
@@ -852,7 +852,7 @@ components:
               $ref: "#/components/schemas/AreaLeft"
 
     EventAreaEntered:
-      description: event structure for event when the device enters the area
+      description: Event structure for event when the device enters the area.
       allOf:
         - $ref: "#/components/schemas/CloudEvent"
         - type: object
@@ -861,7 +861,7 @@ components:
               $ref: "#/components/schemas/AreaEntered"
 
     EventSubscriptionEnds:
-      description: event structure for event subscription ends
+      description: Event structure for event subscription ends.
       allOf:
         - $ref: "#/components/schemas/CloudEvent"
         - type: object
@@ -870,7 +870,7 @@ components:
               $ref: "#/components/schemas/SubscriptionEnds"
 
     AreaLeft:
-      description: Event detail structure for area-left event
+      description: Event detail structure for area-left event.
       type: object
       required:
         - device
@@ -885,7 +885,7 @@ components:
           $ref: "#/components/schemas/SubscriptionId"
 
     AreaEntered:
-      description: Event detail structure for area-entered event
+      description: Event detail structure for area-entered event.
       type: object
       required:
         - device
@@ -900,7 +900,7 @@ components:
           $ref: "#/components/schemas/SubscriptionId"
 
     SubscriptionEnds:
-      description: Event detail structure for SUBSCRIPTION_ENDS event
+      description: Event detail structure for SUBSCRIPTION_ENDS event.
       type: object
       required:
         - device
@@ -1090,7 +1090,7 @@ components:
         - subject
   responses:
     CreateSubscriptionBadRequest400:
-      description: Problem with the client request
+      description: Problem with the client request.
       headers:
         x-correlator:
           $ref: "#/components/headers/x-correlator"
@@ -1103,22 +1103,22 @@ components:
               value:
                 status: 400
                 code: INVALID_ARGUMENT
-                message: Client specified an invalid argument, request body or query param
+                message: Client specified an invalid argument, request body or query param.
             InvalidProtocol:
               value:
                 status: 400
                 code: INVALID_PROTOCOL
-                message: Only HTTP is supported
+                message: Only HTTP is supported.
             InvalidCredential:
               value:
                 status: 400
                 code: INVALID_CREDENTIAL
-                message: Only Access token is supported
+                message: Only Access token is supported.
             InvalidToken:
               value:
                 status: 400
                 code: INVALID_TOKEN
-                message: Only bearer token is supported
+                message: Only bearer token is supported.
     Generic400:
       description: Bad Request
       headers:
@@ -1131,9 +1131,9 @@ components:
           example:
             status: 400
             code: INVALID_ARGUMENT
-            message: Client specified an invalid argument, request body or query param
+            message: Client specified an invalid argument, request body or query param.
     Generic401:
-      description: Authentication problem with the client request
+      description: Authentication problem with the client request.
       headers:
         x-correlator:
           $ref: "#/components/headers/x-correlator"
@@ -1146,7 +1146,7 @@ components:
             code: UNAUTHENTICATED
             message: Request not authenticated due to missing, invalid, or expired credentials.
     CreateSubscription403:
-      description: Client does not have sufficient permission
+      description: Client does not have sufficient permission.
       headers:
         x-correlator:
           $ref: "#/components/headers/x-correlator"
@@ -1159,12 +1159,12 @@ components:
               value:
                 status: 403
                 code: PERMISSION_DENIED
-                message: Client does not have sufficient permissions to perform this action
+                message: Client does not have sufficient permissions to perform this action.
             TokenMismatch:
               value:
                 status: 403
                 code: SUBSCRIPTION_MISMATCH
-                message: Inconsistent access token for requested events subscription
+                message: Inconsistent access token for requested events subscription.
     Generic403:
       description: Forbidden
       headers:
@@ -1177,7 +1177,7 @@ components:
           example:
             status: 403
             code: PERMISSION_DENIED
-            message: Client does not have sufficient permissions to perform this action
+            message: Client does not have sufficient permissions to perform this action.
     Generic404:
       description: Not found
       headers:
@@ -1204,19 +1204,19 @@ components:
           schema:
             $ref: "#/components/schemas/ErrorInfo"
           examples:
-            PermissionDenied:
+            MultieventSubscriptionNotSupported:
               value:
                 status: 422
                 code: MULTIEVENT_SUBSCRIPTION_NOT_SUPPORTED
-                message: Multi event types subscription not managed
+                message: Multi event types subscription not managed.
             DeviceIdentifierMismatch:
-              description: Inconsistency between device identifiers not pointing to the same device
+              description: Inconsistency between device identifiers not pointing to the same device.
               value:
                 status: 422
                 code: DEVICE_IDENTIFIERS_MISMATCH
                 message: Provided device identifiers are not consistent.
             DeviceNotApplicable:
-              description: Service is not available for the provided device
+              description: Service is not available for the provided device.
               value:
                 status: 422
                 code: DEVICE_NOT_APPLICABLE
@@ -1237,20 +1237,20 @@ components:
             $ref: "#/components/schemas/ErrorInfo"
           examples:
             GENERIC_429_QUOTA_EXCEEDED:
-              description: Request is rejected due to exceeding a business quota limit
+              description: Request is rejected due to exceeding a business quota limit.
               value:
                 status: 429
                 code: QUOTA_EXCEEDED
                 message: Either out of resource quota or reaching rate limiting.
             GENERIC_429_TOO_MANY_REQUESTS:
-              description: API Server request limit is overpassed
+              description: API Server request limit is overpassed.
               value:
                 status: 429
                 code: TOO_MANY_REQUESTS
                 message: Either out of resource quota or reaching rate limiting.
 
     Generic500:
-      description: Server error
+      description: Server error.
       headers:
         x-correlator:
           $ref: "#/components/headers/x-correlator"
@@ -1273,7 +1273,7 @@ components:
             $ref: "#/components/schemas/ErrorInfo"
           examples:
             GENERIC_503_UNAVAILABLE:
-              description: Service is not available. Temporary situation usually related to maintenance process in the server side
+              description: Service is not available. Temporary situation usually related to maintenance process in the server side.
               value:
                 status: 503
                 code: UNAVAILABLE
@@ -1302,7 +1302,7 @@ components:
                 message: "Expected property is missing: subscriptionId"
   examples:
     REQUEST_CIRCLE_AREA_ENTERED:
-      description: A sample geofence for entering for a circle area
+      description: A sample geofence for entering for a circle area.
       value:
         protocol: "HTTP"
         sink: https://notificationSendServer12.supertelco.com
@@ -1322,7 +1322,7 @@ components:
           subscriptionMaxEvents: 10
           subscriptionExpireTime: 2024-03-22T05:40:58.469Z
     CIRCLE_AREA_ENTERED:
-      description: The cloud event when a geofence area was entered
+      description: The cloud event when a geofence area was entered.
       value:
         id: "123655"
         source: https://notificationSendServer12.supertelco.com
@@ -1341,7 +1341,7 @@ components:
               longitude: 7.10066
             radius: 2000
     CIRCLE_AREA_LEFT:
-      description: The cloud event when a geofence area was left
+      description: The cloud event when a geofence area was left.
       value:
         id: "123655"
         source: https://notificationSendServer12.supertelco.com
@@ -1361,7 +1361,7 @@ components:
             radius: 2000
 
     SUBSCRIPTION_ENDS:
-      description: The cloud event when a geofence subscription ends
+      description: The cloud event when a geofence subscription ends.
       value:
         id: "123655"
         source: https://notificationSendServer12.supertelco.com
