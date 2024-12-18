@@ -140,7 +140,7 @@ Feature: CAMARA Device location retrieval API, v0.3.0 - Operation retrieveLocati
     When the HTTP "POST" request is sent
     Then the response status code is 422
     And the response property "$.status" is 422
-    And the response property "$.code" is "UNSUPPORTED_DEVICE_IDENTIFIERS"
+    And the response property "$.code" is "UNSUPPORTED_IDENTIFIERS"
     And the response property "$.message" contains a user friendly text
 
   @location_retrieval_13_device_not_found
@@ -149,7 +149,7 @@ Feature: CAMARA Device location retrieval API, v0.3.0 - Operation retrieveLocati
     When the HTTP "POST" request is sent
     Then the response status code is 404
     And the response property "$.status" is 404
-    And the response property "$.code" is "DEVICE_NOT_FOUND"
+    And the response property "$.code" is "IDENTIFIER_NOT_FOUND"
     And the response property "$.message" contains a user friendly text
 
   @location_retrieval_14_device_identifiers_mismatch
@@ -160,7 +160,7 @@ Feature: CAMARA Device location retrieval API, v0.3.0 - Operation retrieveLocati
     When the HTTP "POST" request is sent
     Then the response status code is 422
     And the response property "$.status" is 422
-    And the response property "$.code" is "DEVICE_IDENTIFIERS_MISMATCH"
+    And the response property "$.code" is "IDENTIFIER_MISMATCH"
     And the response property "$.message" contains a user friendly text
 
   @location_retrieval_15_device_token_mismatch
@@ -181,7 +181,7 @@ Feature: CAMARA Device location retrieval API, v0.3.0 - Operation retrieveLocati
     When the HTTP "POST" request is sent
     Then the response status code is 422
     And the response property "$.status" is 422
-    And the response property "$.code" is "DEVICE_NOT_APPLICABLE"
+    And the response property "$.code" is "SERVICE_NOT_APPLICABLE"
     And the response property "$.message" contains a user friendly text
 
   # Generic 400 errors
