@@ -394,7 +394,10 @@ components:
           description: The subscription expiration time (in date-time format) requested by the API consumer.
         subscriptionMaxEvents:
           type: integer
-          description: Identifies the maximum number of event reports to be generated (>=1) requested by the API consumer - Once this number is reached, the subscription ends.
+          description: | 
+            Identifies the maximum number of event reports to be generated (>=1) requested by the API consumer - Once this number is reached, the subscription ends.
+            Note on combined usage of `initialEvent` and `subscriptionMaxEvents`:
+            If an event is triggered following `initialEvent` set to `true`, this event will be counted towards `subscriptionMaxEvents`.
           minimum: 1
           example: 5
         initialEvent:
