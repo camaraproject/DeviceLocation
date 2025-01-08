@@ -566,8 +566,58 @@ components:
       content:
         application/json:
           schema:
-            $ref: "#/components/schemas/ErrorInfo"
+            allOf:
+              - $ref: "#/components/schemas/ErrorInfo"
+              - type: object
+                properties:
+                  status:
+                    enum:
+                      - 422
+                  code:
+                    enum:
+                      - AREA_NOT_COVERED
+                      - IDENTIFIER_MISMATCH
+                      - SERVICE_NOT_APPLICABLE
+                      - MISSING_IDENTIFIER
+                      - UNSUPPORTED_IDENTIFIER
+                      - UNNECESSARY_IDENTIFIER
+                      - LOCATION_VERIFICATION.UNABLE_TO_FULFILL_MAX_AGE
           examples:
+            GENERIC_422_AREA_NOT_COVERED:
+              value:
+                status: 422
+                code: AREA_NOT_COVERED
+                message: The specified area cannot be covered or is too small to be valid
+            GENERIC_422_IDENTIFIER_MISMATCH:
+              description: Inconsistency between identifiers not pointing to the same device
+              value:
+                status: 422
+                code: IDENTIFIER_MISMATCH
+                message: Provided identifiers are not consistent.
+            GENERIC_422_SERVICE_NOT_APPLICABLE:
+              description: Service not applicable for the provided identifier
+              value:
+                status: 422
+                code: SERVICE_NOT_APPLICABLE
+                message: The service is not available for the provided identifier.
+            GENERIC_422_MISSING_IDENTIFIER:
+              description: An identifier is not included in the request and the device or phone number identification cannot be derived from the 3-legged access token
+              value:
+                status: 422
+                code: MISSING_IDENTIFIER
+                message: The device cannot be identified.
+            GENERIC_422_UNSUPPORTED_IDENTIFIER:
+              description: None of the provided identifiers is supported by the implementation
+              value:
+                status: 422
+                code: UNSUPPORTED_IDENTIFIER
+                message: The identifier provided is not supported.
+            GENERIC_422_UNNECESSARY_IDENTIFIER:
+              description: An explicit identifier is provided when a device or phone number has already been identified from the access token
+              value:
+                status: 422
+                code: UNNECESSARY_IDENTIFIER
+                message: The device is already identified by the access token.
             LOCATION_VERIFICATION_422_UNABLE_TO_FULFILL_MAX_AGE:
               summary: Unable to fulfill maxAge
               description: The system is not able to provide the fresh location required by the client
@@ -575,46 +625,6 @@ components:
                 status: 422
                 code: LOCATION_VERIFICATION.UNABLE_TO_FULFILL_MAX_AGE
                 message: "Unable to provide expected freshness for location"
-            GENERIC_422_AREA_NOT_COVERED:
-              value:
-                status: 422
-                code: AREA_NOT_COVERED
-                message: The specified area cannot be covered or is too small to be valid
-            GENERIC_422_UNPROCESSABLE_ENTITY:
-              summary: Unprocessable entity
-              description: The request was well-formed but was unable to be processed due to semantic errors or not applicable values. This is the generic error code for 422 responses.
-              value:
-                status: 422
-                code: UNPROCESSABLE_ENTITY
-                message: "Value not acceptable: ..."
-            GENERIC_422_DEVICE_NOT_APPLICABLE:
-              summary: Service not applicable to the device
-              description: The provided device is not compatible with the requested operation, according to the service provider rules.
-              value:
-                status: 422
-                code: DEVICE_NOT_APPLICABLE
-                message: "The device is not applicable for the requested operation"
-            GENERIC_422_DEVICE_IDENTIFIERS_MISMATCH:
-              summary: Device identifiers mismatch
-              description: Several device identifiers are provided but do not match the same device
-              value:
-                status: 422
-                code: DEVICE_IDENTIFIERS_MISMATCH
-                message: "The provided device identifiers do not match the same device"
-            GENERIC_422_UNSUPPORTED_DEVICE_IDENTIFIERS:
-              summary: None of the provided device identifiers is supported by the implementation
-              description: Message may list the supported device identifiers
-              value:
-                status: 422
-                code: UNSUPPORTED_DEVICE_IDENTIFIERS
-                message: "Supported device identifiers are: ..."
-            GENERIC_422_UNIDENTIFIABLE_DEVICE:
-              summary: No identifier provided
-              description: No device identifier provided for the device to be located
-              value:
-                status: 422
-                code: UNIDENTIFIABLE_DEVICE
-                message: "A device must be provided"
 
     Generic429:
       description: Too Many Requests
