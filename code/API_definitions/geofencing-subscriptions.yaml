@@ -737,8 +737,10 @@ components:
               $ref: "#/components/schemas/Point"
             radius:
               type: integer
-              description: Expected accuracy for the subscription event of device location in m, from location (radius).
-              minimum: 2000
+              description: |
+                Expected accuracy for the subscription event of device location in m, from location (radius).
+                Note: The area surface could be restricted locally depending on regulations. Implementations may enforce a larger minimum radius (e.g. 1000 meters).
+              minimum: 1
               maximum: 200000
           required:
             - center
