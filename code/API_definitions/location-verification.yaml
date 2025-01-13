@@ -258,7 +258,7 @@ components:
             radius:
               type: integer
               description: |
-                Expected accuracy for the verification in meters, from center.
+                Expected accuracy for the verification, in meters from `center`.
                 Note: The area surface could be restricted locally depending on regulations. Implementations may enforce a larger minimum radius (e.g. 1000 meters).
               minimum: 1
               maximum: 200000
