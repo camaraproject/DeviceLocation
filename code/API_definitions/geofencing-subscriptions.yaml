@@ -412,7 +412,7 @@ components:
         subscriptionExpireTime:
           type: string
           format: date-time
-          example: 2023-01-17T13:18:23.682Z
+          example: "2023-01-17T13:18:23.682Z"
           description: The subscription expiration time (in date-time format) requested by the API consumer.
         subscriptionMaxEvents:
           type: integer
@@ -1320,7 +1320,7 @@ components:
               radius: 2000
           initialEvent: true
           subscriptionMaxEvents: 10
-          subscriptionExpireTime: 2024-03-22T05:40:58.469Z
+          subscriptionExpireTime: "2024-03-22T05:40:58.469Z"
     CIRCLE_AREA_ENTERED:
       description: The cloud event when a geofence area was entered.
       value:

@@ -291,9 +291,7 @@ components:
         - area
       properties:
         lastLocationTime:
-          description: Last date and time when the device was localized. It must follow RFC 3339 and must have time zone. Recommended format is yyyy-MM-dd'T'HH:mm:ss.SSSZ (i.e. which allows 2023-07-03T14:27:08.312+02:00 or 2023-07-03T12:27:08.312Z)
-          type: string
-          format: date-time
+          $ref: "#/components/schemas/LastLocationTime"
         area:
           $ref: '#/components/schemas/Area'
 
@@ -370,6 +368,12 @@ components:
       example:
         latitude: 50.735851
         longitude: 7.10066
+
+    LastLocationTime:
+      description: Last date and time when the device was localized. It must follow RFC 3339 and must have time zone. Recommended format is yyyy-MM-dd'T'HH:mm:ss.SSSZ (i.e. which allows 2023-07-03T14:27:08.312+02:00 or 2023-07-03T12:27:08.312Z)
+      format: date-time
+      type: string
+      example: "2023-09-07T10:40:52Z"
 
     Latitude:
       description: Latitude component of a location
@@ -601,7 +605,7 @@ components:
       summary: circle-based device location retrieval
       description: The device is localized within a circle with a center at the specified coordinates and a radius of 800 meters.
       value:
-        lastLocationTime: 2023-10-17T13:18:23.682Z
+        lastLocationTime: "2023-10-17T13:18:23.682Z"
         area:
           areaType: CIRCLE
           center:
@@ -612,7 +616,7 @@ components:
       summary: polygon-based device location retrieval
       description: The device is localized within a polygon delimited by the provided coordinates.
       value:
-        lastLocationTime: 2023-10-17T13:18:23.682Z
+        lastLocationTime: "2023-10-17T13:18:23.682Z"
         area:
           areaType: POLYGON
           boundary:
