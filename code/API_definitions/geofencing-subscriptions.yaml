@@ -738,7 +738,7 @@ components:
             radius:
               type: integer
               description: |
-                Expected accuracy for the subscription event of device location in m, from location (radius).
+                Expected accuracy for the subscription event of device location, in meters from `center`.
                 Note: The area surface could be restricted locally depending on regulations. Implementations may enforce a larger minimum radius (e.g. 1000 meters).
               minimum: 1
               maximum: 200000
