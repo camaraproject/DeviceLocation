@@ -575,19 +575,15 @@ components:
                       - 422
                   code:
                     enum:
-                      - AREA_NOT_COVERED
                       - IDENTIFIER_MISMATCH
                       - SERVICE_NOT_APPLICABLE
                       - MISSING_IDENTIFIER
                       - UNSUPPORTED_IDENTIFIER
                       - UNNECESSARY_IDENTIFIER
+                      - LOCATION_VERIFICATION.AREA_NOT_COVERED
+                      - LOCATION_VERIFICATION.INVALID_AREA
                       - LOCATION_VERIFICATION.UNABLE_TO_FULFILL_MAX_AGE
           examples:
-            GENERIC_422_AREA_NOT_COVERED:
-              value:
-                status: 422
-                code: AREA_NOT_COVERED
-                message: The specified area cannot be covered or is too small to be valid
             GENERIC_422_IDENTIFIER_MISMATCH:
               description: Inconsistency between identifiers not pointing to the same device
               value:
@@ -618,6 +614,16 @@ components:
                 status: 422
                 code: UNNECESSARY_IDENTIFIER
                 message: The device is already identified by the access token.
+            LOCATION_VERIFICATION_422_AREA_NOT_COVERED:
+              value:
+                status: 422
+                code: LOCATION_VERIFICATION.AREA_NOT_COVERED
+                message: The requested area is not supported.
+            LOCATION_VERIFICATION_422_INVALID_AREA:
+              value:
+                status: 422
+                code: LOCATION_VERIFICATION.INVALID_AREA
+                message: The requested area is too small, too complex, etc.
             LOCATION_VERIFICATION_422_UNABLE_TO_FULFILL_MAX_AGE:
               summary: Unable to fulfill maxAge
               description: The system is not able to provide the fresh location required by the client
@@ -625,7 +631,6 @@ components:
                 status: 422
                 code: LOCATION_VERIFICATION.UNABLE_TO_FULFILL_MAX_AGE
                 message: "Unable to provide expected freshness for location"
-
     Generic429:
       description: Too Many Requests
       headers:
