@@ -169,13 +169,13 @@ paths:
                   description: The network locates the device within the requested area
                   value:
                     verificationResult: "TRUE"
-                    lastLocationTime: 2023-09-07T10:40:52Z
+                    lastLocationTime: "2023-09-07T10:40:52Z"
                 VERIFICATION_FALSE:
                   summary: No match
                   description: The requested area does not match the area where the network locates the device
                   value:
                     verificationResult: "FALSE"
-                    lastLocationTime: 2023-09-07T10:40:52Z
+                    lastLocationTime: "2023-09-07T10:40:52Z"
                 VERIFICATION_UNKNOWN:
                   summary: Unknown
                   description: The network cannot locate the device
@@ -187,7 +187,7 @@ paths:
                   value:
                     verificationResult: "PARTIAL"
                     matchRate: 74
-                    lastLocationTime: 2023-09-07T10:40:52Z
+                    lastLocationTime: "2023-09-07T10:40:52Z"
         "400":
           $ref: "#/components/responses/Generic400"
         "401":
