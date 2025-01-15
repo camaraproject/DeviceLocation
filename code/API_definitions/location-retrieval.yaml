@@ -48,7 +48,7 @@ info:
     * **Max Surface**: Maximum surface in square meters which is accepted by the client for the location retrieval.
 
       * absence of `maxSurface` means that "any surface size" is acceptable for the client.
-      * API implementation could specify in the documentation the `maxSurface` minimum acceptable (for exemple minimun of 10000 square meters allowed).
+      * API implementation could specify the minimum acceptable `maxSurface` in the documentation (for example a minimum of 10000 square meters are allowed).
       * If the system is not able to provide an area with a surface acceptable with the client request, an error 422 with code LOCATION_RETRIEVAL.UNABLE_TO_FULFILL_MAX_SURFACE is sent back.
       * Note: if both `maxAge` and `maxSurface` requirements fail, the system can either send back one or the other error code.
 
