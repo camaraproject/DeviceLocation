@@ -169,9 +169,9 @@ Feature: CAMARA Device location retrieval API, v0.3.0 - Operation retrieveLocati
     Given the request body property "$.device" is set to a valid testing device
     And the header "Authorization" is set to a valid access token emitted for a different device
     When the HTTP "POST" request is sent
-    Then the response status code is 403
-    And the response property "$.status" is 403
-    And the response property "$.code" is "INVALID_TOKEN_CONTEXT"
+    Then the response status code is 422
+    And the response property "$.status" is 422
+    And the response property "$.code" is "UNNECESSARY_IDENTIFIER"
     And the response property "$.message" contains a user friendly text
 
   @location_retrieval_16_device_not_supported
