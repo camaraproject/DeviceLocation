@@ -494,7 +494,6 @@ components:
                   code:
                     enum:
                       - UNAUTHENTICATED
-                      - AUTHENTICATION_REQUIRED
           examples:
             GENERIC_401_UNAUTHENTICATED:
               description: Request cannot be authenticated
@@ -502,12 +501,6 @@ components:
                 status: 401
                 code: UNAUTHENTICATED
                 message: Request not authenticated due to missing, invalid, or expired credentials.
-            GENERIC_401_AUTHENTICATION_REQUIRED:
-              description: New authentication is needed, authentication is no longer valid
-              value:
-                status: 401
-                code: AUTHENTICATION_REQUIRED
-                message: New authentication is required.
 
     Generic403:
       description: Forbidden
@@ -527,7 +520,6 @@ components:
                   code:
                     enum:
                       - PERMISSION_DENIED
-                      - INVALID_TOKEN_CONTEXT
           examples:
             GENERIC_403_PERMISSION_DENIED:
               description: Permission denied. OAuth2 token access does not have the required scope or when the user fails operational security
@@ -535,12 +527,6 @@ components:
                 status: 403
                 code: PERMISSION_DENIED
                 message: Client does not have sufficient permissions to perform this action.
-            GENERIC_403_INVALID_TOKEN_CONTEXT:
-              description: Reflect some inconsistency between information in some field of the API and the related OAuth2 Token
-              value:
-                status: 403
-                code: INVALID_TOKEN_CONTEXT
-                message: "{{field}} is not consistent with access token."
 
     Generic404:
       description: Not found
