@@ -136,7 +136,7 @@ Feature: CAMARA Device location verification API, vwip - Operation verifyLocatio
 
   @location_verification_C02.04_unnecessary_device
   Scenario: Device not to be included when it can be deduced from the access token
-    Given the header "Authorization" is set to a valid access token token identifying a device
+    Given the header "Authorization" is set to a valid access token identifying a device
     And the request body property "$.device" is set to a valid device
     When the HTTP "POST" request is sent
     Then the response status code is 422
