@@ -13,7 +13,10 @@ info:
 
     The retrieved shape depends on the network conditions at the device's location and any of the supported shapes could be received.
 
-    The requester could optionally ask for a freshness of the localization information by providing a `maxAge` ("I want a location not older than 600 seconds").
+    The requester could optionally ask for
+     * a freshness of the localization information by providing a `maxAge` ("I want a location not older than 600 seconds").
+     * an accuracy of the localization information by providing a `maxSurface` ("I want a location not larger than 1000000 square meters").
+
 
     The result accuracy depends on the network's ability and accuracy to locate the device.
 
@@ -41,6 +44,13 @@ info:
       * `maxAge`=0 means that a fresh calculation is requested by the client. If the system is not able to provide the fresh location, an error 422 with code LOCATION_RETRIEVAL.UNABLE_TO_FULFILL_MAX_AGE is sent back.
 
     * **Last Location Time** : Last date and time when the device was localized.
+
+    * **Max Surface**: Maximum surface in square meters which is accepted by the client for the location retrieval.
+
+      * absence of `maxSurface` means that "any surface size" is acceptable for the client.
+      * API implementation could specify the minimum acceptable `maxSurface` in the documentation (for example a minimum of 10000 square meters are allowed).
+      * If the system is not able to provide an area with a surface acceptable with the client request, an error 422 with code LOCATION_RETRIEVAL.UNABLE_TO_FULFILL_MAX_SURFACE is sent back.
+      * Note: if both `maxAge` and `maxSurface` requirements fail, the system can either send back one or the other error code.
 
 
     # API Functionality
@@ -118,6 +128,15 @@ paths:
                   device:
                     phoneNumber: "+123456789"
                   maxAge: 120
+              INPUT_PHONE_NUMBER_MAX_AGE_AND_SURFACE:
+                summary: Phone number, maxAge and maxSurface
+                description: Retrieve location for a device identified by a phone number, providing a maxAge and maxSurface
+                value:
+                  device:
+                    phoneNumber: "+123456789"
+                  maxAge: 120
+                  maxSurface: 1000000
+
               INPUT_IP_ADDRESS_V4:
                 summary: IPv4 address without maxAge
                 description: Retrieve location for a device identified by an IPv4 address, without an indication for maxAge
@@ -191,7 +210,11 @@ components:
         maxAge:
           type: integer
           description: Maximum age of the location information which is accepted for the location retrieval (in seconds). Absence of maxAge means "any age" and maxAge=0 means a fresh calculation.
-
+        maxSurface:
+          type: integer
+          minimum: 1
+          description: Maximum surface in square meters which is accepted by the client for the location retrieval. Absence of maxSurface means "any surface size".
+          example: 1000000
     Device:
       description: |
         End-user equipment able to connect to a mobile network. Examples of devices include smartphones or IoT sensors/actuators.
@@ -278,9 +301,7 @@ components:
         - area
       properties:
         lastLocationTime:
-          description: Last date and time when the device was localized. It must follow RFC 3339 and must have time zone. Recommended format is yyyy-MM-dd'T'HH:mm:ss.SSSZ (i.e. which allows 2023-07-03T14:27:08.312+02:00 or 2023-07-03T12:27:08.312Z)
-          type: string
-          format: date-time
+          $ref: "#/components/schemas/LastLocationTime"
         area:
           $ref: '#/components/schemas/Area'
 
@@ -357,6 +378,12 @@ components:
       example:
         latitude: 50.735851
         longitude: 7.10066
+
+    LastLocationTime:
+      description: Last date and time when the device was localized. It must follow RFC 3339 and must have time zone. Recommended format is yyyy-MM-dd'T'HH:mm:ss.SSSZ (i.e. which allows 2023-07-03T14:27:08.312+02:00 or 2023-07-03T12:27:08.312Z)
+      format: date-time
+      type: string
+      example: "2023-09-07T10:40:52Z"
 
     Latitude:
       description: Latitude component of a location
@@ -610,7 +637,7 @@ components:
       summary: circle-based device location retrieval
       description: The device is localized within a circle with a center at the specified coordinates and a radius of 800 meters.
       value:
-        lastLocationTime: 2023-10-17T13:18:23.682Z
+        lastLocationTime: "2023-10-17T13:18:23.682Z"
         area:
           areaType: CIRCLE
           center:
@@ -621,7 +648,7 @@ components:
       summary: polygon-based device location retrieval
       description: The device is localized within a polygon delimited by the provided coordinates.
       value:
-        lastLocationTime: 2023-10-17T13:18:23.682Z
+        lastLocationTime: "2023-10-17T13:18:23.682Z"
         area:
           areaType: POLYGON
           boundary:
