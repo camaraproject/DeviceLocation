@@ -315,7 +315,7 @@ Feature: Camara Geofencing Subscriptions API, vwip - Operations on subscriptions
     When the HTTP "POST" request is sent
     Then the response status code is 422
     And the response property "$.status" is 422
-    And the response property "$.code" is "GEOFENCING.AREA_NOT_COVERED"
+    And the response property "$.code" is "GEOFENCING_SUBSCRIPTIONS.AREA_NOT_COVERED"
     And the response property "$.message" contains "Unable to cover the requested area"
 
   @geofencing_subscriptions_29_create_with_identifier_mismatch
@@ -360,5 +360,5 @@ Feature: Camara Geofencing Subscriptions API, vwip - Operations on subscriptions
     When the HTTP "POST" request is sent
     Then the response status code is 422
     And the response property "$.status" is 422
-    And the response property "$.code" is "GEOFENCING.INVALID_AREA"
+    And the response property "$.code" is "GEOFENCING_SUBSCRIPTIONS.INVALID_AREA"
     And the response property "$.message" contains "The requested area is too small"

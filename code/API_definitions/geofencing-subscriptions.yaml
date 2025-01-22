@@ -8,8 +8,8 @@ info:
 
     With this API, API consumers can create subscriptions for their devices to receive notifications when a device enters or exits a specified area.
 
-    * If the provided area is out of the operator's coverage or it is not supported for any reason, an error `422 GEOFENCING.AREA_NOT_COVERED` will be returned.
-    * Legal restrictions regarding privacy, or other regulatory or implementation issues, may force the operator to set restrictions to the provided area, such as setting a minimum value to the accepted radius. In these cases, an error `422 GEOFENCING.INVALID_AREA` will be returned and the error message will refer to the reason of the limitation.
+    * If the provided area is out of the operator's coverage or it is not supported for any reason, an error `422 GEOFENCING_SUBSCRIPTIONS.AREA_NOT_COVERED` will be returned.
+    * Legal restrictions regarding privacy, or other regulatory or implementation issues, may force the operator to set restrictions to the provided area, such as setting a minimum value to the accepted radius. In these cases, an error `422 GEOFENCING_SUBSCRIPTIONS.INVALID_AREA` will be returned and the error message will refer to the reason of the limitation.
 
     The area provided in the request is described by a circle determined by coordinates (latitude and longitude) and an accuracy defined by the radius.
 
@@ -1333,8 +1333,8 @@ components:
                       - SERVICE_NOT_APPLICABLE
                       - UNNECESSARY_IDENTIFIER
                       - UNSUPPORTED_IDENTIFIER
-                      - GEOFENCING.AREA_NOT_COVERED
-                      - GEOFENCING.INVALID_AREA
+                      - GEOFENCING_SUBSCRIPTIONS.AREA_NOT_COVERED
+                      - GEOFENCING_SUBSCRIPTIONS.INVALID_AREA
           examples:
             GENERIC_422_IDENTIFIER_MISMATCH:
               description: Inconsistency between device identifiers not pointing to the same device.
@@ -1370,14 +1370,14 @@ components:
               description: The system is not able cover the requested area
               value:
                 status: 422
-                code: GEOFENCING.AREA_NOT_COVERED
+                code: GEOFENCING_SUBSCRIPTIONS.AREA_NOT_COVERED
                 message: "Unable to cover the requested area"
             GEOFENCING_422_INVALID_AREA:
               summary: Invalid area
               description: The requested area is too small to be supported by the system.
               value:
                 status: 422
-                code: GEOFENCING.INVALID_AREA
+                code: GEOFENCING_SUBSCRIPTIONS.INVALID_AREA
                 message: "The requested area is too small"
     Generic429:
       description: Too Many Requests
