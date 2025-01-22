@@ -1,4 +1,4 @@
-Feature: CAMARA Device location retrieval API, v0.3.0 - Operation retrieveLocation
+Feature: CAMARA Device location retrieval API, vwip - Operation retrieveLocation
   # Input to be provided by the implementation to the tester
   #
   # Implementation indications:
@@ -12,7 +12,7 @@ Feature: CAMARA Device location retrieval API, v0.3.0 - Operation retrieveLocati
   # References to OAS spec schemas refer to schemas specifies in location-retrieval.yaml
 
   Background: Common retrieveLocation setup
-    Given the resource "/location-retrieval/v0.3/retrieve"                                                              |
+    Given the resource "/location-retrieval/vwip/retrieve"                                                              |
     And the header "Content-Type" is set to "application/json"
     And the header "Authorization" is set to a valid access token
     And the header "x-correlator" is set to a UUID value
@@ -24,7 +24,8 @@ Feature: CAMARA Device location retrieval API, v0.3.0 - Operation retrieveLocati
   @location_retrieval_01_generic_success_scenario
   Scenario: Common validations for any success scenario
     # Valid testing device and default request body compliant with the schema
-    Given the request body property "$.device" is set to a valid testing device supported by the service
+    # Not that in case the device is identifed by the token the body could be {}
+    Given a valid testing device supported by the service, identified by the token or provided in the request body
     And the request body is set to a valid request body
     When the HTTP "POST" request is sent
     Then the response status code is 200
@@ -37,8 +38,7 @@ Feature: CAMARA Device location retrieval API, v0.3.0 - Operation retrieveLocati
 
   @location_retrieval_02_location_retrieval_for_device_no_maxAge
   Scenario: Retrieve location of a device without specifying maxAge
-    Given the testing device is connected to the network
-    And the request body property "$.device" is set to a valid testing device supported by the service
+    Given a valid testing device supported by the service, identified by the token or provided in the request body
     And the request body property "$.maxAge" is not included
     When the HTTP "POST" request is sent
     Then the response status code is 200
@@ -49,7 +49,7 @@ Feature: CAMARA Device location retrieval API, v0.3.0 - Operation retrieveLocati
   @location_retrieval_03_location_retrieval_for_device_with_maxAge
   Scenario: Retrieve location of a device specifying maxAge
     # maxAge could be tested with several values with scenario variable
-    Given the testing device is connected to the network
+    Given a valid testing device supported by the service, identified by the token or provided in the request body
     And the request body property "$.device" is set to a valid testing device supported by the service
     And the request body property "$.maxAge" is included
     When the HTTP "POST" request is sent
@@ -62,7 +62,7 @@ Feature: CAMARA Device location retrieval API, v0.3.0 - Operation retrieveLocati
   @location_retrieval_04_location_retrieval_unable_to_locate_device
   # Input set to a device that could not be located
   Scenario: Unable to provide device location
-    Given the request body property "$.device" is set to a valid testing device which cannot be located by the network
+    Given a valid testing device which cannot be located by the network, identified by the token or provided in the request body
     And the request body property "$.maxAge" is not included
     When the HTTP "POST" request is sent
     Then the response status code is 404
@@ -74,7 +74,7 @@ Feature: CAMARA Device location retrieval API, v0.3.0 - Operation retrieveLocati
 
   @location_retrieval_05_location_retrieval_unable_to_locate_device_with_required_freshness
   Scenario: Unable to provide device location with required maxAge
-    Given the testing device is not connected to the network for some time
+    Given the testing device, identified by the token or provided in the request, is not connected to the network for some time
     And request body property "$.device" is set to a valid testing device which is not connected to the network for some time
     And the request body property "$.maxAge" is set to a value shorter than that time
     When the HTTP "POST" request is sent
@@ -89,17 +89,18 @@ Feature: CAMARA Device location retrieval API, v0.3.0 - Operation retrieveLocati
 
   @location_retrieval_10_device_empty
   Scenario: The device value is an empty object
-    Given the request body property "$.device" is set to empty object
+    Given the header "Authorization" is set to a valid access token which does not identify a single device
+    And the request body property "$.device" is set to: {}
     When the HTTP "POST" request is sent
     Then the response status code is 400
     And the response property "$.status" is 400
     And the response property "$.code" is "INVALID_ARGUMENT"
     And the response property "$.message" contains a user friendly text
 
-  @location_retrieval_11_device_schema_compliant
-  # Test every type of identifier even if not supported by the implementation
+  @location_retrieval_11_device_identifiers_not_schema_compliant
   Scenario Outline: Some device identifier value does not comply with the schema
-    Given the request body property "<device_identifier>" does not comply with the OAS schema at "<oas_spec_schema>"
+    Given the header "Authorization" is set to a valid access token which does not identify a single device
+    And the request body property "<device_identifier>" does not comply with the OAS schema at "<oas_spec_schema>"
     When the HTTP "POST" request is sent
     Then the response status code is 400
     And the response property "$.status" is 400
@@ -117,7 +118,8 @@ Feature: CAMARA Device location retrieval API, v0.3.0 - Operation retrieveLocati
   # Example of the scenario above with a higher level of specification
   # TBD if test plan has to provide specific testing values to provoke an error
   Scenario Outline: Device identifier phoneNumber value does not comply with the schema
-    Given the request body property "$.device.phoneNumber" is set to: <phone_number_value>
+    Given the header "Authorization" is set to a valid access token which does not identify a single device
+    And the request body property "$.device.phoneNumber" is set to: <phone_number_value>
     When the HTTP "POST" request is sent
     Then the response status code is 400
     And the response property "$.status" is 400
@@ -136,52 +138,54 @@ Feature: CAMARA Device location retrieval API, v0.3.0 - Operation retrieveLocati
   @location_retrieval_12_device_identifiers_unsupported
   Scenario: None of the provided device identifiers is supported by the implementation
     Given that some type of device identifiers are not supported by the implementation
+    And the header "Authorization" is set to a valid access token which does not identify a single device
     And the request body property "$.device" only includes device identifiers not supported by the implementation
     When the HTTP "POST" request is sent
     Then the response status code is 422
     And the response property "$.status" is 422
-    And the response property "$.code" is "UNSUPPORTED_DEVICE_IDENTIFIERS"
+    And the response property "$.code" is "UNSUPPORTED_IDENTIFIERS"
     And the response property "$.message" contains a user friendly text
 
   @location_retrieval_13_device_not_found
   Scenario: Some identifier cannot be matched to a device
     Given the request body property "$.device" is set to a value compliant to the OAS schema at "/components/schemas/Device" but does not identify a valid device
+    And the header "Authorization" is set to a valid access token which does not identify a single device
     When the HTTP "POST" request is sent
     Then the response status code is 404
     And the response property "$.status" is 404
-    And the response property "$.code" is "DEVICE_NOT_FOUND"
+    And the response property "$.code" is "IDENTIFIER_NOT_FOUND"
     And the response property "$.message" contains a user friendly text
 
   @location_retrieval_14_device_identifiers_mismatch
   Scenario: Device identifiers mismatch
     # To test this, at least 2 types of identifiers have to be provided, e.g. a phoneNumber and the IP address of a device associated to a different phoneNumber
     Given that config_var "identifier_types_unsupported" contains at least 2 items
+    And the header "Authorization" is set to a valid access token which does not identify a single device
     And the request body property "$.device" includes several identifiers, each of them identifying a valid but different device
     When the HTTP "POST" request is sent
     Then the response status code is 422
     And the response property "$.status" is 422
-    And the response property "$.code" is "DEVICE_IDENTIFIERS_MISMATCH"
+    And the response property "$.code" is "IDENTIFIER_MISMATCH"
     And the response property "$.message" contains a user friendly text
 
-  @location_retrieval_15_device_token_mismatch
-  Scenario: Inconsistent access token context for the device
-    # To test this, a token have to be obtained for a different device
-    Given the request body property "$.device" is set to a valid testing device
-    And the header "Authorization" is set to a valid access token emitted for a different device
+  @location_retrieval_15_unnecessary_device
+  Scenario: Device not to be included when it can be deduced from the access token
+    Given the header "Authorization" is set to a valid access token identifying a device
+    And the request body property "$.device" is set to a valid device
     When the HTTP "POST" request is sent
-    Then the response status code is 403
-    And the response property "$.status" is 403
-    And the response property "$.code" is "INVALID_TOKEN_CONTEXT"
+    Then the response status code is 422
+    And the response property "$.status" is 422
+    And the response property "$.code" is "UNNECESSARY_IDENTIFIER"
     And the response property "$.message" contains a user friendly text
 
   @location_retrieval_16_device_not_supported
   Scenario: Service not available for the device
-    Given that service is not supported for all devices commercialized by the operator 
-    And the request body property "$.device" is set to a valid device for which the service is not applicable
+    Given that the service is not available for all devices commercialized by the operator
+    And a valid device, identified by the token or provided in the request body, for which the service is not applicable
     When the HTTP "POST" request is sent
     Then the response status code is 422
     And the response property "$.status" is 422
-    And the response property "$.code" is "DEVICE_NOT_APPLICABLE"
+    And the response property "$.code" is "SERVICE_NOT_APPLICABLE"
     And the response property "$.message" contains a user friendly text
 
   # Generic 400 errors
@@ -195,20 +199,11 @@ Feature: CAMARA Device location retrieval API, v0.3.0 - Operation retrieveLocati
     And the response property "$.code" is "INVALID_ARGUMENT"
     And the response property "$.message" contains a user friendly text
 
-  @location_retrieval_400.2_empty_request_body
-  Scenario: Empty object as request body
-    Given the request body is set to "{}"
-    When the HTTP "POST" request is sent
-    Then the response status code is 400
-    And the response property "$.status" is 400
-    And the response property "$.code" is "INVALID_ARGUMENT"
-    And the response property "$.message" contains a user friendly text
-
   # Other specific 400 errors
 
   @location_retrieval_400.3_max_age_schema_compliant
   Scenario: Input property values doe not comply with the schema
-    Given the request body property "$.device" is set to a valid testing device
+    Given a valid testing device supported by the service, identified by the token or provided in the request body
     And the "maxAge" is set to 6a0
     When the HTTP "POST" request is sent
     Then the response status code is 400
@@ -219,6 +214,7 @@ Feature: CAMARA Device location retrieval API, v0.3.0 - Operation retrieveLocati
   @location_retrieval_400.4_required_device_identifier_missing
   Scenario: Required device identifier is  missing
     Given the request body property "$.device" is not included
+    And the header "Authorization" is set to a valid access token which does not identify a single device
     When the HTTP "POST" request is sent
     Then the response status code is 400
     And the response property "$.status" is 400
