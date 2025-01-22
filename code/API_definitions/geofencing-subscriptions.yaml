@@ -1333,8 +1333,8 @@ components:
                       - SERVICE_NOT_APPLICABLE
                       - UNNECESSARY_IDENTIFIER
                       - UNSUPPORTED_IDENTIFIER
-                      - GEOFENCING_422_AREA_NOT_COVERED
-                      - GEOFENCING_422_INVALID_AREA
+                      - GEOFENCING.AREA_NOT_COVERED
+                      - GEOFENCING.INVALID_AREA
           examples:
             GENERIC_422_IDENTIFIER_MISMATCH:
               description: Inconsistency between device identifiers not pointing to the same device.
