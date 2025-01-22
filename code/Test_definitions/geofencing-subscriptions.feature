@@ -309,14 +309,14 @@ Feature: Camara Geofencing Subscriptions API, v0.3.0 - Operations on subscriptio
     And the response property "$.code" is "NOT_FOUND"
     And the response property "$.message" contains a user friendly text
 
-  @geofencing_subscriptions_28_create_with_invalid_area
+  @geofencing_subscriptions_28_create_with_an_unsupported_area
   Scenario: Create subscription with an invalid area
     Given the request body property "$.area" is set to an unsupported or invalid area
     When the HTTP "POST" request is sent
     Then the response status code is 422
     And the response property "$.status" is 422
-    And the response property "$.code" is "AREA_NOT_COVERED"
-    And the response property "$.message" contains "The specified area cannot be covered or is invalid."
+    And the response property "$.code" is "GEOFENCING.AREA_NOT_COVERED"
+    And the response property "$.message" contains "Unable to cover the requested area"
 
   @geofencing_subscriptions_29_create_with_identifier_mismatch
   Scenario: Create subscription with identifier mismatch
@@ -353,3 +353,12 @@ Feature: Camara Geofencing Subscriptions API, v0.3.0 - Operations on subscriptio
     And the response property "$.status" is 422
     And the response property "$.code" is "UNSUPPORTED_IDENTIFIER"
     And the response property "$.message" contains "The identifier provided is not supported."
+
+  @geofencing_subscriptions_33_create_with_an_invalid_area
+  Scenario: Create subscription with an invalid area
+    Given the request body property "$.area" is set with an too small area-size
+    When the HTTP "POST" request is sent
+    Then the response status code is 422
+    And the response property "$.status" is 422
+    And the response property "$.code" is "GEOFENCING.INVALID_AREA"
+    And the response property "$.message" contains "The requested area is too small"
