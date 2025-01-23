@@ -1,11 +1,11 @@
 @Geofencing 
-Feature: Camara Geofencing Subscriptions API, v0.3.0 - Operations on subscriptions 
+Feature: Camara Geofencing Subscriptions API, v0.4.0-rc.1 - Operations on subscriptions
 
 # Input to be provided by the implementation to the tests
-# References to OAS spec schemas refer to schemas specified in geofencing-subscriptions.yaml, version v0.3.0
+# References to OAS spec schemas refer to schemas specified in geofencing-subscriptions.yaml, version v0.4.0-rc.1
 
   Background: Common Geofencing Subscriptions setup
-    Given the resource "{apiroot}/geofencing-subscriptions/v0.3/" as geofencing base-url                                                           
+    Given the resource "{apiroot}/geofencing-subscriptions/v0.4rc1/" as geofencing base-url
     And the header "Authorization" is set to a valid access token
     And the header "x-correlator" is set to a UUID value
 
