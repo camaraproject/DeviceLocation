@@ -29,7 +29,8 @@ The API definition(s) are based on
 * Commonalities v0.5.0
 * Identity and Consent Management v0.2.1
 
-**Changelog since v0.2.0**
+**Changelog since r1.2**
+
 
 * Full Changelog with the list of PRs and contributors: https://github.com/camaraproject/DeviceLocation/compare/r1.2...r2.1
 
