@@ -1,6 +1,6 @@
 # API Readiness Checklist
 
-Checklist for location-verification v1.0.0 in r1.2
+Checklist for location-verification 2.0.0-rc.1 in r2.1
 
 | Nr | API release assets                           | alpha | release-candidate | initial<br>public | stable<br> public | Status |                                                                   Comments                                                                   |
 |----|----------------------------------------------|:-----:|:-----------------:|:-----------------:|:-----------------:|:------:|:--------------------------------------------------------------------------------------------------------------------------------------------:|
