@@ -2,7 +2,8 @@
 
 ## Table of Contents
 
-- **[r1.2](#r12)**
+- **[r2.1](#r21)**
+- [r1.2](#r12)
 - [r1.1](#r11)
 - [v0.2.0](#v020)
 - [v0.1.0](#v010)
@@ -14,6 +15,70 @@ The below sections record the changes for each API version in each release as fo
 * for each first alpha or release-candidate API version, all changes since the release of the previous public API version
 * for subsequent alpha or release-candidate API versions, the delta with respect to the previous pre-release
 * for a public API version, the consolidated changes since the release of the previous public API version
+
+# r2.1
+
+## Release Notes
+
+This **public release** contains the definition and documentation of
+* location-verification v2.0.0-rc.1
+* location-retrieval v0.4.0-rc.1
+* geofencing-subscriptions v0.4.0-rc.1
+
+The API definition(s) are based on
+* Commonalities v0.5.0
+* Identity and Consent Management v0.2.1
+
+**Changelog since v0.2.0**
+
+* Full Changelog with the list of PRs and contributors: https://github.com/camaraproject/DeviceLocation/compare/r1.2...r2.1
+
+## location-verification v2.0.0-rc.1
+
+### Changed
+
+* Error schemas updated with enums
+* Some error status and codes have been updated
+* Section with guidelines about how to identify the device from access token and request body has been updated
+
+### Fixed
+* Update errormessage for unsupported device identifiers
+* Add quote-marks for `lastLocationTime` - examples
+
+## location-retrieval v0.4.0-rc.1
+
+### Added
+
+* Add management of `maxSurface` in request.
+
+### Changed
+
+* Error schemas updated with enums
+* Some error status and codes have been updated
+* Section with guidelines about how to identify the device from access token and request body has been updated
+* Test definitions aligned with API specification update
+
+### Fixed
+
+* Update errormessage for unsupported device identifiers
+* Add quote-marks for `lastLocationTime` - examples
+
+## geofencing-subscriptions v0.4.0-rc.1
+
+### Added
+
+* Add test-definitions for HTTP-422 error-cases for geofencing-API
+
+### Changed
+
+* Error schemas updated with enums
+* Some error status and codes have been updated
+* Add a note that initial events will be counted when `subscriptionMaxEvents` is combined with initialEvent=true 
+
+### Fixed
+* remove `allOf` in `sinkCredential`
+* Correct the example for subscriptions regarding `initialEvent` and error `MULTIEVENT_SUBSCRIPTION_NOT_SUPPORTED`
+* Add quote-marks for `subscriptionExpireTime` - examples
 
 # r1.2
 
