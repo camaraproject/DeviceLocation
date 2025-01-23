@@ -35,6 +35,10 @@ The API definition(s) are based on
 
 ## location-verification v2.0.0-rc.1
 
+### Added
+
+* Add MultiSIM section to info.description by @jlurien in https://github.com/camaraproject/DeviceLocation/pull/291
+
 ### Changed
 
 * Decrease radius minimum to "1" for circle-area by @maxl2287 in #285
@@ -51,6 +55,7 @@ The API definition(s) are based on
 ### Added
 
 * Add management of `maxSurface` in request by @bigludo7 in #262
+* Add MultiSIM section to info.description by @jlurien in https://github.com/camaraproject/DeviceLocation/pull/291
 
 ### Changed
 
@@ -69,6 +74,8 @@ The API definition(s) are based on
 ### Added
 
 * Add test-definitions for HTTP-422 error-cases for geofencing-API by @maxl2287 in #289
+* Add MultiSIM section to info.description by @jlurien in https://github.com/camaraproject/DeviceLocation/pull/291
+
 
 ### Changed
 
