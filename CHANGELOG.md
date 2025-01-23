@@ -37,6 +37,7 @@ The API definition(s) are based on
 
 ### Changed
 
+* Decrease radius minimum to "1" for circle-area
 * Error schemas updated with enums
 * Some error status and codes have been updated
 * Section with guidelines about how to identify the device from access token and request body has been updated
@@ -71,6 +72,7 @@ The API definition(s) are based on
 
 ### Changed
 
+* Decrease radius minimum to "1" for circle-area
 * Error schemas updated with enums
 * Some error status and codes have been updated
 * Add a note that initial events will be counted when `subscriptionMaxEvents` is combined with initialEvent=true 
