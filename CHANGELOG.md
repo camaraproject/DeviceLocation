@@ -37,50 +37,50 @@ The API definition(s) are based on
 
 ### Changed
 
-* Decrease radius minimum to "1" for circle-area
-* Error schemas updated with enums
-* Some error status and codes have been updated
-* Section with guidelines about how to identify the device from access token and request body has been updated
+* Decrease radius minimum to "1" for circle-area by @maxl2287 in #285
+* Error schemas updated with enums by @jlurien in #281
+* Some error status and codes have been updated by @jlurien in #281
+* Section with guidelines about how to identify the device from access token and request body has been updated by @jlurien in #281
 
 ### Fixed
-* Update errormessage for unsupported device identifiers
-* Add quote-marks for `lastLocationTime` - examples
+* Update errormessage for unsupported device identifiers by @maxl2287 in #261
+* Add quote-marks for `lastLocationTime` - examples by @maxl2287 in #287
 
 ## location-retrieval v0.4.0-rc.1
 
 ### Added
 
-* Add management of `maxSurface` in request.
+* Add management of `maxSurface` in request by @bigludo7 in #262
 
 ### Changed
 
-* Error schemas updated with enums
-* Some error status and codes have been updated
-* Section with guidelines about how to identify the device from access token and request body has been updated
-* Test definitions aligned with API specification update
+* Error schemas updated with enums by @bigludo7 in #283
+* Some error status and codes have been updated by @bigludo7 in #283
+* Section with guidelines about how to identify the device from access token and request body has been updated by @bigludo7 in #283
+* Test definitions aligned with API specification update by @bigludo7 in #283
 
 ### Fixed
 
-* Update errormessage for unsupported device identifiers
-* Add quote-marks for `lastLocationTime` - examples
+* Update errormessage for unsupported device identifiers by @maxl2287 in #261
+* Add quote-marks for `lastLocationTime` - examples by @maxl2287 in #287 
 
 ## geofencing-subscriptions v0.4.0-rc.1
 
 ### Added
 
-* Add test-definitions for HTTP-422 error-cases for geofencing-API
+* Add test-definitions for HTTP-422 error-cases for geofencing-API by @maxl2287 in #289
 
 ### Changed
 
-* Decrease radius minimum to "1" for circle-area
-* Error schemas updated with enums
-* Some error status and codes have been updated
-* Add a note that initial events will be counted when `subscriptionMaxEvents` is combined with initialEvent=true 
+* Decrease radius minimum to "1" for circle-area by @maxl2287 in #285
+* Error schemas updated with enums by @maxl2287 in #284
+* Some error status and codes have been updated by @maxl2287 in #284
+* Add a note that initial events will be counted when `subscriptionMaxEvents` is combined with initialEvent=true by @maxl2287 in #284
 
 ### Fixed
-* remove `allOf` in `sinkCredential`
-* Correct the example for subscriptions regarding `initialEvent` and error `MULTIEVENT_SUBSCRIPTION_NOT_SUPPORTED`
-* Add quote-marks for `subscriptionExpireTime` - examples
+* remove `allOf` in `sinkCredential` by @maxl2287 in #265
+* Correct the example for subscriptions regarding `initialEvent` and error `MULTIEVENT_SUBSCRIPTION_NOT_SUPPORTED` by @dfischer-tech in #267
+* Add quote-marks for `subscriptionExpireTime` - examples by @maxl2287 in #287
 
 # r1.2
 
