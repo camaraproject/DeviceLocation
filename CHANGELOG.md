@@ -46,6 +46,8 @@ The API definition(s) are based on
 * Error schemas updated with enums by @jlurien in #281
 * Some error status and codes have been updated by @jlurien in #281
 * Section with guidelines about how to identify the device from access token and request body has been updated by @jlurien in #281
+* Add pattern for x-correlator by @bigludo7 in #290
+* Update 429 error message by @bigludo7 in #290
 
 ### Fixed
 * Update errormessage for unsupported device identifiers by @maxl2287 in #261
@@ -64,6 +66,8 @@ The API definition(s) are based on
 * Some error status and codes have been updated by @bigludo7 in #283
 * Section with guidelines about how to identify the device from access token and request body has been updated by @bigludo7 in #283
 * Test definitions aligned with API specification update by @bigludo7 in #283
+* Add pattern for x-correlator by @bigludo7 in #290
+* Update 429 error message by @bigludo7 in #290
 
 ### Fixed
 
@@ -84,6 +88,8 @@ The API definition(s) are based on
 * Error schemas updated with enums by @maxl2287 in #284
 * Some error status and codes have been updated by @maxl2287 in #284
 * Add a note that initial events will be counted when `subscriptionMaxEvents` is combined with initialEvent=true by @maxl2287 in #284
+* Add pattern for x-correlator by @bigludo7 in #290
+* Update 429 error message by @bigludo7 in #290
 
 ### Fixed
 * remove `allOf` in `sinkCredential` by @maxl2287 in #265
