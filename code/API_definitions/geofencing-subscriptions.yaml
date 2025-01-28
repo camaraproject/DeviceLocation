@@ -323,11 +323,13 @@ components:
       description: Correlation id for the different services.
       schema:
         type: string
+        pattern: ^[a-zA-Z0-9-]{0,55}$
   headers:
     x-correlator:
       description: Correlation id for the different services.
       schema:
         type: string
+        pattern: ^[a-zA-Z0-9-]{0,55}$
   schemas:
     ErrorInfo:
       description: The error info object for possible error cases.
@@ -1414,17 +1416,17 @@ components:
                       - TOO_MANY_REQUESTS
           examples:
             GENERIC_429_QUOTA_EXCEEDED:
-              description: Request is rejected due to exceeding a business quota limit.
+              description: Request is rejected due to exceeding a business quota limit
               value:
                 status: 429
                 code: QUOTA_EXCEEDED
-                message: Either out of resource quota or reaching rate limiting.
+                message: Out of resource quota.
             GENERIC_429_TOO_MANY_REQUESTS:
-              description: API Server request limit is overpassed.
+              description: Access to the API has been temporarily blocked due to rate or spike arrest limits being reached
               value:
                 status: 429
                 code: TOO_MANY_REQUESTS
-                message: Either out of resource quota or reaching rate limiting.
+                message: Rate limit reached.
   examples:
     REQUEST_CIRCLE_AREA_ENTERED:
       description: A sample geofence for entering for a circle area.
