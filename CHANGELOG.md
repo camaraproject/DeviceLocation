@@ -106,8 +106,8 @@ This **public release** contains the definition and documentation of
 * geofencing-subscriptions v0.3.0
 
 The API definition(s) are based on
-* Commonalities v0.4.0
-* Identity and Consent Management v0.2.0
+* Commonalities r2.2
+* Identity and Consent Management r2.2
 
 **Changelog since v0.2.0**
 

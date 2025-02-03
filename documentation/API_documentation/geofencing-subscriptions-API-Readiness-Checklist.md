@@ -2,11 +2,11 @@
 
 Checklist for geofencing-subscriptions 0.4.0-rc.1 in r2.1
 
-| Nr | API release assets                           | alpha | release-candidate | public-release<br>initial | public-release<br> stable | Status |                                                      Comments                                                      |
+| Nr | API release assets                           | alpha | release-candidate | public-release<br>initial | public-release<br> stable | Status |                                               Reference information                                                |
 |----|----------------------------------------------|:-----:|:-----------------:|:-------------------------:|:-------------------------:|:------:|:------------------------------------------------------------------------------------------------------------------:|
 | 1  | API definition                               |   M   |         M         |             M             |             M             |   Y    |     [/code/API_definitions/geofencing-subscriptions.yaml](/code/API_definitions/geofencing-subscriptions.yaml)     |
-| 2  | Design guidelines from Commonalities applied |   O   |         M         |             M             |             M             |   Y    |                                                                                                                    |
-| 3  | Guidelines from ICM applied                  |   O   |         M         |             M             |             M             |   Y    |                                                                                                                    |
+| 2  | Design guidelines from Commonalities applied |   O   |         M         |             M             |             M             |   Y    |                                                        r2.2                                                        |
+| 3  | Guidelines from ICM applied                  |   O   |         M         |             M             |             M             |   Y    |                                                        r2.2                                                        |
 | 4  | API versioning convention applied            |   M   |         M         |             M             |             M             |   Y    |                                                                                                                    |
 | 5  | API documentation                            |   M   |         M         |             M             |             M             |   Y    |                                                   inline in yaml                                                   |
 | 6  | User stories                                 |   O   |         O         |             O             |             M             |   N    |                                                                                                                    |
