@@ -21,4 +21,4 @@ Checklist for geofencing-subscriptions 0.4.0-rc.1 in r2.1
 
 Note: the checklists of a public API version and of its preceding release-candidate API version can be the same.
 
-The documentation for the content of the checklist is here: [API Readiness Checklist](https://wiki.camaraproject.org/display/CAM/API+Release+Process#APIReleaseProcess-APIreadinesschecklist).
+The documentation for the content of the checklist is here: see API Readiness Checklist section in the [API Release Process](https://lf-camaraproject.atlassian.net/wiki/x/jine).
