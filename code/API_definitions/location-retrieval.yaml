@@ -64,11 +64,11 @@ info:
 
     # Authorization and authentication
 
-    The "Camara Security and Interoperability Profile" provides details on how a client requests an access token. Please refer to Identify and Consent Management (https://github.com/camaraproject/IdentityAndConsentManagement/) for the released version of the Profile.
+    The "Camara Security and Interoperability Profile" provides details of how an API consumer requests an access token. Please refer to Identity and Consent Management (https://github.com/camaraproject/IdentityAndConsentManagement/) for the released version of the profile.
 
-    Which specific authorization flows are to be used will be determined during onboarding process, happening between the API Client and the API Provider, taking into account the declared purpose for accessing the API, while also being subject to the prevailing legal framework dictated by local legislation.
+    The specific authorization flows to be used will be agreed upon during the onboarding process, happening between the API consumer and the API provider, taking into account the declared purpose for accessing the API, whilst also being subject to the prevailing legal framework dictated by local legislation.
 
-    It is important to remark that in cases where personal user data is processed by the API, and users can exercise their rights through mechanisms such as opt-in and/or opt-out, the use of 3-legged access tokens becomes mandatory. This measure ensures that the API remains in strict compliance with user privacy preferences and regulatory obligations, upholding the principles of transparency and user-centric data control.
+    In cases where personal data is processed by the API and users can exercise their rights through mechanisms such as opt-in and/or opt-out, the use of three-legged access tokens is mandatory. This ensures that the API remains in compliance with privacy regulations, upholding the principles of transparency and user-centric privacy-by-design.
 
     # Identifying the device from the access token
 
@@ -101,16 +101,16 @@ info:
     # Further info and support
 
     (FAQs will be added in a later version of the documentation)
-  version: wip
+  version: 0.4.0-rc.1
   license:
     name: Apache 2.0
     url: https://www.apache.org/licenses/LICENSE-2.0.html
-  x-camara-commonalities: 0.5.0
+  x-camara-commonalities: 0.5
 externalDocs:
   description: Project documentation at Camara
   url: https://github.com/camaraproject/DeviceLocation
 servers:
-  - url: '{apiRoot}/location-retrieval/vwip'
+  - url: '{apiRoot}/location-retrieval/v0.4rc1'
     variables:
       apiRoot:
         default: http://localhost:9091
@@ -209,11 +209,13 @@ components:
       description: Correlation id for the different services
       schema:
         type: string
+        pattern: ^[a-zA-Z0-9-]{0,55}$
   headers:
     x-correlator:
       description: Correlation id for the different services
       schema:
         type: string
+        pattern: ^[a-zA-Z0-9-]{0,55}$
   schemas:
     RetrievalLocationRequest:
       description: Request to retrieve the location of a device. Device is not required when using a 3-legged access token, following the rules in the description.
@@ -639,13 +641,13 @@ components:
               value:
                 status: 429
                 code: QUOTA_EXCEEDED
-                message: Either out of resource quota or reaching rate limiting.
+                message: Out of resource quota.
             GENERIC_429_TOO_MANY_REQUESTS:
-              description: API Server request limit is overpassed
+              description: Access to the API has been temporarily blocked due to rate or spike arrest limits being reached
               value:
                 status: 429
                 code: TOO_MANY_REQUESTS
-                message: Either out of resource quota or reaching rate limiting.
+                message: Rate limit reached.
   examples:
     RETRIEVAL_CIRCLE:
       summary: circle-based device location retrieval

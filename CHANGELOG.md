@@ -2,7 +2,8 @@
 
 ## Table of Contents
 
-- **[r1.2](#r12)**
+- **[r2.1](#r21)**
+- [r1.2](#r12)
 - [r1.1](#r11)
 - [v0.2.0](#v020)
 - [v0.1.0](#v010)
@@ -11,9 +12,101 @@
 
 The below sections record the changes for each API version in each release as follows:
 
-* for each first alpha or release-candidate API version, all changes since the release of the previous public API version
-* for subsequent alpha or release-candidate API versions, the delta with respect to the previous pre-release
-* for a public API version, the consolidated changes since the release of the previous public API version
+* for an alpha release, the delta with respect to the previous release
+* for the first release-candidate, all changes since the last public release
+* for subsequent release-candidate(s), only the delta to the previous release-candidate
+* for a public release, the consolidated changes since the previous public release
+
+# r2.1
+
+## Release Notes
+
+This **public release** contains the definition and documentation of
+* location-verification v2.0.0-rc.1
+* location-retrieval v0.4.0-rc.1
+* geofencing-subscriptions v0.4.0-rc.1
+
+The API definition(s) are based on
+* Commonalities r2.2
+* Identity and Consent Management r2.2
+
+**Changelog since r1.2**
+
+
+* Full Changelog with the list of PRs and contributors: https://github.com/camaraproject/DeviceLocation/compare/r1.2...r2.1
+
+## location-verification v2.0.0-rc.1
+
+**Please be aware that this release contains breaking changes compared to the previous version.**
+
+### Breaking Changes
+* Some error status and codes have been updated by @jlurien in #281
+* Section with guidelines about how to identify the device from access token and request body has been updated by @jlurien in #281
+
+### Added
+
+* Add MultiSIM section to info.description by @jlurien in #291
+
+### Changed
+
+* Decrease radius minimum to "1" for circle-area by @maxl2287 in #285
+* Error schemas updated with enums by @jlurien in #281
+* Add pattern for x-correlator by @bigludo7 in #290
+* Update 429 error message by @bigludo7 in #290
+
+### Fixed
+* Update errormessage for unsupported device identifiers by @maxl2287 in #261
+* Add quote-marks for `lastLocationTime` - examples by @maxl2287 in #287
+
+## location-retrieval v0.4.0-rc.1
+**Please be aware that this release contains breaking changes compared to the previous version.**
+
+### Breaking Changes
+
+* Some error status and codes have been updated by @bigludo7 in #283
+* Section with guidelines about how to identify the device from access token and request body has been updated by @bigludo7 in #283
+
+### Added
+
+* Add management of `maxSurface` in request by @bigludo7 in #262
+* Add MultiSIM section to info.description by @jlurien in #291
+
+### Changed
+
+* Error schemas updated with enums by @bigludo7 in #283
+* Test definitions aligned with API specification update by @bigludo7 in #283
+* Add pattern for x-correlator by @bigludo7 in #290
+* Update 429 error message by @bigludo7 in #290
+
+### Fixed
+
+* Update errormessage for unsupported device identifiers by @maxl2287 in #261
+* Add quote-marks for `lastLocationTime` - examples by @maxl2287 in #287 
+
+## geofencing-subscriptions v0.4.0-rc.1
+**Please be aware that this release contains breaking changes compared to the previous version.**
+
+### Breaking Changes
+
+* Some error status and codes have been updated by @maxl2287 in #284
+
+### Added
+
+* Add test-definitions for HTTP-422 error-cases for geofencing-API by @maxl2287 in #289
+* Add MultiSIM section to info.description by @jlurien in #291
+
+### Changed
+
+* Decrease radius minimum to "1" for circle-area by @maxl2287 in #285
+* Error schemas updated with enums by @maxl2287 in #284
+* Add a note that initial events will be counted when `subscriptionMaxEvents` is combined with initialEvent=true by @maxl2287 in #284
+* Add pattern for x-correlator by @bigludo7 in #290
+* Update 429 error message by @bigludo7 in #290
+
+### Fixed
+* remove `allOf` in `sinkCredential` by @maxl2287 in #265
+* Correct the example for subscriptions regarding `initialEvent` and error `MULTIEVENT_SUBSCRIPTION_NOT_SUPPORTED` by @dfischer-tech in #267
+* Add quote-marks for `subscriptionExpireTime` - examples by @maxl2287 in #287
 
 # r1.2
 
