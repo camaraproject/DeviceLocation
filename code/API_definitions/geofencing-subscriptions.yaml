@@ -525,7 +525,6 @@ components:
         area:
           $ref: "#/components/schemas/Area"
       required:
-        - device
         - area
 
     SubscriptionEventType:
