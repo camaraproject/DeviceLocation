@@ -78,6 +78,8 @@ info:
     - When the API is invoked using a two-legged access token, the subject will be identified from the optional `device` object, which therefore MUST be provided.
     - When a three-legged access token is used however, this optional identifier MUST NOT be provided, as the subject will be uniquely identified from the access token.
 
+    This approach simplifies API usage for API consumers using a three-legged access token to invoke the API by relying on the information that is associated with the access token and was identified during the authentication process.
+
     # Multi-SIM scenario handling
 
     In multi-SIM scenarios, where more than one mobile device is associated with the phone number given as input in the API call (e.g. a smartphone with an associated smartwatch), it might not be possible to uniquely identify the device whose location is to be verified. Check with the API provider what is the expected behaviour when a phone number belonging to a multi-SIM group is used as the device identifier, as the API may behave:
