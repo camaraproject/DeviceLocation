@@ -879,10 +879,13 @@ components:
               $ref: "#/components/schemas/SubscriptionEnds"
 
     AreaLeft:
-      description: Event detail structure for area-left event.
+      description: |
+        Event detail structure for org.camaraproject.geofencing-subscriptions.v0.area-left event.
+        Note that the device object is defined as optional and will only to be returned if provided in createSubscription. 
+        If more than one type of device identifier was provided, only one identifier will be returned 
+        (at implementation choice and with the original value provided in createSubscription).
       type: object
       required:
-        - device
         - area
         - subscriptionId
       properties:
@@ -894,10 +897,14 @@ components:
           $ref: "#/components/schemas/SubscriptionId"
 
     AreaEntered:
-      description: Event detail structure for area-entered event.
+      description: |
+        Event detail structure for org.camaraproject.geofencing-subscriptions.v0.area-entered event.
+        Note that the device object is defined as optional and will only to be returned if provided in createSubscription. 
+        If more than one type of device identifier was provided, only one identifier will be returned 
+        (at implementation choice and with the original value provided in createSubscription).
+      
       type: object
       required:
-        - device
         - area
         - subscriptionId
       properties:
@@ -909,10 +916,13 @@ components:
           $ref: "#/components/schemas/SubscriptionId"
 
     SubscriptionEnds:
-      description: Event detail structure for SUBSCRIPTION_ENDS event.
+      description: |
+        Event detail structure for org.camaraproject.geofencing-subscriptions.v0.subscription-ends event.
+        Note that the device object is defined as optional and will only to be returned if provided in createSubscription. 
+        If more than one type of device identifier was provided, only one identifier will be returned 
+        (at implementation choice and with the original value provided in createSubscription).
       type: object
       required:
-        - device
         - area
         - terminationReason
         - subscriptionId
