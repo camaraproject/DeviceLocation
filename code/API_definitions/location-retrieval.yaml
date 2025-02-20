@@ -578,6 +578,7 @@ components:
                       - UNSUPPORTED_IDENTIFIER
                       - UNNECESSARY_IDENTIFIER
                       - LOCATION_RETRIEVAL.UNABLE_TO_FULFILL_MAX_AGE
+                      - LOCATION_RETRIEVAL.UNABLE_TO_FULFILL_MAX_SURFACE
           examples:
             GENERIC_422_IDENTIFIER_MISMATCH:
               description: Inconsistency between identifiers not pointing to the same device
