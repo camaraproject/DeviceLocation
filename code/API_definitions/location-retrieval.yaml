@@ -110,7 +110,7 @@ externalDocs:
   description: Project documentation at Camara
   url: https://github.com/camaraproject/DeviceLocation
 servers:
-  - url: '{apiRoot}/location-retrieval/wip'
+  - url: '{apiRoot}/location-retrieval/vwip'
     variables:
       apiRoot:
         default: http://localhost:9091
