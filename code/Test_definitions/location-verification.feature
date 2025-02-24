@@ -13,7 +13,6 @@ Feature: CAMARA Device location verification API, vwip - Operation verifyLocatio
 
   Background: Common verifyLocation setup
     Given the resource "/location-verification/vwip/verify"
-
     And the header "Content-Type" is set to "application/json"
     And the header "Authorization" is set to a valid access token
     And the header "x-correlator" is set to a UUID value
@@ -283,4 +282,16 @@ Feature: CAMARA Device location verification API, vwip - Operation verifyLocatio
     And the response header "Content-Type" is "application/json"
     And the response property "$.status" is 401
     And the response property "$.code" is "UNAUTHENTICATED"
+    And the response property "$.message" contains a user friendly text
+
+  # Generic 403 error
+
+  @location_verification_403_no_authorization_header
+  Scenario: No Authorization header
+    Given the header "Authorization" is set to an access token without the required scope
+    And the request body is set to a valid request body
+    When the HTTP "POST" request is sent
+    Then the response status code is 403
+    And the response property "$.status" is 403
+    And the response property "$.code" is "PERMISSION_DENIED"
     And the response property "$.message" contains a user friendly text
