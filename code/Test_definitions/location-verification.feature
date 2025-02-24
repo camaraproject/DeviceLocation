@@ -23,7 +23,7 @@ Feature: CAMARA Device location verification API, vwip - Operation verifyLocatio
   Scenario: Common validations for any success scenario
     # Valid testing device and default request body compliant with the schema
     Given a valid testing device supported by the service, identified by the token or provided in the request body
-    And the request body is set to a valid request body
+    And the request body property "$.area" is set to a valid area covered by the service
     When the HTTP "POST" request is sent
     Then the response status code is 200
     And the response header "Content-Type" is "application/json"
@@ -39,7 +39,7 @@ Feature: CAMARA Device location verification API, vwip - Operation verifyLocatio
   @location_verification_02_known_location_for_device_no_maxAge
   Scenario: Known location of a device without specifying maxAge
     Given a valid testing device supported by the service, identified by the token or provided in the request body
-    And the request body property "$.area" is set to the known location of the device
+    And the request body property "$.area" is set to a valid area covered by the service where the device is located
     And the request body property "$.maxAge" is not included
     When the HTTP "POST" request is sent
     Then the response status code is 200
@@ -53,7 +53,7 @@ Feature: CAMARA Device location verification API, vwip - Operation verifyLocatio
   @location_verification_03_known_location_for_device_with_maxAge
   Scenario: Known location of a device specifying maxAge
     Given a valid testing device supported by the service identified, by the token or provided in the request body
-    And the request body property "$.area" is set to the known location of the device
+    And the request body property "$.area" is set to a valid area covered by the service where the device is located
     And the request body property "$.maxAge" is included
     When the HTTP "POST" request is sent
     Then the response status code is 200
@@ -67,7 +67,7 @@ Feature: CAMARA Device location verification API, vwip - Operation verifyLocatio
   @location_verification_04_false_location_for_device
   Scenario: False location of a device
     Given a valid testing device supported by the service identified, by the token or provided in the request body
-    And the request body property "$.area" is set to a wrong location of the device
+    And the request body property "$.area" is set to a valid area covered by the service where the device is not located
     When the HTTP "POST" request is sent
     Then the response status code is 200
     And the response header "Content-Type" is "application/json"
@@ -78,16 +78,17 @@ Feature: CAMARA Device location verification API, vwip - Operation verifyLocatio
     And the response property "$.matchRate" does not exist
 
   @location_verification_05_unknown_location_for_device
-  Scenario: Unknown location of a device specifying maxAge
-    Given a valid testing device supported by the service, identified by the token or provided in the request body, which is not connected to the network for some time
-    And the request body property "$.maxAge" is set to a value shorter than that time
+  Scenario: Unknown location of a device without specifying maxAge
+    Given a valid testing device supported by the service, identified by the token or provided in the request body, for which there is no historical location information
+    And the request body property "$.maxAge" is not included
+    And the request body property "$.area" is set to a valid area covered by the service
     When the HTTP "POST" request is sent
     Then the response status code is 200
     And the response header "Content-Type" is "application/json"
     And the response header "x-correlator" has same value as the request header "x-correlator"
     And the response body complies with the OAS schema at "/components/schemas/VerifyLocationResponse"
     And the response property "$.verificationResult" is "UNKNOWN"
-    And the response property "$.lastLocationTime" if exists has a value older the value of "$.maxAge" in the request
+    And the response property "$.lastLocationTime" does not exist
     And the response property "$.matchRate" does not exist
 
   # Error scenarios for management of input parameter device
@@ -192,7 +193,6 @@ Feature: CAMARA Device location verification API, vwip - Operation verifyLocatio
     And the response property "$.code" is "IDENTIFIER_MISMATCH"
     And the response property "$.message" contains a user friendly text
 
-
   # Generic 400 errors
 
   @location_verification_400.1_no_request_body
@@ -286,8 +286,8 @@ Feature: CAMARA Device location verification API, vwip - Operation verifyLocatio
 
   # Generic 403 error
 
-  @location_verification_403_no_authorization_header
-  Scenario: No Authorization header
+  @location_verification_403_missing_scope
+  Scenario: Missing scope in the access token
     Given the header "Authorization" is set to an access token without the required scope
     And the request body is set to a valid request body
     When the HTTP "POST" request is sent
@@ -295,3 +295,43 @@ Feature: CAMARA Device location verification API, vwip - Operation verifyLocatio
     And the response property "$.status" is 403
     And the response property "$.code" is "PERMISSION_DENIED"
     And the response property "$.message" contains a user friendly text
+
+  # 422 error codes
+
+  @location_verification_422.1_area_not_covered
+  Scenario: Area not covered
+    Given a valid testing device supported by the service identified, by the token or provided in the request body
+    And the request body property "$.area" is set to an area not covered by the implementation
+    And the request body property "$.maxAge" is not included
+    When the HTTP "POST" request is sent
+    Then the response status code is 422
+    And the response property "$.status" is 422
+    And the response property "$.code" is "LOCATION_VERIFICATION.AREA_NOT_COVERED"
+    And the response property "$.message" contains a user-friendly text
+
+
+  @location_verification_422.2_area_too_small
+  Scenario: Area too small
+    Given that there is a minimum radius allowed by the implementation 
+    And a valid testing device supported by the service identified, by the token or provided in the request body
+    And the request body property "$.area.areaType" is set to "CIRCLE" 
+    And the request body property "$.area.center" is set to a location covered by the implementation
+    And the request body property "$.area.radius" is set to a value smaller than the minimum allowed
+    And the request body property "$.maxAge" is not included
+    When the HTTP "POST" request is sent
+    Then the response status code is 422
+    And the response property "$.status" is 422
+    And the response property "$.code" is "LOCATION_VERIFICATION.INVALID_AREA"
+    And the response property "$.message" contains a user-friendly text
+
+
+  @location_verification_422.3_unable_to_fulfill_max_age
+  Scenario: Unable to fulfill max age
+    Given a valid testing device supported by the service, identified by the token or provided in the request body, which is not connected to the network for some time
+    And the request body property "$.maxAge" is set to a value shorter than that time
+    And the request body property "$.area" is set to a valid area covered by the service
+    When the HTTP "POST" request is sent
+    Then the response status code is 422
+    And the response property "$.status" is 422
+    And the response property "$.code" is "LOCATION_VERIFICATION.UNABLE_TO_FULFILL_MAX_AGE"
+    And the response property "$.message" contains a user-friendly text
