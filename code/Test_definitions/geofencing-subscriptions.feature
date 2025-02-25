@@ -362,3 +362,13 @@ Feature: Camara Geofencing Subscriptions API, vwip - Operations on subscriptions
     And the response property "$.status" is 422
     And the response property "$.code" is "GEOFENCING_SUBSCRIPTIONS.INVALID_AREA"
     And the response property "$.message" contains "The requested area is too small"
+
+  @geofencing_subscriptions_33_missing_device
+  Scenario: Device not included and cannot be deduced from the access token
+    Given the header "Authorization" is set to a valid access token which does not identify a single device
+    And the request body property "$.device" is not included
+    When the HTTP "POST" request is sent
+    Then the response status code is 422
+    And the response property "$.status" is 422
+    And the response property "$.code" is "MISSING_IDENTIFIER"
+    And the response property "$.message" contains a user-friendly text
