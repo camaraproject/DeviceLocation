@@ -101,7 +101,7 @@ info:
     # Further info and support
 
     (FAQs will be added in a later version of the documentation)
-  version: 0.4.0-rc.1
+  version: wip
   license:
     name: Apache 2.0
     url: https://www.apache.org/licenses/LICENSE-2.0.html
@@ -110,7 +110,7 @@ externalDocs:
   description: Project documentation at Camara
   url: https://github.com/camaraproject/DeviceLocation
 servers:
-  - url: '{apiRoot}/location-retrieval/v0.4rc1'
+  - url: '{apiRoot}/location-retrieval/vwip'
     variables:
       apiRoot:
         default: http://localhost:9091
@@ -578,6 +578,7 @@ components:
                       - UNSUPPORTED_IDENTIFIER
                       - UNNECESSARY_IDENTIFIER
                       - LOCATION_RETRIEVAL.UNABLE_TO_FULFILL_MAX_AGE
+                      - LOCATION_RETRIEVAL.UNABLE_TO_FULFILL_MAX_SURFACE
           examples:
             GENERIC_422_IDENTIFIER_MISMATCH:
               description: Inconsistency between identifiers not pointing to the same device
@@ -616,6 +617,13 @@ components:
                 status: 422
                 code: LOCATION_RETRIEVAL.UNABLE_TO_FULFILL_MAX_AGE
                 message: "Unable to provide expected freshness for location"
+            LOCATION_RETRIEVAL_422_UNABLE_TO_FULFILL_MAX_SURFACE:
+              summary: Unable to fulfill maxSurface
+              description: The system is not able to provide accurate acceptable surface required by the client
+              value:
+                status: 422
+                code: LOCATION_RETRIEVAL.UNABLE_TO_FULFILL_MAX_SURFACE
+                message: "Unable to provide accurate acceptable surface for location"
     Generic429:
       description: Too Many Requests
       headers:
