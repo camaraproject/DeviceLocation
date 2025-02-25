@@ -24,7 +24,7 @@ Feature: CAMARA Device location verification API, vwip - Operation verifyLocatio
     # Valid testing device and default request body compliant with the schema
     Given a valid testing device supported by the service, identified by the token or provided in the request body
     And the request body property "$.area" is set to a valid area covered by the service
-    When the HTTP "POST" request is sent
+    When the request "verifyLocation" is sent
     Then the response status code is 200
     And the response header "Content-Type" is "application/json"
     And the response header "x-correlator" has same value as the request header "x-correlator"
@@ -41,7 +41,7 @@ Feature: CAMARA Device location verification API, vwip - Operation verifyLocatio
     Given a valid testing device supported by the service, identified by the token or provided in the request body
     And the request body property "$.area" is set to a valid area covered by the service where the device is located
     And the request body property "$.maxAge" is not included
-    When the HTTP "POST" request is sent
+    When the request "verifyLocation" is sent
     Then the response status code is 200
     And the response header "Content-Type" is "application/json"
     And the response header "x-correlator" has same value as the request header "x-correlator"
@@ -55,7 +55,7 @@ Feature: CAMARA Device location verification API, vwip - Operation verifyLocatio
     Given a valid testing device supported by the service identified, by the token or provided in the request body
     And the request body property "$.area" is set to a valid area covered by the service where the device is located
     And the request body property "$.maxAge" is included
-    When the HTTP "POST" request is sent
+    When the request "verifyLocation" is sent
     Then the response status code is 200
     And the response header "Content-Type" is "application/json"
     And the response header "x-correlator" has same value as the request header "x-correlator"
@@ -68,7 +68,7 @@ Feature: CAMARA Device location verification API, vwip - Operation verifyLocatio
   Scenario: False location of a device
     Given a valid testing device supported by the service identified, by the token or provided in the request body
     And the request body property "$.area" is set to a valid area covered by the service where the device is not located
-    When the HTTP "POST" request is sent
+    When the request "verifyLocation" is sent
     Then the response status code is 200
     And the response header "Content-Type" is "application/json"
     And the response header "x-correlator" has same value as the request header "x-correlator"
@@ -82,7 +82,7 @@ Feature: CAMARA Device location verification API, vwip - Operation verifyLocatio
     Given a valid testing device supported by the service, identified by the token or provided in the request body, for which there is no historical location information
     And the request body property "$.maxAge" is not included
     And the request body property "$.area" is set to a valid area covered by the service
-    When the HTTP "POST" request is sent
+    When the request "verifyLocation" is sent
     Then the response status code is 200
     And the response header "Content-Type" is "application/json"
     And the response header "x-correlator" has same value as the request header "x-correlator"
@@ -97,7 +97,7 @@ Feature: CAMARA Device location verification API, vwip - Operation verifyLocatio
   Scenario: The device value is an empty object
     Given the header "Authorization" is set to a valid access token which does not identify a single device
     And the request body property "$.device" is set to: {}
-    When the HTTP "POST" request is sent
+    When the request "verifyLocation" is sent
     Then the response status code is 400
     And the response property "$.status" is 400
     And the response property "$.code" is "INVALID_ARGUMENT"
@@ -108,7 +108,7 @@ Feature: CAMARA Device location verification API, vwip - Operation verifyLocatio
   Scenario Outline: Some device identifier value does not comply with the schema
     Given the header "Authorization" is set to a valid access token which does not identify a single device
     And the request body property "<device_identifier>" does not comply with the OAS schema at "<oas_spec_schema>"
-    When the HTTP "POST" request is sent
+    When the request "verifyLocation" is sent
     Then the response status code is 400
     And the response property "$.status" is 400
     And the response property "$.code" is "INVALID_ARGUMENT"
@@ -127,7 +127,7 @@ Feature: CAMARA Device location verification API, vwip - Operation verifyLocatio
   Scenario: Some identifier cannot be matched to a device
     Given the header "Authorization" is set to a valid access token which does not identify a single device
     And the request body property "$.device" is compliant with the schema but does not identify a valid device
-    When the HTTP "POST" request is sent
+    When the request "verifyLocation" is sent
     Then the response status code is 404
     And the response property "$.status" is 404
     And the response property "$.code" is "IDENTIFIER_NOT_FOUND"
@@ -138,7 +138,7 @@ Feature: CAMARA Device location verification API, vwip - Operation verifyLocatio
   Scenario: Device not to be included when it can be deduced from the access token
     Given the header "Authorization" is set to a valid access token identifying a device
     And the request body property "$.device" is set to a valid device
-    When the HTTP "POST" request is sent
+    When the request "verifyLocation" is sent
     Then the response status code is 422
     And the response property "$.status" is 422
     And the response property "$.code" is "UNNECESSARY_IDENTIFIER"
@@ -149,7 +149,7 @@ Feature: CAMARA Device location verification API, vwip - Operation verifyLocatio
   Scenario: Device not included and cannot be deduced from the access token
     Given the header "Authorization" is set to a valid access token which does not identify a single device
     And the request body property "$.device" is not included
-    When the HTTP "POST" request is sent
+    When the request "verifyLocation" is sent
     Then the response status code is 422
     And the response property "$.status" is 422
     And the response property "$.code" is "MISSING_IDENTIFIER"
@@ -161,7 +161,7 @@ Feature: CAMARA Device location verification API, vwip - Operation verifyLocatio
     Given that some types of device identifiers are not supported by the implementation
     And the header "Authorization" is set to a valid access token which does not identify a single device
     And the request body property "$.device" only includes device identifiers not supported by the implementation
-    When the HTTP "POST" request is sent
+    When the request "verifyLocation" is sent
     Then the response status code is 422
     And the response property "$.status" is 422
     And the response property "$.code" is "UNSUPPORTED_IDENTIFIER"
@@ -173,7 +173,7 @@ Feature: CAMARA Device location verification API, vwip - Operation verifyLocatio
   Scenario: Service not available for the device
     Given that the service is not available for all devices commercialized by the operator
     And a valid device, identified by the token or provided in the request body, for which the service is not applicable
-    When the HTTP "POST" request is sent
+    When the request "verifyLocation" is sent
     Then the response status code is 422
     And the response property "$.status" is 422
     And the response property "$.code" is "SERVICE_NOT_APPLICABLE"
@@ -187,7 +187,7 @@ Feature: CAMARA Device location verification API, vwip - Operation verifyLocatio
     Given the header "Authorization" is set to a valid access token which does not identify a single device
     And at least 2 types of device identifiers are supported by the implementation
     And the request body property "$.device" includes several identifiers, each of them identifying a valid but different device
-    When the HTTP "POST" request is sent
+    When the request "verifyLocation" is sent
     Then the response status code is 422
     And the response property "$.status" is 422
     And the response property "$.code" is "IDENTIFIER_MISMATCH"
@@ -198,7 +198,7 @@ Feature: CAMARA Device location verification API, vwip - Operation verifyLocatio
   @location_verification_400.1_no_request_body
   Scenario: Missing request body
     Given the request body is not included
-    When the HTTP "POST" request is sent
+    When the request "verifyLocation" is sent
     Then the response status code is 400
     And the response property "$.status" is 400
     And the response property "$.code" is "INVALID_ARGUMENT"
@@ -207,7 +207,7 @@ Feature: CAMARA Device location verification API, vwip - Operation verifyLocatio
   @location_verification_400.2_empty_request_body
   Scenario: Empty object as request body
     Given the request body is set to "{}"
-    When the HTTP "POST" request is sent
+    When the request "verifyLocation" is sent
     Then the response status code is 400
     And the response property "$.status" is 400
     And the response property "$.code" is "INVALID_ARGUMENT"
@@ -219,7 +219,7 @@ Feature: CAMARA Device location verification API, vwip - Operation verifyLocatio
   # Test other input properties in addition to device
   Scenario Outline: Input property values doe not comply with the schema
     Given the request body property "<input_property>" does not comply with the OAS schema at <oas_spec_schema>
-    When the HTTP "POST" request is sent
+    When the request "verifyLocation" is sent
     Then the response status code is 400
     And the response property "$.status" is 400
     And the response property "$.code" is "INVALID_ARGUMENT"
@@ -236,7 +236,7 @@ Feature: CAMARA Device location verification API, vwip - Operation verifyLocatio
   @location_verification_400.4_required_input_properties_missing
   Scenario Outline: Required input properties are missing
     Given the request body property "<input_property>" is not included
-    When the HTTP "POST" request is sent
+    When the request "verifyLocation" is sent
     Then the response status code is 400
     And the response property "$.status" is 400
     And the response property "$.code" is "INVALID_ARGUMENT"
@@ -257,7 +257,7 @@ Feature: CAMARA Device location verification API, vwip - Operation verifyLocatio
   Scenario: No Authorization header
     Given the header "Authorization" is removed
     And the request body is set to a valid request body
-    When the HTTP "POST" request is sent
+    When the request "verifyLocation" is sent
     Then the response status code is 401
     And the response property "$.status" is 401
     And the response property "$.code" is "UNAUTHENTICATED"
@@ -267,7 +267,7 @@ Feature: CAMARA Device location verification API, vwip - Operation verifyLocatio
   Scenario: Expired access token
     Given the header "Authorization" is set to an expired access token
     And the request body is set to a valid request body
-    When the HTTP "POST" request is sent
+    When the request "verifyLocation" is sent
     Then the response status code is 401
     And the response property "$.status" is 401
     And the response property "$.code" is "UNAUTHENTICATED"
@@ -277,7 +277,7 @@ Feature: CAMARA Device location verification API, vwip - Operation verifyLocatio
   Scenario: Invalid access token
     Given the header "Authorization" is set to an invalid access token
     And the request body is set to a valid request body
-    When the HTTP "POST" request is sent
+    When the request "verifyLocation" is sent
     Then the response status code is 401
     And the response header "Content-Type" is "application/json"
     And the response property "$.status" is 401
@@ -290,7 +290,7 @@ Feature: CAMARA Device location verification API, vwip - Operation verifyLocatio
   Scenario: Missing scope in the access token
     Given the header "Authorization" is set to an access token without the required scope
     And the request body is set to a valid request body
-    When the HTTP "POST" request is sent
+    When the request "verifyLocation" is sent
     Then the response status code is 403
     And the response property "$.status" is 403
     And the response property "$.code" is "PERMISSION_DENIED"
@@ -303,7 +303,7 @@ Feature: CAMARA Device location verification API, vwip - Operation verifyLocatio
     Given a valid testing device supported by the service identified, by the token or provided in the request body
     And the request body property "$.area" is set to an area not covered by the implementation
     And the request body property "$.maxAge" is not included
-    When the HTTP "POST" request is sent
+    When the request "verifyLocation" is sent
     Then the response status code is 422
     And the response property "$.status" is 422
     And the response property "$.code" is "LOCATION_VERIFICATION.AREA_NOT_COVERED"
@@ -318,7 +318,7 @@ Feature: CAMARA Device location verification API, vwip - Operation verifyLocatio
     And the request body property "$.area.center" is set to a location covered by the implementation
     And the request body property "$.area.radius" is set to a value smaller than the minimum allowed
     And the request body property "$.maxAge" is not included
-    When the HTTP "POST" request is sent
+    When the request "verifyLocation" is sent
     Then the response status code is 422
     And the response property "$.status" is 422
     And the response property "$.code" is "LOCATION_VERIFICATION.INVALID_AREA"
@@ -330,7 +330,7 @@ Feature: CAMARA Device location verification API, vwip - Operation verifyLocatio
     Given a valid testing device supported by the service, identified by the token or provided in the request body, which is not connected to the network for some time
     And the request body property "$.maxAge" is set to a value shorter than that time
     And the request body property "$.area" is set to a valid area covered by the service
-    When the HTTP "POST" request is sent
+    When the request "verifyLocation" is sent
     Then the response status code is 422
     And the response property "$.status" is 422
     And the response property "$.code" is "LOCATION_VERIFICATION.UNABLE_TO_FULFILL_MAX_AGE"

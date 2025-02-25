@@ -202,7 +202,7 @@ paths:
         "403":
           $ref: "#/components/responses/Generic403"
         "404":
-          $ref: "#/components/responses/Generic404"
+          $ref: "#/components/responses/VerifyLocationNotFound404"
         "422":
           $ref: "#/components/responses/VerifyLocationUnprocessableEntity422"
       security:
@@ -547,7 +547,7 @@ components:
                 code: PERMISSION_DENIED
                 message: Client does not have sufficient permissions to perform this action.
 
-    Generic404:
+    VerifyLocationNotFound404:
       description: Not found
       headers:
         x-correlator:
@@ -564,15 +564,8 @@ components:
                       - 404
                   code:
                     enum:
-                      - NOT_FOUND
                       - IDENTIFIER_NOT_FOUND
           examples:
-            GENERIC_404_NOT_FOUND:
-              description: Resource is not found
-              value:
-                status: 404
-                code: NOT_FOUND
-                message: The specified resource is not found.
             GENERIC_404_IDENTIFIER_NOT_FOUND:
               description: Some identifier cannot be matched to a device
               value:
