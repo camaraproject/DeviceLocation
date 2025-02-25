@@ -188,6 +188,17 @@ Feature: CAMARA Device location retrieval API, vwip - Operation retrieveLocation
     And the response property "$.code" is "SERVICE_NOT_APPLICABLE"
     And the response property "$.message" contains a user friendly text
 
+
+  @location_retrieval_17_device_identifier_missing
+  Scenario: Required device identifier is  missing
+    Given the request body property "$.device" is not included
+    And the header "Authorization" is set to a valid access token which does not identify a single device
+    When the HTTP "POST" request is sent
+    Then the response status code is 422
+    And the response property "$.status" is 422
+    And the response property "$.code" is "MISSING_IDENTIFIER"
+    And the response property "$.message" contains a user friendly text
+
   # Generic 400 errors
 
   @location_retrieval_400.1_no_request_body
@@ -205,16 +216,6 @@ Feature: CAMARA Device location retrieval API, vwip - Operation retrieveLocation
   Scenario: Input property values doe not comply with the schema
     Given a valid testing device supported by the service, identified by the token or provided in the request body
     And the "maxAge" is set to 6a0
-    When the HTTP "POST" request is sent
-    Then the response status code is 400
-    And the response property "$.status" is 400
-    And the response property "$.code" is "INVALID_ARGUMENT"
-    And the response property "$.message" contains a user friendly text
-
-  @location_retrieval_400.4_required_device_identifier_missing
-  Scenario: Required device identifier is  missing
-    Given the request body property "$.device" is not included
-    And the header "Authorization" is set to a valid access token which does not identify a single device
     When the HTTP "POST" request is sent
     Then the response status code is 400
     And the response property "$.status" is 400
@@ -252,4 +253,14 @@ Feature: CAMARA Device location retrieval API, vwip - Operation retrieveLocation
     And the response header "Content-Type" is "application/json"
     And the response property "$.status" is 401
     And the response property "$.code" is "UNAUTHENTICATED"
+    And the response property "$.message" contains a user friendly text
+
+  @location_retrieval_403_missing_scope
+  Scenario: Missing scope in the access token
+    Given the header "Authorization" is set to an access token without the required scope
+    And the request body is set to a valid request body
+    When the HTTP "POST" request is sent
+    Then the response status code is 403
+    And the response property "$.status" is 403
+    And the response property "$.code" is "PERMISSION_DENIED"
     And the response property "$.message" contains a user friendly text
