@@ -72,6 +72,14 @@ info:
 
     In cases where personal data is processed by the API and users can exercise their rights through mechanisms such as opt-in and/or opt-out, the use of three-legged access tokens is mandatory. This ensures that the API remains in compliance with privacy regulations, upholding the principles of transparency and user-centric privacy-by-design.
 
+    # Identifying the device from the access token
+
+    This API requires the API consumer to identify a device as the subject of the API as follows:
+    - When the API is invoked using a two-legged access token, the subject will be identified from the optional `device` object, which therefore MUST be provided.
+    - When a three-legged access token is used however, this optional identifier MUST NOT be provided, as the subject will be uniquely identified from the access token.
+
+    This approach simplifies API usage for API consumers using a three-legged access token to invoke the API by relying on the information that is associated with the access token and was identified during the authentication process.
+
     # Multi-SIM scenario handling
 
     In multi-SIM scenarios, where more than one mobile device is associated with the phone number given as input in the API call (e.g. a smartphone with an associated smartwatch), it might not be possible to uniquely identify the device whose location is to be verified. Check with the API provider what is the expected behaviour when a phone number belonging to a multi-SIM group is used as the device identifier, as the API may behave:
@@ -525,7 +533,6 @@ components:
         area:
           $ref: "#/components/schemas/Area"
       required:
-        - device
         - area
 
     SubscriptionEventType:
@@ -872,10 +879,13 @@ components:
               $ref: "#/components/schemas/SubscriptionEnds"
 
     AreaLeft:
-      description: Event detail structure for area-left event.
+      description: |
+        Event detail structure for org.camaraproject.geofencing-subscriptions.v0.area-left event.
+        Note that the device object is defined as optional and will only to be returned if provided in createSubscription.
+        If more than one type of device identifier was provided, only one identifier will be returned
+        (at implementation choice and with the original value provided in createSubscription).
       type: object
       required:
-        - device
         - area
         - subscriptionId
       properties:
@@ -887,10 +897,13 @@ components:
           $ref: "#/components/schemas/SubscriptionId"
 
     AreaEntered:
-      description: Event detail structure for area-entered event.
+      description: |
+        Event detail structure for org.camaraproject.geofencing-subscriptions.v0.area-entered event.
+        Note that the device object is defined as optional and will only to be returned if provided in createSubscription.
+        If more than one type of device identifier was provided, only one identifier will be returned
+        (at implementation choice and with the original value provided in createSubscription).
       type: object
       required:
-        - device
         - area
         - subscriptionId
       properties:
@@ -902,10 +915,13 @@ components:
           $ref: "#/components/schemas/SubscriptionId"
 
     SubscriptionEnds:
-      description: Event detail structure for SUBSCRIPTION_ENDS event.
+      description: |
+        Event detail structure for org.camaraproject.geofencing-subscriptions.v0.subscription-ends event.
+        Note that the device object is defined as optional and will only to be returned if provided in createSubscription.
+        If more than one type of device identifier was provided, only one identifier will be returned
+        (at implementation choice and with the original value provided in createSubscription).
       type: object
       required:
-        - device
         - area
         - terminationReason
         - subscriptionId
