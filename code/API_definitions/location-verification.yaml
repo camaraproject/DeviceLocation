@@ -17,10 +17,9 @@ info:
     * If the network's estimation of the device's location does not overlap with the requested area at all, the verification result is `FALSE`.
     * If the network's estimation of the device's location partially overlaps with the requested area, or it fully contains the requested area (because it is larger), the result is `PARTIAL`. In this case, a `match_rate` is included in the response, indicating an estimation of the likelihood of the match in percent.
     * Lastly, the network may not be able to locate the device. In this case, the verification result is `UNKNOWN`.
+    * The client may optionally include a `maxAge` indication. If the location information known to the server is older than the specified `maxAge` or not known at all, an error with code `422 LOCATION_VERIFICATION.UNABLE_TO_FULFILL_MAX_AGE` is sent back, independently of the verification result.
 
-    The client may optionally include a `maxAge` indication. If the location information known to the server is older than the specified `maxAge`, an error with code `422 LOCATION_VERIFICATION.UNABLE_TO_FULFILL_MAX_AGE` is sent back.
-
-    `lastLocationTime` will be always included in the success response unless there is no historical location information available for the device. In this case, `UNKNOWN` will be returned without `lastLocationTime`.
+    * `lastLocationTime` will be always included in a success response unless there is no historical location information available for the device. In this case, `UNKNOWN` will be returned without `lastLocationTime`.
 
     Location Verification could be useful in scenarios such as:
 
@@ -202,11 +201,9 @@ paths:
         "403":
           $ref: "#/components/responses/Generic403"
         "404":
-          $ref: "#/components/responses/Generic404"
+          $ref: "#/components/responses/VerifyLocationNotFound404"
         "422":
           $ref: "#/components/responses/VerifyLocationUnprocessableEntity422"
-        "429":
-          $ref: "#/components/responses/Generic429"
       security:
         - openId:
             - location-verification:verify
@@ -549,7 +546,7 @@ components:
                 code: PERMISSION_DENIED
                 message: Client does not have sufficient permissions to perform this action.
 
-    Generic404:
+    VerifyLocationNotFound404:
       description: Not found
       headers:
         x-correlator:
@@ -566,15 +563,8 @@ components:
                       - 404
                   code:
                     enum:
-                      - NOT_FOUND
                       - IDENTIFIER_NOT_FOUND
           examples:
-            GENERIC_404_NOT_FOUND:
-              description: Resource is not found
-              value:
-                status: 404
-                code: NOT_FOUND
-                message: The specified resource is not found.
             GENERIC_404_IDENTIFIER_NOT_FOUND:
               description: Some identifier cannot be matched to a device
               value:
@@ -659,36 +649,3 @@ components:
                 status: 422
                 code: LOCATION_VERIFICATION.UNABLE_TO_FULFILL_MAX_AGE
                 message: "Unable to provide expected freshness for location"
-
-    Generic429:
-      description: Too Many Requests
-      headers:
-        x-correlator:
-          $ref: "#/components/headers/x-correlator"
-      content:
-        application/json:
-          schema:
-            allOf:
-              - $ref: "#/components/schemas/ErrorInfo"
-              - type: object
-                properties:
-                  status:
-                    enum:
-                      - 429
-                  code:
-                    enum:
-                      - QUOTA_EXCEEDED
-                      - TOO_MANY_REQUESTS
-          examples:
-            GENERIC_429_QUOTA_EXCEEDED:
-              description: Request is rejected due to exceeding a business quota limit
-              value:
-                status: 429
-                code: QUOTA_EXCEEDED
-                message: Out of resource quota.
-            GENERIC_429_TOO_MANY_REQUESTS:
-              description: Access to the API has been temporarily blocked due to rate or spike arrest limits being reached
-              value:
-                status: 429
-                code: TOO_MANY_REQUESTS
-                message: Rate limit reached.

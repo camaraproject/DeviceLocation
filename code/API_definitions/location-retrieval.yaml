@@ -190,8 +190,6 @@ paths:
           $ref: '#/components/responses/RetrieveLocationNotFound404'
         '422':
           $ref: '#/components/responses/RetrieveLocationUnprocessableEntity422'
-        '429':
-          $ref: '#/components/responses/Generic429'
       security:
         - openId:
             - location-retrieval:read
@@ -452,27 +450,14 @@ components:
                   code:
                     enum:
                       - INVALID_ARGUMENT
-                      - OUT_OF_RANGE
-                      - LOCATION_RETRIEVAL.MAXAGE_INVALID_ARGUMENT
           examples:
             GENERIC_400_INVALID_ARGUMENT:
+              summary: Invalid argument
               description: Invalid Argument. Generic Syntax Exception
               value:
                 status: 400
                 code: INVALID_ARGUMENT
                 message: Client specified an invalid argument, request body or query param.
-            GENERIC_400_OUT_OF_RANGE:
-              description: Out of Range. Specific Syntax Exception used when a given field has a pre-defined range or a invalid filter criteria combination is requested
-              value:
-                status: 400
-                code: OUT_OF_RANGE
-                message: Client specified an invalid range.
-            GENERIC_400_MAX_AGE_NOT_SATISFIABLE:
-              description: maxAge required in the request cannot be satisfied. Specific error for this API
-              value:
-                status: 400
-                code: LOCATION_RETRIEVAL.MAXAGE_INVALID_ARGUMENT
-                message: "maxAge threshold cannot be satisfied"
     Generic401:
       description: Unauthorized
       headers:
@@ -493,6 +478,7 @@ components:
                       - UNAUTHENTICATED
           examples:
             GENERIC_401_UNAUTHENTICATED:
+              summary: Unauthenticated
               description: Request cannot be authenticated
               value:
                 status: 401
@@ -518,6 +504,7 @@ components:
                       - PERMISSION_DENIED
           examples:
             GENERIC_403_PERMISSION_DENIED:
+              summary: Permission denied
               description: Permission denied. OAuth2 token access does not have the required scope or when the user fails operational security
               value:
                 status: 403
@@ -544,12 +531,14 @@ components:
                       - IDENTIFIER_NOT_FOUND
           examples:
             LOCATION_RETRIEVAL_404_DEVICE_NOT_FOUND:
+              summary: Device not found
               description: The location server is not able to locate the device
               value:
                 status: 404
                 code: LOCATION_RETRIEVAL.DEVICE_NOT_FOUND
                 message: 'The location server is not able to locate the mobile'
             GENERIC_404_IDENTIFIER_NOT_FOUND:
+              summary: Identifier not found
               description: Some identifier cannot be matched to a device
               value:
                 status: 404
@@ -581,30 +570,35 @@ components:
                       - LOCATION_RETRIEVAL.UNABLE_TO_FULFILL_MAX_SURFACE
           examples:
             GENERIC_422_IDENTIFIER_MISMATCH:
+              summary: Identifier mismatch
               description: Inconsistency between identifiers not pointing to the same device
               value:
                 status: 422
                 code: IDENTIFIER_MISMATCH
                 message: Provided identifiers are not consistent.
             GENERIC_422_SERVICE_NOT_APPLICABLE:
+              summary: Service not applicable
               description: Service not applicable for the provided identifier
               value:
                 status: 422
                 code: SERVICE_NOT_APPLICABLE
                 message: The service is not available for the provided identifier.
             GENERIC_422_MISSING_IDENTIFIER:
+              summary: Missing identifier
               description: An identifier is not included in the request and the device or phone number identification cannot be derived from the 3-legged access token
               value:
                 status: 422
                 code: MISSING_IDENTIFIER
                 message: The device cannot be identified.
             GENERIC_422_UNSUPPORTED_IDENTIFIER:
+              summary: Unsupported identifier
               description: None of the provided identifiers is supported by the implementation
               value:
                 status: 422
                 code: UNSUPPORTED_IDENTIFIER
                 message: The identifier provided is not supported.
             GENERIC_422_UNNECESSARY_IDENTIFIER:
+              summary: Unnecessary identifier
               description: An explicit identifier is provided when a device or phone number has already been identified from the access token
               value:
                 status: 422
@@ -624,38 +618,6 @@ components:
                 status: 422
                 code: LOCATION_RETRIEVAL.UNABLE_TO_FULFILL_MAX_SURFACE
                 message: "Unable to provide accurate acceptable surface for location"
-    Generic429:
-      description: Too Many Requests
-      headers:
-        x-correlator:
-          $ref: "#/components/headers/x-correlator"
-      content:
-        application/json:
-          schema:
-            allOf:
-              - $ref: "#/components/schemas/ErrorInfo"
-              - type: object
-                properties:
-                  status:
-                    enum:
-                      - 429
-                  code:
-                    enum:
-                      - QUOTA_EXCEEDED
-                      - TOO_MANY_REQUESTS
-          examples:
-            GENERIC_429_QUOTA_EXCEEDED:
-              description: Request is rejected due to exceeding a business quota limit
-              value:
-                status: 429
-                code: QUOTA_EXCEEDED
-                message: Out of resource quota.
-            GENERIC_429_TOO_MANY_REQUESTS:
-              description: Access to the API has been temporarily blocked due to rate or spike arrest limits being reached
-              value:
-                status: 429
-                code: TOO_MANY_REQUESTS
-                message: Rate limit reached.
   examples:
     RETRIEVAL_CIRCLE:
       summary: circle-based device location retrieval
