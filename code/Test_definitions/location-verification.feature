@@ -327,7 +327,7 @@ Feature: CAMARA Device location verification API, vwip - Operation verifyLocatio
 
   @location_verification_422.3_unable_to_fulfill_max_age
   Scenario: Unable to fulfill max age
-    Given a valid testing device supported by the service, identified by the token or provided in the request body, which is not connected to the network for some time
+    Given a valid testing device supported by the service, identified by the token or provided in the request body, with no historical location information for some time
     And the request body property "$.maxAge" is set to a value shorter than that time
     And the request body property "$.area" is set to a valid area covered by the service
     When the request "verifyLocation" is sent
