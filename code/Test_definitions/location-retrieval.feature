@@ -1,4 +1,4 @@
-Feature: CAMARA Device location retrieval API, vwip - Operation retrieveLocation
+Feature: CAMARA Device location retrieval API, v0.3.0 - Operation retrieveLocation
   # Input to be provided by the implementation to the tester
   #
   # Implementation indications:
