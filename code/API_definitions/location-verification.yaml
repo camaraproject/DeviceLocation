@@ -17,10 +17,9 @@ info:
     * If the network's estimation of the device's location does not overlap with the requested area at all, the verification result is `FALSE`.
     * If the network's estimation of the device's location partially overlaps with the requested area, or it fully contains the requested area (because it is larger), the result is `PARTIAL`. In this case, a `match_rate` is included in the response, indicating an estimation of the likelihood of the match in percent.
     * Lastly, the network may not be able to locate the device. In this case, the verification result is `UNKNOWN`.
+    * The client may optionally include a `maxAge` indication. If the location information known to the server is older than the specified `maxAge` or not known at all, an error with code `422 LOCATION_VERIFICATION.UNABLE_TO_FULFILL_MAX_AGE` is sent back, independently of the verification result.
 
-    The client may optionally include a `maxAge` indication. If the location information known to the server is older than the specified `maxAge`, an error with code `422 LOCATION_VERIFICATION.UNABLE_TO_FULFILL_MAX_AGE` is sent back.
-
-    `lastLocationTime` will be always included in the success response unless there is no historical location information available for the device. In this case, `UNKNOWN` will be returned without `lastLocationTime`.
+    * `lastLocationTime` will be always included in a success response unless there is no historical location information available for the device. In this case, `UNKNOWN` will be returned without `lastLocationTime`.
 
     Location Verification could be useful in scenarios such as:
 
