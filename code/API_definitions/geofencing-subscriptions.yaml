@@ -75,8 +75,8 @@ info:
     # Identifying the device from the access token
 
     This API requires the API consumer to identify a device as the subject of the API as follows:
-      - When the API is invoked using a two-legged access token, the subject will be identified from the optional `device` object, which therefore MUST be provided.
-      - When a three-legged access token is used however, this optional identifier MUST NOT be provided, as the subject will be uniquely identified from the access token.
+    - When the API is invoked using a two-legged access token, the subject will be identified from the optional `device` object, which therefore MUST be provided.
+    - When a three-legged access token is used however, this optional identifier MUST NOT be provided, as the subject will be uniquely identified from the access token.
 
     This approach simplifies API usage for API consumers using a three-legged access token to invoke the API by relying on the information that is associated with the access token and was identified during the authentication process.
 
@@ -547,7 +547,6 @@ components:
         area:
           $ref: "#/components/schemas/Area"
       required:
-        - device
         - area
 
     SubscriptionEventType:
@@ -900,10 +899,13 @@ components:
               $ref: "#/components/schemas/SubscriptionEnds"
 
     AreaLeft:
-      description: Event detail structure for area-left event.
+      description: |
+        Event detail structure for org.camaraproject.geofencing-subscriptions.v0.area-left event.
+        Note that the device object is defined as optional and will only to be returned if provided in createSubscription.
+        If more than one type of device identifier was provided, only one identifier will be returned
+        (at implementation choice and with the original value provided in createSubscription).
       type: object
       required:
-        - device
         - area
         - subscriptionId
       properties:
@@ -915,10 +917,13 @@ components:
           $ref: "#/components/schemas/SubscriptionId"
 
     AreaEntered:
-      description: Event detail structure for area-entered event.
+      description: |
+        Event detail structure for org.camaraproject.geofencing-subscriptions.v0.area-entered event.
+        Note that the device object is defined as optional and will only to be returned if provided in createSubscription.
+        If more than one type of device identifier was provided, only one identifier will be returned
+        (at implementation choice and with the original value provided in createSubscription).
       type: object
       required:
-        - device
         - area
         - subscriptionId
       properties:
@@ -930,10 +935,13 @@ components:
           $ref: "#/components/schemas/SubscriptionId"
 
     SubscriptionEnds:
-      description: Event detail structure for SUBSCRIPTION_ENDS event.
+      description: |
+        Event detail structure for org.camaraproject.geofencing-subscriptions.v0.subscription-ends event.
+        Note that the device object is defined as optional and will only to be returned if provided in createSubscription.
+        If more than one type of device identifier was provided, only one identifier will be returned
+        (at implementation choice and with the original value provided in createSubscription).
       type: object
       required:
-        - device
         - area
         - terminationReason
         - subscriptionId
@@ -1373,6 +1381,7 @@ components:
                   code:
                     enum:
                       - IDENTIFIER_MISMATCH
+                      - MISSING_IDENTIFIER
                       - MULTIEVENT_SUBSCRIPTION_NOT_SUPPORTED
                       - SERVICE_NOT_APPLICABLE
                       - UNNECESSARY_IDENTIFIER
@@ -1392,6 +1401,12 @@ components:
                 status: 422
                 code: SERVICE_NOT_APPLICABLE
                 message: The service is not available for the provided identifier.
+            GENERIC_422_MISSING_IDENTIFIER:
+              description: An identifier is not included in the request and the device or phone number identification cannot be derived from the 3-legged access token
+              value:
+                status: 422
+                code: MISSING_IDENTIFIER
+                message: The device cannot be identified.
             GENERIC_422_MULTIEVENT_SUBSCRIPTION_NOT_SUPPORTED:
               value:
                 status: 422
