@@ -8,7 +8,7 @@
 <a href="https://github.com/camaraproject/Governance/blob/main/ProjectStructureAndRoles.md" title="Incubating API Repository"><img src="https://img.shields.io/badge/Incubating%20API%20Repository-green?style=plastic"></a>
 
 # DeviceLocation
-Repository to describe, develop, document and test the DeviceLocation API family
+Incubating API Repository to evolve and maintain the definitions and documentation of the DeviceLocation API family
 * API Repository wiki page: https://lf-camaraproject.atlassian.net/l/cp/jcV1c0Hy
 
 ## Scope
