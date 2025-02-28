@@ -5,19 +5,22 @@
 <a href="https://github.com/camaraproject/DeviceLocation" title="Repo Size"><img src="https://img.shields.io/github/repo-size/camaraproject/DeviceLocation?style=plastic"></a>
 <a href="https://github.com/camaraproject/DeviceLocation/blob/main/LICENSE" title="License"><img src="https://img.shields.io/badge/License-Apache%202.0-green.svg?style=plastic"></a>
 <a href="https://github.com/camaraproject/DeviceLocation/releases/latest" title="Latest Release"><img src="https://img.shields.io/github/release/camaraproject/DeviceLocation?style=plastic">
+<a href="https://github.com/camaraproject/Governance/blob/main/ProjectStructureAndRoles.md" title="Incubating API Repository"><img src="https://img.shields.io/badge/Incubating%20API%20Repository-green?style=plastic"></a>
 
 # DeviceLocation
 Repository to describe, develop, document and test the DeviceLocation API family
+* API Repository wiki page: https://lf-camaraproject.atlassian.net/l/cp/jcV1c0Hy
 
 ## Scope
 * Service APIs for “Device Location” (see APIBacklog.md)  
-* It provides the customer with the ability to:  
+* The APIs provide the API consumer with the ability to: 
   * verify the location of a device (location-verification).
   * retrieve the location of a device (location-retrieval).
   * subscribe and receive notifications about a device entering or leaving certain location (geofencing-subscriptions). 
   * NOTE: The scope of this API family should be limited (at least at a first stage) to 4G and 5G.  
 * Describe, develop, document and test the APIs (with 1-2 Telcos)  
 * Started: July 2022
+* Incubating stage since: February 2025
 * Location: virtually  
 
 ## Release Information
