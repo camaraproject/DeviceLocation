@@ -59,7 +59,8 @@ In this context also some error response codes have been renamed or replaced to 
 
 ### Fixed
 
-* Update errormessage for unsupported device identifiers by @maxl2287 in #261
+* Update error message for unsupported device identifiers by @maxl2287 in #261
+
 * Add quote-marks for `lastLocationTime` - examples by @maxl2287 in #287
 
 ## location-retrieval v0.4.0
