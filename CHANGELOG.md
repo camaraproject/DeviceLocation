@@ -40,14 +40,11 @@ The API definition(s) are based on
 In these cases the optional `device` parameter MUST NOT be provided, as the subject will be uniquely identified from the access token. 
 In this context also some error response codes have been renamed or replaced to comply with Commonalities 0.5.
 
-### Breaking Changes
-* Some error status and codes have been updated by @jlurien in #281
-* Section with guidelines about how to identify the device from access token and request body has been updated by @jlurien in #281
-
 ### Added
 
 * Add MultiSIM section to info.description by @jlurien in #291
 * Enhance description UNKNOWN vs UNABLE_TO_FULFILL_MAX_AGE by @jlurien in #314
+* Section with guidelines about how to identify the device from access token and request body has been updated by @jlurien in #281
 
 ### Changed
 
@@ -56,6 +53,7 @@ In this context also some error response codes have been renamed or replaced to 
 * Add pattern for x-correlator by @bigludo7 in #290
 * Update 429 error message by @bigludo7 in #290
 * Location verification align error tests by @jlurien in #306
+* Some error status and codes have been updated by @jlurien in #281
 
 ### Fixed
 
@@ -69,16 +67,12 @@ In this context also some error response codes have been renamed or replaced to 
 In these cases the optional `device` parameter MUST NOT be provided, as the subject will be uniquely identified from the access token.
 In this context also some error response codes have been renamed or replaced to comply with Commonalities 0.5.
 
-### Breaking Changes
-
-* Some error status and codes have been updated by @bigludo7 in #283
-* Section with guidelines about how to identify the device from access token and request body has been updated by @bigludo7 in #283
-
 ### Added
 
 * Add management of `maxSurface` in request by @bigludo7 in #262
 * Add MultiSIM section to info.description by @jlurien in #291
 * Add LOCATION_RETRIEVAL.UNABLE_TO_FULFILL_MAX_SURFACE error by @bigludo7 in #303
+* Section with guidelines about how to identify the device from access token and request body has been updated by @bigludo7 in #283
 
 ### Changed
 
@@ -88,6 +82,7 @@ In this context also some error response codes have been renamed or replaced to 
 * Update 429 error message by @bigludo7 in #290
 * Location Retrieval - Align Error Test by @bigludo7 in #310
 * Location Retrieval - Remove unnecessary error 400 by @bigludo7 in #316
+* Some error status and codes have been updated by @bigludo7 in #283
 
 ### Fixed
 
@@ -101,16 +96,12 @@ In this context also some error response codes have been renamed or replaced to 
 In these cases the optional `device` parameter MUST NOT be provided, as the subject will be uniquely identified from the access token.
 In this context also some error response codes have been renamed or replaced to comply with Commonalities 0.5.
 
-### Breaking Changes
-
-* Some error status and codes have been updated by @maxl2287 in #284
-* Set Device Object To Optional - According to API Design Guidelines by @dfischer-tech in #298
-
 ### Added
 
 * Add test-definitions for HTTP-422 error-cases for geofencing-API by @maxl2287 in #289
 * Add MultiSIM section to info.description by @jlurien in #291
 * Add "MISSING_IDENTIFIER" to the 422-error codes by @maxl2287 in #309
+* Set Device Object To Optional - According to API Design Guidelines by @dfischer-tech in #298
 
 ### Changed
 
@@ -120,6 +111,7 @@ In this context also some error response codes have been renamed or replaced to 
 * Add pattern for x-correlator by @bigludo7 in #290
 * Update 429 error message by @bigludo7 in #290
 * Alignment on commonalities r2.3 by @maxl2287 in #311
+* Some error status and codes have been updated by @maxl2287 in #284
 
 ### Fixed
 * remove `allOf` in `sinkCredential` by @maxl2287 in #265
