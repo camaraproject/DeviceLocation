@@ -110,9 +110,9 @@ Feature: CAMARA Device location retrieval API, v0.4.0 - Operation retrieveLocati
     Examples:
       | device_identifier          | oas_spec_schema                             |
       | $.device.phoneNumber       | /components/schemas/PhoneNumber             |
-      | $.device.ipv4Address       | /components/schemas/NetworkAccessIdentifier |
-      | $.device.ipv6Address       | /components/schemas/DeviceIpv4Addr          |
-      | $.device.networkIdentifier | /components/schemas/DeviceIpv6Address       |
+      | $.device.ipv4Address       | /components/schemas/DeviceIpv4Addr          |
+      | $.device.ipv6Address       | /components/schemas/DeviceIpv6Address       |
+      | $.device.networkIdentifier | /components/schemas/NetworkAccessIdentifier |
 
   @location_retrieval_11.1_device_phoneNumber_schema_compliant
   # Example of the scenario above with a higher level of specification
