@@ -9,7 +9,7 @@
 
 # DeviceLocation
 Incubating API Repository to evolve and maintain the definitions and documentation of the DeviceLocation APIs
-* API Repository wiki page: https://lf-camaraproject.atlassian.net/l/cp/jcV1c0Hy
+* API wiki page: [Device Location](https://lf-camaraproject.atlassian.net/l/cp/o9sdMHiK)
 
 ## Scope
 * Service APIs for “Device Location” (see APIBacklog.md)  
