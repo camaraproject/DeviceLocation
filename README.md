@@ -17,7 +17,7 @@ Incubating API Repository to evolve and maintain the definitions and documentati
   * verify the location of a device (location-verification).
   * retrieve the location of a device (location-retrieval).
   * subscribe and receive notifications about a device entering or leaving certain location (geofencing-subscriptions). 
-  * NOTE: The scope of this API family should be limited (at least at a first stage) to 4G and 5G.  
+  * NOTE: The scope of these APIs is limited (at least at a first stage) to 4G and 5G.  
 * Describe, develop, document and test the APIs (with 1-2 Telcos)  
 * Started: July 2022
 * Incubating stage since: February 2025
