@@ -5,20 +5,22 @@
 <a href="https://github.com/camaraproject/DeviceLocation" title="Repo Size"><img src="https://img.shields.io/github/repo-size/camaraproject/DeviceLocation?style=plastic"></a>
 <a href="https://github.com/camaraproject/DeviceLocation/blob/main/LICENSE" title="License"><img src="https://img.shields.io/badge/License-Apache%202.0-green.svg?style=plastic"></a>
 <a href="https://github.com/camaraproject/DeviceLocation/releases/latest" title="Latest Release"><img src="https://img.shields.io/github/release/camaraproject/DeviceLocation?style=plastic">
+<a href="https://github.com/camaraproject/Governance/blob/main/ProjectStructureAndRoles.md" title="Incubating API Repository"><img src="https://img.shields.io/badge/Incubating%20API%20Repository-green?style=plastic"></a>
 
 # DeviceLocation
-Repository to describe, develop, document and test the DeviceLocation API family
+Incubating API Repository to evolve and maintain the definitions and documentation of the DeviceLocation APIs
+* API wiki page: [Device Location](https://lf-camaraproject.atlassian.net/l/cp/o9sdMHiK)
 
 ## Scope
 * Service APIs for “Device Location” (see APIBacklog.md)  
-* It provides the customer with the ability to:  
+* The APIs provide the API consumer with the ability to: 
   * verify the location of a device (location-verification).
   * retrieve the location of a device (location-retrieval).
   * subscribe and receive notifications about a device entering or leaving certain location (geofencing-subscriptions). 
-  * NOTE: The scope of this API family should be limited (at least at a first stage) to 4G and 5G.  
+  * NOTE: The scope of these APIs is limited (at least at a first stage) to 4G and 5G.  
 * Describe, develop, document and test the APIs (with 1-2 Telcos)  
 * Started: July 2022
-* Location: virtually  
+* Incubating stage since: February 2025
 
 ## Release Information
 
@@ -27,10 +29,23 @@ Repository to describe, develop, document and test the DeviceLocation API family
 
 * Note: Please be aware that the project will have frequent updates to the main branch. There are no compatibility guarantees associated with code in any branch, including main, until a new release is created. For example, changes may be reverted before a release is created. **For best results, use the latest available release**.
 
-* The latest pre-release is [r2.1](https://github.com/camaraproject/DeviceLocation/tree/r2.1) with the following API definitions (with inline documentation):
-  - **location-verification v2.0.0-rc.1** [[YAML OAS]](https://github.com/camaraproject/DeviceLocation/blob/r2.1/code/API_definitions/location-verification.yaml) [[View it on ReDoc]](https://redocly.github.io/redoc/?url=https://raw.githubusercontent.com/camaraproject/DeviceLocation/r2.1/code/API_definitions/location-verification.yaml&nocors) [[View it on Swagger Editor]](https://editor.swagger.io/?url=https://raw.githubusercontent.com/camaraproject/DeviceLocation/r2.1/code/API_definitions/location-verification.yaml)
-  - **location-retrieval v0.4.0-rc.1** [[YAML OAS]](https://github.com/camaraproject/DeviceLocation/blob/r2.1/code/API_definitions/location-retrieval.yaml) [[View it on ReDoc]](https://redocly.github.io/redoc/?url=https://raw.githubusercontent.com/camaraproject/DeviceLocation/r2.1/code/API_definitions/location-retrieval.yaml&nocors) [[View it on Swagger Editor]](https://editor.swagger.io/?url=https://raw.githubusercontent.com/camaraproject/DeviceLocation/r2.1/code/API_definitions/location-retrieval.yaml)
-  - **geofencing-subscriptions v0.4.0-rc.1** [[YAML OAS]](https://github.com/camaraproject/DeviceLocation/blob/r2.1/code/API_definitions/geofencing-subscriptions.yaml) [[View it on ReDoc]](https://redocly.github.io/redoc/?url=https://raw.githubusercontent.com/camaraproject/DeviceLocation/r2.1/code/API_definitions/geofencing-subscriptions.yaml&nocors) [[View it on Swagger Editor]](https://editor.swagger.io/?url=https://raw.githubusercontent.com/camaraproject/DeviceLocation/r2.1/code/API_definitions/geofencing-subscriptions.yaml)
+* **The latest public release is [r2.2](https://github.com/camaraproject/DeviceLocation/tree/r2.2), with the following API definitions (with inline documentation):**
+  
+  - **location-verification v2.0.0** 
+  [[YAML OAS]](https://github.com/camaraproject/DeviceLocation/blob/r2.2/code/API_definitions/location-verification.yaml)
+  [[View it on ReDoc]](https://redocly.github.io/redoc/?url=https://raw.githubusercontent.com/camaraproject/DeviceLocation/r2.2/code/API_definitions/location-verification.yaml&nocors)
+  [[View it on Swagger Editor]](https://editor.swagger.io/?url=https://raw.githubusercontent.com/camaraproject/DeviceLocation/r2.2/code/API_definitions/location-verification.yaml)
+
+  - **location-retrieval v0.4.0** 
+  [[YAML OAS]](https://github.com/camaraproject/DeviceLocation/blob/r2.2/code/API_definitions/location-retrieval.yaml)
+  [[View it on ReDoc]](https://redocly.github.io/redoc/?url=https://raw.githubusercontent.com/camaraproject/DeviceLocation/r2.2/code/API_definitions/location-retrieval.yaml&nocors)
+  [[View it on Swagger Editor]](https://editor.swagger.io/?url=https://raw.githubusercontent.com/camaraproject/DeviceLocation/r2.2/code/API_definitions/location-retrieval.yaml)
+
+  - **geofencing-subscriptions v0.4.0**
+  [[YAML OAS]](https://github.com/camaraproject/DeviceLocation/blob/r2.2/code/API_definitions/geofencing-subscriptions.yaml)
+  [[View it on ReDoc]](https://redocly.github.io/redoc/?url=https://raw.githubusercontent.com/camaraproject/DeviceLocation/r2.2/code/API_definitions/geofencing-subscriptions.yaml&nocors)
+  [[View it on Swagger Editor]](https://editor.swagger.io/?url=https://raw.githubusercontent.com/camaraproject/DeviceLocation/r2.2/code/API_definitions/geofencing-subscriptions.yaml)
+
 ## Contributing
 
 * Meetings are held virtually

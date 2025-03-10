@@ -86,7 +86,7 @@ info:
     # Further info and support
 
     (FAQs will be added in a later version of the documentation)
-  version: wip
+  version: 2.0.0
   license:
     name: Apache 2.0
     url: https://www.apache.org/licenses/LICENSE-2.0.html
@@ -95,7 +95,7 @@ externalDocs:
   description: Project documentation at CAMARA
   url: https://github.com/camaraproject/DeviceLocation
 servers:
-  - url: "{apiRoot}/location-verification/vwip"
+  - url: "{apiRoot}/location-verification/v2"
     variables:
       apiRoot:
         default: http://localhost:9091
@@ -333,7 +333,7 @@ components:
 
     Device:
       description: |
-        End-user equipment able to connect to a mobile network. Examples of devices include smartphones or IoT sensors/actuators.
+        End-user device able to connect to a mobile network. Examples of devices include smartphones or IoT sensors/actuators.
 
         The developer can choose to provide the below specified device identifiers:
 
@@ -342,7 +342,7 @@ components:
         * `phoneNumber`
         * `networkAccessIdentifier`
 
-        NOTE1: the MNO might support only a subset of these options. The API invoker can provide multiple identifiers to be compatible across different MNOs. In this case the identifiers MUST belong to the same device
+        NOTE1: the API provider might support only a subset of these options. The API consumer can provide multiple identifiers to be compatible across different API providers. In this case the identifiers MUST belong to the same device
         NOTE2: as for this Commonalities release, we are enforcing that the networkAccessIdentifier is only part of the schema for future-proofing, and CAMARA does not currently allow its use. After the CAMARA meta-release work is concluded and the relevant issues are resolved, its use will need to be explicitly documented in the guidelines.
       type: object
       properties:

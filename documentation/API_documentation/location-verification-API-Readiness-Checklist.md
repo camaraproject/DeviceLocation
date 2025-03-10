@@ -1,23 +1,21 @@
 # API Readiness Checklist
 
-Checklist for location-verification 2.0.0-rc.1 in r2.1
+Checklist for location-verification 2.0.0 in r2.2
 
 | Nr | API release assets                           | alpha | release-candidate | public-release<br>initial | public-release<br> stable | Status |                                                            Reference information                                                             |
 |----|----------------------------------------------|:-----:|:-----------------:|:-------------------------:|:-------------------------:|:------:|:--------------------------------------------------------------------------------------------------------------------------------------------:|
 | 1  | API definition                               |   M   |         M         |             M             |             M             |   Y    |                     [/code/API_definitions/location-verification.yaml](/code/API_definitions/location-verification.yaml)                     |
-| 2  | Design guidelines from Commonalities applied |   O   |         M         |             M             |             M             |   Y    |                                                                     r2.2                                                                     |
-| 3  | Guidelines from ICM applied                  |   O   |         M         |             M             |             M             |   Y    |                                                                     r2.2                                                                     |
+| 2  | Design guidelines from Commonalities applied |   O   |         M         |             M             |             M             |   Y    |                                                                     r2.3                                                                     |
+| 3  | Guidelines from ICM applied                  |   O   |         M         |             M             |             M             |   Y    |                                                                     r2.3                                                                     |
 | 4  | API versioning convention applied            |   M   |         M         |             M             |             M             |   Y    |                                                                                                                                              |
 | 5  | API documentation                            |   M   |         M         |             M             |             M             |   Y    |                                                                inline in yaml                                                                |
 | 6  | User stories                                 |   O   |         O         |             O             |             M             |   Y    | [/documentation/API_documentation/location-verification-User-Story.md](/documentation/API_documentation/location-verification-User-Story.md) |
 | 7  | Basic API test cases & documentation         |   O   |         M         |             M             |             M             |   Y    |                 [/code/Test_definitions/location-verification.feature](/code/Test_definitions/location-verification.feature)                 |
 | 8  | Enhanced API test cases & documentation      |   O   |         O         |             O             |             M             |   Y    |                 [/code/Test_definitions/location-verification.feature](/code/Test_definitions/location-verification.feature)                 |
-| 9  | Test result statement                        |   O   |         O         |             O             |             M             |   N    |                                                        Test results not available (*)                                                        |
+| 9  | Test result statement                        |   O   |         O         |             O             |             M             |   Y    |                                          https://github.com/camaraproject/DeviceLocation/issues/296                                          |
 | 10 | API release numbering convention applied     |   M   |         M         |             M             |             M             |   Y    |                                                                                                                                              |
 | 11 | Change log updated                           |   M   |         M         |             M             |             M             |   Y    |                                                        [/CHANGELOG.md](/CHANGELOG.md)                                                        |
 | 12 | Previous public release was certified        |   O   |         O         |             O             |             M             |   Y    |                                                                                                                                              |
-
-(*) If you encounter issues with the provided test files (.feature), please create an issue in the API Sub-Project to signal these issues so they can be fixed in a patch release.
 
 Note: the checklists of a public API version and of its preceding release-candidate API version can be the same.
 

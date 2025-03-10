@@ -2,8 +2,9 @@
 
 ## Table of Contents
 
-- **[r2.1](#r21)**
-- [r1.2](#r12)
+- **[r2.2](#r21) (Spring25 public release)**
+- [r2.1](#r21)
+- **[r1.2](#r12) (Fall24 public release)**
 - [r1.1](#r11)
 - [v0.2.0](#v020)
 - [v0.1.0](#v010)
@@ -17,11 +18,111 @@ The below sections record the changes for each API version in each release as fo
 * for subsequent release-candidate(s), only the delta to the previous release-candidate
 * for a public release, the consolidated changes since the previous public release
 
-# r2.1
+# r2.2
 
 ## Release Notes
 
 This **public release** contains the definition and documentation of
+* location-verification v2.0.0
+* location-retrieval v0.4.0
+* geofencing-subscriptions v0.4.0
+
+The API definition(s) are based on
+* Commonalities r2.3
+* Identity and Consent Management r2.3
+
+**Changelog since r1.2**
+* Full Changelog with the list of PRs and contributors: https://github.com/camaraproject/DeviceLocation/compare/r1.2...r2.2
+
+## location-verification v2.0.0
+
+**There are breaking changes compared to v1.0.0**: the API use has been simplified for API consumers using a three-legged access token to invoke the API. 
+In these cases the optional `device` parameter MUST NOT be provided, as the subject will be uniquely identified from the access token. 
+In this context also some error response codes have been renamed or replaced to comply with Commonalities 0.5.
+
+### Added
+
+* Add MultiSIM section to info.description by @jlurien in #291
+* Enhance description UNKNOWN vs UNABLE_TO_FULFILL_MAX_AGE by @jlurien in #314
+* Section with guidelines about how to identify the device from access token and request body has been updated by @jlurien in #281
+
+### Changed
+
+* Decrease radius minimum to "1" for circle-area by @maxl2287 in #285
+* Error schemas updated with enums by @jlurien in #281
+* Add pattern for x-correlator by @bigludo7 in #290
+* Update 429 error message by @bigludo7 in #290
+* Location verification align error tests by @jlurien in #306
+* Some error status and codes have been updated by @jlurien in #281
+
+### Fixed
+
+* Update error message for unsupported device identifiers by @maxl2287 in #261
+
+* Add quote-marks for `lastLocationTime` - examples by @maxl2287 in #287
+
+## location-retrieval v0.4.0
+
+**There are breaking changes compared to v0.3.0**: the API use has been simplified for API consumers using a three-legged access token to invoke the API.
+In these cases the optional `device` parameter MUST NOT be provided, as the subject will be uniquely identified from the access token.
+In this context also some error response codes have been renamed or replaced to comply with Commonalities 0.5.
+
+### Added
+
+* Add management of `maxSurface` in request by @bigludo7 in #262
+* Add MultiSIM section to info.description by @jlurien in #291
+* Add LOCATION_RETRIEVAL.UNABLE_TO_FULFILL_MAX_SURFACE error by @bigludo7 in #303
+* Section with guidelines about how to identify the device from access token and request body has been updated by @bigludo7 in #283
+
+### Changed
+
+* Error schemas updated with enums by @bigludo7 in #283
+* Test definitions aligned with API specification update by @bigludo7 in #283
+* Add pattern for x-correlator by @bigludo7 in #290
+* Update 429 error message by @bigludo7 in #290
+* Location Retrieval - Align Error Test by @bigludo7 in #310
+* Location Retrieval - Remove unnecessary error 400 by @bigludo7 in #316
+* Some error status and codes have been updated by @bigludo7 in #283
+
+### Fixed
+
+* Update error message for unsupported device identifiers by @maxl2287 in #261
+
+* Add quote-marks for `lastLocationTime` - examples by @maxl2287 in #287
+
+## geofencing-subscriptions v0.4.0
+
+**There are breaking changes compared to v0.3.0**: the API use has been simplified for API consumers using a three-legged access token to invoke the API.
+In these cases the optional `device` parameter MUST NOT be provided, as the subject will be uniquely identified from the access token.
+In this context also some error response codes have been renamed or replaced to comply with Commonalities 0.5.
+
+### Added
+
+* Add test-definitions for HTTP-422 error-cases for geofencing-API by @maxl2287 in #289
+* Add MultiSIM section to info.description by @jlurien in #291
+* Add "MISSING_IDENTIFIER" to the 422-error codes by @maxl2287 in #309
+* Set Device Object To Optional - According to API Design Guidelines by @dfischer-tech in #298
+
+### Changed
+
+* Decrease radius minimum to "1" for circle-area by @maxl2287 in #285
+* Error schemas updated with enums by @maxl2287 in #284
+* Add a note that initial events will be counted when `subscriptionMaxEvents` is combined with initialEvent=true by @maxl2287 in #284
+* Add pattern for x-correlator by @bigludo7 in #290
+* Update 429 error message by @bigludo7 in #290
+* Alignment on commonalities r2.3 by @maxl2287 in #311
+* Some error status and codes have been updated by @maxl2287 in #284
+
+### Fixed
+* remove `allOf` in `sinkCredential` by @maxl2287 in #265
+* Correct the example for subscriptions regarding `initialEvent` and error `MULTIEVENT_SUBSCRIPTION_NOT_SUPPORTED` by @dfischer-tech in #267
+* Add quote-marks for `subscriptionExpireTime` - examples by @maxl2287 in #287
+
+# r2.1
+
+## Release Notes
+
+This **pre-release** contains the definition and documentation of
 * location-verification v2.0.0-rc.1
 * location-retrieval v0.4.0-rc.1
 * geofencing-subscriptions v0.4.0-rc.1
@@ -37,7 +138,9 @@ The API definition(s) are based on
 
 ## location-verification v2.0.0-rc.1
 
-**Please be aware that this release contains breaking changes compared to the previous version.**
+**There are breaking changes compared to v1.0.0**: the API use has been simplified for API consumers using a three-legged access token to invoke the API.
+In these cases the optional `device` parameter MUST NOT be provided, as the subject will be uniquely identified from the access token.
+In this context also some error response codes have been renamed or replaced to comply with Commonalities 0.5.
 
 ### Breaking Changes
 * Some error status and codes have been updated by @jlurien in #281
@@ -59,7 +162,9 @@ The API definition(s) are based on
 * Add quote-marks for `lastLocationTime` - examples by @maxl2287 in #287
 
 ## location-retrieval v0.4.0-rc.1
-**Please be aware that this release contains breaking changes compared to the previous version.**
+**There are breaking changes compared to v0.3.0**: the API use has been simplified for API consumers using a three-legged access token to invoke the API.
+In these cases the optional `device` parameter MUST NOT be provided, as the subject will be uniquely identified from the access token.
+In this context also some error response codes have been renamed or replaced to comply with Commonalities 0.5.
 
 ### Breaking Changes
 
@@ -84,7 +189,10 @@ The API definition(s) are based on
 * Add quote-marks for `lastLocationTime` - examples by @maxl2287 in #287 
 
 ## geofencing-subscriptions v0.4.0-rc.1
-**Please be aware that this release contains breaking changes compared to the previous version.**
+
+**There are breaking changes compared to v0.3.0**: the API use has been simplified for API consumers using a three-legged access token to invoke the API.
+In these cases the optional `device` parameter MUST NOT be provided, as the subject will be uniquely identified from the access token.
+In this context also some error response codes have been renamed or replaced to comply with Commonalities 0.5.
 
 ### Breaking Changes
 

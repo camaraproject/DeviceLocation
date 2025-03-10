@@ -1,4 +1,4 @@
-Feature: CAMARA Device location retrieval API, vwip - Operation retrieveLocation
+Feature: CAMARA Device location retrieval API, v0.4.0 - Operation retrieveLocation
   # Input to be provided by the implementation to the tester
   #
   # Implementation indications:
@@ -12,7 +12,7 @@ Feature: CAMARA Device location retrieval API, vwip - Operation retrieveLocation
   # References to OAS spec schemas refer to schemas specifies in location-retrieval.yaml
 
   Background: Common retrieveLocation setup
-    Given the resource "/location-retrieval/vwip/retrieve"                                                              |
+    Given the resource "/location-retrieval/v0.4/retrieve"                                                              |
     And the header "Content-Type" is set to "application/json"
     And the header "Authorization" is set to a valid access token
     And the header "x-correlator" is set to a UUID value
@@ -110,9 +110,9 @@ Feature: CAMARA Device location retrieval API, vwip - Operation retrieveLocation
     Examples:
       | device_identifier          | oas_spec_schema                             |
       | $.device.phoneNumber       | /components/schemas/PhoneNumber             |
-      | $.device.ipv4Address       | /components/schemas/NetworkAccessIdentifier |
-      | $.device.ipv6Address       | /components/schemas/DeviceIpv4Addr          |
-      | $.device.networkIdentifier | /components/schemas/DeviceIpv6Address       |
+      | $.device.ipv4Address       | /components/schemas/DeviceIpv4Addr          |
+      | $.device.ipv6Address       | /components/schemas/DeviceIpv6Address       |
+      | $.device.networkIdentifier | /components/schemas/NetworkAccessIdentifier |
 
   @location_retrieval_11.1_device_phoneNumber_schema_compliant
   # Example of the scenario above with a higher level of specification

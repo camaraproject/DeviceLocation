@@ -101,7 +101,7 @@ info:
     # Further info and support
 
     (FAQs will be added in a later version of the documentation)
-  version: wip
+  version: 0.4.0
   license:
     name: Apache 2.0
     url: https://www.apache.org/licenses/LICENSE-2.0.html
@@ -110,7 +110,7 @@ externalDocs:
   description: Project documentation at Camara
   url: https://github.com/camaraproject/DeviceLocation
 servers:
-  - url: '{apiRoot}/location-retrieval/vwip'
+  - url: '{apiRoot}/location-retrieval/v0.4'
     variables:
       apiRoot:
         default: http://localhost:9091
@@ -123,7 +123,7 @@ paths:
     post:
       tags:
         - Location retrieval
-      summary: 'Execute location retrieval for a user equipment'
+      summary: 'Execute location retrieval for a user device'
       description: Retrieve the area where a certain user device is localized.
       operationId: retrieveLocation
       parameters:
@@ -231,7 +231,7 @@ components:
           example: 1000000
     Device:
       description: |
-        End-user equipment able to connect to a mobile network. Examples of devices include smartphones or IoT sensors/actuators.
+        End-user device able to connect to a mobile network. Examples of devices include smartphones or IoT sensors/actuators.
 
         The developer can choose to provide the below specified device identifiers:
 
