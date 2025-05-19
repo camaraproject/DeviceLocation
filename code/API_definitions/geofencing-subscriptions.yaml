@@ -814,6 +814,7 @@ components:
             longitude: 13.37959
           - latitude: 52.515849
             longitude: 13.378308
+
     Point:
       type: object
       description: Coordinates (latitude, longitude) defining a location in a map.
