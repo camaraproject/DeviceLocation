@@ -55,8 +55,7 @@
     ],
     "Feature": [
       "poor description",
-      "validate",
-      "verify"
+      "validate"
     ],
     "Background": [
       "show last response",
@@ -68,7 +67,7 @@
     ]
   }],
   "required-tags": ["on", {
-  "tags": ["^@.*$"], // Allow any tag starting with '@'
-  "ignoreUntagged": false // Enforce tagging
+  "tags": ["^@.*$"],
+  "ignoreUntagged": false
 }]
 }
