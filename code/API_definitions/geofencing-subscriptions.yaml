@@ -130,7 +130,7 @@ paths:
         - Geofencing subscriptions
       summary: "Create a geofencing subscription for a device"
       description: Create a subscription for a device to receive notifications when the device enters or exits a specified area.
-      operationId: createSubscription
+      operationId: createGeofencingSubscriptions
       parameters:
         - $ref: "#/components/parameters/x-correlator"
       security:
@@ -901,9 +901,9 @@ components:
     AreaLeft:
       description: |
         Event detail structure for org.camaraproject.geofencing-subscriptions.v0.area-left event.
-        Note that the device object is defined as optional and will only to be returned if provided in createSubscription.
+        Note that the device object is defined as optional and will only to be returned if provided in createGeofencingSubscriptions.
         If more than one type of device identifier was provided, only one identifier will be returned
-        (at implementation choice and with the original value provided in createSubscription).
+        (at implementation choice and with the original value provided in createGeofencingSubscriptions).
       type: object
       required:
         - area
@@ -919,9 +919,9 @@ components:
     AreaEntered:
       description: |
         Event detail structure for org.camaraproject.geofencing-subscriptions.v0.area-entered event.
-        Note that the device object is defined as optional and will only to be returned if provided in createSubscription.
+        Note that the device object is defined as optional and will only to be returned if provided in createGeofencingSubscriptions.
         If more than one type of device identifier was provided, only one identifier will be returned
-        (at implementation choice and with the original value provided in createSubscription).
+        (at implementation choice and with the original value provided in createGeofencingSubscriptions).
       type: object
       required:
         - area
@@ -937,9 +937,9 @@ components:
     SubscriptionEnds:
       description: |
         Event detail structure for org.camaraproject.geofencing-subscriptions.v0.subscription-ends event.
-        Note that the device object is defined as optional and will only to be returned if provided in createSubscription.
+        Note that the device object is defined as optional and will only to be returned if provided in createGeofencingSubscriptions.
         If more than one type of device identifier was provided, only one identifier will be returned
-        (at implementation choice and with the original value provided in createSubscription).
+        (at implementation choice and with the original value provided in createGeofencingSubscriptions).
       type: object
       required:
         - area
