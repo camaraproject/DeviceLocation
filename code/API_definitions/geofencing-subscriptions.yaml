@@ -12,7 +12,7 @@ info:
     * Legal restrictions regarding privacy, or other regulatory or implementation issues, may force the operator to set restrictions to the provided area, such as setting a minimum value to the accepted radius. In these cases, an error `422 GEOFENCING_SUBSCRIPTIONS.INVALID_AREA` will be returned and the error message will refer to the reason of the limitation.
     * If the provided polygonal type of area is not supported by operator, an error `422 GEOFENCING_SUBSCRIPTIONS.NOT_MANAGED_AREA_TYPE` will be returned.
 
-    The area provided in the request is described by a circle or a polygon. The circle area is determined by coordinates (latitude and longitude) and an accuracy defined by the radius. The polygon area is determined by an array of corner points in form of geo coordinates (latitude and longitude).
+    The area provided in the request is described by a circle or a polygon. The circle area is determined by coordinates (latitude and longitude) and an accuracy defined by the radius. The polygon area is determined by an list of corner points in form of geo coordinates (latitude and longitude). Support of circle type areas is mandatory for provider. Implementation of polygonal areas is optional. 
 
     Upon successfully creating a subscription, the API will provide an Event Subscription ID, and it will indicate the subscription's expiration date.
 
@@ -788,24 +788,18 @@ components:
         radius: 50000
 
     Polygon:
-      description: Polygon based area defined by an ordered geo points array
+      description: Polygonal area. The Polygon should be a simple polygon defined by an ordered geo points list, i.e. should not intersect itself.
       allOf:
         - $ref: "#/components/schemas/Area"
         - type: object
-          properties:
-            coordinates:
-              type: array
-              items:
-                type: array
-                items:
-                  $ref: "#/components/schemas/Point"
-                minItems: 3
-                maxItems: 16
           required:
-            - coordinates
+            - boundary
+          properties:
+            boundary:
+              $ref: "#/components/schemas/PointList"
       example:
         areaType: POLYGON
-        coordinates:
+        boundary:
           - latitude: 52.516770
             longitude: 13.378156
           - latitude: 52.516841
@@ -814,6 +808,14 @@ components:
             longitude: 13.37959
           - latitude: 52.515849
             longitude: 13.378308
+
+    PointList:
+      description: List of points defining a polygon
+      type: array
+      items:
+        $ref: "#/components/schemas/Point"
+      minItems: 3
+      maxItems: 15
 
     Point:
       type: object
@@ -1548,7 +1550,7 @@ components:
               phoneNumber: "+12345678912"
             area:
               areaType: POLYGON
-              coordinates:
+              boundary:
                 - latitude: 52.516770
                   longitude: 13.378156
                 - latitude: 52.516841
@@ -1596,7 +1598,7 @@ components:
             phoneNumber: +123456789
           area:
             areaType: POLYGON
-            coordinates:
+            boundary:
               - latitude: 52.516770
                 longitude: 13.378156
               - latitude: 52.516841
