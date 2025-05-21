@@ -6,13 +6,10 @@ info:
 
     # Introduction
 
-    API consumers are able to verify whether the location of certain user device is within the area specified. Currently two area types are supported as input:
-    - Circle is determined by a set of coordinates (latitude and longitude) and some expected accuracy (radius).
-    - Polygon is determined by an array of corner points in form of geo coordinates (latitude and longitude). This area type is not mandatory for implementation by provider.
+    API consumers are able to verify whether the location of certain user device is within the area specified. Currently the only area supported as input is a circle determined by a set of coordinates (latitude and longitude) and some expected accuracy (radius).
 
     * If the provided area is out of the operator's coverage or it is not supported for any reason, an error `422 LOCATION_VERIFICATION.AREA_NOT_COVERED` will be returned.
     * Legal restrictions regarding privacy, or other regulatory or implementation issues, may force the operator to set restrictions to the provided area, such as setting a minimum value to the accepted radius. In these cases, an error `422 LOCATION_VERIFICATION.INVALID_AREA` will be returned and the error message will refer to the reason of the limitation.
-    * If the provided polygonal type of area is not supported by operator, an error `422 GEOFENCING_SUBSCRIPTIONS.NOT_MANAGED_AREA_TYPE` will be returned.
 
     The verification result depends on the network's ability and accuracy to locate the device at the requested area.
 
@@ -48,7 +45,7 @@ info:
 
     The API exposes a single endpoint/operation:
 
-    - Verify whether the device location is within a requested area defined as circle or polygon. The operation returns a verification result and, optionally, a match rate estimation for the location verification in percent.
+    - Verify whether the device location is within a requested area, currently a circle with center specified by the latitude and longitude, and radius specified by the accuracy. The operation returns a verification result and, optionally, a match rate estimation for the location verification in percent.
 
     # Authorization and authentication
 
@@ -137,23 +134,6 @@ paths:
                       longitude: 7.10066
                     radius: 50000
                   maxAge: 120
-              INPUT_PHONE_NUMBER_POLYGON:
-                summary: Phone number, polygon and maxAge
-                description: Verify if device identified by a phone number is within a polygon shaped area, not indicating a maxAge
-                value:
-                  device:
-                    phoneNumber: "+123456789"
-                  area:
-                    areaType: POLYGON
-                    coordinates:
-                      - latitude: 52.516770
-                        longitude: 13.378156
-                      - latitude: 52.516841
-                        longitude: 13.379433
-                      - latitude: 52.515917
-                        longitude: 13.37959
-                      - latitude: 52.515849
-                        longitude: 13.378308
               INPUT_IP_ADDRESS_V4_CIRCLE:
                 summary: IPv4 address, circle, without maxAge
                 description: Verify if device identified by an IPv4 address is within a circle, not indicating a maxAge
@@ -260,17 +240,14 @@ components:
         propertyName: areaType
         mapping:
           CIRCLE: "#/components/schemas/Circle"
-          POLYGON: "#/components/schemas/Polygon"
 
     AreaType:
       type: string
       description: |
         Type of this area.
         CIRCLE - The area is defined as a circle.
-        POLYGON - The area is defined as a polygon.
       enum:
         - CIRCLE
-        - POLYGON
 
     Circle:
       description: Circular area
@@ -296,34 +273,6 @@ components:
           latitude: 50.735851
           longitude: 7.10066
         radius: 50000
-
-    Polygon:
-      description: Polygon based area defined by an ordered geo points array
-      allOf:
-        - $ref: "#/components/schemas/Area"
-        - type: object
-          properties:
-            coordinates:
-              type: array
-              items:
-                type: array
-                items:
-                  $ref: "#/components/schemas/Point"
-                minItems: 3
-                maxItems: 16
-          required:
-            - coordinates
-      example:
-        areaType: POLYGON
-        coordinates:
-          - latitude: 52.516770
-            longitude: 13.378156
-          - latitude: 52.516841
-            longitude: 13.379433
-          - latitude: 52.515917
-            longitude: 13.37959
-          - latitude: 52.515849
-            longitude: 13.378308
 
     Point:
       type: object
@@ -648,7 +597,6 @@ components:
                       - LOCATION_VERIFICATION.AREA_NOT_COVERED
                       - LOCATION_VERIFICATION.INVALID_AREA
                       - LOCATION_VERIFICATION.UNABLE_TO_FULFILL_MAX_AGE
-                      - LOCATION_VERIFICATION.NOT_MANAGED_AREA_TYPE
           examples:
             GENERIC_422_IDENTIFIER_MISMATCH:
               description: Inconsistency between identifiers not pointing to the same device
@@ -689,7 +637,7 @@ components:
                 message: "Unable to cover the requested area"
             LOCATION_VERIFICATION_422_INVALID_AREA:
               summary: Invalid area
-              description: The requested area is too small to be supported by the system
+              description: The requested area is too small to be supported by the system.
               value:
                 status: 422
                 code: LOCATION_VERIFICATION.INVALID_AREA
@@ -701,10 +649,3 @@ components:
                 status: 422
                 code: LOCATION_VERIFICATION.UNABLE_TO_FULFILL_MAX_AGE
                 message: "Unable to provide expected freshness for location"
-            LOCATION_VERIFICATION_422_NOT_MANAGED_AREA_TYPE:
-              summary: Not managed area type
-              description: The requested area type is currently not supported by implementation
-              value:
-                status: 422
-                code: LOCATION_VERIFICATION.NOT_MANAGED_AREA_TYPE
-                message: "The requested area type is not managed"
