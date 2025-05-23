@@ -40,6 +40,12 @@ The API definition(s) are based on
 In these cases the optional `device` parameter MUST NOT be provided, as the subject will be uniquely identified from the access token. 
 In this context also some error response codes have been renamed or replaced to comply with Commonalities 0.5.
 
+* API definition with **inline documentation**:
+
+  - [View it on ReDoc](https://redocly.github.io/redoc/?url=https://raw.githubusercontent.com/camaraproject/DeviceLocation/r2.2/code/API_definitions/location-verification.yaml&nocors)
+  - [View it on Swagger Editor](https://editor-next.swagger.io/?url=https://raw.githubusercontent.com/camaraproject/DeviceLocation/r2.2/code/API_definitions/location-verification.yaml)
+  - OpenAPI [YAML spec file](https://github.com/camaraproject/DeviceLocation/blob/r2.2/code/API_definitions/location-verification.yaml)
+
 ### Added
 
 * Add MultiSIM section to info.description by @jlurien in #291
@@ -66,6 +72,12 @@ In this context also some error response codes have been renamed or replaced to 
 **There are breaking changes compared to v0.3.0**: the API use has been simplified for API consumers using a three-legged access token to invoke the API.
 In these cases the optional `device` parameter MUST NOT be provided, as the subject will be uniquely identified from the access token.
 In this context also some error response codes have been renamed or replaced to comply with Commonalities 0.5.
+
+* API definition with **inline documentation**:
+
+  - [View it on ReDoc](https://redocly.github.io/redoc/?url=https://raw.githubusercontent.com/camaraproject/DeviceLocation/r2.2/code/API_definitions/location-retrieval.yaml&nocors)
+  - [View it on Swagger Editor](https://editor-next.swagger.io/?url=https://raw.githubusercontent.com/camaraproject/DeviceLocation/r2.2/code/API_definitions/location-retrieval.yaml)
+  - OpenAPI [YAML spec file](https://github.com/camaraproject/DeviceLocation/blob/r2.2/code/API_definitions/location-retrieval.yaml)
 
 ### Added
 
@@ -95,6 +107,12 @@ In this context also some error response codes have been renamed or replaced to 
 **There are breaking changes compared to v0.3.0**: the API use has been simplified for API consumers using a three-legged access token to invoke the API.
 In these cases the optional `device` parameter MUST NOT be provided, as the subject will be uniquely identified from the access token.
 In this context also some error response codes have been renamed or replaced to comply with Commonalities 0.5.
+
+* API definition with **inline documentation**:
+
+  - [View it on ReDoc](https://redocly.github.io/redoc/?url=https://raw.githubusercontent.com/camaraproject/DeviceLocation/r2.2/code/API_definitions/geofencing-subscriptions.yaml&nocors)
+  - [View it on Swagger Editor](https://editor-next.swagger.io/?url=https://raw.githubusercontent.com/camaraproject/DeviceLocation/r2.2/code/API_definitions/geofencing-subscriptions.yaml)
+  - OpenAPI [YAML spec file](https://github.com/camaraproject/DeviceLocation/blob/r2.2/code/API_definitions/geofencing-subscriptions.yaml)
 
 ### Added
 
@@ -142,6 +160,12 @@ The API definition(s) are based on
 In these cases the optional `device` parameter MUST NOT be provided, as the subject will be uniquely identified from the access token.
 In this context also some error response codes have been renamed or replaced to comply with Commonalities 0.5.
 
+* API definition with **inline documentation**:
+
+  - [View it on ReDoc](https://redocly.github.io/redoc/?url=https://raw.githubusercontent.com/camaraproject/DeviceLocation/r2.1/code/API_definitions/location-verification.yaml&nocors)
+  - [View it on Swagger Editor](https://editor-next.swagger.io/?url=https://raw.githubusercontent.com/camaraproject/DeviceLocation/r2.1/code/API_definitions/location-verification.yaml)
+  - OpenAPI [YAML spec file](https://github.com/camaraproject/DeviceLocation/blob/r2.1/code/API_definitions/location-verification.yaml)
+
 ### Breaking Changes
 * Some error status and codes have been updated by @jlurien in #281
 * Section with guidelines about how to identify the device from access token and request body has been updated by @jlurien in #281
@@ -165,6 +189,12 @@ In this context also some error response codes have been renamed or replaced to 
 **There are breaking changes compared to v0.3.0**: the API use has been simplified for API consumers using a three-legged access token to invoke the API.
 In these cases the optional `device` parameter MUST NOT be provided, as the subject will be uniquely identified from the access token.
 In this context also some error response codes have been renamed or replaced to comply with Commonalities 0.5.
+
+* API definition with **inline documentation**:
+
+  - [View it on ReDoc](https://redocly.github.io/redoc/?url=https://raw.githubusercontent.com/camaraproject/DeviceLocation/r2.1/code/API_definitions/location-retrieval.yaml&nocors)
+  - [View it on Swagger Editor](https://editor-next.swagger.io/?url=https://raw.githubusercontent.com/camaraproject/DeviceLocation/r2.1/code/API_definitions/location-retrieval.yaml)
+  - OpenAPI [YAML spec file](https://github.com/camaraproject/DeviceLocation/blob/r2.1/code/API_definitions/location-retrieval.yaml)
 
 ### Breaking Changes
 
@@ -193,6 +223,12 @@ In this context also some error response codes have been renamed or replaced to 
 **There are breaking changes compared to v0.3.0**: the API use has been simplified for API consumers using a three-legged access token to invoke the API.
 In these cases the optional `device` parameter MUST NOT be provided, as the subject will be uniquely identified from the access token.
 In this context also some error response codes have been renamed or replaced to comply with Commonalities 0.5.
+
+* API definition with **inline documentation**:
+
+  - [View it on ReDoc](https://redocly.github.io/redoc/?url=https://raw.githubusercontent.com/camaraproject/DeviceLocation/r2.1/code/API_definitions/geofencing-subscriptions.yaml&nocors)
+  - [View it on Swagger Editor](https://editor-next.swagger.io/?url=https://raw.githubusercontent.com/camaraproject/DeviceLocation/r2.1/code/API_definitions/geofencing-subscriptions.yaml)
+  - OpenAPI [YAML spec file](https://github.com/camaraproject/DeviceLocation/blob/r2.1/code/API_definitions/geofencing-subscriptions.yaml)
 
 ### Breaking Changes
 
@@ -235,6 +271,12 @@ The API definition(s) are based on
 
 ## location-verification v1.0.0
 
+* API definition with **inline documentation**:
+
+  - [View it on ReDoc](https://redocly.github.io/redoc/?url=https://raw.githubusercontent.com/camaraproject/DeviceLocation/r1.2/code/API_definitions/location-verification.yaml&nocors)
+  - [View it on Swagger Editor](https://editor-next.swagger.io/?url=https://raw.githubusercontent.com/camaraproject/DeviceLocation/r1.2/code/API_definitions/location-verification.yaml)
+  - OpenAPI [YAML spec file](https://github.com/camaraproject/DeviceLocation/blob/r1.2/code/API_definitions/location-verification.yaml)
+
 ### Added
 
 * Added x-correlator to requests and headers
@@ -254,6 +296,12 @@ The API definition(s) are based on
 
 ## location-retrieval v0.3.0
 
+* API definition with **inline documentation**:
+
+  - [View it on ReDoc](https://redocly.github.io/redoc/?url=https://raw.githubusercontent.com/camaraproject/DeviceLocation/r1.2/code/API_definitions/location-retrieval.yaml&nocors)
+  - [View it on Swagger Editor](https://editor-next.swagger.io/?url=https://raw.githubusercontent.com/camaraproject/DeviceLocation/r1.2/code/API_definitions/location-retrieval.yaml)
+  - OpenAPI [YAML spec file](https://github.com/camaraproject/DeviceLocation/blob/r1.2/code/API_definitions/location-retrieval.yaml)
+
 ### Added
 
 * Added x-correlator to requests and headers
@@ -272,6 +320,12 @@ The API definition(s) are based on
 * Clarify that `lastLocationTime` is mandatory in responses
 
 ## geofencing-subscriptions v0.3.0
+
+* API definition with **inline documentation**:
+
+  - [View it on ReDoc](https://redocly.github.io/redoc/?url=https://raw.githubusercontent.com/camaraproject/DeviceLocation/r1.2/code/API_definitions/geofencing-subscriptions.yaml&nocors)
+  - [View it on Swagger Editor](https://editor-next.swagger.io/?url=https://raw.githubusercontent.com/camaraproject/DeviceLocation/r1.2/code/API_definitions/geofencing-subscriptions.yaml)
+  - OpenAPI [YAML spec file](https://github.com/camaraproject/DeviceLocation/blob/r1.2/code/API_definitions/geofencing-subscriptions.yaml)
 
 ### Added
 
@@ -308,6 +362,12 @@ The API definition(s) are based on
 
 ## location-verification v1.0.0-rc.1
 
+* API definition with **inline documentation**:
+
+  - [View it on ReDoc](https://redocly.github.io/redoc/?url=https://raw.githubusercontent.com/camaraproject/DeviceLocation/r1.1/code/API_definitions/location-verification.yaml&nocors)
+  - [View it on Swagger Editor](https://editor-next.swagger.io/?url=https://raw.githubusercontent.com/camaraproject/DeviceLocation/r1.1/code/API_definitions/location-verification.yaml)
+  - OpenAPI [YAML spec file](https://github.com/camaraproject/DeviceLocation/blob/r1.1/code/API_definitions/location-verification.yaml)
+
 ### Added
 
 * Added x-correlator to requests and headers
@@ -327,6 +387,12 @@ The API definition(s) are based on
 
 ## location-retrieval v0.3.0-rc.1
 
+* API definition with **inline documentation**:
+
+  - [View it on ReDoc](https://redocly.github.io/redoc/?url=https://raw.githubusercontent.com/camaraproject/DeviceLocation/r1.1/code/API_definitions/location-retrieval.yaml&nocors)
+  - [View it on Swagger Editor](https://editor-next.swagger.io/?url=https://raw.githubusercontent.com/camaraproject/DeviceLocation/r1.1/code/API_definitions/location-retrieval.yaml)
+  - OpenAPI [YAML spec file](https://github.com/camaraproject/DeviceLocation/blob/r1.1/code/API_definitions/location-retrieval.yaml)
+
 ### Added
 
 * Added x-correlator to requests and headers
@@ -345,6 +411,12 @@ The API definition(s) are based on
 * Clarify that `lastLocationTime` is mandatory in responses
 
 ## geofencing-subscriptions v0.3.0-rc.1
+
+* API definition with **inline documentation**:
+
+  - [View it on ReDoc](https://redocly.github.io/redoc/?url=https://raw.githubusercontent.com/camaraproject/DeviceLocation/r1.1/code/API_definitions/geofencing-subscriptions.yaml&nocors)
+  - [View it on Swagger Editor](https://editor-next.swagger.io/?url=https://raw.githubusercontent.com/camaraproject/DeviceLocation/r1.1/code/API_definitions/geofencing-subscriptions.yaml)
+  - OpenAPI [YAML spec file](https://github.com/camaraproject/DeviceLocation/blob/r1.1/code/API_definitions/geofencing-subscriptions.yaml)
 
 ### Added
 
@@ -414,4 +486,4 @@ The API definition(s) are based on
 ## What's changed
 
 * New API `location`, v0.1.0, with a single operation for location verification:
-    - Given a device identified by the `ueId` object, a set of coordinates (`latitude` and `longitude`), and the requested `accuracy`, returns a boolean `verificationResult`, verifying if the device is within the circular area delimited by the coordinates and the accuracy radius.  
+    - Given a device identified by the `ueId` object, a set of coordinates (`latitude` and `longitude`), and the requested `accuracy`, returns a boolean `verificationResult`, verifying if the device is within the circular area delimited by the coordinates and the accuracy radius.
