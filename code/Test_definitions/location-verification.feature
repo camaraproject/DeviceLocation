@@ -18,6 +18,10 @@ Feature: CAMARA Device location verification API, vwip - Operation verifyLocatio
     And the header "x-correlator" is set to a UUID value
     And the request body is set by default to a request body compliant with the schema
 
+##########################
+# Happy path scenarios
+##########################
+
   # This first scenario serves as a minimum, not testing any specific verificationResult
   @location_verification_01_generic_success_scenario
   Scenario: Common validations for any success scenario
@@ -91,7 +95,9 @@ Feature: CAMARA Device location verification API, vwip - Operation verifyLocatio
     And the response property "$.lastLocationTime" does not exist
     And the response property "$.matchRate" does not exist
 
-  # Error scenarios for management of input parameter device
+#################
+# Error scenarios for management of input parameter device
+###################
 
   @location_verification_C01.01_device_empty
   Scenario: The device value is an empty object
@@ -102,7 +108,6 @@ Feature: CAMARA Device location verification API, vwip - Operation verifyLocatio
     And the response property "$.status" is 400
     And the response property "$.code" is "INVALID_ARGUMENT"
     And the response property "$.message" contains a user friendly text
-
 
   @location_verification_C01.02_device_identifiers_not_schema_compliant
   Scenario Outline: Some device identifier value does not comply with the schema
@@ -121,7 +126,6 @@ Feature: CAMARA Device location verification API, vwip - Operation verifyLocatio
       | $.device.ipv6Address       | /components/schemas/DeviceIpv6Address       |
       | $.device.networkIdentifier | /components/schemas/NetworkAccessIdentifier |
 
-
   # This scenario may happen e.g. with 2-legged access tokens, which do not identify a single device.
   @location_verification_C01.03_device_not_found
   Scenario: Some identifier cannot be matched to a device
@@ -133,7 +137,6 @@ Feature: CAMARA Device location verification API, vwip - Operation verifyLocatio
     And the response property "$.code" is "IDENTIFIER_NOT_FOUND"
     And the response property "$.message" contains a user friendly text
 
-
   @location_verification_C02.04_unnecessary_device
   Scenario: Device not to be included when it can be deduced from the access token
     Given the header "Authorization" is set to a valid access token identifying a device
@@ -144,7 +147,6 @@ Feature: CAMARA Device location verification API, vwip - Operation verifyLocatio
     And the response property "$.code" is "UNNECESSARY_IDENTIFIER"
     And the response property "$.message" contains a user-friendly text
 
-
   @location_verification_C01.05_missing_device
   Scenario: Device not included and cannot be deduced from the access token
     Given the header "Authorization" is set to a valid access token which does not identify a single device
@@ -154,7 +156,6 @@ Feature: CAMARA Device location verification API, vwip - Operation verifyLocatio
     And the response property "$.status" is 422
     And the response property "$.code" is "MISSING_IDENTIFIER"
     And the response property "$.message" contains a user-friendly text
-
 
   @location_verification_C01.06_unsupported_device
   Scenario: None of the provided device identifiers is supported by the implementation
@@ -167,7 +168,6 @@ Feature: CAMARA Device location verification API, vwip - Operation verifyLocatio
     And the response property "$.code" is "UNSUPPORTED_IDENTIFIER"
     And the response property "$.message" contains a user-friendly text
 
-
   # When the service is only offered to certain types of devices or subscriptions, e.g. IoT, B2C, etc.
   @location_verification_C01.07_device_not_supported
   Scenario: Service not available for the device
@@ -178,7 +178,6 @@ Feature: CAMARA Device location verification API, vwip - Operation verifyLocatio
     And the response property "$.status" is 422
     And the response property "$.code" is "SERVICE_NOT_APPLICABLE"
     And the response property "$.message" contains a user-friendly text
-
 
   # Several identifiers provided but they do not identify the same device
   # This scenario may happen with 2-legged access tokens, which do not identify a device
@@ -193,7 +192,9 @@ Feature: CAMARA Device location verification API, vwip - Operation verifyLocatio
     And the response property "$.code" is "IDENTIFIER_MISMATCH"
     And the response property "$.message" contains a user friendly text
 
-  # Generic 400 errors
+#################
+# Error code 400
+#################
 
   @location_verification_400.1_no_request_body
   Scenario: Missing request body
@@ -212,8 +213,6 @@ Feature: CAMARA Device location verification API, vwip - Operation verifyLocatio
     And the response property "$.status" is 400
     And the response property "$.code" is "INVALID_ARGUMENT"
     And the response property "$.message" contains a user friendly text
-
-  # Other specific 400 errors
 
   @location_verification_400.3_other_input_properties_schema_not_compliant
   # Test other input properties in addition to device
@@ -251,7 +250,9 @@ Feature: CAMARA Device location verification API, vwip - Operation verifyLocatio
       | $.area.center.longitude |
       | $.area.radius           |
 
-  # Generic 401 errors
+#################
+# Error code 401
+#################
 
   @location_verification_401.1_no_authorization_header
   Scenario: No Authorization header
@@ -284,7 +285,9 @@ Feature: CAMARA Device location verification API, vwip - Operation verifyLocatio
     And the response property "$.code" is "UNAUTHENTICATED"
     And the response property "$.message" contains a user friendly text
 
-  # Generic 403 error
+#################
+# Error code 403
+#################
 
   @location_verification_403_missing_scope
   Scenario: Missing scope in the access token
@@ -296,7 +299,9 @@ Feature: CAMARA Device location verification API, vwip - Operation verifyLocatio
     And the response property "$.code" is "PERMISSION_DENIED"
     And the response property "$.message" contains a user friendly text
 
-  # 422 error codes
+#################
+# Error code 422
+#################
 
   @location_verification_422.1_area_not_covered
   Scenario: Area not covered
@@ -309,12 +314,11 @@ Feature: CAMARA Device location verification API, vwip - Operation verifyLocatio
     And the response property "$.code" is "LOCATION_VERIFICATION.AREA_NOT_COVERED"
     And the response property "$.message" contains a user-friendly text
 
-
   @location_verification_422.2_area_too_small
   Scenario: Area too small
-    Given that there is a minimum radius allowed by the implementation 
+    Given that there is a minimum radius allowed by the implementation
     And a valid testing device supported by the service identified, by the token or provided in the request body
-    And the request body property "$.area.areaType" is set to "CIRCLE" 
+    And the request body property "$.area.areaType" is set to "CIRCLE"
     And the request body property "$.area.center" is set to a location covered by the implementation
     And the request body property "$.area.radius" is set to a value smaller than the minimum allowed
     And the request body property "$.maxAge" is not included
@@ -323,7 +327,6 @@ Feature: CAMARA Device location verification API, vwip - Operation verifyLocatio
     And the response property "$.status" is 422
     And the response property "$.code" is "LOCATION_VERIFICATION.INVALID_AREA"
     And the response property "$.message" contains a user-friendly text
-
 
   @location_verification_422.3_unable_to_fulfill_max_age
   Scenario: Unable to fulfill max age
