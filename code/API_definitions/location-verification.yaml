@@ -139,7 +139,7 @@ paths:
                   maxAge: 120
               INPUT_PHONE_NUMBER_POLYGON:
                 summary: Phone number, polygon and maxAge
-                description: Verify if device identified by a phone number is within a polygon shaped area, not indicating a maxAge
+                description: Verify if device identified by a phone number is within a polygon shaped area, providing a maxAge
                 value:
                   device:
                     phoneNumber: "+123456789"
@@ -154,6 +154,7 @@ paths:
                         longitude: 13.37959
                       - latitude: 52.515849
                         longitude: 13.378308
+                  maxAge: 120
               INPUT_IP_ADDRESS_V4_CIRCLE:
                 summary: IPv4 address, circle, without maxAge
                 description: Verify if device identified by an IPv4 address is within a circle, not indicating a maxAge
