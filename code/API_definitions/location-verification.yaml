@@ -8,7 +8,7 @@ info:
 
     API consumers are able to verify whether the location of certain user device is within the area specified. Currently two area types are supported as input:
     - Circle is determined by a set of coordinates (latitude and longitude) and some expected accuracy (radius). Support of circle type areas is mandatory for provider.
-    - Polygon is determined by an array of corner points in form of geo coordinates (latitude and longitude). This area type is not mandatory for implementation by provider.
+    - Polygon is defined by an ordered list of geographic points (latitude and longitude) that form its boundary. This area type is not mandatory for implementation by provider.
 
     * If the provided area is out of the operator's coverage or it is not supported for any reason, an error `422 LOCATION_VERIFICATION.AREA_NOT_COVERED` will be returned.
     * Legal restrictions regarding privacy, or other regulatory or implementation issues, may force the operator to set restrictions to the provided area, such as setting a minimum value to the accepted radius. In these cases, an error `422 LOCATION_VERIFICATION.INVALID_AREA` will be returned and the error message will refer to the reason of the limitation.
