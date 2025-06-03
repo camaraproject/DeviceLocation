@@ -12,7 +12,7 @@ info:
     * Legal restrictions regarding privacy, or other regulatory or implementation issues, may force the operator to set restrictions to the provided area, such as setting a minimum value to the accepted radius. In these cases, an error `422 GEOFENCING_SUBSCRIPTIONS.INVALID_AREA` will be returned and the error message will refer to the reason of the limitation.
     * If the provided polygonal type of area is not supported by operator, an error `422 GEOFENCING_SUBSCRIPTIONS.NOT_MANAGED_AREA_TYPE` will be returned.
 
-    The area provided in the request is described by a circle or a polygon. The circle area is determined by coordinates (latitude and longitude) and an accuracy defined by the radius. The polygon area is determined by an list of corner points in form of geo coordinates (latitude and longitude). Support of circle type areas is mandatory for provider. Implementation of polygonal areas is optional. 
+    The area provided in the request is described by a circle or a polygon. The circle area is determined by coordinates (latitude and longitude) and an accuracy defined by the radius. The polygon area is defined by an ordered list of geographic points (latitude and longitude) that form its boundary. Support of circle type areas is mandatory for provider. Implementation of polygonal areas is optional. 
 
     Upon successfully creating a subscription, the API will provide an Event Subscription ID, and it will indicate the subscription's expiration date.
 
