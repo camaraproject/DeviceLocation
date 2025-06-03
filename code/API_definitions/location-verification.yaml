@@ -12,7 +12,7 @@ info:
 
     * If the provided area is out of the operator's coverage or it is not supported for any reason, an error `422 LOCATION_VERIFICATION.AREA_NOT_COVERED` will be returned.
     * Legal restrictions regarding privacy, or other regulatory or implementation issues, may force the operator to set restrictions to the provided area, such as setting a minimum value to the accepted radius. In these cases, an error `422 LOCATION_VERIFICATION.INVALID_AREA` will be returned and the error message will refer to the reason of the limitation.
-    * If the provided polygonal type of area is not supported by operator, an error `422 GEOFENCING_SUBSCRIPTIONS.NOT_MANAGED_AREA_TYPE` will be returned.
+    * If the provided polygonal type of area is not supported by operator, an error `422 LOCATION_VERIFICATION.NOT_MANAGED_AREA_TYPE` will be returned.
 
     The verification result depends on the network's ability and accuracy to locate the device at the requested area.
 
