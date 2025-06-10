@@ -22,7 +22,7 @@ Feature: Camara Geofencing Subscriptions API, vwip - Operations on subscriptions
   Scenario:  Create geofencing subscription (sync creation)
     Given that subscriptions are created synchronously
     And a valid subscription request body 
-    When the request "createSubscription" is sent 
+    When the request "createGeofencingSubscription" is sent
     Then the response code is 201
     And the response header "Content-Type" is "application/json"
     And the response header "x-correlator" has same value as the request header "x-correlator"
@@ -32,7 +32,7 @@ Feature: Camara Geofencing Subscriptions API, vwip - Operations on subscriptions
   Scenario:  Create geofencing subscription (async creation)
     Given that subscriptions are created asynchronously
     And a valid subscription request body
-    When the request "createSubscription" is sent
+    When the request "createGeofencingSubscription" is sent
     Then the response code is 202
     And the response header "Content-Type" is "application/json"
     And the response header "x-correlator" has same value as the request header "x-correlator"
@@ -79,7 +79,7 @@ Feature: Camara Geofencing Subscriptions API, vwip - Operations on subscriptions
     Given a valid subscription request body 
     And the request body property "$.area" is set to circle which covers location "Place1" 
     And the request body property "$.type" is "area-entered"	
-    When the request "createSubscription" is sent
+    When the request "createGeofencingSubscription" is sent
     Then the response code is 201
     Then the device entered location "Place1"
     Then event notification "area-entered" is received on callback-url
@@ -92,7 +92,7 @@ Feature: Camara Geofencing Subscriptions API, vwip - Operations on subscriptions
     Given a valid subscription request body 
     And the request body property "$.area" is set to circle which covers location "Place1" 
     And the request body property "$.type" is "area-left" 
-    When the request "createSubscription" is sent
+    When the request "createGeofencingSubscription" is sent
     Then the response code is 201
     Then the device left from location "Place1" 
     Then event notification "area-left" is received on callback-url
@@ -106,7 +106,7 @@ Feature: Camara Geofencing Subscriptions API, vwip - Operations on subscriptions
     And the request body property "$.area" is set to circle which covers location "Place1" 
     And the request body property "$.type" is "area-left"
     And the request body property "$.subscriptionExpireTime" is set to a value in the near future
-    When the request "createSubscription" is sent
+    When the request "createGeofencingSubscription" is sent
     Then the response code is 201 
     Then the subscription is expired
     Then event notification "subscription-ends" is received on callback-url
@@ -120,7 +120,7 @@ Feature: Camara Geofencing Subscriptions API, vwip - Operations on subscriptions
     And the request body property "$.area" is set to circle which covers location "Place1"
     And the request body property "$.type" is "area-left"
     And the request body property "$.subscriptionMaxEvents" is set to 1
-    When the request "createSubscription" is sent
+    When the request "createGeofencingSubscription" is sent
     Then the response code is 201
     Then the device left from location "Place1"
     Then event notification "area-left" is received on callback-url
@@ -131,7 +131,7 @@ Feature: Camara Geofencing Subscriptions API, vwip - Operations on subscriptions
   @geofencing_subscriptions_11_subscription_delete_event_validation
   Scenario: Receive notification for subscription-ends event on deletion
     Given a valid subscription request body 
-    When the request "createSubscription" is sent
+    When the request "createGeofencingSubscription" is sent
     Then the response code is 201 
     And path parameter "subscriptionId" is set to the identifier of an existing subscription created 
     When the request "deleteGeofencingSubscription" is sent
@@ -145,7 +145,7 @@ Feature: Camara Geofencing Subscriptions API, vwip - Operations on subscriptions
   @geofencing_subscriptions_12_create_geofencing_subscription_for_a_device_with_invalid_parameter
   Scenario:  Create geofencing subscription with invalid parameter
     Given the request body is not compliant with the schema "/components/schemas/SubscriptionRequest"
-    When the  request "createSubscription" is sent 
+    When the  request "createGeofencingSubscription" is sent
     Then the response code is 400
     And the response property "$.status" is 400
     And the response property "$.code" is "INVALID_ARGUMENT"
@@ -155,7 +155,7 @@ Feature: Camara Geofencing Subscriptions API, vwip - Operations on subscriptions
   Scenario: Expiry time in past
     Given a valid subscription request body 
     And request body property "$.subscriptionexpiretime" in past
-    When the request "createSubscription" is sent 
+    When the request "createGeofencingSubscription" is sent
     Then the response code is 400
     And the response property "$.status" is 400
     And the response property "$.code" is "INVALID_ARGUMENT"
@@ -165,7 +165,7 @@ Feature: Camara Geofencing Subscriptions API, vwip - Operations on subscriptions
   Scenario: Subscription creation with invalid event type
     Given a valid subscription request body 
     And the request body property "$.types" is set to invalid value  
-    When the request "createSubscription" is sent
+    When the request "createGeofencingSubscription" is sent
     Then the response property "$.status" is 400
     And the response property "$.code" is "INVALID_ARGUMENT"
     And the response property "$.message" contains a user friendly text
@@ -173,7 +173,7 @@ Feature: Camara Geofencing Subscriptions API, vwip - Operations on subscriptions
   @geofencing_subscription_15_invalid_protocol
   Scenario: Subscription creation with invalid protocol
     Given a valid subscription request body 
-    When the request "createSubscription" is sent
+    When the request "createGeofencingSubscription" is sent
     And the request property "$.types" is set to "org.camaraproject.geofencing-subscriptions.v0.area-entered"
     And the request property "$.protocol" is not set to "HTTP"
     And the request property "$.config.subscriptionDetail.phoneNumber" is set with provided phoneNumber
@@ -185,7 +185,7 @@ Feature: Camara Geofencing Subscriptions API, vwip - Operations on subscriptions
   @geofencing_subscription_16_invalid_credential
   Scenario: Subscription creation with invalid credential
     Given a valid subscription request body 
-    When the request "createSubscription" is sent
+    When the request "createGeofencingSubscription" is sent
     And the request property "$.types" is set to "org.camaraproject.geofencing-subscriptions.v0.area-entered"
     And the request property "$.protocol" is set to "HTTP"
     And the request property "$.config.subscriptionDetail.phoneNumber" is set with with provided phoneNumber
@@ -201,7 +201,7 @@ Feature: Camara Geofencing Subscriptions API, vwip - Operations on subscriptions
   @geofencing_subscription_17_invalid_token
   Scenario: Subscription creation with invalid token
     Given a valid subscription request body
-    When the request "createSubscription" is sent
+    When the request "createGeofencingSubscription" is sent
     And  the request property "$.types"="org.camaraproject.geofencing-subscriptions.v0.area-entered"
     And  the request property "$.protocol" is set to "HTTP"
     And the request property "$.sink" is set to provided callbackUrl
@@ -216,7 +216,7 @@ Feature: Camara Geofencing Subscriptions API, vwip - Operations on subscriptions
   @geofencing_subscriptions_18_no_authorization_header_for_create_subscription
   Scenario: No Authorization header for create subscription
     Given a valid subscription request body and header "Authorization" is not set to 
-    When the request "createSubscription" is sent 
+    When the request "createGeofencingSubscription" is sent
     Then the response status code is 401
     And the response property "$.status" is 401
     And the response property "$.code" is "UNAUTHENTICATED"
@@ -225,7 +225,7 @@ Feature: Camara Geofencing Subscriptions API, vwip - Operations on subscriptions
   @geofencing_subscriptions_19_expired_access_token_for_create_subscription
   Scenario: Expired access token for create subscription
     Given a valid subscription request body and header "Authorization" is expired
-    When the request "createSubscription" is sent
+    When the request "createGeofencingSubscription" is sent
     Then the response status code is 401
     And the response property "$.status" is 401
     And the response property "$.code" is "UNAUTHENTICATED"
@@ -235,7 +235,7 @@ Feature: Camara Geofencing Subscriptions API, vwip - Operations on subscriptions
   Scenario: Invalid access token for create subscription
     Given a valid subscription request body 
     And header "Authorization" set to an invalid access token
-    When the request "createSubscription" is sent
+    When the request "createGeofencingSubscription" is sent
     Then the response status code is 401
     And the response header "Content-Type" is "application/json"
     And the response property "$.status" is 401
