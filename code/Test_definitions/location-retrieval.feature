@@ -268,7 +268,6 @@ Feature: CAMARA Device location retrieval API, vwip - Operation retrieveLocation
   @location_retrieval_422.2_unable_to_locate_device_with_required_freshness
   Scenario: Unable to provide device location with required maxAge
     Given the testing device, identified by the token or provided in the request, is not connected to the network for some time
-    And request body property "$.device" is set to a valid testing device which is not connected to the network for some time
     And the request body property "$.maxAge" is set to a value shorter than that time
     When the request "retrieveLocation" is sent
     Then the response status code is 422
