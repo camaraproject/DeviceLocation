@@ -34,9 +34,7 @@ Feature: CAMARA Device location retrieval API, vwip - Operation retrieveLocation
     # The response has to comply with the generic response schema which is part of the spec
     And the response body complies with the OAS schema at "#/components/schemas/Location"
 
-#################
-# Scenarios testing specific situations for the device location
-###################
+  # Scenarios testing specific situations for the device location
 
   @location_retrieval_200.1_location_retrieval_for_device_no_maxAge
   Scenario: Retrieve location of a device without specifying maxAge
@@ -61,9 +59,7 @@ Feature: CAMARA Device location retrieval API, vwip - Operation retrieveLocation
     And the response body complies with the OAS schema at "#/components/schemas/Location"
     And the response property "$.lastLocationTime" value is not older than the value of "$.maxAge" the request time
 
-#################
-# Error scenarios for management of input parameter device
-###################
+  # Error scenarios for management of input parameter device
 
   @location_retrieval_C01.01_device_empty
   Scenario: The device value is an empty object
@@ -158,9 +154,9 @@ Feature: CAMARA Device location retrieval API, vwip - Operation retrieveLocation
     And the response property "$.code" is "IDENTIFIER_MISMATCH"
     And the response property "$.message" contains a user friendly text
 
-#################
-# Error code 400
-#################
+  #################
+  # Error code 400
+  #################
 
   @location_retrieval_400.1_no_request_body
   Scenario: Missing request body
@@ -181,9 +177,9 @@ Feature: CAMARA Device location retrieval API, vwip - Operation retrieveLocation
     And the response property "$.code" is "INVALID_ARGUMENT"
     And the response property "$.message" contains a user friendly text
 
-#################
-# Error code 401
-#################
+  #################
+  # Error code 401
+  #################
 
   @location_retrieval_401.1_no_authorization_header
   Scenario: No Authorization header
@@ -216,9 +212,9 @@ Feature: CAMARA Device location retrieval API, vwip - Operation retrieveLocation
     And the response property "$.code" is "UNAUTHENTICATED"
     And the response property "$.message" contains a user friendly text
 
-#################
-# Error code 403
-#################
+  #################
+  # Error code 403
+  #################
 
   @location_retrieval_403_missing_scope
   Scenario: Missing scope in the access token
@@ -230,9 +226,9 @@ Feature: CAMARA Device location retrieval API, vwip - Operation retrieveLocation
     And the response property "$.code" is "PERMISSION_DENIED"
     And the response property "$.message" contains a user friendly text
 
-#################
-# Error code 404
-#################
+  #################
+  # Error code 404
+  #################
 
   @location_retrieval_404_unable_to_locate_device
   # Input set to a device that could not be located
@@ -248,9 +244,9 @@ Feature: CAMARA Device location retrieval API, vwip - Operation retrieveLocation
     And the response property "$.code" is "LOCATION_RETRIEVAL.DEVICE_NOT_FOUND"
     And the response property "$.message" contains a user friendly text
 
-#################
-# HTTP - 422
-#################
+  #################
+  # HTTP - 422
+  #################
 
   @location_retrieval_422.1_unable_to_fulfill_max_surface
   Scenario: Unable to provide device location with required maxSurface

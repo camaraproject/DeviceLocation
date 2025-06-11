@@ -213,9 +213,7 @@ Feature: Camara Geofencing Subscriptions API, vwip - Operations on subscriptions
     And the notification property "$.data.subscriptionId" is equal to "id"
     And the notification request property "$.data.terminationReason" is equal to "SUBSCRIPTION_DELETED"
 
-################
-# Error scenarios for management of input parameter device
-##################
+  # Error scenarios for management of input parameter device
 
   @geofencing_subscription_C01.01_device_empty
   Scenario: The device value is an empty object
@@ -310,9 +308,9 @@ Feature: Camara Geofencing Subscriptions API, vwip - Operations on subscriptions
     And the response property "$.code" is "IDENTIFIER_MISMATCH"
     And the response property "$.message" contains a user friendly text
 
-##################
-# Error code 400
-##################
+  ##################
+  # Error code 400
+  ##################
 
   @geofencing_subscription_400.1_create_subscription_with_invalid_parameter
   Scenario: Create subscription with invalid parameter
@@ -375,9 +373,9 @@ Feature: Camara Geofencing Subscriptions API, vwip - Operations on subscriptions
     And the response property "$.code" is "INVALID_TOKEN"
     And the response property "$.message" contains a user friendly text
 
-##################
-# Error code 401
-##################
+  ##################
+  # Error code 401
+  ##################
 
   @geofencing_subscription_creation_401.1_no_authorization_header
   Scenario: No Authorization header
@@ -412,9 +410,9 @@ Feature: Camara Geofencing Subscriptions API, vwip - Operations on subscriptions
     And the response property "$.code" is "UNAUTHENTICATED" or "AUTHENTICATION_REQUIRED"
     And the response property "$.message" contains a user friendly text
 
-##################
-# Error code 401
-##################
+  ##################
+  # Error code 401
+  ##################
 
   @geofencing_subscription_404.1_retrieve_unknown_subscription_id
   Scenario: Get subscription when subscriptionId is unknown to the system
@@ -436,9 +434,9 @@ Feature: Camara Geofencing Subscriptions API, vwip - Operations on subscriptions
     And the response property "$.code" is "NOT_FOUND"
     And the response property "$.message" contains a user friendly text
 
-##################
-# Error code 422
-##################
+  ##################
+  # Error code 422
+  ##################
 
   @geofencing_subscriptions_422.1_create_with_an_unsupported_area
   Scenario: Create subscription with an unsupported area

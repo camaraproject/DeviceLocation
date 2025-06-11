@@ -93,9 +93,7 @@ Feature: CAMARA Device location verification API, vwip - Operation verifyLocatio
     And the response property "$.lastLocationTime" does not exist
     And the response property "$.matchRate" does not exist
 
-#################
-# Error scenarios for management of input parameter device
-###################
+  # Error scenarios for management of input parameter device
 
   @location_verification_C01.01_device_empty
   Scenario: The device value is an empty object
@@ -190,9 +188,9 @@ Feature: CAMARA Device location verification API, vwip - Operation verifyLocatio
     And the response property "$.code" is "IDENTIFIER_MISMATCH"
     And the response property "$.message" contains a user friendly text
 
-#################
-# Error code 400
-#################
+  #################
+  # Error code 400
+  #################
 
   @location_verification_400.1_no_request_body
   Scenario: Missing request body
@@ -248,9 +246,9 @@ Feature: CAMARA Device location verification API, vwip - Operation verifyLocatio
       | $.area.center.longitude |
       | $.area.radius           |
 
-#################
-# Error code 401
-#################
+  #################
+  # Error code 401
+  #################
 
   @location_verification_401.1_no_authorization_header
   Scenario: No Authorization header
@@ -283,9 +281,9 @@ Feature: CAMARA Device location verification API, vwip - Operation verifyLocatio
     And the response property "$.code" is "UNAUTHENTICATED"
     And the response property "$.message" contains a user friendly text
 
-#################
-# Error code 403
-#################
+  #################
+  # Error code 403
+  #################
 
   @location_verification_403_missing_scope
   Scenario: Missing scope in the access token
@@ -297,9 +295,9 @@ Feature: CAMARA Device location verification API, vwip - Operation verifyLocatio
     And the response property "$.code" is "PERMISSION_DENIED"
     And the response property "$.message" contains a user friendly text
 
-#################
-# Error code 422
-#################
+  #################
+  # Error code 422
+  #################
 
   @location_verification_422.1_area_not_covered
   Scenario: Area not covered
