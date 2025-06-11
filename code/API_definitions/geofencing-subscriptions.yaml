@@ -1245,15 +1245,8 @@ components:
                       - 401
                   code:
                     enum:
-                      - AUTHENTICATION_REQUIRED
                       - UNAUTHENTICATED
           examples:
-            GENERIC_401_AUTHENTICATION_REQUIRED:
-              description: New authentication is needed, authentication is no longer valid
-              value:
-                status: 401
-                code: AUTHENTICATION_REQUIRED
-                message: New authentication is required.
             GENERIC_401_UNAUTHENTICATED:
               description: Request cannot be authenticated
               value:
