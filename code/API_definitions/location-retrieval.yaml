@@ -207,13 +207,13 @@ components:
       description: Correlation id for the different services
       schema:
         type: string
-        pattern: ^[a-zA-Z0-9-]{0,55}$
+        pattern: ^[a-zA-Z0-9-_:;.\/<>{}]{0,256}$
   headers:
     x-correlator:
       description: Correlation id for the different services
       schema:
         type: string
-        pattern: ^[a-zA-Z0-9-]{0,55}$
+        pattern: ^[a-zA-Z0-9-_:;.\/<>{}]{0,256}$
   schemas:
     RetrievalLocationRequest:
       description: Request to retrieve the location of a device. Device is not required when using a 3-legged access token, following the rules in the description.
