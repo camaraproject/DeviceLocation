@@ -239,7 +239,8 @@ Feature: CAMARA Device location retrieval API, vwip - Operation retrieveLocation
   @location_retrieval_404_unable_to_locate_device
   # Input set to a device that could not be located
   Scenario: Unable to provide device location
-    Given a valid testing device which cannot be located by the network, identified by the token or provided in the request body
+    Given a valid testing device which cannot be located by the network operator, identified by the token or provided in the request body
+
     And the request body property "$.maxAge" is not included
     When the request "retrieveLocation" is sent
     Then the response status code is 404
