@@ -18,9 +18,7 @@ Feature: Camara Geofencing Subscriptions API, vwip - Operations on subscriptions
     And the header "x-correlator" is set to a UUID value
     And the request body is set by default to a request body compliant with the schema
 
-##########################
-# Happy path scenarios
-##########################
+  # Success scenarios
 
   @geofencing_subscriptions_01.1_sync_creation_2legs
   Scenario Outline: Synchronous subscription creation with 2-legged-token

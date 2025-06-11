@@ -18,9 +18,7 @@ Feature: CAMARA Device location retrieval API, vwip - Operation retrieveLocation
     And the header "x-correlator" is set to a UUID value
     And the request body is set by default to a request body compliant with the schema
 
-##########################
-# Happy path scenarios
-##########################
+  # Success scenarios
 
   # This first scenario serves as a minimum
   @location_retrieval_200_generic_success_scenario

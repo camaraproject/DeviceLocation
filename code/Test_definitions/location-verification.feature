@@ -18,9 +18,7 @@ Feature: CAMARA Device location verification API, vwip - Operation verifyLocatio
     And the header "x-correlator" is set to a UUID value
     And the request body is set by default to a request body compliant with the schema
 
-##########################
-# Happy path scenarios
-##########################
+  # Success scenarios
 
   # This first scenario serves as a minimum, not testing any specific verificationResult
   @location_verification_01_generic_success_scenario
