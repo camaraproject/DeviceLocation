@@ -255,7 +255,8 @@ Feature: CAMARA Device location retrieval API, vwip - Operation retrieveLocation
 
   @location_retrieval_422.1_unable_to_fulfill_max_surface
   Scenario: Unable to provide device location with required maxSurface
-    Given the testing device, identified by the token or provided in the request, is located within a surface of certain area
+    Given the testing device, identified by the token or provided in the request, is located by the network operator within a surface of certain area
+
     And the request body property "$.maxSurface" is set to a value smaller than that area
     When the request "retrieveLocation" is sent
     Then the response status code is 422
