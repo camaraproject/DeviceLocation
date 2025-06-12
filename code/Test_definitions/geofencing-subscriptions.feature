@@ -15,7 +15,7 @@ Feature: Camara Geofencing Subscriptions API, vwip - Operations on subscriptions
   Background: Common Geofencing Subscriptions setup
     Given the resource "{apiroot}/geofencing-subscriptions/vwip/" as geofencing base-url
     And the header "Authorization" is set to a valid access token
-    And the header "x-correlator" is set to a UUID value
+    And the header "x-correlator" complies with the schema at "#/components/schemas/XCorrelator"
 
 ############################ Happy Path Scenarios ########################
   @geofencing_subscriptions_01_Create_geofencing_subscription_for_a_device_sync
