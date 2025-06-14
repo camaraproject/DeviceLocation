@@ -9,9 +9,9 @@
 
 # DeviceLocation
 
-Incubating API Repository to evolve and maintain the definitions and documentation of the DeviceLocation APIs
+Incubating API Repository to evolve and maintain the definitions and documentation of DeviceLocation Service API(s) within the Sub Project [Device Location](https://lf-camaraproject.atlassian.net/wiki/x/wgApBQ)
 
-* API wiki page: [Device Location](https://lf-camaraproject.atlassian.net/l/cp/o9sdMHiK)
+* API Repository [wiki page](https://lf-camaraproject.atlassian.net/wiki/x/GDLe)
 
 ## Scope
 * Service APIs for “Device Location” (see APIBacklog.md)  
