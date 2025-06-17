@@ -55,7 +55,8 @@
     ],
     "Feature": [
       "poor description",
-      "validate"
+      "validate",
+      "verify"
     ],
     "Background": [
       "show last response",
