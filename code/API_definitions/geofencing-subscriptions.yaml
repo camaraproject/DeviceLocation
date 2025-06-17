@@ -10,8 +10,9 @@ info:
 
     * If the provided area is out of the operator's coverage or it is not supported for any reason, an error `422 GEOFENCING_SUBSCRIPTIONS.AREA_NOT_COVERED` will be returned.
     * Legal restrictions regarding privacy, or other regulatory or implementation issues, may force the operator to set restrictions to the provided area, such as setting a minimum value to the accepted radius. In these cases, an error `422 GEOFENCING_SUBSCRIPTIONS.INVALID_AREA` will be returned and the error message will refer to the reason of the limitation.
+    * If the provided polygonal type of area is not supported by operator, an error `422 GEOFENCING_SUBSCRIPTIONS.NOT_MANAGED_AREA_TYPE` will be returned.
 
-    The area provided in the request is described by a circle determined by coordinates (latitude and longitude) and an accuracy defined by the radius.
+    The area provided in the request is described by a circle or a polygon. The circle area is determined by coordinates (latitude and longitude) and an accuracy defined by the radius. The polygon area is defined by an ordered list of geographic points (latitude and longitude) that form its boundary. Support of circle type areas is mandatory for provider. Implementation of polygonal areas is optional. 
 
     Upon successfully creating a subscription, the API will provide an Event Subscription ID, and it will indicate the subscription's expiration date.
 
@@ -153,6 +154,8 @@ paths:
             examples:
               CIRCLE_AREA_ENTERED:
                 $ref: "#/components/examples/REQUEST_CIRCLE_AREA_ENTERED"
+              POLYGON_AREA_ENTERED:
+                $ref: "#/components/examples/REQUEST_POLYGON_AREA_ENTERED"
         required: true
       callbacks:
         notifications:
@@ -177,6 +180,8 @@ paths:
                         $ref: "#/components/examples/CIRCLE_AREA_ENTERED"
                       CIRCLE_AREA_LEFT:
                         $ref: "#/components/examples/CIRCLE_AREA_LEFT"
+                      POLYGON_AREA_ENTERED:
+                        $ref: "#/components/examples/POLYGON_AREA_ENTERED"
                       SUBSCRIPTION_ENDS:
                         $ref: "#/components/examples/SUBSCRIPTION_ENDS"
                       SUBSCRIPTION_UNPROCESSABLE:
@@ -758,14 +763,17 @@ components:
         propertyName: areaType
         mapping:
           CIRCLE: "#/components/schemas/Circle"
+          POLYGON: "#/components/schemas/Polygon"
 
     AreaType:
       type: string
       description: |
         Type of this area.
         CIRCLE - The area is defined as a circle.
+        POLYGON - The area is defined as a polygon.
       enum:
         - CIRCLE
+        - POLYGON
 
     Circle:
       description: Circular area
@@ -791,6 +799,36 @@ components:
           latitude: 50.735851
           longitude: 7.10066
         radius: 50000
+
+    Polygon:
+      description: Polygonal area. The Polygon should be a simple polygon defined by an ordered geo points list, i.e. should not intersect itself.
+      allOf:
+        - $ref: "#/components/schemas/Area"
+        - type: object
+          required:
+            - boundary
+          properties:
+            boundary:
+              $ref: "#/components/schemas/PointList"
+      example:
+        areaType: POLYGON
+        boundary:
+          - latitude: 52.516770
+            longitude: 13.378156
+          - latitude: 52.516841
+            longitude: 13.379433
+          - latitude: 52.515917
+            longitude: 13.37959
+          - latitude: 52.515849
+            longitude: 13.378308
+
+    PointList:
+      description: List of points defining a polygon
+      type: array
+      items:
+        $ref: "#/components/schemas/Point"
+      minItems: 3
+      maxItems: 15
 
     Point:
       type: object
@@ -1394,6 +1432,7 @@ components:
                       - UNSUPPORTED_IDENTIFIER
                       - GEOFENCING_SUBSCRIPTIONS.AREA_NOT_COVERED
                       - GEOFENCING_SUBSCRIPTIONS.INVALID_AREA
+                      - GEOFENCING_SUBSCRIPTIONS.NOT_MANAGED_AREA_TYPE
           examples:
             GENERIC_422_IDENTIFIER_MISMATCH:
               description: Inconsistency between device identifiers not pointing to the same device.
@@ -1443,7 +1482,13 @@ components:
               value:
                 status: 422
                 code: GEOFENCING_SUBSCRIPTIONS.INVALID_AREA
-                message: "The requested area is too small"
+            GEOFENCING_422_NOT_MANAGED_AREA_TYPE:
+              summary: Not managed area type
+              description: The requested area type is currently not supported by implementation.
+              value:
+                status: 422
+                code: GEOFENCING_SUBSCRIPTIONS.NOT_MANAGED_AREA_TYPE
+                message: "The requested area type is not managed"
     Generic429:
       description: Too Many Requests
       headers:
@@ -1497,8 +1542,35 @@ components:
           initialEvent: true
           subscriptionMaxEvents: 10
           subscriptionExpireTime: "2024-03-22T05:40:58.469Z"
+
+    REQUEST_POLYGON_AREA_ENTERED:
+      description: A sample geofence for entering for a polygon area.
+      value:
+        protocol: "HTTP"
+        sink: https://notificationSendServer12.supertelco.com
+        types:
+          - org.camaraproject.geofencing-subscriptions.v0.area-entered
+        config:
+          subscriptionDetail:
+            device:
+              phoneNumber: "+12345678912"
+            area:
+              areaType: POLYGON
+              boundary:
+                - latitude: 52.516770
+                  longitude: 13.378156
+                - latitude: 52.516841
+                  longitude: 13.379433
+                - latitude: 52.515917
+                  longitude: 13.37959
+                - latitude: 52.515849
+                  longitude: 13.378308
+          initialEvent: true
+          subscriptionMaxEvents: 10
+          subscriptionExpireTime: "2024-03-22T05:40:58.469Z"
+
     CIRCLE_AREA_ENTERED:
-      description: The cloud event when a geofence area was entered.
+      description: The cloud event when a geofence area of circle type was entered.
       value:
         id: "123655"
         source: https://notificationSendServer12.supertelco.com
@@ -1516,6 +1588,32 @@ components:
               latitude: 50.735851
               longitude: 7.10066
             radius: 2000
+
+    POLYGON_AREA_ENTERED:
+      description: The cloud event when a geofence area of polygon type was entered.
+      value:
+        id: "123655"
+        source: https://notificationSendServer12.supertelco.com
+        type: org.camaraproject.geofencing-subscriptions.v0.area-entered
+        specversion: "1.0"
+        datacontenttype: application/json
+        time: 2023-03-22T05:40:23.682Z
+        data:
+          subscriptionId: 987654321
+          device:
+            phoneNumber: +123456789
+          area:
+            areaType: POLYGON
+            boundary:
+              - latitude: 52.516770
+                longitude: 13.378156
+              - latitude: 52.516841
+                longitude: 13.379433
+              - latitude: 52.515917
+                longitude: 13.37959
+              - latitude: 52.515849
+                longitude: 13.378308
+
     CIRCLE_AREA_LEFT:
       description: The cloud event when a geofence area was left.
       value:
