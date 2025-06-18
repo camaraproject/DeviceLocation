@@ -12,16 +12,14 @@ Feature: Camara Geofencing Subscriptions API, vwip - Operations on subscriptions
   # References to OAS spec schemas refer to schemas specifies in geofencing-subscriptions.yaml
 
   Background: Common Geofencing Subscriptions setup
-    Given the resource "/geofencing-subscriptions/vwip/subscriptions" as geofencing base-url
-    And the header "Content-Type" is set to "application/json"
+    Given the resource "{apiroot}/geofencing-subscriptions/vwip/subscriptions" as geofencing base-url
     And the header "Authorization" is set to a valid access token
     And the header "x-correlator" complies with the schema at "#/components/schemas/XCorrelator"
-    And the request body is set by default to a request body compliant with the schema
 
   # Success scenarios
 
   @geofencing_subscriptions_01.1_sync_creation_2legs
-  Scenario Outline: Synchronous subscription creation with 2-legged-token
+  Scenario Outline: Create geofencing subscription (async creation) with 2-legged-token
     Given the header "Authorization" is set to a valid access token which does not identify any device
     And the request body is compliant with the OAS schema at "#/component/schemas/SubscriptionRequest"
     When the request "createGeofencingSubscription" is sent
@@ -42,10 +40,10 @@ Feature: Camara Geofencing Subscriptions API, vwip - Operations on subscriptions
       | org.camaraproject.geofencing-subscriptions.v0.area-left    |
 
   @geofencing_subscriptions_01.1_sync_creation_3legs
-  Scenario Outline: Synchronous subscription creation with 3-legged-token
+  Scenario Outline: Create geofencing subscription (async creation) with 3-legged-token
     # Some implementations may only support asynchronous subscription creation
-    Given the header "Authorization" is set to a valid access token which identifies a valid device
-    And the request body is compliant with the OAS schema at "#/component/schemas/SubscriptionRequest"
+    Given that subscriptions are created synchronously
+    And a valid subscription request body
     When the request "createGeofencingSubscription" is sent
     And request property "$.types" is one of the allowed values "<subscription-creation-types>"
     And request property "$.protocol" is equal to "HTTP"
@@ -65,7 +63,7 @@ Feature: Camara Geofencing Subscriptions API, vwip - Operations on subscriptions
       | org.camaraproject.geofencing-subscriptions.v0.area-left    |
 
   @geofencing_subscriptions_02_async_creation
-  Scenario Outline: Asynchronous subscription creation with 2- or 3-legged access token
+  Scenario Outline: Create geofencing subscription (async creation)
     Given a valid target device, identified by either the access token or in the request body
     And the request body is compliant with the OAS schema at "#/component/schemas/SubscriptionRequest"
     When the request "createGeofencingSubscription" is sent
@@ -142,7 +140,7 @@ Feature: Camara Geofencing Subscriptions API, vwip - Operations on subscriptions
     And the response header "x-correlator" has same value as the request header "x-correlator"
     And the response body is an empty array
 
-  @geofencing_subscriptions_07_delete_subscription_based_on_an_existing_subscription-id
+  @geofencing_subscriptions_07_Operation_to_delete_subscription_based_on_an_existing_subscription-id
   Scenario: Delete the subscription with subscriptionId equal to "id"
     Given the API consumer has an active subscription with "subscriptionId" equal to "id"
     When the request "deleteGeofencingSubscription" is sent
@@ -176,7 +174,7 @@ Feature: Camara Geofencing Subscriptions API, vwip - Operations on subscriptions
     And the notification property "$.type" is equal to "org.camaraproject.geofencing-subscriptions.v0.area-left"
     And the notification property "$.data.subscriptionId" is equal to "id"
 
-  @geofencing_subscriptions_10_subscription_expiry
+  @geofencing_subscriptions_10_subscription_ends_on_expiry
   Scenario: Receive notification for subscription-ends event on expiry
     Given a valid subscription for a device exists with "subscriptionId" equal to "id"
     And the subscription property "$.subscriptionExpireTime" is set to a value in the near future
@@ -188,34 +186,40 @@ Feature: Camara Geofencing Subscriptions API, vwip - Operations on subscriptions
     And the notification property "$.data.subscriptionId" is equal to "id"
     And the notification property "$.data.terminationReason" is equal to "SUBSCRIPTION_EXPIRED"
 
-  @geofencing_subscriptions_10_subscription_end_when_max_events
+  @geofencing_subscriptions_10_subscription_ends_on_max_events
   Scenario: Receive notification for subscription-ends event on max events reached
-    Given a valid subscription for a device exists with "subscriptionId" equal to "id"
-    And the subscription property "$.subscriptionMaxEvents" is set to 1
-    And the subscription property "$.sink" is a valid callback URL
-    When a single notification corresponding to subscription property "$.type" has been sent to the callback URL
-    Then a subscription termination event notification is sent to the callback URL
-    And the notification body complies with the OAS schema at "#/components/schemas/EventSubscriptionEnds"
-    And the notification property "$.type" is "org.camaraproject.geofencing-subscriptions.v0.subscription-ends"
-    And the notification property "$.data.subscriptionId" is equal to "id"
-    And the notification request property "$.data.terminationReason" is equal to "MAX_EVENTS_REACHED"
+    Given an existing geofencing subscription with the property "config.subscriptionMaxEvents" set to 1
+    When the event subscribed occurs
+    Then event notification "<event-type>" is received on callback-url
+    And event notification "subscription-ended" is received on callback-url
+    And notification body complies with the OAS schema at "#/components/schemas/EventSubscriptionEnded"
+    And type="org.camaraproject.geofencing-subscriptions.v0.subscription-ends"
+    And the response property "$.terminationReason" is "MAX_EVENTS_REACHED"
 
-  @geofencing_subscriptions_11_subscription_delete_event_validation
+  @geofencing_subscriptions_11_subscriptions_delete_event_validation
   Scenario: Receive notification for subscription-ends event on deletion
-    Given a valid subscription for a device exists with "subscriptionId" equal to "id"
-    And the subscription property "$.sink" is a valid callback URL
+    Given the path parameter "subscriptionId" is set to the identifier of an existing geofencing subscription
     When the request "deleteGeofencingSubscription" is sent
-    And the path parameter "subscriptionId" is set to "id"
-    And the response status code is 202 or 204
-    Then a subscription termination event notification is sent to the callback URL
+    Then the response status code is 202 or 204
+    And event notification "subscription-ended" is received on callback-url
     And the notification body complies with the OAS schema at "#/components/schemas/EventSubscriptionEnds"
-    And the notification property "$.type" is equal to "org.camaraproject.geofencing-subscriptions.v0.subscription-ends"
-    And the notification property "$.data.subscriptionId" is equal to "id"
-    And the notification request property "$.data.terminationReason" is equal to "SUBSCRIPTION_DELETED"
+    And type="org.camaraproject.geofencing-subscriptions.v0.subscription-ends"
+    And the response property "$.terminationReason" is "SUBSCRIPTION_DELETED"
+
+  #Scenario in case initialEvent is managed
+
+  @geofencing_subscriptions_12_subscription_creation_initial_event
+  Scenario: Receive initial event notification on creation
+    Given the API supports initial events to be sent
+    And a valid subscription request body with property "$.config.initialEvent" set to true
+    When the request "createGeofencingSubscription" is sent
+    Then the response code is 201 or 202
+    And an event notification of the subscribed type is received on callback-url
+    And notification body complies with the OAS schema at "#/components/schemas/CloudEvent"
 
   # Error scenarios for management of input parameter device
 
-  @geofencing_subscription_C01.01_device_empty
+  @geofencing_subscriptions_C01.01_device_empty
   Scenario: The device value is an empty object
     Given the header "Authorization" is set to a valid access token which does not identify a single device
     And the request body property "$.device" is set to: {}
@@ -225,7 +229,7 @@ Feature: Camara Geofencing Subscriptions API, vwip - Operations on subscriptions
     And the response property "$.code" is "INVALID_ARGUMENT"
     And the response property "$.message" contains a user friendly text
 
-  @geofencing_subscription_C01.02_device_identifiers_not_schema_compliant
+  @geofencing_subscriptions_C01.02_device_identifiers_not_schema_compliant
   Scenario Outline: Some device identifier value does not comply with the schema
     Given the header "Authorization" is set to a valid access token which does not identify a single device
     And the request body property "<device_identifier>" does not comply with the OAS schema at "<oas_spec_schema>"
@@ -243,7 +247,7 @@ Feature: Camara Geofencing Subscriptions API, vwip - Operations on subscriptions
       | $.device.networkIdentifier | /components/schemas/NetworkAccessIdentifier |
 
  # This scenario may happen e.g. with 2-legged access tokens, which do not identify a single device.
-  @geofencing_subscription_C01.03_device_not_found
+  @geofencing_subscriptions_C01.03_device_not_found
   Scenario: Some identifier cannot be matched to a device
     Given the header "Authorization" is set to a valid access token which does not identify a single device
     And the request body property "$.device" is compliant with the schema but does not identify a device whose connectivity is managed by the API provider
@@ -253,7 +257,7 @@ Feature: Camara Geofencing Subscriptions API, vwip - Operations on subscriptions
     And the response property "$.code" is "IDENTIFIER_NOT_FOUND"
     And the response property "$.message" contains a user friendly text
 
-  @geofencing_subscription_C01.04_unnecessary_device
+  @geofencing_subscriptions_C01.04_unnecessary_device
   Scenario: Device not to be included when it can be deduced from the access token
     Given the header "Authorization" is set to a valid access token identifying a device
     And the request body property "$.device" is also set to a valid device, which may or may not be the same device
@@ -263,7 +267,7 @@ Feature: Camara Geofencing Subscriptions API, vwip - Operations on subscriptions
     And the response property "$.code" is "UNNECESSARY_IDENTIFIER"
     And the response property "$.message" contains a user-friendly text
 
-  @geofencing_subscription_C01.05_missing_device
+  @geofencing_subscriptions_C01.05_missing_device
   Scenario: Device not included and cannot be deduced from the access token
     Given the header "Authorization" is set to a valid access token which does not identify a single device
     And the request body property "$.device" is not included
@@ -273,7 +277,7 @@ Feature: Camara Geofencing Subscriptions API, vwip - Operations on subscriptions
     And the response property "$.code" is "MISSING_IDENTIFIER"
     And the response property "$.message" contains a user-friendly text
 
-  @geofencing_subscription_C01.06_unsupported_device
+  @geofencing_subscriptions_C01.06_unsupported_device
   Scenario: None of the provided device identifiers is supported by the implementation
     Given that some types of device identifiers are not supported by the implementation
     And the header "Authorization" is set to a valid access token which does not identify a single device
@@ -285,7 +289,7 @@ Feature: Camara Geofencing Subscriptions API, vwip - Operations on subscriptions
     And the response property "$.message" contains a user-friendly text
 
  # When the service is only offered to certain types of devices or subscriptions, e.g. IoT, B2C, etc.
-  @geofencing_subscription_C01.07_device_not_supported
+  @geofencing_subscriptions_C01.07_device_not_supported
   Scenario: Service not available for the device
     Given that the service is not available for all devices commercialized by the operator
     And a valid device, identified by the token or provided in the request body, for which the service is not applicable
@@ -297,7 +301,7 @@ Feature: Camara Geofencing Subscriptions API, vwip - Operations on subscriptions
 
  # Several identifiers provided but they do not identify the same device
  # This scenario may happen with 2-legged access tokens, which do not identify a device
-  @geofencing_subscription_C01.08_device_identifiers_mismatch
+  @geofencing_subscriptions_C01.08_device_identifiers_mismatch
   Scenario: Device identifiers mismatch
     Given the header "Authorization" is set to a valid access token which does not identify a single device
     And at least 2 types of device identifiers are supported by the implementation
@@ -312,7 +316,7 @@ Feature: Camara Geofencing Subscriptions API, vwip - Operations on subscriptions
   # Error code 400
   ##################
 
-  @geofencing_subscription_400.1_create_subscription_with_invalid_parameter
+  @geofencing_subscriptions_400.1_create_subscriptions_with_invalid_parameter
   Scenario: Create subscription with invalid parameter
     Given the request body is not compliant with the schema "#/components/schemas/SubscriptionRequest"
     When the request "createGeofencingSubscription" is sent
@@ -321,19 +325,19 @@ Feature: Camara Geofencing Subscriptions API, vwip - Operations on subscriptions
     And the response property "$.code" is "INVALID_ARGUMENT"
     And the response property "$.message" contains a user friendly text
 
-  @geofencing_subscription_400.2_create_subscription_with_invalid_subscription_expire_time
+  @geofencing_subscriptions_400.2_creation_of_subscription_with_expiry_time_in_past
   Scenario: Expiry time in past
-    Given the request body is compliant with the schema "#/components/schemas/SubscriptionRequest"
-    And the request property "$.config.subscriptionExpireTime" is set to a time in the past
+    Given a valid geofencing subscription request body
+    And the request property "$.config.subscriptionExpireTime" in the past
     When the request "createGeofencingSubscription" is sent
     Then the response status code is 400
     And the response property "$.status" is 400
     And the response property "$.code" is "INVALID_ARGUMENT"
     And the response property "$.message" contains a user friendly text
 
-  @geofencing_subscription_400.3_invalid_eventType
+  @geofencing_subscriptions_400.3_invalid_eventType
   Scenario: Subscription creation with invalid event type
-    Given the request body is compliant with the schema "#/components/schemas/SubscriptionRequest"
+    Given a valid geofencing subscription request body
     And the request body property "$.types" is set to an invalid value
     When the request "createGeofencingSubscription" is sent
     Then the response status code is 400
@@ -341,9 +345,9 @@ Feature: Camara Geofencing Subscriptions API, vwip - Operations on subscriptions
     And the response property "$.code" is "INVALID_ARGUMENT"
     And the response property "$.message" contains a user friendly text
 
-  @geofencing_subscription_400.4_invalid_protocol
+  @geofencing_subscriptions_400.4_invalid_protocol
   Scenario: subscription creation with invalid protocol
-    Given the request body is compliant with the schema "#/components/schemas/SubscriptionRequest"
+    Given a valid geofencing subscription request body
     And the request property "$.protocol" is not equal to "HTTP"
     When the request "createGeofencingSubscription" is sent
     Then the response status code is 400
@@ -351,9 +355,9 @@ Feature: Camara Geofencing Subscriptions API, vwip - Operations on subscriptions
     And the response property "$.code" is "INVALID_PROTOCOL"
     And the response property "$.message" contains a user friendly text
 
-  @geofencing_subscription_400.5_create_subscription_with_invalid_credential_type
+  @geofencing_subscriptions_400.5_invalid_credential
   Scenario: subscription creation with invalid credential type
-    Given the request body is compliant with the schema "#/components/schemas/SubscriptionRequest"
+    Given a valid geofencing subscription request body
     And the request property "$.sinkCredential.accessTokenType" is equal to "bearer"
     And the request property "$.sinkCredential.credentialType" is not equal to "ACCESSTOKEN"
     When the request "createGeofencingSubscription" is sent
@@ -362,9 +366,9 @@ Feature: Camara Geofencing Subscriptions API, vwip - Operations on subscriptions
     And the response property "$.code" is "INVALID_CREDENTIAL"
     And the response property "$.message" contains a user friendly text
 
-  @geofencing_subscription_400.6_create_subscription_with_invalid_access_token_type
+  @geofencing_subscriptions_400.6_create_subscriptions_with_invalid_access_token_type
   Scenario: subscription creation with invalid token
-    Given the request body is compliant with the schema "#/components/schemas/SubscriptionRequest"
+    Given a valid geofencing subscription request body
     And the request property "$.sinkCredential.credentialType" is equal to "ACCESSTOKEN"
     And the request property "$.sinkCredential.accessTokenType" is not equal to "bearer"
     When the request "createGeofencingSubscription" is sent
@@ -373,11 +377,50 @@ Feature: Camara Geofencing Subscriptions API, vwip - Operations on subscriptions
     And the response property "$.code" is "INVALID_TOKEN"
     And the response property "$.message" contains a user friendly text
 
+  @geofencing_subscriptions_400.7_invalid_url
+  Scenario: Subscription creation with invalid url
+    Given a valid geofencing subscription request body
+    And the request property "$.protocol" is set to "HTTP"
+    And the request property "$.sink" is set to "azerty"
+    When the request "createGeofencingSubscription" is sent
+    Then the response property "$.status" is 400
+    And the response property "$.code" is "INVALID_SINK"
+    And the response property "$.message" contains a user friendly text
+
+  @geofencing_subscriptions_400.8_no_authorization_header_for_create_subscription
+  Scenario: No Authorization header for create subscription
+    Given a valid geofencing subscription request body
+    And the request does not include the "Authorization" header
+    When the request "createGeofencingSubscription" is sent
+    Then the response status code is 401
+    And the response property "$.status" is 401
+    And the response property "$.code" is "UNAUTHENTICATED"
+    And the response property "$.message" contains a user friendly text
+
+  @geofencing_subscriptions_400.9_expired_access_token_for_create_subscription
+  Scenario: Expired access token for create subscription
+    Given a valid geofencing subscription request body and header "Authorization" is expired
+    When the request "createGeofencingSubscription" is sent
+    Then the response status code is 401
+    And the response property "$.status" is 401
+    And the response property "$.code" is "UNAUTHENTICATED"
+    And the response property "$.message" contains a user friendly text
+
+  @geofencing_subscriptions_400.10_invalid_access_token_for_create_subscription
+  Scenario: Invalid access token for create subscription
+    Given a valid geofencing subscription request body
+    And header "Authorization" set to an invalid access token
+    When the request "createGeofencingSubscription" is sent
+    Then the response status code is 401
+    And the response property "$.status" is 401
+    And the response property "$.code" is "UNAUTHENTICATED"
+    And the response property "$.message" contains a user friendly text
+
   ##################
   # Error code 401
   ##################
 
-  @geofencing_subscription_creation_401.1_no_authorization_header
+  @geofencing_subscriptions_creation_401.1_no_authorization_header
   Scenario: No Authorization header
     Given the header "Authorization" is removed
     And the request body is compliant with the schema "#/components/schemas/SubscriptionRequest"
@@ -388,7 +431,7 @@ Feature: Camara Geofencing Subscriptions API, vwip - Operations on subscriptions
     And the response property "$.code" is "UNAUTHENTICATED" or "AUTHENTICATION_REQUIRED"
     And the response property "$.message" contains a user friendly text
 
-  @geofencing_subscription_creation_401.2_expired_access_token
+  @geofencing_subscriptions_creation_401.2_expired_access_token
   Scenario: Expired access token
     Given the header "Authorization" is set to a previously valid but now expired access token
     And the request body is compliant with the schema "#/components/schemas/SubscriptionRequest"
@@ -399,7 +442,7 @@ Feature: Camara Geofencing Subscriptions API, vwip - Operations on subscriptions
     And the response property "$.code" is "UNAUTHENTICATED" or "AUTHENTICATION_REQUIRED"
     And the response property "$.message" contains a user friendly text
 
-  @geofencing_subscription_creation_401.3_malformed_access_token
+  @geofencing_subscriptions_creation_401.3_malformed_access_token
   Scenario: Malformed access token
     Given the header "Authorization" is set to a malformed token
     And the request body is compliant with the schema "#/components/schemas/SubscriptionRequest"
@@ -411,10 +454,10 @@ Feature: Camara Geofencing Subscriptions API, vwip - Operations on subscriptions
     And the response property "$.message" contains a user friendly text
 
   ##################
-  # Error code 401
+  # Error code 404
   ##################
 
-  @geofencing_subscription_404.1_retrieve_unknown_subscription_id
+  @geofencing_subscriptions_404.1_retrieve_unknown_subscriptions_id
   Scenario: Get subscription when subscriptionId is unknown to the system
     Given that there is no valid subscription with "subscriptionId" equal to "id"
     When the request "retrieveGeofencingSubscription" is sent
@@ -424,7 +467,7 @@ Feature: Camara Geofencing Subscriptions API, vwip - Operations on subscriptions
     And the response property "$.code" is "NOT_FOUND"
     And the response property "$.message" contains a user friendly text
 
-  @geofencing_subscription_404.2_delete_unknown_subscription_id
+  @geofencing_subscriptions_404.2_delete_unknown_subscriptions_id
   Scenario: Delete subscription with subscriptionId unknown to the system
     Given that there is no valid subscription with "subscriptionId" equal to "id"
     When the request "deleteGeofencingSubscription" is sent
@@ -455,3 +498,14 @@ Feature: Camara Geofencing Subscriptions API, vwip - Operations on subscriptions
     And the response property "$.status" is 422
     And the response property "$.code" is "GEOFENCING_SUBSCRIPTIONS.INVALID_AREA"
     And the response property "$.message" contains "The requested area is too small"
+
+  @geofencing_subscriptions_422.3_create_with_unsupported_multiple_event_type
+  Scenario: Multi event subscription not supported
+    Given the API provider only allows one event to be subscribed per subscription request
+    And a valid subscription request body
+    And the request body property "$.types" is set to an array with 2 valid items
+    When the request "createGeofencingSubscription" is sent
+    Then the response code is 422
+    And the response property "$.status" is 422
+    And the response property "$.code" is "MULTIEVENT_SUBSCRIPTION_NOT_SUPPORTED"
+    And the response property "$.message" contains a user friendly text
