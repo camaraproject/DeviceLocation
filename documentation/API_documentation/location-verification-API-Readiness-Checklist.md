@@ -16,6 +16,7 @@ Checklist for location-verification 2.0.0 in r2.2
 | 10 | API release numbering convention applied     |   M   |         M         |             M             |             M             |   Y    |                                                                                                                                              |
 | 11 | Change log updated                           |   M   |         M         |             M             |             M             |   Y    |                                                        [/CHANGELOG.md](/CHANGELOG.md)                                                        |
 | 12 | Previous public release was certified        |   O   |         O         |             O             |             M             |   Y    |                                                                                                                                              |
+| 13 | API description (for marketing)              |   O   |         O         |    M    |    M   |      | [wiki link](https://lf-camaraproject.atlassian.net/wiki/xxx) |
 
 Note: the checklists of a public API version and of its preceding release-candidate API version can be the same.
 
