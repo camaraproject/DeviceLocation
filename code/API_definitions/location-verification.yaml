@@ -156,6 +156,22 @@ paths:
                       latitude: 50.735851
                       longitude: 7.10066
                     radius: 50000
+              INPUT_PHONE_NUMBER_IP_ADDRESS_V4_CIRCLE:
+                summary: Both phone number and IPv4 address, circle and maxAge
+                description: Verify if device identified both by a phone number and an IPv4 address is within a circle, providing a maxAge
+                value:
+                  device:
+                    phoneNumber: "+123456789"
+                    ipv4Address:
+                      publicAddress: 123.234.1.2
+                      publicPort: 1234
+                  area:
+                    areaType: CIRCLE
+                    center:
+                      latitude: 50.735851
+                      longitude: 7.10066
+                    radius: 50000
+                  maxAge: 120
               INPUT_NO_DEVICE:
                 summary: Device not provided
                 description: The device has to be deducted from token
@@ -184,6 +200,14 @@ paths:
                   value:
                     verificationResult: "TRUE"
                     lastLocationTime: "2023-09-07T10:40:52Z"
+                VERIFICATION_TRUE_WITH_DEVICE_DISAMBIGUATION:
+                  summary: Match returning the device identifier used by the implementation
+                  description: The network locates the device within the requested area. Several device identifiers were provided.
+                  value:
+                    verificationResult: "TRUE"
+                    lastLocationTime: "2023-09-07T10:40:52Z"
+                    device:
+                      phoneNumber: "+123456789"
                 VERIFICATION_FALSE:
                   summary: No match
                   description: The requested area does not match the area where the network locates the device
@@ -340,6 +364,8 @@ components:
           $ref: "#/components/schemas/VerificationResult"
         matchRate:
           $ref: "#/components/schemas/MatchRate"
+        device:
+          $ref: "#/components/schemas/DeviceResponse"
 
     Device:
       description: |
@@ -352,7 +378,7 @@ components:
         * `phoneNumber`
         * `networkAccessIdentifier`
 
-        NOTE1: the API provider might support only a subset of these options. The API consumer can provide multiple identifiers to be compatible across different API providers. In this case the identifiers MUST belong to the same device
+        NOTE1: the API provider might support only a subset of these options. The API consumer can provide multiple identifiers to be compatible across different API providers. In this case the identifiers MUST belong to the same device. Where more than one device identifier is provided, only one identifier will be selected by the implementation and this choice indicated to the API consumer in the response.
         NOTE2: as for this Commonalities release, we are enforcing that the networkAccessIdentifier is only part of the schema for future-proofing, and CAMARA does not currently allow its use. After the CAMARA meta-release work is concluded and the relevant issues are resolved, its use will need to be explicitly documented in the guidelines.
       type: object
       properties:
@@ -419,6 +445,14 @@ components:
       type: string
       format: ipv6
       example: 2001:db8:85a3:8d3:1319:8a2e:370:7344
+
+    DeviceResponse:
+      description: |
+        An identifier for the end-user equipment able to connect to the network that the response refers to. This parameter is only returned when the API consumer includes the `device` parameter in their request (i.e. they are using a two-legged access token), and is relevant when more than one device identifier is specified, as only one of those device identifiers is allowed in the response.
+        If the API consumer provides more than one device identifier in their request, the API provider must return a single identifier which is the one they are using to fulfil the request, even if the identifiers do not match the same device. API provider does not perform any logic to validate/correlate that the indicated device identifiers match the same device. No error should be returned if the identifiers are otherwise valid to prevent API consumers correlating different identifiers with a given end user.
+      allOf:
+        - $ref: "#/components/schemas/Device"
+        - maxProperties: 1
 
     MaxAge:
       description: The maximum age (in seconds) for the location known by the implementation, which is accepted for the verification. Absence of maxAge means "any age" and maxAge=0 means a fresh calculation.
@@ -599,7 +633,6 @@ components:
                       - 422
                   code:
                     enum:
-                      - IDENTIFIER_MISMATCH
                       - SERVICE_NOT_APPLICABLE
                       - MISSING_IDENTIFIER
                       - UNSUPPORTED_IDENTIFIER
@@ -608,12 +641,6 @@ components:
                       - LOCATION_VERIFICATION.INVALID_AREA
                       - LOCATION_VERIFICATION.UNABLE_TO_FULFILL_MAX_AGE
           examples:
-            GENERIC_422_IDENTIFIER_MISMATCH:
-              description: Inconsistency between identifiers not pointing to the same device
-              value:
-                status: 422
-                code: IDENTIFIER_MISMATCH
-                message: Provided identifiers are not consistent.
             GENERIC_422_SERVICE_NOT_APPLICABLE:
               description: Service not applicable for the provided identifier
               value:

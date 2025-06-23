@@ -153,6 +153,8 @@ paths:
             examples:
               CIRCLE_AREA_ENTERED:
                 $ref: "#/components/examples/REQUEST_CIRCLE_AREA_ENTERED"
+              REQUEST_CIRCLE_AREA_ENTERED_MULTIPLE_IDENTIFIERS:
+                $ref: "#/components/examples/REQUEST_CIRCLE_AREA_ENTERED_MULTIPLE_IDENTIFIERS"
         required: true
       callbacks:
         notifications:
@@ -401,7 +403,7 @@ components:
           items:
             $ref: "#/components/schemas/SubscriptionEventType"
         config:
-          $ref: "#/components/schemas/Config"
+          $ref: "#/components/schemas/ConfigRequest"
       discriminator:
         propertyName: protocol
         mapping:
@@ -422,14 +424,8 @@ components:
       description: |
         Implementation-specific configuration parameters are needed by the subscription manager for acquiring events.
         In CAMARA we have predefined attributes like `subscriptionExpireTime`, `subscriptionMaxEvents`, `initialEvent`.
-        Specific event type attributes must be defined in `subscriptionDetail`.
-        Note: If a request is performed for several event types, all subscribed events will use the same `config` parameters.
       type: object
-      required:
-        - subscriptionDetail
       properties:
-        subscriptionDetail:
-          $ref: "#/components/schemas/SubscriptionDetail"
         subscriptionExpireTime:
           type: string
           format: date-time
@@ -448,6 +444,37 @@ components:
           description: |
             Set to `true` by API consumer if consumer wants to get an event as soon as the subscription is created and current situation reflects event request.
             Example: Consumer request area entered event. If consumer sets initialEvent to true and device is already in the geofence, an event is triggered.
+
+    ConfigRequest:
+      allOf:
+        - $ref: "#/components/schemas/Config"
+        - description: |
+            Implementation-specific configuration parameters are needed by the subscription manager for acquiring events.
+            In CAMARA we have predefined attributes like `subscriptionExpireTime`, `subscriptionMaxEvents`, `initialEvent`.
+            Specific event type attributes requested by the client must be defined in `subscriptionDetail`.
+            Note: If a request is performed for several event types, all subscribed events will use the same `config` parameters.
+          type: object
+          required:
+            - subscriptionDetail
+          properties:
+            subscriptionDetail:
+              $ref: "#/components/schemas/SubscriptionDetailRequest"
+
+    ConfigResponse:
+      allOf:
+        - $ref: "#/components/schemas/Config"
+        - description: |
+            Implementation-specific configuration parameters are needed by the subscription manager for acquiring events.
+            In CAMARA we have predefined attributes like `subscriptionExpireTime`, `subscriptionMaxEvents`, `initialEvent`.
+            Specific event type attributes granted by the implementation are included in `subscriptionDetail`.
+            Note: If a request is performed for several event types, all subscribed events will use the same `config` parameters.
+          type: object
+          required:
+            - subscriptionDetail
+          properties:
+            subscriptionDetail:
+              $ref: "#/components/schemas/SubscriptionDetailResponse"
+
 
     SinkCredential:
       type: object
@@ -548,12 +575,23 @@ components:
         - refreshToken
         - refreshTokenEndpoint
 
-    SubscriptionDetail:
+    SubscriptionDetailRequest:
       description: The detail of the requested event subscription.
       type: object
       properties:
         device:
           $ref: "#/components/schemas/Device"
+        area:
+          $ref: "#/components/schemas/Area"
+      required:
+        - area
+
+    SubscriptionDetailResponse:
+      description: The detail of the event subscription granted by the implementation.
+      type: object
+      properties:
+        device:
+          $ref: "#/components/schemas/DeviceResponse"
         area:
           $ref: "#/components/schemas/Area"
       required:
@@ -610,7 +648,7 @@ components:
           items:
             $ref: "#/components/schemas/SubscriptionEventType"
         config:
-          $ref: "#/components/schemas/Config"
+          $ref: "#/components/schemas/ConfigResponse"
         id:
           type: string
           description: The unique identifier of the subscription in the scope of the subscription manager. When this information is contained within an event notification, this concept SHALL be referred as `subscriptionId` as per [Commonalities Event Notification Model](https://github.com/camaraproject/Commonalities/blob/main/documentation/API-design-guidelines.md#122-event-notification).
@@ -679,8 +717,8 @@ components:
         * `phoneNumber`
         * `networkAccessIdentifier`
 
-        NOTE1: the API provider might support only a subset of these options. The API consumer can provide multiple identifiers to be compatible across different API providers. In this case the identifiers MUST belong to the same device
-        NOTE2: for the Commonalities release v0.4, we are enforcing that the networkAccessIdentifier is only part of the schema for future-proofing, and CAMARA does not currently allow its use. After the CAMARA meta-release work is concluded and the relevant issues are resolved, its use will need to be explicitly documented in the guidelines.
+        NOTE1: the API provider might support only a subset of these options. The API consumer can provide multiple identifiers to be compatible across different API providers. In this case the identifiers MUST belong to the same device. Where more than one device identifier is provided, only one identifier will be selected by the implementation and this choice indicated to the API consumer in the response or event.
+        NOTE2: as for this Commonalities release, we are enforcing that the networkAccessIdentifier is only part of the schema for future-proofing, and CAMARA does not currently allow its use. After the CAMARA meta-release work is concluded and the relevant issues are resolved, its use will need to be explicitly documented in the guidelines.
       type: object
       properties:
         phoneNumber:
@@ -746,6 +784,14 @@ components:
       type: string
       format: ipv6
       example: 2001:db8:85a3:8d3:1319:8a2e:370:7344
+
+    DeviceResponse:
+      description: |
+        An identifier for the end-user equipment able to connect to the network that the response refers to. This parameter is only returned when the API consumer includes the `device` parameter in their request (i.e. they are using a two-legged access token), and is relevant when more than one device identifier is specified, as only one of those device identifiers is allowed in the response.
+        If the API consumer provides more than one device identifier in their request, the API provider must return a single identifier which is the one they are using to fulfil the request, even if the identifiers do not match the same device. API provider does not perform any logic to validate/correlate that the indicated device identifiers match the same device. No error should be returned if the identifiers are otherwise valid to prevent API consumers correlating different identifiers with a given end user.
+      allOf:
+        - $ref: "#/components/schemas/Device"
+        - maxProperties: 1
 
     Area:
       type: object
@@ -923,7 +969,7 @@ components:
         - subscriptionId
       properties:
         device:
-          $ref: "#/components/schemas/Device"
+          $ref: "#/components/schemas/DeviceResponse"
         area:
           $ref: "#/components/schemas/Area"
         subscriptionId:
@@ -941,7 +987,7 @@ components:
         - subscriptionId
       properties:
         device:
-          $ref: "#/components/schemas/Device"
+          $ref: "#/components/schemas/DeviceResponse"
         area:
           $ref: "#/components/schemas/Area"
         subscriptionId:
@@ -960,7 +1006,7 @@ components:
         - subscriptionId
       properties:
         device:
-          $ref: "#/components/schemas/Device"
+          $ref: "#/components/schemas/DeviceResponse"
         area:
           $ref: "#/components/schemas/Area"
         terminationReason:
@@ -1386,7 +1432,6 @@ components:
                       - 422
                   code:
                     enum:
-                      - IDENTIFIER_MISMATCH
                       - MISSING_IDENTIFIER
                       - MULTIEVENT_SUBSCRIPTION_NOT_SUPPORTED
                       - SERVICE_NOT_APPLICABLE
@@ -1395,12 +1440,6 @@ components:
                       - GEOFENCING_SUBSCRIPTIONS.AREA_NOT_COVERED
                       - GEOFENCING_SUBSCRIPTIONS.INVALID_AREA
           examples:
-            GENERIC_422_IDENTIFIER_MISMATCH:
-              description: Inconsistency between device identifiers not pointing to the same device.
-              value:
-                status: 422
-                code: IDENTIFIER_MISMATCH
-                message: Provided identifiers are not consistent.
             GENERIC_422_SERVICE_NOT_APPLICABLE:
               description: Service not applicable for the provided identifier
               value:
@@ -1488,6 +1527,29 @@ components:
           subscriptionDetail:
             device:
               phoneNumber: "+12345678912"
+            area:
+              areaType: CIRCLE
+              center:
+                latitude: 50.735851
+                longitude: 7.10066
+              radius: 2000
+          initialEvent: true
+          subscriptionMaxEvents: 10
+          subscriptionExpireTime: "2024-03-22T05:40:58.469Z"
+    REQUEST_CIRCLE_AREA_ENTERED_MULTIPLE_IDENTIFIERS:
+      description: A sample geofence for entering for a circle area.
+      value:
+        protocol: "HTTP"
+        sink: https://notificationSendServer12.supertelco.com
+        types:
+          - org.camaraproject.geofencing-subscriptions.v0.area-entered
+        config:
+          subscriptionDetail:
+            device:
+              phoneNumber: "+12345678912"
+              ipv4Address:
+                publicAddress: 123.234.1.2
+                publicPort: 1234              
             area:
               areaType: CIRCLE
               center:
