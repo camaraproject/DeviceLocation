@@ -1549,7 +1549,7 @@ components:
               phoneNumber: "+12345678912"
               ipv4Address:
                 publicAddress: 123.234.1.2
-                publicPort: 1234              
+                publicPort: 1234     
             area:
               areaType: CIRCLE
               center:

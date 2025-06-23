@@ -178,7 +178,7 @@ paths:
                     phoneNumber: "+123456789"
                     ipv4Address:
                       publicAddress: 123.234.1.2
-                      publicPort: 1234    
+                      publicPort: 1234
       responses:
         '200':
           description: Location retrieval result
