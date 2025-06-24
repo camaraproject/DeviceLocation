@@ -589,6 +589,8 @@ components:
       enum:
         - org.camaraproject.geofencing-subscriptions.v0.area-entered
         - org.camaraproject.geofencing-subscriptions.v0.area-left
+        - org.camaraproject.geofencing-subscriptions.v0.subscription-started
+        - org.camaraproject.geofencing-subscriptions.v0.subscription-updated
         - org.camaraproject.geofencing-subscriptions.v0.subscription-ended
 
     Subscription:
