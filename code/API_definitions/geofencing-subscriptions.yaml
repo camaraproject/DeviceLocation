@@ -44,9 +44,6 @@ info:
 
       - ``org.camaraproject.geofencing-subscriptions.v0.area-left``     - Event triggered when the device leaves the given area
 
-    Note: Additionally to these list, ``org.camaraproject.geofencing-subscriptions.v0.subscription-ended`` notification `type` is sent when the subscription ends.
-    This notification does not require dedicated subscription.
-    
     Note: Additionally, the following events could be send, which do not require a dedicated subscription:
       - `org.camaraproject.geofencing-subscriptions.v0.subscription-started` is sent when the subscription starts.
       - `org.camaraproject.geofencing-subscriptions.v0.subscription-updated` is sent when the subscription is updated.
