@@ -585,6 +585,10 @@ components:
 
         area-left - Event triggered when the device leaves the given area
 
+        subscription-started: Event triggered when the subscription starts.
+
+        subscription-updated - Event triggered when the subscription is updated.
+
         subscription-ended - Event triggered when the subscription ends
       enum:
         - org.camaraproject.geofencing-subscriptions.v0.area-entered
