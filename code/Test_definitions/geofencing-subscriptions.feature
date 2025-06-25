@@ -213,6 +213,15 @@ Feature: Camara Geofencing Subscriptions API, vwip - Operations on subscriptions
     And the response property "$.code" is "INVALID_TOKEN" or "INVALID_ARGUMENT"
     And the response property "$.message" contains a user friendly text
 
+  @geofencing_subscription_17_invalid_sink
+  Scenario: Subscription creation with sink
+    Given a valid subscription request body
+    When the request "createGeofencingSubscription" is sent
+    And the request property "$.sink" is not matching the defined pattern
+    Then the response property "$.status" is 400
+    And the response property "$.code" is "INVALID_SINK"
+    And the response property "$.message" contains a user friendly text
+
   @geofencing_subscriptions_18_no_authorization_header_for_create_subscription
   Scenario: No Authorization header for create subscription
     Given a valid subscription request body and header "Authorization" is not set to 
