@@ -213,7 +213,7 @@ Feature: Camara Geofencing Subscriptions API, vwip - Operations on subscriptions
     And the response property "$.code" is "INVALID_TOKEN" or "INVALID_ARGUMENT"
     And the response property "$.message" contains a user friendly text
 
-  @geofencing_subscription_17_invalid_sink
+  @geofencing_subscription_17_invalid_url
   Scenario: Subscription creation with sink
     Given a valid subscription request body
     When the request "createGeofencingSubscription" is sent
