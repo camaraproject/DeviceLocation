@@ -987,7 +987,7 @@ components:
         - type: object
           properties:
             data:
-              $ref: "#/components/schemas/SubscriptionEnds"
+              $ref: "#/components/schemas/SubscriptionEnded"
 
     AreaLeft:
       description: |
@@ -1025,7 +1025,7 @@ components:
         subscriptionId:
           $ref: "#/components/schemas/SubscriptionId"
 
-    SubscriptionEnds:
+    SubscriptionEnded:
       description: |
         Event detail structure for org.camaraproject.geofencing-subscriptions.v0.subscription-ended event.
         Note that the device object is defined as optional and will only to be returned if provided in createGeofencingSubscription.
