@@ -1635,6 +1635,14 @@ components:
         data:
           initiationReason: SUBSCRIPTION_CREATED
           subscriptionId: dv10-h556-rt89-1403
+          device:
+            phoneNumber: +123456789
+          area:
+            areaType: CIRCLE
+            center:
+              latitude: 50.735851
+              longitude: 7.10066
+            radius: 2000
         time: "2024-03-05T15:00:23.682Z"
 
     SUBSCRIPTION_UPDATED:
@@ -1648,6 +1656,14 @@ components:
         data:
           updateReason: SUBSCRIPTION_ACTIVE
           subscriptionId: dv10-h556-rt89-1403
+          device:
+            phoneNumber: +123456789
+          area:
+            areaType: CIRCLE
+            center:
+              latitude: 50.735851
+              longitude: 7.10066
+            radius: 2000
         time: "2024-03-05T15:00:23.682Z"
 
     SUBSCRIPTION_ENDED:
