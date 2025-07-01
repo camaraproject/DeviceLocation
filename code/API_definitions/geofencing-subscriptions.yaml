@@ -931,7 +931,12 @@ components:
       required:
         - initiationReason
         - subscriptionId
+        - area
       properties:
+        device:
+          $ref: "#/components/schemas/Device"
+        area:
+          $ref: "#/components/schemas/Area"
         initiationReason:
           $ref: "#/components/schemas/InitiationReason"
         subscriptionId:
@@ -960,9 +965,14 @@ components:
       description: Event detail structure for subscription updated event
       type: object
       required:
+        - area
         - updateReason
         - subscriptionId
       properties:
+        device:
+          $ref: "#/components/schemas/Device"
+        area:
+          $ref: "#/components/schemas/Area"
         updateReason:
           $ref: "#/components/schemas/UpdateReason"
         subscriptionId:
