@@ -40,7 +40,7 @@ info:
 
     * **Max Age**: Maximum age of the location information which is accepted for the location retrieval (in seconds).
 
-      * Absence of `maxAge` means that "any age" is acceptable for the client. In other words, this is like `maxAge`=infinite. The system will return `lastLocationTime` in the response. If the system is not able to provide location, an error 404 with code LOCATION_RETRIEVAL.DEVICE_NOT_FOUND is sent back.
+      * Absence of `maxAge` means that "any age" is acceptable for the client. In other words, this is like `maxAge`=infinite. The system will return `lastLocationTime` in the response. If the system is not able to provide location, an error 422 with code LOCATION_RETRIEVAL.UNABLE_TO_LOCATE is sent back.
       * `maxAge`=0 means that a fresh calculation is requested by the client. If the system is not able to provide the fresh location, an error 422 with code LOCATION_RETRIEVAL.UNABLE_TO_FULFILL_MAX_AGE is sent back.
 
     * **Last Location Time** : Last date and time when the device was localized.
@@ -555,16 +555,8 @@ components:
                       - 404
                   code:
                     enum:
-                      - LOCATION_RETRIEVAL.DEVICE_NOT_FOUND
                       - IDENTIFIER_NOT_FOUND
           examples:
-            LOCATION_RETRIEVAL_404_DEVICE_NOT_FOUND:
-              summary: Device not found
-              description: The location server is not able to locate the device
-              value:
-                status: 404
-                code: LOCATION_RETRIEVAL.DEVICE_NOT_FOUND
-                message: 'The location server is not able to locate the mobile'
             GENERIC_404_IDENTIFIER_NOT_FOUND:
               summary: Identifier not found
               description: Some identifier cannot be matched to a device
@@ -595,6 +587,7 @@ components:
                       - UNNECESSARY_IDENTIFIER
                       - LOCATION_RETRIEVAL.UNABLE_TO_FULFILL_MAX_AGE
                       - LOCATION_RETRIEVAL.UNABLE_TO_FULFILL_MAX_SURFACE
+                      - LOCATION_RETRIEVAL.UNABLE_TO_LOCATE
           examples:
             GENERIC_422_SERVICE_NOT_APPLICABLE:
               summary: Service not applicable
@@ -638,6 +631,13 @@ components:
                 status: 422
                 code: LOCATION_RETRIEVAL.UNABLE_TO_FULFILL_MAX_SURFACE
                 message: "Unable to provide accurate acceptable surface for location"
+            LOCATION_RETRIEVAL_422_UNABLE_TO_LOCATE:
+              summary: Unable to locate device
+              description: The network cannot locate the device
+              value:
+                status: 422
+                code: LOCATION_RETRIEVAL.UNABLE_TO_LOCATE
+                message: "The network is unable to locate the device"
   examples:
     RETRIEVAL_CIRCLE:
       summary: circle-based device location retrieval
