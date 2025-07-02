@@ -194,8 +194,8 @@ paths:
                   $ref: "#/components/examples/RETRIEVAL_CIRCLE"
                 LOCATION_POLYGON:
                   $ref: "#/components/examples/RETRIEVAL_POLYGON"
-                LOCATION_CIRCLE_WITH_DEVICE_DISAMBIGUATION:
-                  $ref: "#/components/examples/LOCATION_CIRCLE_WITH_DEVICE_DISAMBIGUATION"
+                LOCATION_CIRCLE_WITH_DEVICE:
+                  $ref: "#/components/examples/LOCATION_CIRCLE_WITH_DEVICE"
         '400':
           $ref: '#/components/responses/Generic400'
         '401':
@@ -668,9 +668,9 @@ components:
               longitude: 4.861125
             - latitude: 45.751442
               longitude: 4.859827
-    LOCATION_CIRCLE_WITH_DEVICE_DISAMBIGUATION:
+    LOCATION_CIRCLE_WITH_DEVICE:
       summary: circle-based device location retrieval, returning the device identifier used by the implementation
-      description: The device is localized within a circle with a center at the specified coordinates and a radius of 800 meters. Several device identifiers were provided.
+      description: The device is localized within a circle with a center at the specified coordinates and a radius of 800 meters. Response when the request used a 2-legged access token with multiple device identifiers, or possibly only a single device identifier.
       value:
         lastLocationTime: "2023-10-17T13:18:23.682Z"
         area:

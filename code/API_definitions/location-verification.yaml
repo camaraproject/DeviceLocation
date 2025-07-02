@@ -198,9 +198,9 @@ paths:
                   value:
                     verificationResult: "TRUE"
                     lastLocationTime: "2023-09-07T10:40:52Z"
-                VERIFICATION_TRUE_WITH_DEVICE_DISAMBIGUATION:
+                VERIFICATION_TRUE_WITH_DEVICE:
                   summary: Match returning the device identifier used by the implementation
-                  description: The network locates the device within the requested area. Several device identifiers were provided.
+                  description: The network locates the device within the requested area. Response when the request used a 2-legged access token with multiple device identifiers, or possibly only a single device identifier
                   value:
                     verificationResult: "TRUE"
                     lastLocationTime: "2023-09-07T10:40:52Z"
