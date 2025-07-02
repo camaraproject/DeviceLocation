@@ -44,15 +44,16 @@ location-verification v3.0.0-rc.1 is the first release candidate for the next st
 
 ### Added
 
-* TBC
+* New error code `422 LOCATION_VERIFICATION.UNABLE_TO_LOCATE`.
+* New `DeviceResponse` object in responses limited to one identifier.
+* Clarifications on non-documented error responses.
 
 ### Changed
 
-* TBC
-
-### Fixed
-
-* TBC
+* `verificationResult: UNKNOWN` for 200 responses is deprecated.
+* Error `422 IDENTIFIER_MISMATCH` is deprecated.
+* Error `401 AUTHENTICATION_REQUIRED` is deprecated.
+* Updated string pattern for `x-correlator`headers
 
 ## location-retrieval v0.5.0-rc.1
 
@@ -66,15 +67,17 @@ location-retrieval v0.5.0-rc.1 is the first release candidate for the next initi
 
 ### Added
 
-* TBC
+* New error `422 LOCATION_RETRIEVAL.UNABLE_TO_LOCATE`.
+* Pattern to property `sink` and new error `400 INVALID_SINK`.
+* New `DeviceResponse` object in responses limited to one identifier.
+* Clarifications on non-documented error responses.
 
 ### Changed
 
-* TBC
-
-### Fixed
-
-* TBC
+* Error `404 LOCATION_RETRIEVAL.DEVICE_NOT_FOUND` is deprecated.
+* Error `422 IDENTIFIER_MISMATCH` is deprecated.
+* Error `401 AUTHENTICATION_REQUIRED` is deprecated.
+* Updated string pattern for `x-correlator`headers
 
 ## geofencing-subscriptions v0.5.0-rc.1
 
@@ -88,15 +91,22 @@ geofencing-subscriptions v0.5.0-rc.1 is the first release candidate for the next
 
 ### Added
 
-* TBC
+* New subscription event types for `subscription-started` and `subscription-updated`
+* New `DeviceResponse` object in responses and events, limited to one identifier.
+* Clarifications on non-documented error responses.
 
 ### Changed
 
-* TBC
+* Subscription event type `subscription-ends` renamed to `subscription-ended`
+* Property `id` becomes required for `SubscriptionAsync` objects.
+* operationId `createSubscription` renamed to `createGeofencingSubscription`
+* Error `401 AUTHENTICATION_REQUIRED` is deprecated.
+* Error `422 IDENTIFIER_MISMATCH` is deprecated.
+* Updated string pattern for `x-correlator`headers
 
 ### Fixed
 
-* TBC
+* Subscription types array items must be limited to allowed `SubscriptionEventType` values
 
 # r2.2
 
