@@ -346,14 +346,7 @@ Feature: Camara Geofencing Subscriptions API, vwip - Operations on subscriptions
     And the response property "$.code" is "GEOFENCING_SUBSCRIPTIONS.AREA_NOT_COVERED"
     And the response property "$.message" contains "Unable to cover the requested area"
 
-  @geofencing_subscriptions_29_create_with_identifier_mismatch
-  Scenario: Create subscription with identifier mismatch
-    Given the request body includes inconsistent identifiers
-    When the HTTP "POST" request is sent
-    Then the response status code is 422
-    And the response property "$.status" is 422
-    And the response property "$.code" is "IDENTIFIER_MISMATCH"
-    And the response property "$.message" contains "Identifiers are not consistent."
+  # @geofencing_subscriptions_29_create_with_identifier_mismatch deprecated
 
   @geofencing_subscriptions_30_create_with_service_not_applicable
   Scenario: Create subscription for a device not supported by the service
