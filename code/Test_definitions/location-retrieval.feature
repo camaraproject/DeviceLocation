@@ -65,11 +65,11 @@ Feature: CAMARA Device location retrieval API, v0.5.0-rc.1 - Operation retrieveL
     Given a valid testing device which cannot be located by the network, identified by the token or provided in the request body
     And the request body property "$.maxAge" is not included
     When the HTTP "POST" request is sent
-    Then the response status code is 404
+    Then the response status code is 422
     And the response header "Content-Type" is "application/json"
     And the response header "x-correlator" has same value as the request header "x-correlator"
-    And the response property "$.status" is 404
-    And the response property "$.code" is "LOCATION_RETRIEVAL.DEVICE_NOT_FOUND"
+    And the response property "$.status" is 422
+    And the response property "$.code" is "LOCATION_RETRIEVAL.UNABLE_TO_LOCATE"
     And the response property "$.message" contains a user friendly text
 
   @location_retrieval_05_location_retrieval_unable_to_locate_device_with_required_freshness

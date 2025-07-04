@@ -16,10 +16,8 @@ info:
     * If the network's estimation of the device's location is fully contained within the requested area, the verification result is `TRUE`.
     * If the network's estimation of the device's location does not overlap with the requested area at all, the verification result is `FALSE`.
     * If the network's estimation of the device's location partially overlaps with the requested area, or it fully contains the requested area (because it is larger), the result is `PARTIAL`. In this case, a `match_rate` is included in the response, indicating an estimation of the likelihood of the match in percent.
-    * Lastly, the network may not be able to locate the device. In this case, the verification result is `UNKNOWN`.
+    * If the network cannot locate the device, an error with code `422 LOCATION_VERIFICATION.UNABLE_TO_LOCATE` is sent back.
     * The client may optionally include a `maxAge` indication. If the location information known to the server is older than the specified `maxAge` or not known at all, an error with code `422 LOCATION_VERIFICATION.UNABLE_TO_FULFILL_MAX_AGE` is sent back, independently of the verification result.
-
-    * `lastLocationTime` will be always included in a success response unless there is no historical location information available for the device. In this case, `UNKNOWN` will be returned without `lastLocationTime`.
 
     Location Verification could be useful in scenarios such as:
 
@@ -35,7 +33,7 @@ info:
     * **Area**: It specifies the geographical surface where a device may be physically located.
 
      * **Max Age**: Maximum age of the location information which is accepted for the location verification (in seconds).
-        * Absence of maxAge means "any age" is acceptable for the client. In other words, this is like maxAge=infinite. In this case the system will still return lastLocationTime, if available.
+        * Absence of maxAge means "any age" is acceptable for the client. In other words, this is like maxAge=infinite. In this case the system will return `lastLocationTime`.
         * maxAge=0 means a fresh calculation is requested by the client. If the system is not able to provide the fresh location, an error with code `422 LOCATION_VERIFICATION.UNABLE_TO_FULFILL_MAX_AGE` is sent back.
 
 
@@ -190,11 +188,6 @@ paths:
                   value:
                     verificationResult: "FALSE"
                     lastLocationTime: "2023-09-07T10:40:52Z"
-                VERIFICATION_UNKNOWN:
-                  summary: Unknown
-                  description: The network cannot locate the device
-                  value:
-                    verificationResult: "UNKNOWN"
                 VERIFICATION_PARTIAL:
                   summary: Partial match
                   description: The requested area partially matches the area where the network locates the device
@@ -333,11 +326,12 @@ components:
       type: object
       required:
         - verificationResult
+        - lastLocationTime
       properties:
-        lastLocationTime:
-          $ref: "#/components/schemas/LastLocationTime"
         verificationResult:
           $ref: "#/components/schemas/VerificationResult"
+        lastLocationTime:
+          $ref: "#/components/schemas/LastLocationTime"
         matchRate:
           $ref: "#/components/schemas/MatchRate"
 
@@ -430,13 +424,11 @@ components:
         Result of a verification request:
           - `TRUE`: when the network locates the device within the requested area,
           - `FALSE`: when the requested area does not match the area where the network locates the device,
-          - `UNKNOWN`: when the network cannot locate the device,
           - `PARTIAL`: when the requested area partially match the area where the network locates the device. A `match_rate` is included in the response.
       type: string
       enum:
         - "TRUE"
         - "FALSE"
-        - "UNKNOWN"
         - "PARTIAL"
 
     MatchRate:
@@ -607,6 +599,7 @@ components:
                       - LOCATION_VERIFICATION.AREA_NOT_COVERED
                       - LOCATION_VERIFICATION.INVALID_AREA
                       - LOCATION_VERIFICATION.UNABLE_TO_FULFILL_MAX_AGE
+                      - LOCATION_VERIFICATION.UNABLE_TO_LOCATE
           examples:
             GENERIC_422_IDENTIFIER_MISMATCH:
               description: Inconsistency between identifiers not pointing to the same device
@@ -659,3 +652,10 @@ components:
                 status: 422
                 code: LOCATION_VERIFICATION.UNABLE_TO_FULFILL_MAX_AGE
                 message: "Unable to provide expected freshness for location"
+            LOCATION_VERIFICATION_422_UNABLE_TO_LOCATE:
+              summary: Unable to locate device
+              description: The network cannot locate the device
+              value:
+                status: 422
+                code: LOCATION_VERIFICATION.UNABLE_TO_LOCATE
+                message: "The network is unable to locate the device"
