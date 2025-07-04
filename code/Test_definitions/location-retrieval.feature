@@ -156,17 +156,7 @@ Feature: CAMARA Device location retrieval API, v0.5.0-rc.1 - Operation retrieveL
     And the response property "$.code" is "IDENTIFIER_NOT_FOUND"
     And the response property "$.message" contains a user friendly text
 
-  @location_retrieval_14_device_identifiers_mismatch
-  Scenario: Device identifiers mismatch
-    # To test this, at least 2 types of identifiers have to be provided, e.g. a phoneNumber and the IP address of a device associated to a different phoneNumber
-    Given that config_var "identifier_types_unsupported" contains at least 2 items
-    And the header "Authorization" is set to a valid access token which does not identify a single device
-    And the request body property "$.device" includes several identifiers, each of them identifying a valid but different device
-    When the HTTP "POST" request is sent
-    Then the response status code is 422
-    And the response property "$.status" is 422
-    And the response property "$.code" is "IDENTIFIER_MISMATCH"
-    And the response property "$.message" contains a user friendly text
+  # @location_retrieval_14_device_identifiers_mismatch deprecated
 
   @location_retrieval_15_unnecessary_device
   Scenario: Device not to be included when it can be deduced from the access token

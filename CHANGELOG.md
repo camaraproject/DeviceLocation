@@ -34,7 +34,7 @@ The API definition(s) are based on
 
 ## location-verification v3.0.0-rc.1
 
-location-verification v3.0.0-rc.1 is the first release candidate for the next stable version of the API Location Verification, ...
+location-verification v3.0.0-rc.1 is the first release candidate for the next stable version of the API Location Verification. It introduces breaking changes compared to the previous release r2.2, due to the deprecation of `UNKNOWN` value for `verificationResult` in favor of the new error `422 LOCATION_VERIFICATION.UNABLE_TO_LOCATE`.
 
 * API definition with **inline documentation**:
 
@@ -44,19 +44,20 @@ location-verification v3.0.0-rc.1 is the first release candidate for the next st
 
 ### Added
 
-* TBC
+* New error code `422 LOCATION_VERIFICATION.UNABLE_TO_LOCATE`.
+* New `DeviceResponse` object in responses limited to one identifier.
+* Clarifications on non-documented error responses.
 
 ### Changed
 
-* TBC
-
-### Fixed
-
-* TBC
+* `verificationResult: UNKNOWN` for 200 responses is deprecated.
+* Error `422 IDENTIFIER_MISMATCH` is deprecated.
+* Error `401 AUTHENTICATION_REQUIRED` is deprecated.
+* Updated string pattern for `x-correlator`headers
 
 ## location-retrieval v0.5.0-rc.1
 
-location-retrieval v0.5.0-rc.1 is the first release candidate for the next initial version of the API Location Retrieval, ...
+location-retrieval v0.5.0-rc.1 is the first release candidate for the next initial version of the API Location Retrieval. It introduces breaking changes compared to the previous release r2.2, due to the deprecation of error `404 LOCATION_RETRIEVAL.DEVICE_NOT_FOUND` in favor of the new error `422 LOCATION_RETRIEVAL.UNABLE_TO_LOCATE`.
 
 * API definition with **inline documentation**:
 
@@ -66,19 +67,20 @@ location-retrieval v0.5.0-rc.1 is the first release candidate for the next initi
 
 ### Added
 
-* TBC
+* New error `422 LOCATION_RETRIEVAL.UNABLE_TO_LOCATE`.
+* New `DeviceResponse` object in responses limited to one identifier.
+* Clarifications on non-documented error responses.
 
 ### Changed
 
-* TBC
-
-### Fixed
-
-* TBC
+* Error `404 LOCATION_RETRIEVAL.DEVICE_NOT_FOUND` is deprecated.
+* Error `422 IDENTIFIER_MISMATCH` is deprecated.
+* Error `401 AUTHENTICATION_REQUIRED` is deprecated.
+* Updated string pattern for `x-correlator`headers
 
 ## geofencing-subscriptions v0.5.0-rc.1
 
-geofencing-subscriptions v0.5.0-rc.1 is the first release candidate for the next initial version of the API Geofencing Subscriptions, ...
+geofencing-subscriptions v0.5.0-rc.1 is the first release candidate for the next initial version of the API Geofencing Subscriptions. It introduces breaking changes compared to the previous release r2.2, coming from the alignment to the new guidelines in Commonalities for APIs with subscriptions.
 
 * API definition with **inline documentation**:
 
@@ -88,15 +90,23 @@ geofencing-subscriptions v0.5.0-rc.1 is the first release candidate for the next
 
 ### Added
 
-* TBC
+* New subscription event types for `subscription-started` and `subscription-updated`
+* New `DeviceResponse` object in responses and events, limited to one identifier.
+* Pattern to property `sink` and new error `400 INVALID_SINK`.
+* Clarifications on non-documented error responses.
 
 ### Changed
 
-* TBC
+* Subscription event type `subscription-ends` renamed to `subscription-ended`
+* Property `id` becomes required for `SubscriptionAsync` objects.
+* operationId `createSubscription` renamed to `createGeofencingSubscription`
+* Error `401 AUTHENTICATION_REQUIRED` is deprecated.
+* Error `422 IDENTIFIER_MISMATCH` is deprecated.
+* Updated string pattern for `x-correlator`headers
 
 ### Fixed
 
-* TBC
+* Subscription types array items must be limited to allowed `SubscriptionEventType` values
 
 # r2.2
 

@@ -101,7 +101,7 @@ Feature: Camara Geofencing Subscriptions API, v0.5.0-rc.1 - Operations on subscr
     And type="org.camaraproject.geofencing-subscriptions.v0.area-left"
 	
   @geofencing_subscriptions_09_subscription_ends_on_expiry
-  Scenario: Receive notification for subscription-ends event on expiry
+  Scenario: Receive notification for subscription-ended event on expiry
     Given a valid subscription request body 
     And the request body property "$.area" is set to circle which covers location "Place1" 
     And the request body property "$.type" is "area-left"
@@ -109,13 +109,13 @@ Feature: Camara Geofencing Subscriptions API, v0.5.0-rc.1 - Operations on subscr
     When the request "createGeofencingSubscription" is sent
     Then the response code is 201 
     Then the subscription is expired
-    Then event notification "subscription-ends" is received on callback-url
-    And notification body complies with the OAS schema at "##/components/schemas/EventSubscriptionEnds"
-    And type="org.camaraproject.geofencing-subscriptions.v0.subscription-ends"
+    Then event notification "subscription-ended" is received on callback-url
+    And notification body complies with the OAS schema at "##/components/schemas/EventSubscriptionEnded"
+    And type="org.camaraproject.geofencing-subscriptions.v0.subscription-ended"
     And the response property "$.terminationReason" is "SUBSCRIPTION_EXPIRED"
     
   @geofencing_subscriptions_10_subscription_ends_on_max_events
-  Scenario: Receive notification for subscription-ends event on max events reached
+  Scenario: Receive notification for subscription-ended event on max events reached
     Given a valid subscription request body
     And the request body property "$.area" is set to circle which covers location "Place1"
     And the request body property "$.type" is "area-left"
@@ -124,23 +124,34 @@ Feature: Camara Geofencing Subscriptions API, v0.5.0-rc.1 - Operations on subscr
     Then the response code is 201
     Then the device left from location "Place1"
     Then event notification "area-left" is received on callback-url
-    Then event notification "subscription-ends" is received on callback-url
-    And notification body complies with the OAS schema at "##/components/schemas/EventSubscriptionEnds"
-    And type="org.camaraproject.geofencing-subscriptions.v0.subscription-ends"And the response property "$.terminationReason" is "MAX_EVENTS_REACHED"
+    Then event notification "subscription-ended" is received on callback-url
+    And notification body complies with the OAS schema at "##/components/schemas/EventSubscriptionEnded"
+    And type="org.camaraproject.geofencing-subscriptions.v0.subscription-ended"And the response property "$.terminationReason" is "MAX_EVENTS_REACHED"
 		
   @geofencing_subscriptions_11_subscription_delete_event_validation
-  Scenario: Receive notification for subscription-ends event on deletion
+  Scenario: Receive notification for subscription-ended event on deletion
     Given a valid subscription request body 
     When the request "createGeofencingSubscription" is sent
     Then the response code is 201 
     And path parameter "subscriptionId" is set to the identifier of an existing subscription created 
     When the request "deleteGeofencingSubscription" is sent
     Then the response code is 202 or 204	
-    Then event notification "subscription-ends" is received on callback-url
-    And notification body complies with the OAS schema at "##/components/schemas/EventSubscriptionEnds"
-    And type="org.camaraproject.geofencing-subscriptions.v0.subscription-ends"
+    Then event notification "subscription-ended" is received on callback-url
+    And notification body complies with the OAS schema at "##/components/schemas/EventSubscriptionEnded"
+    And type="org.camaraproject.geofencing-subscriptions.v0.subscription-ended"
     And the response property "$.terminationReason" is "SUBSCRIPTION_DELETED"
-	
+
+######################### Scenario in case initialEvent is managed ##############################
+
+  @geofencing_subscriptions_12_subscription_creation_initial_event
+  Scenario: Receive initial event notification on creation
+    Given the API supports initial events to be sent
+    And a valid subscription request body with property "$.config.initialEvent" set to true
+    When the request "create<xxx>Subscription" is sent
+    Then the response code is 201 or 202
+    And an event notification of the subscribed type is received on callback-url
+    And notification body complies with the OAS schema at "#/components/schemas/CloudEvent"
+
 ########################### Error response scenarios ############################################
   @geofencing_subscriptions_12_create_geofencing_subscription_for_a_device_with_invalid_parameter
   Scenario:  Create geofencing subscription with invalid parameter
@@ -335,14 +346,7 @@ Feature: Camara Geofencing Subscriptions API, v0.5.0-rc.1 - Operations on subscr
     And the response property "$.code" is "GEOFENCING_SUBSCRIPTIONS.AREA_NOT_COVERED"
     And the response property "$.message" contains "Unable to cover the requested area"
 
-  @geofencing_subscriptions_29_create_with_identifier_mismatch
-  Scenario: Create subscription with identifier mismatch
-    Given the request body includes inconsistent identifiers
-    When the HTTP "POST" request is sent
-    Then the response status code is 422
-    And the response property "$.status" is 422
-    And the response property "$.code" is "IDENTIFIER_MISMATCH"
-    And the response property "$.message" contains "Identifiers are not consistent."
+  # @geofencing_subscriptions_29_create_with_identifier_mismatch deprecated
 
   @geofencing_subscriptions_30_create_with_service_not_applicable
   Scenario: Create subscription for a device not supported by the service
