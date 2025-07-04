@@ -50,10 +50,13 @@ location-verification v3.0.0-rc.1 is the first release candidate for the next st
 
 ### Changed
 
-* `verificationResult: UNKNOWN` for 200 responses is deprecated.
-* Error `422 IDENTIFIER_MISMATCH` is deprecated.
-* Error `401 AUTHENTICATION_REQUIRED` is deprecated.
-* Updated string pattern for `x-correlator`headers
+* Updated string pattern for `x-correlator`headers.
+
+### Removed
+
+* `verificationResult: UNKNOWN` for 200 responses.
+* Error `422 IDENTIFIER_MISMATCH`.
+* Error `401 AUTHENTICATION_REQUIRED`.
 
 ## location-retrieval v0.5.0-rc.1
 
@@ -73,10 +76,13 @@ location-retrieval v0.5.0-rc.1 is the first release candidate for the next initi
 
 ### Changed
 
-* Error `404 LOCATION_RETRIEVAL.DEVICE_NOT_FOUND` is deprecated.
-* Error `422 IDENTIFIER_MISMATCH` is deprecated.
-* Error `401 AUTHENTICATION_REQUIRED` is deprecated.
 * Updated string pattern for `x-correlator`headers
+
+### Removed
+
+* Error `404 LOCATION_RETRIEVAL.DEVICE_NOT_FOUND`.
+* Error `422 IDENTIFIER_MISMATCH`.
+* Error `401 AUTHENTICATION_REQUIRED`.
 
 ## geofencing-subscriptions v0.5.0-rc.1
 
@@ -100,13 +106,16 @@ geofencing-subscriptions v0.5.0-rc.1 is the first release candidate for the next
 * Subscription event type `subscription-ends` renamed to `subscription-ended`
 * Property `id` becomes required for `SubscriptionAsync` objects.
 * operationId `createSubscription` renamed to `createGeofencingSubscription`
-* Error `401 AUTHENTICATION_REQUIRED` is deprecated.
-* Error `422 IDENTIFIER_MISMATCH` is deprecated.
 * Updated string pattern for `x-correlator`headers
 
 ### Fixed
 
 * Subscription types array items must be limited to allowed `SubscriptionEventType` values
+
+### Removed
+
+* Error `422 IDENTIFIER_MISMATCH`.
+* Error `401 AUTHENTICATION_REQUIRED`.
 
 # r2.2
 
