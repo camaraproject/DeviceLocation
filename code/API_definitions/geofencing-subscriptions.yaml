@@ -206,8 +206,8 @@ paths:
                 "429":
                   $ref: "#/components/responses/Generic429"
               security:
-                - {}
                 - notificationsBearerAuth: []
+                - {}
       responses:
         "201":
           description: Created (Successful creation of subscription).
@@ -339,6 +339,10 @@ components:
       description: OpenID Connect authentication.
       type: openIdConnect
       openIdConnectUrl: https://example.com/.well-known/openid-configuration
+    notificationsBearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: "{$request.body#/sinkCredential.credentialType}"
   parameters:
     SubscriptionId:
       name: subscriptionId
