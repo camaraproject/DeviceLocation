@@ -15,7 +15,7 @@ Feature: CAMARA Device location retrieval API, vwip - Operation retrieveLocation
     Given the resource "/location-retrieval/vwip/retrieve"                                                              |
     And the header "Content-Type" is set to "application/json"
     And the header "Authorization" is set to a valid access token
-    And the header "x-correlator" is set to a UUID value
+    And the header "x-correlator" complies with the schema at "#/components/schemas/XCorrelator"
     And the request body is set by default to a request body compliant with the schema
 
   # Happy path scenarios
@@ -65,11 +65,11 @@ Feature: CAMARA Device location retrieval API, vwip - Operation retrieveLocation
     Given a valid testing device which cannot be located by the network, identified by the token or provided in the request body
     And the request body property "$.maxAge" is not included
     When the HTTP "POST" request is sent
-    Then the response status code is 404
+    Then the response status code is 422
     And the response header "Content-Type" is "application/json"
     And the response header "x-correlator" has same value as the request header "x-correlator"
-    And the response property "$.status" is 404
-    And the response property "$.code" is "LOCATION_RETRIEVAL.DEVICE_NOT_FOUND"
+    And the response property "$.status" is 422
+    And the response property "$.code" is "LOCATION_RETRIEVAL.UNABLE_TO_LOCATE"
     And the response property "$.message" contains a user friendly text
 
   @location_retrieval_05_location_retrieval_unable_to_locate_device_with_required_freshness
@@ -156,17 +156,7 @@ Feature: CAMARA Device location retrieval API, vwip - Operation retrieveLocation
     And the response property "$.code" is "IDENTIFIER_NOT_FOUND"
     And the response property "$.message" contains a user friendly text
 
-  @location_retrieval_14_device_identifiers_mismatch
-  Scenario: Device identifiers mismatch
-    # To test this, at least 2 types of identifiers have to be provided, e.g. a phoneNumber and the IP address of a device associated to a different phoneNumber
-    Given that config_var "identifier_types_unsupported" contains at least 2 items
-    And the header "Authorization" is set to a valid access token which does not identify a single device
-    And the request body property "$.device" includes several identifiers, each of them identifying a valid but different device
-    When the HTTP "POST" request is sent
-    Then the response status code is 422
-    And the response property "$.status" is 422
-    And the response property "$.code" is "IDENTIFIER_MISMATCH"
-    And the response property "$.message" contains a user friendly text
+  # @location_retrieval_14_device_identifiers_mismatch deprecated
 
   @location_retrieval_15_unnecessary_device
   Scenario: Device not to be included when it can be deduced from the access token

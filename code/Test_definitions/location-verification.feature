@@ -15,7 +15,7 @@ Feature: CAMARA Device location verification API, vwip - Operation verifyLocatio
     Given the resource "/location-verification/vwip/verify"
     And the header "Content-Type" is set to "application/json"
     And the header "Authorization" is set to a valid access token
-    And the header "x-correlator" is set to a UUID value
+    And the header "x-correlator" complies with the schema at "#/components/schemas/XCorrelator"
     And the request body is set by default to a request body compliant with the schema
 
   # This first scenario serves as a minimum, not testing any specific verificationResult
@@ -31,7 +31,6 @@ Feature: CAMARA Device location verification API, vwip - Operation verifyLocatio
     # The response has to comply with the generic response schema which is part of the spec
     And the response body complies with the OAS schema at "/components/schemas/VerifyLocationResponse"
     # Additionally any success response has to comply with some constraints not documented in the schema
-    And if the response property "$.lastLocationTime" does not exists then "$.verificationResult" is "UNKNOWN"
     And the response property "$.matchRate" exists only if "$.verificationResult" is "PARTIAL"
 
   # Scenarios testing specific situations for the device location
@@ -75,20 +74,6 @@ Feature: CAMARA Device location verification API, vwip - Operation verifyLocatio
     And the response body complies with the OAS schema at "/components/schemas/VerifyLocationResponse"
     And the response property "$.verificationResult" is "FALSE"
     And the response property "$.lastLocationTime" exists
-    And the response property "$.matchRate" does not exist
-
-  @location_verification_05_unknown_location_for_device
-  Scenario: Unknown location of a device without specifying maxAge
-    Given a valid testing device supported by the service, identified by the token or provided in the request body, for which there is no historical location information
-    And the request body property "$.maxAge" is not included
-    And the request body property "$.area" is set to a valid area covered by the service
-    When the request "verifyLocation" is sent
-    Then the response status code is 200
-    And the response header "Content-Type" is "application/json"
-    And the response header "x-correlator" has same value as the request header "x-correlator"
-    And the response body complies with the OAS schema at "/components/schemas/VerifyLocationResponse"
-    And the response property "$.verificationResult" is "UNKNOWN"
-    And the response property "$.lastLocationTime" does not exist
     And the response property "$.matchRate" does not exist
 
   # Error scenarios for management of input parameter device
@@ -178,20 +163,6 @@ Feature: CAMARA Device location verification API, vwip - Operation verifyLocatio
     And the response property "$.status" is 422
     And the response property "$.code" is "SERVICE_NOT_APPLICABLE"
     And the response property "$.message" contains a user-friendly text
-
-
-  # Several identifiers provided but they do not identify the same device
-  # This scenario may happen with 2-legged access tokens, which do not identify a device
-  @location_verification_C01.08_device_identifiers_mismatch
-  Scenario: Device identifiers mismatch
-    Given the header "Authorization" is set to a valid access token which does not identify a single device
-    And at least 2 types of device identifiers are supported by the implementation
-    And the request body property "$.device" includes several identifiers, each of them identifying a valid but different device
-    When the request "verifyLocation" is sent
-    Then the response status code is 422
-    And the response property "$.status" is 422
-    And the response property "$.code" is "IDENTIFIER_MISMATCH"
-    And the response property "$.message" contains a user friendly text
 
   # Generic 400 errors
 
@@ -334,4 +305,16 @@ Feature: CAMARA Device location verification API, vwip - Operation verifyLocatio
     Then the response status code is 422
     And the response property "$.status" is 422
     And the response property "$.code" is "LOCATION_VERIFICATION.UNABLE_TO_FULFILL_MAX_AGE"
+    And the response property "$.message" contains a user-friendly text
+
+
+  @location_verification_422.4_unknown_location_for_device
+  Scenario: Unknown location of a device without specifying maxAge
+    Given a valid testing device supported by the service, identified by the token or provided in the request body, for which there is no historical location information
+    And the request body property "$.maxAge" is not included
+    And the request body property "$.area" is set to a valid area covered by the service
+    When the request "verifyLocation" is sent
+    Then the response status code is 422
+    And the response property "$.status" is 422
+    And the response property "$.code" is "LOCATION_VERIFICATION.UNABLE_TO_LOCATE"
     And the response property "$.message" contains a user-friendly text
