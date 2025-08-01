@@ -201,7 +201,7 @@ Feature: CAMARA Device location retrieval API, vwip - Operation retrieveLocation
     And the response property "$.status" is 422
     And the response property "$.code" is "LOCATION_RETRIEVAL.UNABLE_TO_FULFILL_MAX_SURFACE"
     And the response property "$.message" contains a user friendly text
-  
+
   # Generic 400 errors
 
   @location_retrieval_400.1_no_request_body
