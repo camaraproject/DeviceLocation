@@ -129,11 +129,10 @@ Feature: Camara Geofencing Subscriptions API, vwip - Operations on subscriptions
 
   @geofencing_subscriptions_11_subscription_delete_event_validation
   Scenario: Receive notification for subscription-ended event on deletion
-    Given a valid subscription request body
-    When the request "createGeofencingSubscription" is sent
-    Then the response code is 201
-    And path parameter "subscriptionId" is set to the identifier of an existing subscription created
+    Given a valid subscription is existing
     When the request "deleteGeofencingSubscription" is sent
+    And path parameter "subscriptionId" is set to the identifier of an existing subscription created
+    And the request "deleteGeofencingSubscription" is sent
     Then the response code is 202 or 204
     And event notification "subscription-ended" is received on callback-url
     And notification body complies with the OAS schema at "##/components/schemas/EventSubscriptionEnded"
