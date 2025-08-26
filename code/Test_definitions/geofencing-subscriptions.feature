@@ -18,9 +18,11 @@ Feature: Camara Geofencing Subscriptions API, vwip - Operations on subscriptions
 
   # Success scenarios
 
-  @geofencing_subscriptions_01.1_sync_creation_2legs
-  Scenario Outline: Create geofencing subscription (async creation) with 2-legged-token
-    Given the header "Authorization" is set to a valid access token which does not identify any device
+  # Note: Depending on the API managed personal data specific scenario update may be require to specify use of 2-legs or 3-legs access token.
+
+  @geofencing_subscriptions_01.1_create_subscription_sync
+  Scenario Outline: Create geofencing subscription (sync creation)
+    Given that subscriptions are created synchronously
     And the request body is compliant with the OAS schema at "#/component/schemas/SubscriptionRequest"
     When the request "createGeofencingSubscription" is sent
     And request property "$.types" is one of the allowed values "<subscription-creation-types>"
@@ -28,41 +30,16 @@ Feature: Camara Geofencing Subscriptions API, vwip - Operations on subscriptions
     And a valid phone number identified by "$.config.subscriptionDetail.device.phoneNumber"
     And request property "$.sink" is set to a valid callbackUrl
     Then the response code is 201
+    And the response header "Content-Type" is "application/json"
+    And the response header "x-correlator" has the same value as the request header "x-correlator"
     And the response body complies with the OAS schema at "#/components/schemas/Subscription"
-    And the response properties "$.types", "$.protocol", "$.sink" and "$.config.subscriptionDetail.device.phoneNumber" are present with the values provided in the request
-    And the response property "$.id" is present
-    And the response property "$.startsAt" and "$.expiresAt", if present, has a valid value with date-time format
-    And the response property "$.status", if present, has the value "ACTIVATION_REQUESTED", "ACTIVE" or "INACTIVE"
 
     Examples:
       | subscription-creation-types                                |
       | org.camaraproject.geofencing-subscriptions.v0.area-entered |
       | org.camaraproject.geofencing-subscriptions.v0.area-left    |
 
-  @geofencing_subscriptions_01.1_sync_creation_3legs
-  Scenario Outline: Create geofencing subscription (async creation) with 3-legged-token
-    # Some implementations may only support asynchronous subscription creation
-    Given that subscriptions are created synchronously
-    And a valid subscription request body
-    When the request "createGeofencingSubscription" is sent
-    And request property "$.types" is one of the allowed values "<subscription-creation-types>"
-    And request property "$.protocol" is equal to "HTTP"
-    And request property "$.sink" is set to a valid callbackUrl
-    And request property "$.config.subscriptionDetail.device.phoneNumber" is not present
-    Then the response status code is 201
-    And the response body complies with the OAS schema at "#/components/schemas/Subscription"
-    And the response properties "$.types", "$.protocol" and "$.sink" are present with the values provided in the request
-    And the response property "$.id" is present
-    And the response property "$.startsAt" and "$.expiresAt", if present, has a valid value with date-time format
-    And the response property "$.status", if present, has the value "ACTIVATION_REQUESTED", "ACTIVE" or "INACTIVE"
-    And the response property "$.config.subscriptionDetail.device" is not present
-
-    Examples:
-      | subscription-creation-types                                |
-      | org.camaraproject.geofencing-subscriptions.v0.area-entered |
-      | org.camaraproject.geofencing-subscriptions.v0.area-left    |
-
-  @geofencing_subscriptions_02_async_creation
+  @geofencing_subscriptions_02_create_subscription_async
   Scenario Outline: Create geofencing subscription (async creation)
     Given a valid target device, identified by either the access token or in the request body
     And the request body is compliant with the OAS schema at "#/component/schemas/SubscriptionRequest"
@@ -321,9 +298,7 @@ Feature: Camara Geofencing Subscriptions API, vwip - Operations on subscriptions
     And the response property "$.code" is "IDENTIFIER_MISMATCH"
     And the response property "$.message" contains a user friendly text
 
-  ##################
   # Error code 400
-  ##################
 
   @geofencing_subscriptions_400.1_create_subscriptions_with_invalid_parameter
   Scenario: Create subscription with invalid parameter
@@ -425,9 +400,7 @@ Feature: Camara Geofencing Subscriptions API, vwip - Operations on subscriptions
     And the response property "$.code" is "UNAUTHENTICATED"
     And the response property "$.message" contains a user friendly text
 
-  ##################
   # Error code 401
-  ##################
 
   @geofencing_subscriptions_creation_401.1_no_authorization_header
   Scenario: No Authorization header
@@ -481,9 +454,7 @@ Feature: Camara Geofencing Subscriptions API, vwip - Operations on subscriptions
     And the response property "$.code" is "UNAUTHENTICATED" or "AUTHENTICATION_REQUIRED"
     And the response property "$.message" contains a user friendly text
 
-  ##################
   # Error code 404
-  ##################
 
   @geofencing_subscriptions_404.1_retrieve_unknown_subscriptions_id
   Scenario: Get subscription when subscriptionId is unknown to the system
@@ -505,9 +476,7 @@ Feature: Camara Geofencing Subscriptions API, vwip - Operations on subscriptions
     And the response property "$.code" is "NOT_FOUND"
     And the response property "$.message" contains a user friendly text
 
-  ##################
   # Error code 422
-  ##################
 
   @geofencing_subscriptions_422.1_create_with_an_unsupported_area
   Scenario: Create subscription with an unsupported area
@@ -537,40 +506,3 @@ Feature: Camara Geofencing Subscriptions API, vwip - Operations on subscriptions
     And the response property "$.status" is 422
     And the response property "$.code" is "MULTIEVENT_SUBSCRIPTION_NOT_SUPPORTED"
     And the response property "$.message" contains a user friendly text
-
-  @geofencing_subscriptions_422.4_create_with_service_not_applicable
-  Scenario: Create subscription for a device not supported by the service
-    Given the request body includes a device identifier not applicable for this service
-    When the request "createGeofencingSubscription" is sent
-    Then the response status code is 422
-    And the response property "$.status" is 422
-    And the response property "$.code" is "SERVICE_NOT_APPLICABLE"
-    And the response property "$.message" contains "Service is not available for the provided device identifier."
-
-  @geofencing_subscriptions_422.5_create_with_unnecessary_identifier
-  Scenario: Create subscription with an unnecessary identifier
-    Given the request body explicitly includes a device identifier when it is not required
-    When the request "createGeofencingSubscription" is sent
-    Then the response status code is 422
-    And the response property "$.status" is 422
-    And the response property "$.code" is "UNNECESSARY_IDENTIFIER"
-    And the response property "$.message" contains "Device is already identified by the access token."
-
-  @geofencing_subscriptions_422.6_create_with_unsupported_identifier
-  Scenario: Create subscription with an unsupported identifier
-    Given the request body includes an identifier type not supported by the implementation
-    When the request "createGeofencingSubscription" is sent
-    Then the response status code is 422
-    And the response property "$.status" is 422
-    And the response property "$.code" is "UNSUPPORTED_IDENTIFIER"
-    And the response property "$.message" contains "The identifier provided is not supported."
-
-  @geofencing_subscriptions_422.7_missing_device
-  Scenario: Device not included and cannot be deduced from the access token
-    Given the header "Authorization" is set to a valid access token which does not identify a single device
-    And the request body property "$.device" is not included
-    When the request "createGeofencingSubscription" is sent
-    Then the response status code is 422
-    And the response property "$.status" is 422
-    And the response property "$.code" is "MISSING_IDENTIFIER"
-    And the response property "$.message" contains a user-friendly text
