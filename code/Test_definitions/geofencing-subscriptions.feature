@@ -214,17 +214,8 @@ Feature: Camara Geofencing Subscriptions API, vwip - Operations on subscriptions
     And notification body complies with the OAS schema at "##/components/schemas/EventSubscriptionEnded"
     And type="org.camaraproject.geofencing-subscriptions.v0.subscription-ended"
     And the response property "$.terminationReason" is "SUBSCRIPTION_DELETED"
-######################### Scenario in case initialEvent is managed ##############################
 
-  @geofencing_subscriptions_12_subscription_creation_initial_event
-  Scenario: Receive initial event notification on creation
-    Given the API supports initial events to be sent
-    And a valid subscription request body with property "$.config.initialEvent" set to true
-    When the request "createGeofencingSubscription" is sent
-    Then the response code is 201 or 202
-    And an event notification of the subscribed type is received on callback-url
-    And notification body complies with the OAS schema at "#/components/schemas/CloudEvent"
-  #Scenario in case initialEvent is managed
+######################### Scenario in case initialEvent is managed ##############################
 
   @geofencing_subscriptions_12_subscription_creation_initial_event
   Scenario: Receive initial event notification on creation
@@ -459,11 +450,11 @@ Feature: Camara Geofencing Subscriptions API, vwip - Operations on subscriptions
     And the response property "$.status" is 401
     And the response property "$.code" is "UNAUTHENTICATED" or "AUTHENTICATION_REQUIRED"
     And the response property "$.message" contains a user friendly text
-    
+
   @geofencing_subscriptions_401.3_no_authorization_header_for_delete_subscription
   Scenario: No Authorization header for delete subscription
     Given header "Authorization" is set without a token
-    When the request "deleteGeofencingSubscription" is sent 
+    When the request "deleteGeofencingSubscription" is sent
     Then the response status code is 401
     And the response property "$.status" is 401
     And the response property "$.code" is "UNAUTHENTICATED"
@@ -574,16 +565,7 @@ Feature: Camara Geofencing Subscriptions API, vwip - Operations on subscriptions
     And the response property "$.code" is "UNSUPPORTED_IDENTIFIER"
     And the response property "$.message" contains "The identifier provided is not supported."
 
-  @geofencing_subscriptions_422.7_create_with_an_invalid_area
-  Scenario: Create subscription with an invalid area
-    Given the request body property "$.area" is set with an too small area-size
-    When the request "createGeofencingSubscription" is sent
-    Then the response status code is 422
-    And the response property "$.status" is 422
-    And the response property "$.code" is "GEOFENCING_SUBSCRIPTIONS.INVALID_AREA"
-    And the response property "$.message" contains "The requested area is too small"
-
-  @geofencing_subscriptions_422.8_missing_device
+  @geofencing_subscriptions_422.7_missing_device
   Scenario: Device not included and cannot be deduced from the access token
     Given the header "Authorization" is set to a valid access token which does not identify a single device
     And the request body property "$.device" is not included

@@ -160,8 +160,6 @@ Feature: CAMARA Device location verification API, vwip - Operation verifyLocatio
     And the response property "$.code" is "SERVICE_NOT_APPLICABLE"
     And the response property "$.message" contains a user-friendly text
 
-
-
   #################
   # Error code 400
   #################
