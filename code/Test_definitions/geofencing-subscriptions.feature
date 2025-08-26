@@ -19,7 +19,7 @@ Feature: Camara Geofencing Subscriptions API, vwip - Operations on subscriptions
   # Success scenarios
 
   @geofencing_subscriptions_01.1_sync_creation_2legs
-  Scenario Outline: Create geofencing subscription (async creation) with 2-legged-token
+  Scenario Outline: Create geofencing subscription (sync creation) with 2-legged-token
     Given the header "Authorization" is set to a valid access token which does not identify any device
     And the request body is compliant with the OAS schema at "#/component/schemas/SubscriptionRequest"
     When the request "createGeofencingSubscription" is sent
