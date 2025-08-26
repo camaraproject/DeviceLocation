@@ -40,7 +40,7 @@ Feature: Camara Geofencing Subscriptions API, vwip - Operations on subscriptions
       | org.camaraproject.geofencing-subscriptions.v0.area-left    |
 
   @geofencing_subscriptions_01.1_sync_creation_3legs
-  Scenario Outline: Create geofencing subscription (async creation) with 3-legged-token
+  Scenario Outline: Create geofencing subscription (sync creation) with 3-legged-token
     # Some implementations may only support asynchronous subscription creation
     Given that subscriptions are created synchronously
     And a valid subscription request body
