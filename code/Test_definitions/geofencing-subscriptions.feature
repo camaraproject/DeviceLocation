@@ -12,7 +12,7 @@ Feature: Camara Geofencing Subscriptions API, vwip - Operations on subscriptions
   # References to OAS spec schemas refer to schemas specifies in geofencing-subscriptions.yaml
 
   Background: Common Geofencing Subscriptions setup
-    Given the resource "{apiroot}/geofencing-subscriptions/vwip/subscriptions" as geofencing base-url
+    Given the resource "{apiroot}/geofencing-subscriptions/vwip/" as geofencing base-url
     And the header "Authorization" is set to a valid access token
     And the header "x-correlator" complies with the schema at "#/components/schemas/XCorrelator"
 
