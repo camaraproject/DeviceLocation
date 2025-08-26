@@ -164,48 +164,66 @@ Feature: Camara Geofencing Subscriptions API, vwip - Operations on subscriptions
 
   @geofencing_subscriptions_09_receive_notification_when_device_leaves_geofence
   Scenario: Receive notification for area-left event
-    Given a valid subscription for that device exists with "subscriptionId" equal to "id"
+    Given a valid subscription request body
     And the request body property "$.area" is set to circle which covers location "Place1"
-    And the subscription property "$.types" contains the element "org.camaraproject.geofencing-subscriptions.v0.area-left"
-    When the device leaves location "Place1"
-    And event notification "area-left" is sent to the specified callback URL
-    And the sink credentials specified when the subscription was created are included
-    And notification body complies with the OAS schema at "#/components/schemas/EventAreaLeft"
-    And the notification property "$.type" is equal to "org.camaraproject.geofencing-subscriptions.v0.area-left"
-    And the notification property "$.data.subscriptionId" is equal to "id"
+    And the request body property "$.type" is "area-left"
+    When the request "createGeofencingSubscription" is sent
+    Then the response code is 201
+    And the device left from location "Place1"
+    And event notification "area-left" is received on callback-url
+    And sink credentials are received as expected
+    And notification body complies with the OAS schema at "##/components/schemas/EventAreaLeft"
+    And type="org.camaraproject.geofencing-subscriptions.v0.area-left"
 
-  @geofencing_subscriptions_10_subscription_ends_on_expiry
-  Scenario: Receive notification for subscription-ends event on expiry
-    Given a valid subscription for a device exists with "subscriptionId" equal to "id"
-    And the subscription property "$.subscriptionExpireTime" is set to a value in the near future
-    And the subscription property "$.sink" is a valid callback URL
-    When the subscriptionExpireTime is reached
-    Then a subscription termination event notification is sent to the callback URL
-    And the notification body complies with the OAS schema at "#/components/schemas/EventSubscriptionEnds"
-    And the notification property "$.type" is "org.camaraproject.geofencing-subscriptions.v0.subscription-ends"
-    And the notification property "$.data.subscriptionId" is equal to "id"
-    And the notification property "$.data.terminationReason" is equal to "SUBSCRIPTION_EXPIRED"
+  @geofencing_subscriptions_09_subscription_ends_on_expiry
+  Scenario: Receive notification for subscription-ended event on expiry
+    Given a valid subscription request body
+    And the request body property "$.area" is set to circle which covers location "Place1"
+    And the request body property "$.type" is "area-left"
+    And the request body property "$.subscriptionExpireTime" is set to a value in the near future
+    When the request "createGeofencingSubscription" is sent
+    Then the response code is 201
+    And the subscription is expired
+    And event notification "subscription-ended" is received on callback-url
+    And notification body complies with the OAS schema at "##/components/schemas/EventSubscriptionEnded"
+    And type="org.camaraproject.geofencing-subscriptions.v0.subscription-ended"
+    And the response property "$.terminationReason" is "SUBSCRIPTION_EXPIRED"
 
   @geofencing_subscriptions_10_subscription_ends_on_max_events
-  Scenario: Receive notification for subscription-ends event on max events reached
-    Given an existing geofencing subscription with the property "config.subscriptionMaxEvents" set to 1
-    When the event subscribed occurs
-    Then event notification "<event-type>" is received on callback-url
+  Scenario: Receive notification for subscription-ended event on max events reached
+    Given a valid subscription request body
+    And the request body property "$.area" is set to circle which covers location "Place1"
+    And the request body property "$.type" is "area-left"
+    And the request body property "$.subscriptionMaxEvents" is set to 1
+    When the request "createGeofencingSubscription" is sent
+    Then the response code is 201
+    And the device left from location "Place1"
+    And event notification "area-left" is received on callback-url
     And event notification "subscription-ended" is received on callback-url
-    And notification body complies with the OAS schema at "#/components/schemas/EventSubscriptionEnded"
-    And type="org.camaraproject.geofencing-subscriptions.v0.subscription-ends"
-    And the response property "$.terminationReason" is "MAX_EVENTS_REACHED"
+    And notification body complies with the OAS schema at "##/components/schemas/EventSubscriptionEnded"
+    And type="org.camaraproject.geofencing-subscriptions.v0.subscription-ended"And the response property "$.terminationReason" is "MAX_EVENTS_REACHED"
 
-  @geofencing_subscriptions_11_subscriptions_delete_event_validation
-  Scenario: Receive notification for subscription-ends event on deletion
-    Given the path parameter "subscriptionId" is set to the identifier of an existing geofencing subscription
+  @geofencing_subscriptions_11_subscription_delete_event_validation
+  Scenario: Receive notification for subscription-ended event on deletion
+    Given a valid subscription is existing
     When the request "deleteGeofencingSubscription" is sent
-    Then the response status code is 202 or 204
+    And path parameter "subscriptionId" is set to the identifier of an existing subscription created
+    And the request "deleteGeofencingSubscription" is sent
+    Then the response code is 202 or 204
     And event notification "subscription-ended" is received on callback-url
-    And the notification body complies with the OAS schema at "#/components/schemas/EventSubscriptionEnds"
-    And type="org.camaraproject.geofencing-subscriptions.v0.subscription-ends"
+    And notification body complies with the OAS schema at "##/components/schemas/EventSubscriptionEnded"
+    And type="org.camaraproject.geofencing-subscriptions.v0.subscription-ended"
     And the response property "$.terminationReason" is "SUBSCRIPTION_DELETED"
+######################### Scenario in case initialEvent is managed ##############################
 
+  @geofencing_subscriptions_12_subscription_creation_initial_event
+  Scenario: Receive initial event notification on creation
+    Given the API supports initial events to be sent
+    And a valid subscription request body with property "$.config.initialEvent" set to true
+    When the request "createGeofencingSubscription" is sent
+    Then the response code is 201 or 202
+    And an event notification of the subscribed type is received on callback-url
+    And notification body complies with the OAS schema at "#/components/schemas/CloudEvent"
   #Scenario in case initialEvent is managed
 
   @geofencing_subscriptions_12_subscription_creation_initial_event
@@ -378,11 +396,10 @@ Feature: Camara Geofencing Subscriptions API, vwip - Operations on subscriptions
     And the response property "$.message" contains a user friendly text
 
   @geofencing_subscriptions_400.7_invalid_url
-  Scenario: Subscription creation with invalid url
-    Given a valid geofencing subscription request body
-    And the request property "$.protocol" is set to "HTTP"
-    And the request property "$.sink" is set to "azerty"
+  Scenario: Subscription creation with sink
+    Given a valid subscription request body
     When the request "createGeofencingSubscription" is sent
+    And the request property "$.sink" is not matching the defined pattern
     Then the response property "$.status" is 400
     And the response property "$.code" is "INVALID_SINK"
     And the response property "$.message" contains a user friendly text
@@ -412,6 +429,7 @@ Feature: Camara Geofencing Subscriptions API, vwip - Operations on subscriptions
     And header "Authorization" set to an invalid access token
     When the request "createGeofencingSubscription" is sent
     Then the response status code is 401
+    And the response header "Content-Type" is "application/json"
     And the response property "$.status" is 401
     And the response property "$.code" is "UNAUTHENTICATED"
     And the response property "$.message" contains a user friendly text
@@ -441,8 +459,27 @@ Feature: Camara Geofencing Subscriptions API, vwip - Operations on subscriptions
     And the response property "$.status" is 401
     And the response property "$.code" is "UNAUTHENTICATED" or "AUTHENTICATION_REQUIRED"
     And the response property "$.message" contains a user friendly text
+    
+  @geofencing_subscriptions_401.3_no_authorization_header_for_delete_subscription
+  Scenario: No Authorization header for delete subscription
+    Given header "Authorization" is set without a token
+    When the request "deleteGeofencingSubscription" is sent 
+    Then the response status code is 401
+    And the response property "$.status" is 401
+    And the response property "$.code" is "UNAUTHENTICATED"
+    And the response property "$.message" contains a user friendly text
 
-  @geofencing_subscriptions_creation_401.3_malformed_access_token
+  @geofencing_subscriptions_401.4_no_authorization_header_for_get_subscription
+  Scenario: No Authorization header for get subscription
+    Given header "Authorization" is not set to valid token
+    And path parameter "subscriptionId" is set to the identifier of an existing subscription
+    When the request "retrieveGeofencingSubscription" is sent
+    Then the response status code is 401
+    And the response property "$.status" is 401
+    And the response property "$.code" is "UNAUTHENTICATED"
+    And the response property "$.message" contains a user friendly text
+
+  @geofencing_subscriptions_creation_401.5_malformed_access_token
   Scenario: Malformed access token
     Given the header "Authorization" is set to a malformed token
     And the request body is compliant with the schema "#/components/schemas/SubscriptionRequest"
@@ -509,3 +546,49 @@ Feature: Camara Geofencing Subscriptions API, vwip - Operations on subscriptions
     And the response property "$.status" is 422
     And the response property "$.code" is "MULTIEVENT_SUBSCRIPTION_NOT_SUPPORTED"
     And the response property "$.message" contains a user friendly text
+
+  @geofencing_subscriptions_422.4_create_with_service_not_applicable
+  Scenario: Create subscription for a device not supported by the service
+    Given the request body includes a device identifier not applicable for this service
+    When the request "createGeofencingSubscription" is sent
+    Then the response status code is 422
+    And the response property "$.status" is 422
+    And the response property "$.code" is "SERVICE_NOT_APPLICABLE"
+    And the response property "$.message" contains "Service is not available for the provided device identifier."
+
+  @geofencing_subscriptions_422.5_create_with_unnecessary_identifier
+  Scenario: Create subscription with an unnecessary identifier
+    Given the request body explicitly includes a device identifier when it is not required
+    When the request "createGeofencingSubscription" is sent
+    Then the response status code is 422
+    And the response property "$.status" is 422
+    And the response property "$.code" is "UNNECESSARY_IDENTIFIER"
+    And the response property "$.message" contains "Device is already identified by the access token."
+
+  @geofencing_subscriptions_422.6_create_with_unsupported_identifier
+  Scenario: Create subscription with an unsupported identifier
+    Given the request body includes an identifier type not supported by the implementation
+    When the request "createGeofencingSubscription" is sent
+    Then the response status code is 422
+    And the response property "$.status" is 422
+    And the response property "$.code" is "UNSUPPORTED_IDENTIFIER"
+    And the response property "$.message" contains "The identifier provided is not supported."
+
+  @geofencing_subscriptions_422.7_create_with_an_invalid_area
+  Scenario: Create subscription with an invalid area
+    Given the request body property "$.area" is set with an too small area-size
+    When the request "createGeofencingSubscription" is sent
+    Then the response status code is 422
+    And the response property "$.status" is 422
+    And the response property "$.code" is "GEOFENCING_SUBSCRIPTIONS.INVALID_AREA"
+    And the response property "$.message" contains "The requested area is too small"
+
+  @geofencing_subscriptions_422.8_missing_device
+  Scenario: Device not included and cannot be deduced from the access token
+    Given the header "Authorization" is set to a valid access token which does not identify a single device
+    And the request body property "$.device" is not included
+    When the request "createGeofencingSubscription" is sent
+    Then the response status code is 422
+    And the response property "$.status" is 422
+    And the response property "$.code" is "MISSING_IDENTIFIER"
+    And the response property "$.message" contains a user-friendly text

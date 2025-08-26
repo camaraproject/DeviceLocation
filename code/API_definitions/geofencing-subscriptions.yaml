@@ -44,8 +44,10 @@ info:
 
       - ``org.camaraproject.geofencing-subscriptions.v0.area-left``     - Event triggered when the device leaves the given area
 
-    Note: Additionally to these list, ``org.camaraproject.geofencing-subscriptions.v0.subscription-ends`` notification `type` is sent when the subscription ends.
-    This notification does not require dedicated subscription.
+    Note: Additionally, the following events could be send, which do not require a dedicated subscription:
+      - `org.camaraproject.geofencing-subscriptions.v0.subscription-started` is sent when the subscription starts.
+      - `org.camaraproject.geofencing-subscriptions.v0.subscription-updated` is sent when the subscription is updated.
+      - `org.camaraproject.geofencing-subscriptions.v0.subscription-ended` is sent when the subscription ends.
 
     It is used when:
       - the subscription expire time (optionally set by the requester) has been reached
@@ -116,7 +118,7 @@ info:
   license:
     name: Apache 2.0
     url: https://www.apache.org/licenses/LICENSE-2.0.html
-  x-camara-commonalities: 0.5
+  x-camara-commonalities: 0.6
 externalDocs:
   description: Project documentation at Camara
   url: https://github.com/camaraproject/DeviceLocation
@@ -153,6 +155,8 @@ paths:
             examples:
               CIRCLE_AREA_ENTERED:
                 $ref: "#/components/examples/REQUEST_CIRCLE_AREA_ENTERED"
+              REQUEST_CIRCLE_AREA_ENTERED_MULTIPLE_IDENTIFIERS:
+                $ref: "#/components/examples/REQUEST_CIRCLE_AREA_ENTERED_MULTIPLE_IDENTIFIERS"
         required: true
       callbacks:
         notifications:
@@ -177,8 +181,12 @@ paths:
                         $ref: "#/components/examples/CIRCLE_AREA_ENTERED"
                       CIRCLE_AREA_LEFT:
                         $ref: "#/components/examples/CIRCLE_AREA_LEFT"
-                      SUBSCRIPTION_ENDS:
-                        $ref: "#/components/examples/SUBSCRIPTION_ENDS"
+                      SUBSCRIPTION_STARTED:
+                        $ref: "#/components/examples/SUBSCRIPTION_STARTED"
+                      SUBSCRIPTION_UPDATED:
+                        $ref: "#/components/examples/SUBSCRIPTION_UPDATED"
+                      SUBSCRIPTION_ENDED:
+                        $ref: "#/components/examples/SUBSCRIPTION_ENDED"
                       SUBSCRIPTION_UNPROCESSABLE:
                         $ref: "#/components/examples/SUBSCRIPTION_UNPROCESSABLE"
               responses:
@@ -198,8 +206,8 @@ paths:
                 "429":
                   $ref: "#/components/responses/Generic429"
               security:
-                - {}
                 - notificationsBearerAuth: []
+                - {}
       responses:
         "201":
           description: Created (Successful creation of subscription).
@@ -331,6 +339,10 @@ components:
       description: OpenID Connect authentication.
       type: openIdConnect
       openIdConnectUrl: https://example.com/.well-known/openid-configuration
+    notificationsBearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: "{$request.body#/sinkCredential.credentialType}"
   parameters:
     SubscriptionId:
       name: subscriptionId
@@ -387,6 +399,7 @@ components:
         sink:
           type: string
           format: uri
+          pattern: ^https:\/\/.+$
           description: The address to which events shall be delivered using the selected protocol.
           example: "https://endpoint.example.com/sink"
         sinkCredential:
@@ -401,7 +414,7 @@ components:
           items:
             $ref: "#/components/schemas/SubscriptionEventType"
         config:
-          $ref: "#/components/schemas/Config"
+          $ref: "#/components/schemas/ConfigRequest"
       discriminator:
         propertyName: protocol
         mapping:
@@ -422,14 +435,8 @@ components:
       description: |
         Implementation-specific configuration parameters are needed by the subscription manager for acquiring events.
         In CAMARA we have predefined attributes like `subscriptionExpireTime`, `subscriptionMaxEvents`, `initialEvent`.
-        Specific event type attributes must be defined in `subscriptionDetail`.
-        Note: If a request is performed for several event types, all subscribed events will use the same `config` parameters.
       type: object
-      required:
-        - subscriptionDetail
       properties:
-        subscriptionDetail:
-          $ref: "#/components/schemas/SubscriptionDetail"
         subscriptionExpireTime:
           type: string
           format: date-time
@@ -448,6 +455,37 @@ components:
           description: |
             Set to `true` by API consumer if consumer wants to get an event as soon as the subscription is created and current situation reflects event request.
             Example: Consumer request area entered event. If consumer sets initialEvent to true and device is already in the geofence, an event is triggered.
+
+    ConfigRequest:
+      allOf:
+        - $ref: "#/components/schemas/Config"
+        - description: |
+            Implementation-specific configuration parameters are needed by the subscription manager for acquiring events.
+            In CAMARA we have predefined attributes like `subscriptionExpireTime`, `subscriptionMaxEvents`, `initialEvent`.
+            Specific event type attributes requested by the client must be defined in `subscriptionDetail`.
+            Note: If a request is performed for several event types, all subscribed events will use the same `config` parameters.
+          type: object
+          required:
+            - subscriptionDetail
+          properties:
+            subscriptionDetail:
+              $ref: "#/components/schemas/SubscriptionDetailRequest"
+
+    ConfigResponse:
+      allOf:
+        - $ref: "#/components/schemas/Config"
+        - description: |
+            Implementation-specific configuration parameters are needed by the subscription manager for acquiring events.
+            In CAMARA we have predefined attributes like `subscriptionExpireTime`, `subscriptionMaxEvents`, `initialEvent`.
+            Specific event type attributes granted by the implementation are included in `subscriptionDetail`.
+            Note: If a request is performed for several event types, all subscribed events will use the same `config` parameters.
+          type: object
+          required:
+            - subscriptionDetail
+          properties:
+            subscriptionDetail:
+              $ref: "#/components/schemas/SubscriptionDetailResponse"
+
 
     SinkCredential:
       type: object
@@ -548,12 +586,23 @@ components:
         - refreshToken
         - refreshTokenEndpoint
 
-    SubscriptionDetail:
+    SubscriptionDetailRequest:
       description: The detail of the requested event subscription.
       type: object
       properties:
         device:
           $ref: "#/components/schemas/Device"
+        area:
+          $ref: "#/components/schemas/Area"
+      required:
+        - area
+
+    SubscriptionDetailResponse:
+      description: The detail of the event subscription granted by the implementation.
+      type: object
+      properties:
+        device:
+          $ref: "#/components/schemas/DeviceResponse"
         area:
           $ref: "#/components/schemas/Area"
       required:
@@ -576,11 +625,17 @@ components:
 
         area-left - Event triggered when the device leaves the given area
 
-        subscription-ends - Event triggered when the subscription ends
+        subscription-started - Event triggered when the subscription starts.
+
+        subscription-updated - Event triggered when the subscription is updated.
+
+        subscription-ended - Event triggered when the subscription ends
       enum:
         - org.camaraproject.geofencing-subscriptions.v0.area-entered
         - org.camaraproject.geofencing-subscriptions.v0.area-left
-        - org.camaraproject.geofencing-subscriptions.v0.subscription-ends
+        - org.camaraproject.geofencing-subscriptions.v0.subscription-started
+        - org.camaraproject.geofencing-subscriptions.v0.subscription-updated
+        - org.camaraproject.geofencing-subscriptions.v0.subscription-ended
 
     Subscription:
       description: Represents a event-type subscription.
@@ -598,6 +653,7 @@ components:
         sink:
           type: string
           format: uri
+          pattern: ^https:\/\/.+$
           description: The address to which events shall be delivered using the selected protocol.
           example: "https://endpoint.example.com/sink"
         types:
@@ -610,7 +666,7 @@ components:
           items:
             $ref: "#/components/schemas/SubscriptionEventType"
         config:
-          $ref: "#/components/schemas/Config"
+          $ref: "#/components/schemas/ConfigResponse"
         id:
           type: string
           description: The unique identifier of the subscription in the scope of the subscription manager. When this information is contained within an event notification, this concept SHALL be referred as `subscriptionId` as per [Commonalities Event Notification Model](https://github.com/camaraproject/Commonalities/blob/main/documentation/API-design-guidelines.md#122-event-notification).
@@ -659,6 +715,8 @@ components:
     SubscriptionAsync:
       description: Response for an event-type subscription request managed asynchronously (Creation or Deletion).
       type: object
+      required:
+        - id
       properties:
         id:
           $ref: "#/components/schemas/SubscriptionId"
@@ -679,8 +737,8 @@ components:
         * `phoneNumber`
         * `networkAccessIdentifier`
 
-        NOTE1: the API provider might support only a subset of these options. The API consumer can provide multiple identifiers to be compatible across different API providers. In this case the identifiers MUST belong to the same device
-        NOTE2: for the Commonalities release v0.4, we are enforcing that the networkAccessIdentifier is only part of the schema for future-proofing, and CAMARA does not currently allow its use. After the CAMARA meta-release work is concluded and the relevant issues are resolved, its use will need to be explicitly documented in the guidelines.
+        NOTE1: the API provider might support only a subset of these options. The API consumer can provide multiple identifiers to be compatible across different API providers. In this case the identifiers MUST belong to the same device. Where more than one device identifier is provided, only one identifier will be selected by the implementation and this choice indicated to the API consumer in the response or event.
+        NOTE2: as for this Commonalities release, we are enforcing that the networkAccessIdentifier is only part of the schema for future-proofing, and CAMARA does not currently allow its use. After the CAMARA meta-release work is concluded and the relevant issues are resolved, its use will need to be explicitly documented in the guidelines.
       type: object
       properties:
         phoneNumber:
@@ -746,6 +804,14 @@ components:
       type: string
       format: ipv6
       example: 2001:db8:85a3:8d3:1319:8a2e:370:7344
+
+    DeviceResponse:
+      description: |
+        An identifier for the end-user equipment able to connect to the network that the response refers to. This parameter is only returned when the API consumer includes the `device` parameter in their request (i.e. they are using a two-legged access token), and is relevant when more than one device identifier is specified, as only one of those device identifiers is allowed in the response.
+        If the API consumer provides more than one device identifier in their request, the API provider must return a single identifier which is the one they are using to fulfil the request, even if the identifiers do not match the same device. API provider does not perform any logic to validate/correlate that the indicated device identifiers match the same device. No error should be returned if the identifiers are otherwise valid to prevent API consumers correlating different identifiers with a given end user.
+      allOf:
+        - $ref: "#/components/schemas/Device"
+        - maxProperties: 1
 
     Area:
       type: object
@@ -860,7 +926,9 @@ components:
         mapping:
           org.camaraproject.geofencing-subscriptions.v0.area-left: "#/components/schemas/EventAreaLeft"
           org.camaraproject.geofencing-subscriptions.v0.area-entered: "#/components/schemas/EventAreaEntered"
-          org.camaraproject.geofencing-subscriptions.v0.subscription-ends: "#/components/schemas/EventSubscriptionEnds"
+          org.camaraproject.geofencing-subscriptions.v0.subscription-started: "#/components/schemas/EventSubscriptionStarted"
+          org.camaraproject.geofencing-subscriptions.v0.subscription-updated: "#/components/schemas/EventSubscriptionUpdated"
+          org.camaraproject.geofencing-subscriptions.v0.subscription-ended: "#/components/schemas/EventSubscriptionEnded"
 
     Source:
       type: string
@@ -902,14 +970,88 @@ components:
             data:
               $ref: "#/components/schemas/AreaEntered"
 
-    EventSubscriptionEnds:
+    EventSubscriptionStarted:
+      description: Event structure for event subscription started
+      allOf:
+        - $ref: "#/components/schemas/CloudEvent"
+        - type: object
+          properties:
+            data:
+              $ref: "#/components/schemas/SubscriptionStarted"
+
+    SubscriptionStarted:
+      description: Event detail structure for subscription started event
+      type: object
+      required:
+        - initiationReason
+        - subscriptionId
+        - area
+      properties:
+        device:
+          $ref: "#/components/schemas/Device"
+        area:
+          $ref: "#/components/schemas/Area"
+        initiationReason:
+          $ref: "#/components/schemas/InitiationReason"
+        subscriptionId:
+          $ref: "#/components/schemas/SubscriptionId"
+        initiationDescription:
+          description: Description about the start of the subscription.
+          type: string
+
+    InitiationReason:
+      type: string
+      description: |
+        - SUBSCRIPTION_CREATED - Subscription created by API Server
+      enum:
+        - SUBSCRIPTION_CREATED
+
+    EventSubscriptionUpdated:
+      description: Event structure for event subscription updated
+      allOf:
+        - $ref: "#/components/schemas/CloudEvent"
+        - type: object
+          properties:
+            data:
+              $ref: "#/components/schemas/SubscriptionUpdated"
+
+    SubscriptionUpdated:
+      description: Event detail structure for subscription updated event
+      type: object
+      required:
+        - area
+        - updateReason
+        - subscriptionId
+      properties:
+        device:
+          $ref: "#/components/schemas/Device"
+        area:
+          $ref: "#/components/schemas/Area"
+        updateReason:
+          $ref: "#/components/schemas/UpdateReason"
+        subscriptionId:
+          $ref: "#/components/schemas/SubscriptionId"
+        updateDescription:
+          description: Description about the subscription update.
+          type: string
+
+    UpdateReason:
+      type: string
+      description: |
+        - SUBSCRIPTION_ACTIVE - API server transitioned susbcription status to `ACTIVE`
+        - SUBSCRIPTION_INACTIVE - API server transitioned susbcription status to `INACTIVE`
+      enum:
+        - SUBSCRIPTION_ACTIVE
+        - SUBSCRIPTION_INACTIVE
+
+    EventSubscriptionEnded:
       description: Event structure for event subscription ends.
       allOf:
         - $ref: "#/components/schemas/CloudEvent"
         - type: object
           properties:
             data:
-              $ref: "#/components/schemas/SubscriptionEnds"
+              $ref: "#/components/schemas/SubscriptionEnded"
 
     AreaLeft:
       description: |
@@ -923,7 +1065,7 @@ components:
         - subscriptionId
       properties:
         device:
-          $ref: "#/components/schemas/Device"
+          $ref: "#/components/schemas/DeviceResponse"
         area:
           $ref: "#/components/schemas/Area"
         subscriptionId:
@@ -941,15 +1083,15 @@ components:
         - subscriptionId
       properties:
         device:
-          $ref: "#/components/schemas/Device"
+          $ref: "#/components/schemas/DeviceResponse"
         area:
           $ref: "#/components/schemas/Area"
         subscriptionId:
           $ref: "#/components/schemas/SubscriptionId"
 
-    SubscriptionEnds:
+    SubscriptionEnded:
       description: |
-        Event detail structure for org.camaraproject.geofencing-subscriptions.v0.subscription-ends event.
+        Event detail structure for org.camaraproject.geofencing-subscriptions.v0.subscription-ended event.
         Note that the device object is defined as optional and will only to be returned if provided in createGeofencingSubscription.
         If more than one type of device identifier was provided, only one identifier will be returned
         (at implementation choice and with the original value provided in createGeofencingSubscription).
@@ -960,7 +1102,7 @@ components:
         - subscriptionId
       properties:
         device:
-          $ref: "#/components/schemas/Device"
+          $ref: "#/components/schemas/DeviceResponse"
         area:
           $ref: "#/components/schemas/Area"
         terminationReason:
@@ -1161,6 +1303,7 @@ components:
                       - INVALID_CREDENTIAL
                       - INVALID_PROTOCOL
                       - INVALID_TOKEN
+                      - INVALID_SINK
           examples:
             GENERIC_400_INVALID_ARGUMENT:
               value:
@@ -1182,6 +1325,12 @@ components:
                 status: 400
                 code: INVALID_TOKEN
                 message: Only bearer token is supported.
+            GENERIC_400_INVALID_SINK:
+              description: Invalid sink value
+              value:
+                status: 400
+                code: INVALID_SINK
+                message: sink not valid for the specified protocol
     Generic400:
       description: Bad Request
       headers:
@@ -1239,7 +1388,7 @@ components:
                 code: INVALID_ARGUMENT
                 message: "Expected property is missing: subscriptionId"
     Generic401:
-      description: Authentication problem with the client request.
+      description: Unauthorized
       headers:
         x-correlator:
           $ref: "#/components/headers/x-correlator"
@@ -1258,11 +1407,11 @@ components:
                       - UNAUTHENTICATED
           examples:
             GENERIC_401_UNAUTHENTICATED:
-              description: Request cannot be authenticated
+              description: Request cannot be authenticated and a new authentication is required
               value:
                 status: 401
                 code: UNAUTHENTICATED
-                message: Request not authenticated due to missing, invalid, or expired credentials.
+                message: Request not authenticated due to missing, invalid, or expired credentials. A new authentication is required.
     SubscriptionPermissionDenied403:
       description: Client does not have sufficient permission.
       headers:
@@ -1386,7 +1535,6 @@ components:
                       - 422
                   code:
                     enum:
-                      - IDENTIFIER_MISMATCH
                       - MISSING_IDENTIFIER
                       - MULTIEVENT_SUBSCRIPTION_NOT_SUPPORTED
                       - SERVICE_NOT_APPLICABLE
@@ -1395,12 +1543,6 @@ components:
                       - GEOFENCING_SUBSCRIPTIONS.AREA_NOT_COVERED
                       - GEOFENCING_SUBSCRIPTIONS.INVALID_AREA
           examples:
-            GENERIC_422_IDENTIFIER_MISMATCH:
-              description: Inconsistency between device identifiers not pointing to the same device.
-              value:
-                status: 422
-                code: IDENTIFIER_MISMATCH
-                message: Provided identifiers are not consistent.
             GENERIC_422_SERVICE_NOT_APPLICABLE:
               description: Service not applicable for the provided identifier
               value:
@@ -1497,6 +1639,29 @@ components:
           initialEvent: true
           subscriptionMaxEvents: 10
           subscriptionExpireTime: "2024-03-22T05:40:58.469Z"
+    REQUEST_CIRCLE_AREA_ENTERED_MULTIPLE_IDENTIFIERS:
+      description: A sample geofence for entering for a circle area.
+      value:
+        protocol: "HTTP"
+        sink: https://notificationSendServer12.supertelco.com
+        types:
+          - org.camaraproject.geofencing-subscriptions.v0.area-entered
+        config:
+          subscriptionDetail:
+            device:
+              phoneNumber: "+12345678912"
+              ipv4Address:
+                publicAddress: 123.234.1.2
+                publicPort: 1234
+            area:
+              areaType: CIRCLE
+              center:
+                latitude: 50.735851
+                longitude: 7.10066
+              radius: 2000
+          initialEvent: true
+          subscriptionMaxEvents: 10
+          subscriptionExpireTime: "2024-03-22T05:40:58.469Z"
     CIRCLE_AREA_ENTERED:
       description: The cloud event when a geofence area was entered.
       value:
@@ -1536,12 +1701,54 @@ components:
               longitude: 7.10066
             radius: 2000
 
-    SUBSCRIPTION_ENDS:
-      description: The cloud event when a geofence subscription ends.
+    SUBSCRIPTION_STARTED:
+      description: The cloud event when a geofence subscription was started.
+      value:
+        id: "124003"
+        source: https://dataUsageServer.supertelco.com
+        type: org.camaraproject.geofencing-subscriptions.v0.subscription-started
+        specversion: "1.0"
+        datacontenttype: application/json
+        data:
+          initiationReason: SUBSCRIPTION_CREATED
+          subscriptionId: dv10-h556-rt89-1403
+          device:
+            phoneNumber: +123456789
+          area:
+            areaType: CIRCLE
+            center:
+              latitude: 50.735851
+              longitude: 7.10066
+            radius: 2000
+        time: "2024-03-05T15:00:23.682Z"
+
+    SUBSCRIPTION_UPDATED:
+      description: The cloud event when a geofence subscription was updated.
+      value:
+        id: "124003"
+        source: https://dataUsageServer.supertelco.com
+        type: org.camaraproject.geofencing-subscriptions.v0.subscription-updated
+        specversion: "1.0"
+        datacontenttype: application/json
+        data:
+          updateReason: SUBSCRIPTION_ACTIVE
+          subscriptionId: dv10-h556-rt89-1403
+          device:
+            phoneNumber: +123456789
+          area:
+            areaType: CIRCLE
+            center:
+              latitude: 50.735851
+              longitude: 7.10066
+            radius: 2000
+        time: "2024-03-05T15:00:23.682Z"
+
+    SUBSCRIPTION_ENDED:
+      description: The cloud event when a geofence subscription ended.
       value:
         id: "123655"
         source: https://notificationSendServer12.supertelco.com
-        type: org.camaraproject.geofencing-subscriptions.v0.subscription-ends
+        type: org.camaraproject.geofencing-subscriptions.v0.subscription-ended
         specversion: "1.0"
         datacontenttype: application/json
         time: 2023-03-22T05:40:23.682Z
@@ -1562,7 +1769,7 @@ components:
       value:
         id: "123655"
         source: https://notificationSendServer12.supertelco.com
-        type: org.camaraproject.geofencing-subscriptions.v0.subscription-ends
+        type: org.camaraproject.geofencing-subscriptions.v0.subscription-ended
         specversion: "1.0"
         datacontenttype: application/json
         time: 2023-03-22T05:40:23.682Z

@@ -40,7 +40,7 @@ info:
 
     * **Max Age**: Maximum age of the location information which is accepted for the location retrieval (in seconds).
 
-      * Absence of `maxAge` means that "any age" is acceptable for the client. In other words, this is like `maxAge`=infinite. The system will return `lastLocationTime` in the response. If the system is not able to provide location, an error 404 with code LOCATION_RETRIEVAL.DEVICE_NOT_FOUND is sent back.
+      * Absence of `maxAge` means that "any age" is acceptable for the client. In other words, this is like `maxAge`=infinite. The system will return `lastLocationTime` in the response. If the system is not able to provide location, an error 422 with code LOCATION_RETRIEVAL.UNABLE_TO_LOCATE is sent back.
       * `maxAge`=0 means that a fresh calculation is requested by the client. If the system is not able to provide the fresh location, an error 422 with code LOCATION_RETRIEVAL.UNABLE_TO_FULFILL_MAX_AGE is sent back.
 
     * **Last Location Time** : Last date and time when the device was localized.
@@ -112,7 +112,7 @@ info:
   license:
     name: Apache 2.0
     url: https://www.apache.org/licenses/LICENSE-2.0.html
-  x-camara-commonalities: 0.5
+  x-camara-commonalities: 0.6
 externalDocs:
   description: Project documentation at Camara
   url: https://github.com/camaraproject/DeviceLocation
@@ -157,7 +157,6 @@ paths:
                     phoneNumber: "+123456789"
                   maxAge: 120
                   maxSurface: 1000000
-
               INPUT_IP_ADDRESS_V4:
                 summary: IPv4 address without maxAge
                 description: Retrieve location for a device identified by an IPv4 address, without an indication for maxAge
@@ -171,7 +170,15 @@ paths:
                 description: The device has to be deducted from token
                 value:
                   maxAge: 120
-
+              INPUT_PHONE_NUMBER_IP_ADDRESS_V4:
+                summary: Both phone number and IPv4 address, without maxAge
+                description: Retrieve location for a device identified both by a phone number and an IPv4 address, without an indication for maxAge
+                value:
+                  device:
+                    phoneNumber: "+123456789"
+                    ipv4Address:
+                      publicAddress: 123.234.1.2
+                      publicPort: 1234
       responses:
         '200':
           description: Location retrieval result
@@ -187,6 +194,8 @@ paths:
                   $ref: "#/components/examples/RETRIEVAL_CIRCLE"
                 LOCATION_POLYGON:
                   $ref: "#/components/examples/RETRIEVAL_POLYGON"
+                LOCATION_CIRCLE_WITH_DEVICE:
+                  $ref: "#/components/examples/LOCATION_CIRCLE_WITH_DEVICE"
         '400':
           $ref: '#/components/responses/Generic400'
         '401':
@@ -248,7 +257,7 @@ components:
         * `ipv6Address`
         * `phoneNumber`
         * `networkAccessIdentifier`
-        NOTE1: the network operator might support only a subset of these options. The API invoker can provide multiple identifiers to be compatible across different network operators. In this case the identifiers MUST belong to the same device.
+        NOTE1: the network operator might support only a subset of these options. The API invoker can provide multiple identifiers to be compatible across different network operators. In this case the identifiers MUST belong to the same device. Where more than one device identifier is provided, only one identifier will be selected by the implementation and this choice indicated to the API consumer in the response.
         NOTE2: as for this Commonalities release, we are enforcing that the networkAccessIdentifier is only part of the schema for future-proofing, and CAMARA does not currently allow its use. After the CAMARA meta-release work is concluded and the relevant issues are resolved, its use will need to be explicitly documented in the guidelines.
       type: object
       properties:
@@ -316,6 +325,14 @@ components:
       format: ipv6
       example: 2001:db8:85a3:8d3:1319:8a2e:370:7344
 
+    DeviceResponse:
+      description: |
+        An identifier for the end-user equipment able to connect to the network that the response refers to. This parameter is only returned when the API consumer includes the `device` parameter in their request (i.e. they are using a two-legged access token), and is relevant when more than one device identifier is specified, as only one of those device identifiers is allowed in the response.
+        If the API consumer provides more than one device identifier in their request, the API provider must return a single identifier which is the one they are using to fulfil the request, even if the identifiers do not match the same device. API provider does not perform any logic to validate/correlate that the indicated device identifiers match the same device. No error should be returned if the identifiers are otherwise valid to prevent API consumers correlating different identifiers with a given end user.
+      allOf:
+        - $ref: "#/components/schemas/Device"
+        - maxProperties: 1
+
     Location:
       type: object
       description: Device location
@@ -327,6 +344,8 @@ components:
           $ref: "#/components/schemas/LastLocationTime"
         area:
           $ref: '#/components/schemas/Area'
+        device:
+          $ref: "#/components/schemas/DeviceResponse"
 
     Area:
       description: Base schema for all areas
@@ -487,12 +506,11 @@ components:
                       - UNAUTHENTICATED
           examples:
             GENERIC_401_UNAUTHENTICATED:
-              summary: Unauthenticated
-              description: Request cannot be authenticated
+              description: Request cannot be authenticated and a new authentication is required
               value:
                 status: 401
                 code: UNAUTHENTICATED
-                message: Request not authenticated due to missing, invalid, or expired credentials.
+                message: Request not authenticated due to missing, invalid, or expired credentials. A new authentication is required.
     Generic403:
       description: Forbidden
       headers:
@@ -536,16 +554,8 @@ components:
                       - 404
                   code:
                     enum:
-                      - LOCATION_RETRIEVAL.DEVICE_NOT_FOUND
                       - IDENTIFIER_NOT_FOUND
           examples:
-            LOCATION_RETRIEVAL_404_DEVICE_NOT_FOUND:
-              summary: Device not found
-              description: The location server is not able to locate the device
-              value:
-                status: 404
-                code: LOCATION_RETRIEVAL.DEVICE_NOT_FOUND
-                message: 'The location server is not able to locate the mobile'
             GENERIC_404_IDENTIFIER_NOT_FOUND:
               summary: Identifier not found
               description: Some identifier cannot be matched to a device
@@ -570,21 +580,14 @@ components:
                       - 422
                   code:
                     enum:
-                      - IDENTIFIER_MISMATCH
                       - SERVICE_NOT_APPLICABLE
                       - MISSING_IDENTIFIER
                       - UNSUPPORTED_IDENTIFIER
                       - UNNECESSARY_IDENTIFIER
                       - LOCATION_RETRIEVAL.UNABLE_TO_FULFILL_MAX_AGE
                       - LOCATION_RETRIEVAL.UNABLE_TO_FULFILL_MAX_SURFACE
+                      - LOCATION_RETRIEVAL.UNABLE_TO_LOCATE
           examples:
-            GENERIC_422_IDENTIFIER_MISMATCH:
-              summary: Identifier mismatch
-              description: Inconsistency between identifiers not pointing to the same device
-              value:
-                status: 422
-                code: IDENTIFIER_MISMATCH
-                message: Provided identifiers are not consistent.
             GENERIC_422_SERVICE_NOT_APPLICABLE:
               summary: Service not applicable
               description: Service not applicable for the provided identifier
@@ -627,6 +630,13 @@ components:
                 status: 422
                 code: LOCATION_RETRIEVAL.UNABLE_TO_FULFILL_MAX_SURFACE
                 message: "Unable to provide accurate acceptable surface for location"
+            LOCATION_RETRIEVAL_422_UNABLE_TO_LOCATE:
+              summary: Unable to locate device
+              description: The network cannot locate the device
+              value:
+                status: 422
+                code: LOCATION_RETRIEVAL.UNABLE_TO_LOCATE
+                message: "The network is unable to locate the device"
   examples:
     RETRIEVAL_CIRCLE:
       summary: circle-based device location retrieval
@@ -657,3 +667,16 @@ components:
               longitude: 4.861125
             - latitude: 45.751442
               longitude: 4.859827
+    LOCATION_CIRCLE_WITH_DEVICE:
+      summary: circle-based device location retrieval, returning the device identifier used by the implementation
+      description: The device is localized within a circle with a center at the specified coordinates and a radius of 800 meters. Response when the request used a 2-legged access token with multiple device identifiers, or possibly only a single device identifier.
+      value:
+        lastLocationTime: "2023-10-17T13:18:23.682Z"
+        area:
+          areaType: CIRCLE
+          center:
+            latitude: 45.754114
+            longitude: 4.860374
+          radius: 800
+        device:
+          phoneNumber: "+123456789"
