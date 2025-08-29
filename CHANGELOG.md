@@ -2,8 +2,9 @@
 
 ## Table of Contents
 
+- **[r3.2](#r32) (Fall25 public release)**
 - [r3.1](#r31)
-- **[r2.2](#r21) (Spring25 public release)**
+- **[r2.2](#r22) (Spring25 public release)**
 - [r2.1](#r21)
 - **[r1.2](#r12) (Fall24 public release)**
 - [r1.1](#r11)
@@ -18,6 +19,110 @@ The below sections record the changes for each API version in each release as fo
 * for the first release-candidate, all changes since the last public release
 * for subsequent release-candidate(s), only the delta to the previous release-candidate
 * for a public release, the consolidated changes since the previous public release
+
+# r3.2
+
+This **public release** contains the definition and documentation of
+* location-verification v3.0.0
+* location-retrieval v0.5.0
+* geofencing-subscriptions v0.5.0
+
+The API definition(s) are based on
+* Commonalities r3.3
+* Identity and Consent Management r3.3
+
+## location-verification v3.0.0
+
+location-verification v3.0.0 is the public release for the next stable version of the API Location Verification. It introduces breaking changes compared to the previous release r2.2, due to the deprecation of `UNKNOWN` value for `verificationResult` in favor of the new error `422 LOCATION_VERIFICATION.UNABLE_TO_LOCATE`.
+
+* API definition with **inline documentation**:
+
+  - [View it on ReDoc](https://redocly.github.io/redoc/?url=https://raw.githubusercontent.com/camaraproject/DeviceLocation/r3.2/code/API_definitions/location-verification.yaml&nocors)
+  - [View it on Swagger Editor](https://camaraproject.github.io/swagger-ui/?url=https://raw.githubusercontent.com/camaraproject/DeviceLocation/r3.2/code/API_definitions/location-verification.yaml)
+  - OpenAPI [YAML spec file](https://github.com/camaraproject/DeviceLocation/blob/r3.2/code/API_definitions/location-verification.yaml)
+
+### Added
+
+* New error code `422 LOCATION_VERIFICATION.UNABLE_TO_LOCATE`.
+* New `DeviceResponse` object in responses limited to one identifier.
+* Clarifications on non-documented error responses.
+
+### Changed
+
+* Updated string pattern for `x-correlator`headers.
+* Type of `radius` for CIRCLE Area changed from `integer` to `number`, and maximum removed.
+* Clarified format for properties with format `date-time`.
+
+### Removed
+
+* `verificationResult: UNKNOWN` for 200 responses.
+* Error `422 IDENTIFIER_MISMATCH`.
+* Error `401 AUTHENTICATION_REQUIRED`.
+
+## location-retrieval v0.5.0
+
+location-retrieval v0.5.0 is the public release for the next initial version of the API Location Retrieval. It introduces breaking changes compared to the previous release r2.2, due to the deprecation of error `404 LOCATION_RETRIEVAL.DEVICE_NOT_FOUND` in favor of the new error `422 LOCATION_RETRIEVAL.UNABLE_TO_LOCATE`.
+
+* API definition with **inline documentation**:
+
+  - [View it on ReDoc](https://redocly.github.io/redoc/?url=https://raw.githubusercontent.com/camaraproject/DeviceLocation/r3.2/code/API_definitions/location-retrieval.yaml&nocors)
+  - [View it on Swagger Editor](https://camaraproject.github.io/swagger-ui/?url=https://raw.githubusercontent.com/camaraproject/DeviceLocation/r3.2/code/API_definitions/location-retrieval.yaml)
+  - OpenAPI [YAML spec file](https://github.com/camaraproject/DeviceLocation/blob/r3.2/code/API_definitions/location-retrieval.yaml)
+
+### Added
+
+* New error `422 LOCATION_RETRIEVAL.UNABLE_TO_LOCATE`.
+* New `DeviceResponse` object in responses limited to one identifier.
+* Clarifications on non-documented error responses.
+
+### Changed
+
+* Updated string pattern for `x-correlator`headers.
+* Clarified format for properties with format `date-time`.
+
+### Removed
+
+* Error `404 LOCATION_RETRIEVAL.DEVICE_NOT_FOUND`.
+* Error `422 IDENTIFIER_MISMATCH`.
+* Error `401 AUTHENTICATION_REQUIRED`.
+
+## geofencing-subscriptions v0.5.0
+
+geofencing-subscriptions v0.5.0 is the public release for the next initial version of the API Geofencing Subscriptions. It introduces breaking changes compared to the previous release r2.2, coming from the alignment to the new guidelines in Commonalities for APIs with subscriptions.
+
+* API definition with **inline documentation**:
+
+  - [View it on ReDoc](https://redocly.github.io/redoc/?url=https://raw.githubusercontent.com/camaraproject/DeviceLocation/r3.2/code/API_definitions/geofencing-subscriptions.yaml&nocors)
+  - [View it on Swagger Editor](https://camaraproject.github.io/swagger-ui/?url=https://raw.githubusercontent.com/camaraproject/DeviceLocation/r3.2/code/API_definitions/geofencing-subscriptions.yaml)
+  - OpenAPI [YAML spec file](https://github.com/camaraproject/DeviceLocation/blob/r3.2/code/API_definitions/geofencing-subscriptions.yaml)
+
+### Added
+
+* New subscription event types for `subscription-started` and `subscription-updated`.
+* New `DeviceResponse` object in responses and events, limited to one identifier.
+* Pattern to property `sink` and new error `400 INVALID_SINK`.
+* Clarifications on non-documented error responses.
+
+### Changed
+
+* Subscription event type `subscription-ends` renamed to `subscription-ended`.
+* Property `id` becomes required for `SubscriptionAsync` objects.
+* operationId `createSubscription` renamed to `createGeofencingSubscription`.
+* Updated string pattern for `x-correlator`headers.
+* Type of `radius` for CIRCLE Area changed from `integer` to `number`, and maximum removed.
+* Clarified format for properties with format `date-time`.
+
+### Fixed
+
+* Subscription types array items must be limited to allowed `SubscriptionEventType` values
+
+### Removed
+
+* Error `422 IDENTIFIER_MISMATCH`.
+* Error `401 AUTHENTICATION_REQUIRED`.
+
+**Changelog since r2.2**
+* Full Changelog with the list of PRs and contributors: https://github.com/camaraproject/DeviceLocation/compare/r2.2...r3.2
 
 # r3.1
 
