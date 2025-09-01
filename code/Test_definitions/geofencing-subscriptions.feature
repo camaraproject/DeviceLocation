@@ -20,114 +20,105 @@ Feature: Camara Geofencing Subscriptions API, vwip - Operations on subscriptions
 
   # Note: Depending on the API managed personal data specific scenario update may be require to specify use of 2-legs or 3-legs access token.
 
-  @geofencing_subscriptions_01.1_create_subscription_sync
-  Scenario Outline: Create geofencing subscription (sync creation)
+  @geofencing_subscriptions_01_create_subscription_sync
+  Scenario: Create geofencing subscription (sync creation)
     Given that subscriptions are created synchronously
-    And the request body is compliant with the OAS schema at "#/component/schemas/SubscriptionRequest"
+    And a valid subscription request body
     When the request "createGeofencingSubscription" is sent
-    And request property "$.types" is one of the allowed values "<subscription-creation-types>"
-    And request property "$.protocol" is equal to "HTTP"
-    And a valid phone number identified by "$.config.subscriptionDetail.device.phoneNumber"
     And request property "$.sink" is set to a valid callbackUrl
     Then the response code is 201
     And the response header "Content-Type" is "application/json"
     And the response header "x-correlator" has the same value as the request header "x-correlator"
     And the response body complies with the OAS schema at "#/components/schemas/Subscription"
 
-    Examples:
-      | subscription-creation-types                                |
-      | org.camaraproject.geofencing-subscriptions.v0.area-entered |
-      | org.camaraproject.geofencing-subscriptions.v0.area-left    |
-
   @geofencing_subscriptions_02_create_subscription_async
-  Scenario Outline: Create geofencing subscription (async creation)
-    Given a valid target device, identified by either the access token or in the request body
-    And the request body is compliant with the OAS schema at "#/component/schemas/SubscriptionRequest"
+  Scenario: Create geofencing subscription (async creation)
+    Given that subscriptions are created asynchronously
+    And a valid subscription request body
     When the request "createGeofencingSubscription" is sent
-    And request property "$.types" is one of the allowed values "<subscription-creation-types>"
-    And request property "$.protocol" is equal to "HTTP"
-    And request property "$.sink" is set to a valid callbackUrl
     Then the response status code is 202
     And the response header "Content-Type" is "application/json"
     And the response header "x-correlator" has same value as the request header "x-correlator"
     And the response body complies with the OAS schema at "#/components/schemas/SubscriptionAsync"
-    And the response property "$.id" is present
 
-    Examples:
-      | subscription-creation-types                                |
-      | org.camaraproject.geofencing-subscriptions.v0.area-entered |
-      | org.camaraproject.geofencing-subscriptions.v0.area-left    |
+  @geofencing_subscriptions_03_subscription_creation_event_validation
+  Scenario: Receive notification for subscription-started event on creation
+    Given a valid subscription request body
+    When the request "createGeofencingSubscription" is sent
+    Then the response code is 201 or 202
+    And event notification "subscription-started" is received on callback-url
+    And notification body complies with the OAS schema at "#/components/schemas/EventSubscriptionStarted"
+    And type="org.camaraproject.geofencing-subscriptions.v0.subscription-started"
+    And the response property "$.initiationReason" is "SUBSCRIPTION_CREATED"
 
-  @geofencing_subscriptions_03.1_retrieve_by_id_2legs
-  Scenario: Check existing subscription is retrieved by id with a 2-legged access token
-    Given the path parameter "subscriptionId" is set to the identifier of an existing Geofencing subscription
-    And the header "Authorization" is set to a valid access token which does not identify any device
-    When the request "retrieveGeofencingSubscription" is sent
-    Then the response status code is 200
-    And the response header "Content-Type" is "application/json"
-    And the response header "x-correlator" has same value as the request header "x-correlator"
-    And the response body complies with the OAS schema at "#/components/schemas/Subscription"
-    And the response property "$.id" is equal to path parameter "subscriptionId"
-    And the response property "$.config.subscriptionDetail.device" is present
-
-  @geofencing_subscriptions_03.2_retrieve_by_id_3legs
-  Scenario: Check existing subscription is retrieved by id with a 3-legged access token
-    Given a subscription exists and has a subscriptionId equal to "id"
-    And the header "Authorization" is set to a valid access token which identifies the device associated with the subscription
-    When the request "retrieveGeofencingSubscription" is sent
-    And the path parameter "subscriptionId" is set to "id"
-    Then the response status code is 200
-    And the response header "Content-Type" is "application/json"
-    And the response header "x-correlator" has same value as the request header "x-correlator"
-    And the response body complies with the OAS schema at "#/components/schemas/Subscription"
-    And the response property "$.id" is equal to "id"
-    And the response property "$.config.subscriptionDetail.device" is not present
-
-  @geofencing_subscriptions_04_retrieve_list_2legs
-  Scenario: Check existing subscription(s) is/are retrieved in list with 2-legged-token
-    Given at least one subscription is existing for the API consumer making this request
-    And the header "Authorization" is set to a valid access token which does not identify any device
+  @geofencing_subscriptions_04_Operation_to_retrieve_list_of_subscriptions_when_no_records
+  Scenario: Get a list of Geofencing subscriptions when no subscriptions available
+    Given a client without Geofencing subscriptions created
     When the request "retrieveGeofencingSubscriptionList" is sent
-    Then the response status code is 200
+    Then the response code is 200
     And the response header "Content-Type" is "application/json"
-    And the response header "x-correlator" has same value as the request header "x-correlator"
-    And the response body complies with an array of OAS schema defined at "#/components/schemas/Subscription"
-    And the response body lists all subscriptions belonging to the API consumer
-
-  @geofencing_subscriptions_05_retrieve_list_3legs
-  Scenario: Check existing subscription(s) is/are retrieved in list with 3-legged-token
-    Given the API consumer has at least one active subscription for the device
-    And the header "Authorization" is set to a valid access token which identifies a valid device associated with one or more subscriptions
-    When the request "retrieveGeofencingSubscriptionList" is sent
-    Then the response status code is 200
-    And the response header "Content-Type" is "application/json"
-    And the response header "x-correlator" has same value as the request header "x-correlator"
-    And the response body complies with an array of OAS schema defined at "#/components/schemas/Subscription"
-    And the response body lists all subscriptions belonging to the API consumer for the identified device
-    And the response property "$.config.subscriptionDetail.device" is not present in any of the subscription records
-
-  @geofencing_subscriptions_06_retrieve_empty_list_3legs
-  Scenario: Check no existing subscription is retrieved in list
-    Given the API consumer has no active subscriptions for the device
-    And the header "Authorization" is set to a valid access token which identifies a valid device
-    When the request "retrieveGeofencingSubscriptionList" is sent
-    Then the response status code is 200
-    And the response header "Content-Type" is "application/json"
-    And the response header "x-correlator" has same value as the request header "x-correlator"
+    And the response header "x-correlator" has the same value as the request header "x-correlator"
     And the response body is an empty array
 
+  @geofencing_subscriptions_05_Operation_to_retrieve_list_of_subscriptions
+  Scenario: Get a list of subscriptions
+    Given a client with Geofencing subscriptions created
+    When the request "retrieveGeofencingSubscriptionList" is sent
+    Then the response code is 200
+    And the response header "Content-Type" is "application/json"
+    And the response header "x-correlator" has the same value as the request header "x-correlator"
+    And the response body has an array of items and each item complies with the OAS schema at "#/components/schemas/Subscription"
+
+  @geofencing_subscriptions_06_Operation_to_retrieve_subscription_based_on_an_existing_subscription-id
+  Scenario: Get a subscription based on existing subscription-id.
+    Given the path parameter "subscriptionId" is set to the identifier of an existing Geofencing subscription
+    When the request "retrieveGeofencingSubscription" is sent
+    Then the response code is 200
+    And the response header "Content-Type" is "application/json"
+    And the response header "x-correlator" has the same value as the request header "x-correlator"
+    And the response body complies with the OAS schema at "#/components/schemas/Subscription"
+
   @geofencing_subscriptions_07_Operation_to_delete_subscription_based_on_an_existing_subscription-id
-  Scenario: Delete the subscription with subscriptionId equal to "id"
+  Scenario: Delete a subscription based on existing subscription-id.
     Given the path parameter "subscriptionId" is set to the identifier of an existing Geofencing subscription
     When the request "deleteGeofencingSubscription" is sent
-    Then the response status code is 202 or 204
-    And the response header "x-correlator" has same value as the request header "x-correlator"
-    And if the response property "$.status" is 204 then response body is not present
-    And if the response property "$.status" is 202 then response body complies with the OAS schema at "#/components/schemas/SubscriptionAsync" and the response property "$.id" is equal to "id"
+    Then the response code is 202 or 204
+    And the response header "x-correlator" has the same value as the request header "x-correlator"
+    And if the response property "$.status" is 204 then the response body is not available
+    And if the response property "$.status" is 202 then the response body complies with the OAS schema at "#/components/schemas/SubscriptionAsync"
 
-  @geofencing_subscriptions_08_receive_notification_when_device_enters_geofence
+  @geofencing_subscriptions_08_subscription_ends_on_expiry
+  Scenario: Receive notification for subscription-ended event on expiry
+    Given an existing Geofencing subscription with some value for the property "expiresAt" in the near future
+    When the subscription is expired
+    Then the event notification "subscription-ended" is received on callback-url
+    And notification body complies with the OAS schema at "#/components/schemas/EventSubscriptionEnded"
+    And type="org.camaraproject.geofencing-subscriptions.v0.subscription-ended"
+    And the response property "$.terminationReason" is "SUBSCRIPTION_EXPIRED"
+
+  @geofencing_subscriptions_09_subscription_ends_on_max_events
+  Scenario: Receive notification for subscription-ended event on max events reached
+    Given an existing Geofencing subscription with the property "config.subscriptionMaxEvents" set to 1
+    When the event subscribed occurs
+    Then event notification "<event-type>" is received on callback-url
+    And event notification "subscription-ended" is received on callback-url
+    And notification body complies with the OAS schema at "#/components/schemas/EventSubscriptionEnded"
+    And type="org.camaraproject.geofencing-subscriptions.v0.subscription-ended"
+    And the response property "$.terminationReason" is "MAX_EVENTS_REACHED"
+
+  @geofencing_subscriptions_10_subscription_delete_event_validation
+  Scenario: Receive notification for subscription-ended event on deletion
+    Given the path parameter "subscriptionId" is set to the identifier of an existing Geofencing subscription
+    When the request "deleteGeofencingSubscription" is sent
+    Then the response code is 202 or 204
+    And event notification "subscription-ended" is received on callback-url
+    And notification body complies with the OAS schema at "#/components/schemas/EventSubscriptionEnded"
+    And type="org.camaraproject.geofencing-subscriptions.v0.subscription-ended"
+    And the response property "$.terminationReason" is "SUBSCRIPTION_DELETED"
+
+  @geofencing_subscriptions_11_receive_notification_when_device_enters_geofence
   Scenario: Receive notification for area-entered event
-    Given a valid subscription of type "org.camaraproject.geofencing-subscriptions.v0.area-entered" for certain  device and area
+    Given a valid subscription of type "org.camaraproject.geofencing-subscriptions.v0.area-entered" for certain device and area
     When the device enters the area in the subscription
     Then an event notification "area-entered" is sent to the specified callback URL
     And the sink credentials specified when the subscription was created are included
@@ -135,62 +126,18 @@ Feature: Camara Geofencing Subscriptions API, vwip - Operations on subscriptions
     And the notification property "$.type" is equal to "org.camaraproject.geofencing-subscriptions.v0.area-entered"
     And the notification property "$.data.subscriptionId" is equal to the existing subscriptionId
 
-  @geofencing_subscriptions_09_receive_notification_when_device_leaves_geofence
+  @geofencing_subscriptions_12_receive_notification_when_device_leaves_geofence
   Scenario: Receive notification for area-left event
-    Given a valid subscription request body
-    And the request body property "$.area" is set to circle which covers location "Place1"
-    And the request body property "$.type" is "area-left"
-    When the request "createGeofencingSubscription" is sent
-    Then the response code is 201
-    And the device left from location "Place1"
-    And event notification "area-left" is received on callback-url
-    And sink credentials are received as expected
-    And notification body complies with the OAS schema at "##/components/schemas/EventAreaLeft"
-    And type="org.camaraproject.geofencing-subscriptions.v0.area-left"
-
-  @geofencing_subscriptions_09_subscription_ends_on_expiry
-  Scenario: Receive notification for subscription-ended event on expiry
-    Given a valid subscription request body
-    And the request body property "$.area" is set to circle which covers location "Place1"
-    And the request body property "$.type" is "area-left"
-    And the request body property "$.subscriptionExpireTime" is set to a value in the near future
-    When the request "createGeofencingSubscription" is sent
-    Then the response code is 201
-    And the subscription is expired
-    And event notification "subscription-ended" is received on callback-url
-    And notification body complies with the OAS schema at "##/components/schemas/EventSubscriptionEnded"
-    And type="org.camaraproject.geofencing-subscriptions.v0.subscription-ended"
-    And the response property "$.terminationReason" is "SUBSCRIPTION_EXPIRED"
-
-  @geofencing_subscriptions_10_subscription_ends_on_max_events
-  Scenario: Receive notification for subscription-ended event on max events reached
-    Given a valid subscription request body
-    And the request body property "$.area" is set to circle which covers location "Place1"
-    And the request body property "$.type" is "area-left"
-    And the request body property "$.subscriptionMaxEvents" is set to 1
-    When the request "createGeofencingSubscription" is sent
-    Then the response code is 201
-    And the device left from location "Place1"
-    And event notification "area-left" is received on callback-url
-    And event notification "subscription-ended" is received on callback-url
-    And notification body complies with the OAS schema at "##/components/schemas/EventSubscriptionEnded"
-    And type="org.camaraproject.geofencing-subscriptions.v0.subscription-ended"And the response property "$.terminationReason" is "MAX_EVENTS_REACHED"
-
-  @geofencing_subscriptions_11_subscription_delete_event_validation
-  Scenario: Receive notification for subscription-ended event on deletion
-    Given a valid subscription is existing
-    When the request "deleteGeofencingSubscription" is sent
-    And path parameter "subscriptionId" is set to the identifier of an existing subscription created
-    And the request "deleteGeofencingSubscription" is sent
-    Then the response code is 202 or 204
-    And event notification "subscription-ended" is received on callback-url
-    And notification body complies with the OAS schema at "##/components/schemas/EventSubscriptionEnded"
-    And type="org.camaraproject.geofencing-subscriptions.v0.subscription-ended"
-    And the response property "$.terminationReason" is "SUBSCRIPTION_DELETED"
+    Given a valid subscription of type "org.camaraproject.geofencing-subscriptions.v0.area-left" for certain device and area
+    When the device leaves the area in the subscription
+    Then an event notification "area-left" is sent to the specified callback URL
+    And notification body complies with the OAS schema at "#/components/schemas/EventAreaLeft"
+    And the notification property "$.type" is equal to "org.camaraproject.geofencing-subscriptions.v0.area-left"
+    And the notification property "$.data.subscriptionId" is equal to the existing subscriptionId
 
 ######################### Scenario in case initialEvent is managed ##############################
 
-  @geofencing_subscriptions_12_subscription_creation_initial_event
+  @geofencing_subscriptions_13_subscription_creation_initial_event
   Scenario: Receive initial event notification on creation
     Given the API supports initial events to be sent
     And a valid subscription request body with property "$.config.initialEvent" set to true
@@ -198,13 +145,13 @@ Feature: Camara Geofencing Subscriptions API, vwip - Operations on subscriptions
     Then the response code is 201 or 202
     And an event notification of the subscribed type is received on callback-url
     And notification body complies with the OAS schema at "#/components/schemas/CloudEvent"
-
+    
   # Error scenarios for management of input parameter device
 
   @geofencing_subscriptions_C01.01_device_empty
   Scenario: The device value is an empty object
     Given the header "Authorization" is set to a valid access token which does not identify a single device
-    And the request body property "$.device" is set to: {}
+    And the request body property "$.config.subscriptionDetail.device" is set to: {}
     When the request "createGeofencingSubscription" is sent
     Then the response status code is 400
     And the response property "$.status" is 400
@@ -223,16 +170,16 @@ Feature: Camara Geofencing Subscriptions API, vwip - Operations on subscriptions
 
     Examples:
       | device_identifier          | oas_spec_schema                             |
-      | $.device.phoneNumber       | /components/schemas/PhoneNumber             |
-      | $.device.ipv4Address       | /components/schemas/DeviceIpv4Addr          |
-      | $.device.ipv6Address       | /components/schemas/DeviceIpv6Address       |
-      | $.device.networkIdentifier | /components/schemas/NetworkAccessIdentifier |
+      | $.config.subscriptionDetail.device.phoneNumber       | /components/schemas/PhoneNumber             |
+      | $.config.subscriptionDetail.device.ipv4Address       | /components/schemas/DeviceIpv4Addr          |
+      | $.config.subscriptionDetail.device.ipv6Address       | /components/schemas/DeviceIpv6Address       |
+      | $.config.subscriptionDetail.device.networkIdentifier | /components/schemas/NetworkAccessIdentifier |
 
  # This scenario may happen e.g. with 2-legged access tokens, which do not identify a single device.
   @geofencing_subscriptions_C01.03_device_not_found
   Scenario: Some identifier cannot be matched to a device
     Given the header "Authorization" is set to a valid access token which does not identify a single device
-    And the request body property "$.device" is compliant with the schema but does not identify a device whose connectivity is managed by the API provider
+    And the request body property "$.config.subscriptionDetail.device" is compliant with the schema but does not identify a device whose connectivity is managed by the API provider
     When the request "createGeofencingSubscription" is sent
     Then the response status code is 404
     And the response property "$.status" is 404
@@ -242,7 +189,7 @@ Feature: Camara Geofencing Subscriptions API, vwip - Operations on subscriptions
   @geofencing_subscriptions_C01.04_unnecessary_device
   Scenario: Device not to be included when it can be deduced from the access token
     Given the header "Authorization" is set to a valid access token identifying a device
-    And the request body property "$.device" is also set to a valid device, which may or may not be the same device
+    And the request body property "$.config.subscriptionDetail.device" is also set to a valid device, which may or may not be the same device
     When the request "createGeofencingSubscription" is sent
     Then the response status code is 422
     And the response property "$.status" is 422
@@ -252,7 +199,7 @@ Feature: Camara Geofencing Subscriptions API, vwip - Operations on subscriptions
   @geofencing_subscriptions_C01.05_missing_device
   Scenario: Device not included and cannot be deduced from the access token
     Given the header "Authorization" is set to a valid access token which does not identify a single device
-    And the request body property "$.device" is not included
+    And the request body property "$.config.subscriptionDetail.device" is not included
     When the request "createGeofencingSubscription" is sent
     Then the response status code is 422
     And the response property "$.status" is 422
@@ -263,7 +210,7 @@ Feature: Camara Geofencing Subscriptions API, vwip - Operations on subscriptions
   Scenario: None of the provided device identifiers is supported by the implementation
     Given that some types of device identifiers are not supported by the implementation
     And the header "Authorization" is set to a valid access token which does not identify a single device
-    And the request body property "$.device" only includes device identifiers not supported by the implementation
+    And the request body property "$.config.subscriptionDetail.device" only includes device identifiers not supported by the implementation
     When the request "createGeofencingSubscription" is sent
     Then the response status code is 422
     And the response property "$.status" is 422
@@ -287,7 +234,7 @@ Feature: Camara Geofencing Subscriptions API, vwip - Operations on subscriptions
   Scenario: Device identifiers mismatch
     Given the header "Authorization" is set to a valid access token which does not identify a single device
     And at least 2 types of device identifiers are supported by the implementation
-    And the request body property "$.device" includes several identifiers, each of them identifying a valid but different device
+    And the request body property "$.config.subscriptionDetail.device" includes several identifiers, each of them identifying a valid but different device
     When the request "createGeofencingSubscription" is sent
     Then the response status code is 422
     And the response property "$.status" is 422
