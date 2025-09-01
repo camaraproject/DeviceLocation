@@ -118,7 +118,7 @@ Feature: Camara Geofencing Subscriptions API, vwip - Operations on subscriptions
 
   @geofencing_subscriptions_07_Operation_to_delete_subscription_based_on_an_existing_subscription-id
   Scenario: Delete the subscription with subscriptionId equal to "id"
-    Given the API consumer has an active subscription with "subscriptionId" equal to "id"
+    Given the path parameter "subscriptionId" is set to the identifier of an existing Geofencing subscription
     When the request "deleteGeofencingSubscription" is sent
     And the path parameter "subscriptionId" is set to "id"
     Then the response status code is 202 or 204
