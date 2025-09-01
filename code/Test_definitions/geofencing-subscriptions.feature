@@ -60,7 +60,7 @@ Feature: Camara Geofencing Subscriptions API, vwip - Operations on subscriptions
 
   @geofencing_subscriptions_03.1_retrieve_by_id_2legs
   Scenario: Check existing subscription is retrieved by id with a 2-legged access token
-    Given a subscription exists and has a subscriptionId equal to "id"
+    Given the path parameter "subscriptionId" is set to the identifier of an existing Geofencing subscription
     And the header "Authorization" is set to a valid access token which does not identify any device
     When the request "retrieveGeofencingSubscription" is sent
     Then the response status code is 200
