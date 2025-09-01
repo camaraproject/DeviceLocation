@@ -63,7 +63,6 @@ Feature: Camara Geofencing Subscriptions API, vwip - Operations on subscriptions
     Given a subscription exists and has a subscriptionId equal to "id"
     And the header "Authorization" is set to a valid access token which does not identify any device
     When the request "retrieveGeofencingSubscription" is sent
-    And the path parameter "subscriptionId" is set to "id"
     Then the response status code is 200
     And the response header "Content-Type" is "application/json"
     And the response header "x-correlator" has same value as the request header "x-correlator"
