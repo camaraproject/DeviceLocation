@@ -67,7 +67,7 @@ Feature: Camara Geofencing Subscriptions API, vwip - Operations on subscriptions
     And the response header "Content-Type" is "application/json"
     And the response header "x-correlator" has same value as the request header "x-correlator"
     And the response body complies with the OAS schema at "#/components/schemas/Subscription"
-    And the response property "$.id" is equal to "id"
+    And the response property "$.id" is equal to path parameter "subscriptionId"
     And the response property "$.config.subscriptionDetail.device" is present
 
   @geofencing_subscriptions_03.2_retrieve_by_id_3legs
