@@ -127,7 +127,7 @@ Feature: Camara Geofencing Subscriptions API, vwip - Operations on subscriptions
 
   @geofencing_subscriptions_08_receive_notification_when_device_enters_geofence
   Scenario: Receive notification for area-entered event
-    Given a valid subscription for that device exists with "subscriptionId" equal to "id"
+    Given a valid subscription of type "org.camaraproject.geofencing-subscriptions.v0.area-entered" for certain  device and area
     When the device enters the area in the subscription
     Then an event notification "area-entered" is sent to the specified callback URL
     And the sink credentials specified when the subscription was created are included
