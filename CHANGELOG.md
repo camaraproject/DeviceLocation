@@ -222,6 +222,7 @@ geofencing-subscriptions v0.5.0-rc.1 is the first release candidate for the next
 * Error `422 IDENTIFIER_MISMATCH`.
 * Error `401 AUTHENTICATION_REQUIRED`.
 
+
 # r2.2
 
 ## Release Notes
