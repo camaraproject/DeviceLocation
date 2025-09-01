@@ -145,7 +145,7 @@ Feature: Camara Geofencing Subscriptions API, vwip - Operations on subscriptions
     Then the response code is 201 or 202
     And an event notification of the subscribed type is received on callback-url
     And notification body complies with the OAS schema at "#/components/schemas/CloudEvent"
-    
+
   # Error scenarios for management of input parameter device
 
   @geofencing_subscriptions_C01.01_device_empty
