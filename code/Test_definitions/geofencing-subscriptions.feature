@@ -135,7 +135,7 @@ Feature: Camara Geofencing Subscriptions API, vwip - Operations on subscriptions
     And the sink credentials specified when the subscription was created are included
     And notification body complies with the OAS schema at "#/components/schemas/EventAreaEntered"
     And the notification property "$.type" is equal to "org.camaraproject.geofencing-subscriptions.v0.area-entered"
-    And the notification property "$.data.subscriptionId" is equal to "id"
+    And the notification property "$.data.subscriptionId" is equal to the existing subscriptionId
 
   @geofencing_subscriptions_09_receive_notification_when_device_leaves_geofence
   Scenario: Receive notification for area-left event
