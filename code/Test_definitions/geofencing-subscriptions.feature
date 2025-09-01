@@ -120,7 +120,6 @@ Feature: Camara Geofencing Subscriptions API, vwip - Operations on subscriptions
   Scenario: Delete the subscription with subscriptionId equal to "id"
     Given the path parameter "subscriptionId" is set to the identifier of an existing Geofencing subscription
     When the request "deleteGeofencingSubscription" is sent
-    And the path parameter "subscriptionId" is set to "id"
     Then the response status code is 202 or 204
     And the response header "x-correlator" has same value as the request header "x-correlator"
     And if the response property "$.status" is 204 then response body is not present
