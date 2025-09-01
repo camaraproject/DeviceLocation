@@ -130,7 +130,6 @@ Feature: Camara Geofencing Subscriptions API, vwip - Operations on subscriptions
   Scenario: Receive notification for area-entered event
     Given a valid subscription for that device exists with "subscriptionId" equal to "id"
     And the request body property "$.area" is set to circle which covers location "Place1"
-    And the subscription property "$.types" contains the element "org.camaraproject.geofencing-subscriptions.v0.area-entered"
     When the device enters the area in the subscription
     And event notification "area-entered" is sent to the specified callback URL
     And the sink credentials specified when the subscription was created are included
