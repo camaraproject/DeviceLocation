@@ -108,7 +108,7 @@ info:
     # Further info and support
 
     (FAQs will be added in a later version of the documentation)
-  version: wip
+  version: 0.5.0
   license:
     name: Apache 2.0
     url: https://www.apache.org/licenses/LICENSE-2.0.html
@@ -117,7 +117,7 @@ externalDocs:
   description: Project documentation at Camara
   url: https://github.com/camaraproject/DeviceLocation
 servers:
-  - url: '{apiRoot}/location-retrieval/vwip'
+  - url: '{apiRoot}/location-retrieval/v0.5'
     variables:
       apiRoot:
         default: http://localhost:9091
