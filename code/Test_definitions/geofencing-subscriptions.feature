@@ -168,11 +168,11 @@ Feature: Camara Geofencing Subscriptions API, vwip - Operations on subscriptions
     And the response property "$.message" contains a user friendly text
 
     Examples:
-      | device_identifier          | oas_spec_schema                             |
-      | $.config.subscriptionDetail.device.phoneNumber       | /components/schemas/PhoneNumber             |
-      | $.config.subscriptionDetail.device.ipv4Address       | /components/schemas/DeviceIpv4Addr          |
-      | $.config.subscriptionDetail.device.ipv6Address       | /components/schemas/DeviceIpv6Address       |
-      | $.config.subscriptionDetail.device.networkIdentifier | /components/schemas/NetworkAccessIdentifier |
+      | device_identifier                                          | oas_spec_schema                             |
+      | $.config.subscriptionDetail.device.phoneNumber             | /components/schemas/PhoneNumber             |
+      | $.config.subscriptionDetail.device.ipv4Address             | /components/schemas/DeviceIpv4Addr          |
+      | $.config.subscriptionDetail.device.ipv6Address             | /components/schemas/DeviceIpv6Address       |
+      | $.config.subscriptionDetail.device.networkAccessIdentifier | /components/schemas/NetworkAccessIdentifier |
 
  # This scenario may happen e.g. with 2-legged access tokens, which do not identify a single device.
   @geofencing_subscriptions_C01.03_device_not_found
