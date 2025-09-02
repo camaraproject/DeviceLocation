@@ -25,7 +25,6 @@ Feature: Camara Geofencing Subscriptions API, vwip - Operations on subscriptions
     Given that subscriptions are created synchronously
     And a valid subscription request body
     When the request "createGeofencingSubscription" is sent
-    And request property "$.sink" is set to a valid callbackUrl
     Then the response code is 201
     And the response header "Content-Type" is "application/json"
     And the response header "x-correlator" has the same value as the request header "x-correlator"
