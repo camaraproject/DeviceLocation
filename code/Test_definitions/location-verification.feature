@@ -18,6 +18,8 @@ Feature: CAMARA Device location verification API, v3.0.0 - Operation verifyLocat
     And the header "x-correlator" complies with the schema at "#/components/schemas/XCorrelator"
     And the request body is set by default to a request body compliant with the schema
 
+  # Success scenarios
+
   # This first scenario serves as a minimum, not testing any specific verificationResult
   @location_verification_01_generic_success_scenario
   Scenario: Common validations for any success scenario
@@ -158,7 +160,7 @@ Feature: CAMARA Device location verification API, v3.0.0 - Operation verifyLocat
     And the response property "$.code" is "SERVICE_NOT_APPLICABLE"
     And the response property "$.message" contains a user-friendly text
 
-  # Generic 400 errors
+  # Error code 400
 
   @location_verification_400.1_no_request_body
   Scenario: Missing request body
@@ -177,8 +179,6 @@ Feature: CAMARA Device location verification API, v3.0.0 - Operation verifyLocat
     And the response property "$.status" is 400
     And the response property "$.code" is "INVALID_ARGUMENT"
     And the response property "$.message" contains a user friendly text
-
-  # Other specific 400 errors
 
   @location_verification_400.3_other_input_properties_schema_not_compliant
   # Test other input properties in addition to device
@@ -216,7 +216,7 @@ Feature: CAMARA Device location verification API, v3.0.0 - Operation verifyLocat
       | $.area.center.longitude |
       | $.area.radius           |
 
-  # Generic 401 errors
+  # Error code 401
 
   @location_verification_401.1_no_authorization_header
   Scenario: No Authorization header
@@ -249,7 +249,7 @@ Feature: CAMARA Device location verification API, v3.0.0 - Operation verifyLocat
     And the response property "$.code" is "UNAUTHENTICATED"
     And the response property "$.message" contains a user friendly text
 
-  # Generic 403 error
+  # Error code 403
 
   @location_verification_403_missing_scope
   Scenario: Missing scope in the access token
@@ -261,7 +261,7 @@ Feature: CAMARA Device location verification API, v3.0.0 - Operation verifyLocat
     And the response property "$.code" is "PERMISSION_DENIED"
     And the response property "$.message" contains a user friendly text
 
-  # 422 error codes
+  # Error code 422
 
   @location_verification_422.1_area_not_covered
   Scenario: Area not covered
