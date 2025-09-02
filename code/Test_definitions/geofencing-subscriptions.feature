@@ -402,7 +402,6 @@ Feature: Camara Geofencing Subscriptions API, vwip - Operations on subscriptions
   Scenario: Get subscription when subscriptionId is unknown to the system
     Given the path parameter "subscriptionId" is set to a value not corresponding to any existing subscription
     When the request "retrieveGeofencingSubscription" is sent
-    And the path parameter "subscriptionId" is equal to "id"
     Then the response status code is 404
     And the response property "$.status" is 404
     And the response property "$.code" is "NOT_FOUND"
