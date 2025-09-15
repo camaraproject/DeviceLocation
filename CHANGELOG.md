@@ -33,7 +33,9 @@ The API definition(s) are based on
 
 ## location-verification v3.0.0
 
-location-verification v3.0.0 is the public release for the next stable version of the API Location Verification. It introduces breaking changes compared to the previous release r2.2, due to the deprecation of `UNKNOWN` value for `verificationResult` in favor of the new error `422 LOCATION_VERIFICATION.UNABLE_TO_LOCATE`.
+location-verification v3.0.0 is the public release for the next stable version of the API Location Verification.
+
+**There is breaking change compared to the previous release r2.2**, due to the deprecation of `UNKNOWN` value for `verificationResult` in favor of the new error `422 LOCATION_VERIFICATION.UNABLE_TO_LOCATE`.
 
 * API definition with **inline documentation**:
 
@@ -692,3 +694,4 @@ The API definition(s) are based on
 
 * New API `location`, v0.1.0, with a single operation for location verification:
     - Given a device identified by the `ueId` object, a set of coordinates (`latitude` and `longitude`), and the requested `accuracy`, returns a boolean `verificationResult`, verifying if the device is within the circular area delimited by the coordinates and the accuracy radius.
+
