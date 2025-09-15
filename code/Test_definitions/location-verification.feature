@@ -310,6 +310,4 @@ Feature: CAMARA Device location verification API, v3.0.0 - Operation verifyLocat
     Then the response status code is 422
     And the response property "$.status" is 422
     And the response property "$.code" is "LOCATION_VERIFICATION.UNABLE_TO_LOCATE"
-
     And the response property "$.message" contains a user-friendly text
-
