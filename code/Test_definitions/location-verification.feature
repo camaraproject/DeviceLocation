@@ -8,7 +8,7 @@ Feature: CAMARA Device location verification API, v3.0.0 - Operation verifyLocat
   # * A device object which location is known by the network when connected. To test all scenarios, at least 2 valid devices are needed
   # * The known location of the testing devices
   # * A device object identifying a device commercialized by the implementation for which the service is not applicable, if any
-  # * apiRoot: 
+  # * apiRoot: API root of the server URL
   #
   # References to OAS spec schemas refer to schemas specifies in location-verification.yaml
 
@@ -312,3 +312,4 @@ Feature: CAMARA Device location verification API, v3.0.0 - Operation verifyLocat
     And the response property "$.code" is "LOCATION_VERIFICATION.UNABLE_TO_LOCATE"
 
     And the response property "$.message" contains a user-friendly text
+
