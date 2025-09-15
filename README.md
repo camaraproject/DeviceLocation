@@ -31,7 +31,7 @@ Incubating API Repository to evolve and maintain the definitions and documentati
 
 * Note: Please be aware that the project will have frequent updates to the main branch. There are no compatibility guarantees associated with code in any branch, including main, until a new release is created. For example, changes may be reverted before a release is created. **For best results, use the latest available release**.
 
-* **The latest public release is [r3.2](https://github.com/camaraproject/DeviceLocation/tree/r3.2), with the following API definitions (with inline documentation):**
+* **NEW: public release** [r3.2](https://github.com/camaraproject/DeviceLocation/releases/r3.2) is available, with the following API definitions (with inline documentation):**
   
   - **location-verification v3.0.0** 
   [[YAML OAS]](https://github.com/camaraproject/DeviceLocation/blob/r3.2/code/API_definitions/location-verification.yaml)
