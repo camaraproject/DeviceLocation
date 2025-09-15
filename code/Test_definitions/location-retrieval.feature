@@ -8,11 +8,13 @@ Feature: CAMARA Device location retrieval API, v0.5.0 - Operation retrieveLocati
   # * A device object which location is known by the network when connected. 2 distinct device are required for some scenario.
   # * A device object identifying a device commercialized by the implementation for which the service is not applicable
   # * A device object which location cannot be provided during test by the network.
+  # * apiRoot: API root of the server URL
   #
   # References to OAS spec schemas refer to schemas specifies in location-retrieval.yaml
 
   Background: Common retrieveLocation setup
-    Given the resource "/location-retrieval/v0.5/retrieve"                                                              |
+    Given an environment at "apiRoot"
+    And the resource "/location-retrieval/v0.5/retrieve"                                                              |
     And the header "Content-Type" is set to "application/json"
     And the header "Authorization" is set to a valid access token
     And the header "x-correlator" complies with the schema at "#/components/schemas/XCorrelator"
