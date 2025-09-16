@@ -31,24 +31,22 @@ Incubating API Repository to evolve and maintain the definitions and documentati
 
 * Note: Please be aware that the project will have frequent updates to the main branch. There are no compatibility guarantees associated with code in any branch, including main, until a new release is created. For example, changes may be reverted before a release is created. **For best results, use the latest available release**.
 
-**NEW**: Pre-release [r3.1](https://github.com/camaraproject/DeviceLocation/releases/tag/r3.1) with location-verification v3.0.0-rc.1, location-retrieval v0.5.0-rc.1 and geofencing-subscriptions v0.5.0-rc.1 is available.
-
-* **The latest public release is [r2.2](https://github.com/camaraproject/DeviceLocation/tree/r2.2), with the following API definitions (with inline documentation):**
+* **NEW: public release** [r3.2](https://github.com/camaraproject/DeviceLocation/releases/r3.2) is available, with the following API definitions (with inline documentation):**
   
-  - **location-verification v2.0.0** 
-  [[YAML OAS]](https://github.com/camaraproject/DeviceLocation/blob/r2.2/code/API_definitions/location-verification.yaml)
-  [[View it on ReDoc]](https://redocly.github.io/redoc/?url=https://raw.githubusercontent.com/camaraproject/DeviceLocation/r2.2/code/API_definitions/location-verification.yaml&nocors)
-  [[View it on Swagger Editor]](https://camaraproject.github.io/swagger-ui/?url=https://raw.githubusercontent.com/camaraproject/DeviceLocation/r2.2/code/API_definitions/location-verification.yaml)
+  - **location-verification v3.0.0** 
+  [[YAML OAS]](https://github.com/camaraproject/DeviceLocation/blob/r3.2/code/API_definitions/location-verification.yaml)
+  [[View it on ReDoc]](https://redocly.github.io/redoc/?url=https://raw.githubusercontent.com/camaraproject/DeviceLocation/r3.2/code/API_definitions/location-verification.yaml&nocors)
+  [[View it on Swagger Editor]](https://camaraproject.github.io/swagger-ui/?url=https://raw.githubusercontent.com/camaraproject/DeviceLocation/r3.2/code/API_definitions/location-verification.yaml)
 
-  - **location-retrieval v0.4.0** 
-  [[YAML OAS]](https://github.com/camaraproject/DeviceLocation/blob/r2.2/code/API_definitions/location-retrieval.yaml)
-  [[View it on ReDoc]](https://redocly.github.io/redoc/?url=https://raw.githubusercontent.com/camaraproject/DeviceLocation/r2.2/code/API_definitions/location-retrieval.yaml&nocors)
-  [[View it on Swagger Editor]](https://camaraproject.github.io/swagger-ui/?url=https://raw.githubusercontent.com/camaraproject/DeviceLocation/r2.2/code/API_definitions/location-retrieval.yaml)
+  - **location-retrieval v0.5.0** 
+  [[YAML OAS]](https://github.com/camaraproject/DeviceLocation/blob/r3.2/code/API_definitions/location-retrieval.yaml)
+  [[View it on ReDoc]](https://redocly.github.io/redoc/?url=https://raw.githubusercontent.com/camaraproject/DeviceLocation/r3.2/code/API_definitions/location-retrieval.yaml&nocors)
+  [[View it on Swagger Editor]](https://camaraproject.github.io/swagger-ui/?url=https://raw.githubusercontent.com/camaraproject/DeviceLocation/r3.2/code/API_definitions/location-retrieval.yaml)
 
-  - **geofencing-subscriptions v0.4.0**
-  [[YAML OAS]](https://github.com/camaraproject/DeviceLocation/blob/r2.2/code/API_definitions/geofencing-subscriptions.yaml)
-  [[View it on ReDoc]](https://redocly.github.io/redoc/?url=https://raw.githubusercontent.com/camaraproject/DeviceLocation/r2.2/code/API_definitions/geofencing-subscriptions.yaml&nocors)
-  [[View it on Swagger Editor]](https://camaraproject.github.io/swagger-ui/?url=https://raw.githubusercontent.com/camaraproject/DeviceLocation/r2.2/code/API_definitions/geofencing-subscriptions.yaml)
+  - **geofencing-subscriptions v0.5.0**
+  [[YAML OAS]](https://github.com/camaraproject/DeviceLocation/blob/r3.2/code/API_definitions/geofencing-subscriptions.yaml)
+  [[View it on ReDoc]](https://redocly.github.io/redoc/?url=https://raw.githubusercontent.com/camaraproject/DeviceLocation/r3.2/code/API_definitions/geofencing-subscriptions.yaml&nocors)
+  [[View it on Swagger Editor]](https://camaraproject.github.io/swagger-ui/?url=https://raw.githubusercontent.com/camaraproject/DeviceLocation/r3.2/code/API_definitions/geofencing-subscriptions.yaml)
 
 ## Contributing
 

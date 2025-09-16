@@ -1,4 +1,4 @@
-Feature: CAMARA Device location verification API, vwip - Operation verifyLocation
+Feature: CAMARA Device location verification API, v3.0.0 - Operation verifyLocation
   # Input to be provided by the implementation to the tester
   #
   # Implementation indications:
@@ -8,11 +8,13 @@ Feature: CAMARA Device location verification API, vwip - Operation verifyLocatio
   # * A device object which location is known by the network when connected. To test all scenarios, at least 2 valid devices are needed
   # * The known location of the testing devices
   # * A device object identifying a device commercialized by the implementation for which the service is not applicable, if any
+  # * apiRoot: API root of the server URL
   #
   # References to OAS spec schemas refer to schemas specifies in location-verification.yaml
 
   Background: Common verifyLocation setup
-    Given the resource "/location-verification/vwip/verify"
+    Given an environment at "apiRoot"
+    And the resource "/location-verification/v3/verify"
     And the header "Content-Type" is set to "application/json"
     And the header "Authorization" is set to a valid access token
     And the header "x-correlator" complies with the schema at "#/components/schemas/XCorrelator"

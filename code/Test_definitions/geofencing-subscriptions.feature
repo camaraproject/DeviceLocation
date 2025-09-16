@@ -1,4 +1,4 @@
-Feature: Camara Geofencing Subscriptions API, vwip - Operations on subscriptions
+Feature: Camara Geofencing Subscriptions API, v0.5.0 - Operations on subscriptions
 
   # Input to be provided by the implementation to the tester
   #
@@ -8,11 +8,13 @@ Feature: Camara Geofencing Subscriptions API, vwip - Operations on subscriptions
   # Testing assets:
   # * A device object which location is known by the network when connected. 2 distinct device are required for some scenario.
   # * A moveable device to trigger area-left / area-entered events.
+  # * apiRoot: API root of the server URL
   #
   # References to OAS spec schemas refer to schemas specifies in geofencing-subscriptions.yaml
 
   Background: Common Geofencing Subscriptions setup
-    Given the resource "{apiroot}/geofencing-subscriptions/vwip/" as geofencing base-url
+    Given an environment at "apiRoot"
+    And the resource  "/geofencing-subscriptions/v0.5/" as geofencing base-url
     And the header "Authorization" is set to a valid access token
     And the header "x-correlator" complies with the schema at "#/components/schemas/XCorrelator"
 

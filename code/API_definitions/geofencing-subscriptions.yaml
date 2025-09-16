@@ -114,7 +114,7 @@ info:
 
     (FAQs will be added in a later version of the documentation)
 
-  version: wip
+  version: 0.5.0
   license:
     name: Apache 2.0
     url: https://www.apache.org/licenses/LICENSE-2.0.html
@@ -124,7 +124,7 @@ externalDocs:
   url: https://github.com/camaraproject/DeviceLocation
 
 servers:
-  - url: "{apiRoot}/geofencing-subscriptions/vwip"
+  - url: "{apiRoot}/geofencing-subscriptions/v0.5"
     variables:
       apiRoot:
         default: http://localhost:9091
@@ -672,7 +672,7 @@ components:
           $ref: "#/components/schemas/ConfigResponse"
         id:
           type: string
-          description: The unique identifier of the subscription in the scope of the subscription manager. When this information is contained within an event notification, this concept SHALL be referred as `subscriptionId` as per [Commonalities Event Notification Model](https://github.com/camaraproject/Commonalities/blob/main/documentation/API-design-guidelines.md#122-event-notification).
+          description: The unique identifier of the subscription in the scope of the subscription manager. When this information is contained within an event notification, this concept SHALL be referred as subscriptionId as per Commonalities Event Notification Model.
           example: "1119920371"
         startsAt:
           type: string
@@ -724,7 +724,7 @@ components:
 
     SubscriptionId:
       type: string
-      description: The unique identifier of the subscription in the scope of the subscription manager. When this information is contained within an event notification, this concept SHALL be referred as `subscriptionId` as per [Commonalities Event Notification Model](https://github.com/camaraproject/Commonalities/blob/main/documentation/API-design-guidelines.md#122-event-notification).
+      description: The unique identifier of the subscription in the scope of the subscription manager. When this information is contained within an event notification, this concept SHALL be referred as subscriptionId as per Commonalities Event Notification Model.
       example: qs15-h556-rt89-1298
 
     Device:
