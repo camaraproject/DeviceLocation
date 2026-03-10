@@ -8,6 +8,7 @@ Feature: CAMARA Device location retrieval API, vwip - Operation retrieveLocation
   # * A device object which location is known by the network when connected. 2 distinct device are required for some scenario.
   # * A device object identifying a device commercialized by the implementation for which the service is not applicable
   # * A device object which location cannot be provided during test by the network.
+  # * A identifier to a non-existent device
   # * apiRoot: API root of the server URL
   #
   # References to OAS spec schemas refer to schemas specifies in location-retrieval.yaml
@@ -224,11 +225,10 @@ Feature: CAMARA Device location retrieval API, vwip - Operation retrieveLocation
 
   # Error code 404
 
-  @location_retrieval_404_unable_to_locate_device
-  # Input set to a device that could not be located
-  Scenario: Unable to provide device location
-    Given a valid testing device which cannot be located by the network operator, identified by the token or provided in the request body
-
+  @location_retrieval_404_non_existent_device
+  # Input set to a non-existent device
+  Scenario: Behavior for non-existent device
+    Given a non-existent testing device, identified by the token or provided in the request body
     And the request body property "$.maxAge" is not included
     When the request "retrieveLocation" is sent
     Then the response status code is 404
@@ -263,4 +263,17 @@ Feature: CAMARA Device location retrieval API, vwip - Operation retrieveLocation
     And the response header "x-correlator" has same value as the request header "x-correlator"
     And the response property "$.status" is 422
     And the response property "$.code" is "LOCATION_RETRIEVAL.UNABLE_TO_FULFILL_MAX_AGE"
+    And the response property "$.message" contains a user friendly text
+
+  @location_retrieval_422.3_unable_to_locate_device
+  # Input set to a device that could not be located without maxAge
+  Scenario: Unable to provide device location
+    Given a valid testing device which cannot be located by the network operator, identified by the token or provided in the request body
+    And the request body property "$.maxAge" is not included
+    When the request "retrieveLocation" is sent
+    Then the response status code is 422
+    And the response header "Content-Type" is "application/json"
+    And the response header "x-correlator" has same value as the request header "x-correlator"
+    And the response property "$.status" is 422
+    And the response property "$.code" is "LOCATION_RETRIEVAL.UNABLE_TO_LOCATE"
     And the response property "$.message" contains a user friendly text
