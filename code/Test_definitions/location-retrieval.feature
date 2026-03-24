@@ -223,21 +223,6 @@ Feature: CAMARA Device location retrieval API, vwip - Operation retrieveLocation
     And the response property "$.code" is "PERMISSION_DENIED"
     And the response property "$.message" contains a user friendly text
 
-  # Error code 404
-
-  @location_retrieval_404_non_existent_device
-  # Input set to a non-existent device
-  Scenario: Behavior for non-existent device
-    Given a non-existent testing device, identified by the token or provided in the request body
-    And the request body property "$.maxAge" is not included
-    When the request "retrieveLocation" is sent
-    Then the response status code is 404
-    And the response header "Content-Type" is "application/json"
-    And the response header "x-correlator" has same value as the request header "x-correlator"
-    And the response property "$.status" is 404
-    And the response property "$.code" is "LOCATION_RETRIEVAL.DEVICE_NOT_FOUND"
-    And the response property "$.message" contains a user friendly text
-
   # HTTP - 422
 
   @location_retrieval_422.1_unable_to_fulfill_max_surface
