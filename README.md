@@ -55,7 +55,7 @@ _The above section is automatically synchronized by CAMARA project-administratio
 ## Contributing
 
 * Meetings are held virtually
-  - Schedule: bi-weekly (odd weeks), Tuesday, 8:00 AM UTC (9:00 CET/10:00 CEST)
+  - Schedule: bi-weekly (odd weeks), Tuesday, 7:00 AM UTC (9:00 CEST)
   - Meeting link: [Registration / Join](https://zoom-lfx.platform.linuxfoundation.org/meeting/91878854906?password=7e620a89-fcb5-4d2d-927a-17e3a0d1d28e)
 * Mailing list:
   - To subscribe / unsubscribe to the mailing list of this Sub Project, please visit <https://lists.camaraproject.org/g/sp-dlo>.
