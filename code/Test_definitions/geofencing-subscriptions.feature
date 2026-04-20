@@ -287,7 +287,7 @@ Feature: Camara Geofencing Subscriptions API, vwip - Operations on subscriptions
   Scenario: subscription creation with invalid credential type
     Given a valid geofencing subscription request body
     And the request property "$.sinkCredential.accessTokenType" is equal to "bearer"
-    And the request property "$.sinkCredential.credentialType" is not equal to "ACCESSTOKEN"
+    And the request property "$.sinkCredential.credentialType" is not equal to "ACCESSTOKEN" and is not set to "PRIVATE_KEY_JWT"
     When the request "createGeofencingSubscription" is sent
     Then the response status code is 400
     And the response property "$.status" is 400
