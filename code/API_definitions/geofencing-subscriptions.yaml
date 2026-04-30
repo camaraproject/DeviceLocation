@@ -497,33 +497,33 @@ components:
             The type of the credential.
             Note: Type of the credential - MUST be set to ACCESSTOKEN or PRIVATE_KEY_JWT for now
           enum:
-            - PLAIN
+            # - PLAIN  # not used in CAMARA
             - ACCESSTOKEN
             - PRIVATE_KEY_JWT
       discriminator:
         propertyName: credentialType
         mapping:
-          PLAIN: "#/components/schemas/PlainCredential"
+          # PLAIN: "#/components/schemas/PlainCredential"  # not used in CAMARA
           ACCESSTOKEN: "#/components/schemas/AccessTokenCredential"
           PRIVATE_KEY_JWT: "#/components/schemas/PrivateKeyJWTCredential"
       required:
         - credentialType
-    PlainCredential:
-      type: object
-      description: A plain credential as a combination of an identifier and a secret.
-      allOf:
-        - $ref: "#/components/schemas/SinkCredential"
-        - type: object
-          required:
-            - identifier
-            - secret
-          properties:
-            identifier:
-              description: The identifier might be an account or username.
-              type: string
-            secret:
-              description: The secret might be a password or passphrase.
-              type: string
+    # PlainCredential:  # not used in CAMARA
+    #   type: object
+    #   description: A plain credential as a combination of an identifier and a secret.
+    #   allOf:
+    #     - $ref: "#/components/schemas/SinkCredential"
+    #     - type: object
+    #       required:
+    #         - identifier
+    #         - secret
+    #       properties:
+    #         identifier:
+    #           description: The identifier might be an account or username.
+    #           type: string
+    #         secret:
+    #           description: The secret might be a password or passphrase.
+    #           type: string
     AccessTokenCredential:
       type: object
       description: An access token credential. This type of credential is meant to be used by API Consumers that have limited capabilities to handle authorization requests. 
