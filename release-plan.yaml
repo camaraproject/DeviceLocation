@@ -40,7 +40,7 @@ apis:
       - jlurien
       - maxl2287
   - api_name: location-retrieval
-    target_api_version: 0.6.0
+    target_api_version: 1.0.0
     target_api_status: alpha
     main_contacts:
       - bigludo7
