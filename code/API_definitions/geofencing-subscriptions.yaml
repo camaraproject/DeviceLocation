@@ -860,6 +860,7 @@ components:
       example: 7.10066
 
     CloudEvent:
+      type: object
       description: The notification callback.
       required:
         - id
