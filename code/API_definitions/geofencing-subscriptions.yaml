@@ -495,44 +495,44 @@ components:
           type: string
           description: |
             The type of the credential.
-            Note: Type of the credential - MUST be set to ACCESSTOKEN for now
+            Note: Type of the credential - MUST be set to ACCESSTOKEN or PRIVATE_KEY_JWT for now
           enum:
-            - PLAIN
+            # - PLAIN  # not used in CAMARA
             - ACCESSTOKEN
-            - REFRESHTOKEN
+            - PRIVATE_KEY_JWT
       discriminator:
         propertyName: credentialType
         mapping:
-          PLAIN: "#/components/schemas/PlainCredential"
+          # PLAIN: "#/components/schemas/PlainCredential"  # not used in CAMARA
           ACCESSTOKEN: "#/components/schemas/AccessTokenCredential"
-          REFRESHTOKEN: "#/components/schemas/RefreshTokenCredential"
+          PRIVATE_KEY_JWT: "#/components/schemas/PrivateKeyJWTCredential"
       required:
         - credentialType
-    PlainCredential:
-      type: object
-      description: A plain credential as a combination of an identifier and a secret.
-      allOf:
-        - $ref: "#/components/schemas/SinkCredential"
-        - type: object
-          required:
-            - identifier
-            - secret
-          properties:
-            identifier:
-              description: The identifier might be an account or username.
-              type: string
-            secret:
-              description: The secret might be a password or passphrase.
-              type: string
+    # PlainCredential:  # not used in CAMARA
+    #   type: object
+    #   description: A plain credential as a combination of an identifier and a secret.
+    #   allOf:
+    #     - $ref: "#/components/schemas/SinkCredential"
+    #     - type: object
+    #       required:
+    #         - identifier
+    #         - secret
+    #       properties:
+    #         identifier:
+    #           description: The identifier might be an account or username.
+    #           type: string
+    #         secret:
+    #           description: The secret might be a password or passphrase.
+    #           type: string
     AccessTokenCredential:
       type: object
-      description: An access token credential.
+      description: An access token credential. This type of credential is meant to be used by API Consumers that have limited capabilities to handle authorization requests.
       allOf:
         - $ref: "#/components/schemas/SinkCredential"
         - type: object
           properties:
             accessToken:
-              description: REQUIRED. An access token is a previously acquired token granting access to the target resource.
+              description: REQUIRED. An access token is a token granting access to the target resource.
               type: string
             accessTokenExpiresUtc:
               type: string
@@ -552,42 +552,11 @@ components:
             - accessToken
             - accessTokenExpiresUtc
             - accessTokenType
-    RefreshTokenCredential:
+    PrivateKeyJWTCredential:
       type: object
-      description: An access token credential with a refresh token.
+      description: Use PRIVATE_KEY_JWT to get an access token. The authorization server information needed for this type of sink credential (token endpoint, client ID, JWKS URL) is shared upfront between the client and the CAMARA entity. This type of credential is to be used by clients that have an authorization server.
       allOf:
         - $ref: "#/components/schemas/SinkCredential"
-        - type: object
-          properties:
-            accessToken:
-              description: REQUIRED. An access token is a previously acquired token granting access to the target resource.
-              type: string
-            accessTokenExpiresUtc:
-              type: string
-              format: date-time
-              description: |
-                REQUIRED. An absolute (UTC) timestamp at which the token shall be considered expired.
-                In the case of an ACCESS_TOKEN_EXPIRED termination reason, implementation should notify the client before the expiration date.
-                If the access token is a JWT and registered "exp" (Expiration Time) claim is present, the two expiry times should match.
-                It must follow [RFC 3339](https://datatracker.ietf.org/doc/html/rfc3339#section-5.6) and must have time zone.
-            accessTokenType:
-              description: REQUIRED. Type of the access token (See [OAuth 2.0](https://tools.ietf.org/html/rfc6749#section-7.1)).
-              type: string
-              enum:
-                - bearer
-            refreshToken:
-              description: REQUIRED. An refresh token credential used to acquire access tokens.
-              type: string
-            refreshTokenEndpoint:
-              type: string
-              format: uri
-              description: REQUIRED. A URL at which the refresh token can be traded for an access token.
-      required:
-        - accessToken
-        - accessTokenExpiresUtc
-        - accessTokenType
-        - refreshToken
-        - refreshTokenEndpoint
 
     SubscriptionDetailRequest:
       description: The detail of the requested event subscription.
@@ -1122,7 +1091,7 @@ components:
         - SUBSCRIPTION_EXPIRED - Subscription expire time (optionally set by the requester) has been reached
         - SUBSCRIPTION_DELETED - Subscription was deleted by the requester
         - MAX_EVENTS_REACHED - Maximum number of events (optionally set by the requester) has been reached
-        - ACCESS_TOKEN_EXPIRED - Access Token sinkCredential (optionally set by the requester) expiration time has been reached
+        - ACCESS_TOKEN_EXPIRED - Access Token sinkCredential (optionally set by the requester with credential type `ACCESSTOKEN`) expiration time has been reached
       enum:
         - MAX_EVENTS_REACHED
         - NETWORK_TERMINATED
@@ -1320,12 +1289,7 @@ components:
               value:
                 status: 400
                 code: INVALID_CREDENTIAL
-                message: Only Access token is supported.
-            GENERIC_400_INVALID_TOKEN:
-              value:
-                status: 400
-                code: INVALID_TOKEN
-                message: Only bearer token is supported.
+                message: Only Access token or Private key JWT are supported
             GENERIC_400_INVALID_SINK:
               description: Invalid sink value
               value:
@@ -1538,6 +1502,7 @@ components:
                     enum:
                       - MISSING_IDENTIFIER
                       - MULTIEVENT_SUBSCRIPTION_NOT_SUPPORTED
+                      - PRIVATE_KEY_JWT_NOT_CONFIGURED
                       - SERVICE_NOT_APPLICABLE
                       - UNNECESSARY_IDENTIFIER
                       - UNSUPPORTED_IDENTIFIER
@@ -1561,6 +1526,12 @@ components:
                 status: 422
                 code: MULTIEVENT_SUBSCRIPTION_NOT_SUPPORTED
                 message: Multi event types subscription not managed.
+            GENERIC_422_PRIVATE_KEY_JWT_NOT_CONFIGURED:
+              description: Private key JWT sink credential type is used but no configuration was pre-shared
+              value:
+                status: 422
+                code: PRIVATE_KEY_JWT_NOT_CONFIGURED
+                message: No JWK Set configured for PRIVATE_KEY_JWT authentication.
             GENERIC_422_UNNECESSARY_IDENTIFIER:
               description: An explicit identifier is provided when a device or phone number has already been identified from the access token
               value:
