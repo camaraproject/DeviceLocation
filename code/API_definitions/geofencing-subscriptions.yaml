@@ -861,6 +861,7 @@ components:
 
     CloudEvent:
       description: The notification callback.
+      type: object
       required:
         - id
         - source
