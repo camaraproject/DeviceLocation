@@ -20,7 +20,7 @@ repository:
 
   # Release type being prepared (must be set before release can be triggered)
   # Options: none | pre-release-alpha | pre-release-rc | public-release | maintenance-release
-  target_release_type: pre-release-alpha
+  target_release_type: pre-release-rc
 
 # Dependencies on Commonalities and ICM releases
 # Update per ReleaseManagement requirements for each release cycle
@@ -34,21 +34,21 @@ dependencies:
 apis:
   - api_name: geofencing-subscriptions
     target_api_version: 0.6.0
-    target_api_status: alpha
+    target_api_status: rc
     main_contacts:
       - bigludo7
       - jlurien
       - maxl2287
   - api_name: location-retrieval
     target_api_version: 1.0.0
-    target_api_status: alpha
+    target_api_status: rc
     main_contacts:
       - bigludo7
       - jlurien
       - maxl2287
   - api_name: location-verification
     target_api_version: 3.1.0
-    target_api_status: alpha
+    target_api_status: rc
     main_contacts:
       - bigludo7
       - jlurien
