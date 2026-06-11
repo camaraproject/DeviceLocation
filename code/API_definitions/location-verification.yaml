@@ -119,13 +119,13 @@ servers:
         default: http://localhost:9091
         description: API root
 tags:
-  - name: Location verification
+  - name: Location Verification
     description: Verification of the location of a device
 paths:
   /verify:
     post:
       tags:
-        - Location verification
+        - Location Verification
       summary: Verify the location of a device
       description: |
         Verify whether the location of a device is within a requested area. The operation returns a verification result and, optionally, a match rate estimation for the location verification in percent.
@@ -328,7 +328,9 @@ components:
     MaxAge:
       description: The maximum age (in seconds) for the location known by the implementation, which is accepted for the verification. Absence of maxAge means "any age" and maxAge=0 means a fresh calculation.
       type: integer
+      format: int32
       minimum: 0
+      maximum: 2147483647
       example: 120
 
     VerificationResult:
@@ -346,14 +348,16 @@ components:
     MatchRate:
       description: Estimation of the match rate between the area in the request (R), and area where the network locates the device (N), calculated as the percent value of the intersection of both areas divided by the network area, that is (R ∩ N) / N * 100. Included only if VerificationResult is PARTIAL.
       type: integer
+      format: int32
       minimum: 1
       maximum: 99
 
     LastLocationTime:
       description: Timestamp of the last location information. It must follow [RFC 3339](https://datatracker.ietf.org/doc/html/rfc3339#section-5.6) and must have time zone.
-      example: "2023-09-07T10:40:52Z"
-      format: date-time
       type: string
+      format: date-time
+      maxLength: 64
+      example: "2023-09-07T10:40:52Z"
 
   responses:
     Generic403:
