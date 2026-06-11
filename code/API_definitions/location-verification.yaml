@@ -356,12 +356,11 @@ components:
       type: string
 
   responses:
-
     Generic403:
       description: Forbidden
       headers:
         x-correlator:
-         $ref: "../common/CAMARA_common.yaml#/components/headers/x-correlator"
+          $ref: "../common/CAMARA_common.yaml#/components/headers/x-correlator"
       content:
         application/json:
           schema:
