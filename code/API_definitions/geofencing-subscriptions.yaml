@@ -414,17 +414,9 @@ components:
         propertyName: protocol
         mapping:
           HTTP: "#/components/schemas/HTTPSubscriptionRequest"
-          MQTT3: "#/components/schemas/MQTTSubscriptionRequest"
-          MQTT5: "#/components/schemas/MQTTSubscriptionRequest"
-          AMQP: "#/components/schemas/AMQPSubscriptionRequest"
-          NATS: "#/components/schemas/NATSSubscriptionRequest"
-          KAFKA: "#/components/schemas/ApacheKafkaSubscriptionRequest"
 
     Protocol:
-      type: string
-      enum: ["HTTP", "MQTT3", "MQTT5", "AMQP", "NATS", "KAFKA"]
-      description: Identifier of a delivery protocol. Only HTTP is allowed for now.
-      example: "HTTP"
+      $ref: '../common/CAMARA_event_common.yaml#/components/schemas/Protocol'
 
     Config:
       description: |
@@ -604,11 +596,6 @@ components:
         propertyName: protocol
         mapping:
           HTTP: "#/components/schemas/HTTPSubscriptionResponse"
-          MQTT3: "#/components/schemas/MQTTSubscriptionResponse"
-          MQTT5: "#/components/schemas/MQTTSubscriptionResponse"
-          AMQP: "#/components/schemas/AMQPSubscriptionResponse"
-          NATS: "#/components/schemas/NATSSubscriptionResponse"
-          KAFKA: "#/components/schemas/ApacheKafkaSubscriptionResponse"
 
     SubscriptionAsync:
       description: Response for an event-type subscription request managed asynchronously (Creation or Deletion).
@@ -922,156 +909,6 @@ components:
             protocolSettings:
               $ref: "#/components/schemas/HTTPSettings"
 
-    MQTTSubscriptionRequest:
-      allOf:
-        - $ref: "#/components/schemas/SubscriptionRequest"
-        - type: object
-          properties:
-            protocolSettings:
-              $ref: "#/components/schemas/MQTTSettings"
-
-    MQTTSubscriptionResponse:
-      allOf:
-        - $ref: "#/components/schemas/Subscription"
-        - type: object
-          properties:
-            protocolSettings:
-              $ref: "#/components/schemas/MQTTSettings"
-
-    MQTTSettings:
-      type: object
-      properties:
-        topicName:
-          type: string
-          maxLength: 256
-          description: Name of the MQTT topic to use for delivering events.
-        qos:
-          type: integer
-          format: int32
-          minimum: 0
-          maximum: 2
-          description: MQTT Quality of Service level (0=at most once, 1=at least once, 2=exactly once).
-        retain:
-          type: boolean
-          description: Whether the broker should retain the last event message for new subscribers.
-        expiry:
-          type: integer
-          format: int32
-          minimum: 0
-          maximum: 2147483647
-          description: The message expiry interval in seconds. A value of 0 means the message does not expire.
-        userProperties:
-          type: object
-          description: User-defined MQTT properties to include in event messages.
-          additionalProperties:
-            type: string
-            maxLength: 512
-      required:
-        - topicName
-
-    AMQPSubscriptionRequest:
-      allOf:
-        - $ref: "#/components/schemas/SubscriptionRequest"
-        - type: object
-          properties:
-            protocolSettings:
-              $ref: "#/components/schemas/AMQPSettings"
-
-    AMQPSubscriptionResponse:
-      allOf:
-        - $ref: "#/components/schemas/Subscription"
-        - type: object
-          properties:
-            protocolSettings:
-              $ref: "#/components/schemas/AMQPSettings"
-
-    AMQPSettings:
-      type: object
-      properties:
-        address:
-          type: string
-          maxLength: 512
-          description: The AMQP address (node name) to use as the target for event delivery.
-        linkName:
-          type: string
-          maxLength: 256
-          description: The AMQP link name to use when attaching to the target.
-        senderSettlementMode:
-          type: string
-          description: The sender settlement mode for the AMQP link (settled or unsettled).
-          enum: ["settled", "unsettled"]
-        linkProperties:
-          type: object
-          description: Additional AMQP link properties.
-          additionalProperties:
-            type: string
-            maxLength: 1024
-
-    ApacheKafkaSubscriptionRequest:
-      allOf:
-        - $ref: "#/components/schemas/SubscriptionRequest"
-        - type: object
-          properties:
-            protocolSettings:
-              $ref: "#/components/schemas/ApacheKafkaSettings"
-
-    ApacheKafkaSubscriptionResponse:
-      allOf:
-        - $ref: "#/components/schemas/Subscription"
-        - type: object
-          properties:
-            protocolSettings:
-              $ref: "#/components/schemas/ApacheKafkaSettings"
-
-    ApacheKafkaSettings:
-      type: object
-      properties:
-        topicName:
-          type: string
-          maxLength: 249
-          description: Name of the Apache Kafka topic to use for delivering events.
-        partitionKeyExtractor:
-          type: string
-          maxLength: 512
-          description: Expression used to extract the partition key from the event payload.
-        clientId:
-          type: string
-          maxLength: 256
-          description: Kafka client identifier used for the producer connection.
-        ackMode:
-          type: integer
-          format: int32
-          minimum: 0
-          maximum: 2
-          description: Kafka acknowledgement mode (0=none, 1=leader, 2=all replicas).
-      required:
-        - topicName
-
-    NATSSubscriptionRequest:
-      allOf:
-        - $ref: "#/components/schemas/SubscriptionRequest"
-        - type: object
-          properties:
-            protocolSettings:
-              $ref: "#/components/schemas/NATSSettings"
-
-    NATSSubscriptionResponse:
-      allOf:
-        - $ref: "#/components/schemas/Subscription"
-        - type: object
-          properties:
-            protocolSettings:
-              $ref: "#/components/schemas/NATSSettings"
-
-    NATSSettings:
-      type: object
-      properties:
-        subject:
-          type: string
-          maxLength: 256
-          description: Name of the NATS subject to use for delivering events.
-      required:
-        - subject
   responses:
     CreateSubscriptionBadRequest400:
       description: Problem with the client request.
