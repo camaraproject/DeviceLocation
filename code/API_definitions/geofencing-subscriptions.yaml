@@ -66,6 +66,7 @@ info:
       Developers may provide a callback URL on which notifications regarding geofencing can be received from the service provider.
       If an event occurs the application will send events to the provided webhook - 'sink'._
 
+    <!-- CAMARA:MANDATORY:authorization-and-authentication:BEGIN -->
     # Authorization and authentication
 
     The "Camara Security and Interoperability Profile" provides details of how an API consumer requests an access token. Please refer to Identity and Consent Management (https://github.com/camaraproject/IdentityAndConsentManagement/) for the released version of the profile.
@@ -73,7 +74,9 @@ info:
     The specific authorization flows to be used will be agreed upon during the onboarding process, happening between the API consumer and the API provider, taking into account the declared purpose for accessing the API, whilst also being subject to the prevailing legal framework dictated by local legislation.
 
     In cases where personal data is processed by the API and users can exercise their rights through mechanisms such as opt-in and/or opt-out, the use of three-legged access tokens is mandatory. This ensures that the API remains in compliance with privacy regulations, upholding the principles of transparency and user-centric privacy-by-design.
+    <!-- CAMARA:MANDATORY:authorization-and-authentication:END -->
 
+    <!-- CAMARA:MANDATORY:identifying-device-from-access-token:BEGIN -->
     # Identifying the device from the access token
 
     This API requires the API consumer to identify a device as the subject of the API as follows:
@@ -87,6 +90,7 @@ info:
     - If the subject cannot be identified from the access token and the optional `device` object is not included in the request, then the server will return an error with the `422 MISSING_IDENTIFIER` error code.
 
     - If the subject can be identified from the access token and the optional `device` object is also included in the request, then the server will return an error with the `422 UNNECESSARY_IDENTIFIER` error code. This will be the case even if the same device is identified by these two methods, as the server is unable to make this comparison.
+    <!-- CAMARA:MANDATORY:identifying-device-from-access-token:END -->
 
     # Multi-SIM scenario handling
 
@@ -102,13 +106,21 @@ info:
     - Identifying the intended device from a unique identifier for that device, such as its source IP address and port.
     - Check with the API provider whether a unique "secondary" phone number is already associated with each device and use the secondary phone number to identify the intended device if available.
 
+    <!-- CAMARA:MANDATORY:additional-error-responses:BEGIN -->
     # Additional CAMARA error responses
 
-      The list of error codes in this API specification is not exhaustive. Therefore the API specification may not document some non-mandatory error statuses as indicated in `CAMARA API Design Guide`.
+    The list of error codes in this API specification is not exhaustive. Therefore the API specification MAY not document some non-mandatory error statuses as indicated in `CAMARA API Design Guide`.
 
-      Please refer to the `CAMARA_common.yaml` of the Commonalities Release associated to this API version for a complete list of error responses. The applicable Commonalities Release can be identified in the `API Readiness Checklist` document associated to this API version.
+    Please refer to the `CAMARA_common.yaml` of the Commonalities Release associated to this API version for a complete list of error responses. The applicable Commonalities Release can be identified in the `API Readiness Checklist` document associated to this API version.
 
-      As a specific rule, error `501 - NOT_IMPLEMENTED` can be only a possible error response if it is explicitly documented in the API.
+    As a specific rule, error `501 - NOT_IMPLEMENTED` can be only a possible error response if it is explicitly documented in the API.
+    <!-- CAMARA:MANDATORY:additional-error-responses:END -->
+
+    <!-- CAMARA:MANDATORY:request-body-strictness:BEGIN -->
+    # Request body strictness
+
+    This API rejects requests with JSON request bodies that contain properties not declared in this specification, at any nesting level. Unknown properties result in a `400 INVALID_ARGUMENT` response.
+    <!-- CAMARA:MANDATORY:request-body-strictness:END -->
 
     # Further info and support
 
@@ -118,7 +130,7 @@ info:
   license:
     name: Apache 2.0
     url: https://www.apache.org/licenses/LICENSE-2.0.html
-  x-camara-commonalities: tbd
+  x-camara-commonalities: 0.8.0
 externalDocs:
   description: Project documentation at Camara
   url: https://github.com/camaraproject/DeviceLocation
@@ -131,13 +143,13 @@ servers:
         description: API root
 
 tags:
-  - name: Geofencing subscriptions
+  - name: Geofencing Subscriptions
     description: Operations to manage event subscriptions on geofencing events for leaving and entering an area.
 paths:
   /subscriptions:
     post:
       tags:
-        - Geofencing subscriptions
+        - Geofencing Subscriptions
       summary: "Create a geofencing subscription for a device"
       description: Create a subscription for a device to receive notifications when the device enters or exits a specified area.
       operationId: createGeofencingSubscription
@@ -239,7 +251,7 @@ paths:
           $ref: "#/components/responses/Generic429"
     get:
       tags:
-        - Geofencing subscriptions
+        - Geofencing Subscriptions
       summary: "Retrieve a list of geofencing event subscription"
       description: Retrieve a list of geofencing event subscription(s).
       operationId: retrieveGeofencingSubscriptionList
@@ -259,6 +271,7 @@ paths:
               schema:
                 type: array
                 minItems: 0
+                maxItems: 20
                 items:
                   $ref: "#/components/schemas/Subscription"
         "400":
@@ -270,7 +283,7 @@ paths:
   /subscriptions/{subscriptionId}:
     get:
       tags:
-        - Geofencing subscriptions
+        - Geofencing Subscriptions
       summary: "Operation to retrieve a subscription based on the provided ID"
       description: Retrieve Geofencing subscription information for a given subscription ID.
       operationId: retrieveGeofencingSubscription
@@ -300,7 +313,7 @@ paths:
           $ref: "#/components/responses/Generic404"
     delete:
       tags:
-        - Geofencing subscriptions
+        - Geofencing Subscriptions
       summary: "Delete a Geofencing event subscription"
       operationId: deleteGeofencingSubscription
       description: Delete a given Geofencing subscription.
@@ -340,9 +353,7 @@ components:
       type: openIdConnect
       openIdConnectUrl: https://example.com/.well-known/openid-configuration
     notificationsBearerAuth:
-      type: http
-      scheme: bearer
-      bearerFormat: "{$request.body#/sinkCredential.credentialType}"
+      $ref: '../common/CAMARA_event_common.yaml#/components/securitySchemes/notificationsBearerAuth'
   parameters:
     SubscriptionId:
       name: subscriptionId
@@ -356,34 +367,17 @@ components:
       in: header
       description: Correlation id for the different services.
       schema:
-        $ref: "#/components/schemas/XCorrelator"
+        $ref: '../common/CAMARA_common.yaml#/components/schemas/XCorrelator'
   headers:
     x-correlator:
       description: Correlation id for the different services.
       schema:
-        $ref: "#/components/schemas/XCorrelator"
+        $ref: '../common/CAMARA_common.yaml#/components/schemas/XCorrelator'
   schemas:
     XCorrelator:
-      type: string
-      pattern: ^[a-zA-Z0-9-_:;.\/<>{}]{0,256}$
-      example: "b4333c46-49c0-4f62-80d7-f0ef930f1c46"
+      $ref: '../common/CAMARA_common.yaml#/components/schemas/XCorrelator'
     ErrorInfo:
-      description: The error info object for possible error cases.
-      type: object
-      required:
-        - status
-        - code
-        - message
-      properties:
-        status:
-          type: integer
-          description: HTTP response status code.
-        code:
-          type: string
-          description: A human-readable code to describe the error.
-        message:
-          type: string
-          description: A human-readable description of what the event represents.
+      $ref: '../common/CAMARA_common.yaml#/components/schemas/ErrorInfo'
 
     SubscriptionRequest:
       description: The request for creating an event-type event subscription.
@@ -399,6 +393,7 @@ components:
         sink:
           type: string
           format: uri
+          maxLength: 2048
           pattern: ^https:\/\/.+$
           description: The address to which events shall be delivered using the selected protocol.
           example: "https://endpoint.example.com/sink"
@@ -440,15 +435,18 @@ components:
         subscriptionExpireTime:
           type: string
           format: date-time
+          maxLength: 64
           example: "2023-01-17T13:18:23.682Z"
           description: The subscription expiration time (in date-time format) requested by the API consumer. It must follow [RFC 3339](https://datatracker.ietf.org/doc/html/rfc3339#section-5.6) and must have time zone.
         subscriptionMaxEvents:
           type: integer
+          format: int32
           description: |
             Identifies the maximum number of event reports to be generated (>=1) requested by the API consumer - Once this number is reached, the subscription ends.
             Note on combined usage of `initialEvent` and `subscriptionMaxEvents`:
             If an event is triggered following `initialEvent` set to `true`, this event will be counted towards `subscriptionMaxEvents`.
           minimum: 1
+          maximum: 1000000
           example: 5
         initialEvent:
           type: boolean
@@ -486,77 +484,6 @@ components:
             subscriptionDetail:
               $ref: "#/components/schemas/SubscriptionDetailResponse"
 
-
-    SinkCredential:
-      type: object
-      description: A sink credential provides authentication or authorization information necessary to enable delivery of events to a target.
-      properties:
-        credentialType:
-          type: string
-          description: |
-            The type of the credential.
-            Note: Type of the credential - MUST be set to ACCESSTOKEN or PRIVATE_KEY_JWT for now
-          enum:
-            # - PLAIN  # not used in CAMARA
-            - ACCESSTOKEN
-            - PRIVATE_KEY_JWT
-      discriminator:
-        propertyName: credentialType
-        mapping:
-          # PLAIN: "#/components/schemas/PlainCredential"  # not used in CAMARA
-          ACCESSTOKEN: "#/components/schemas/AccessTokenCredential"
-          PRIVATE_KEY_JWT: "#/components/schemas/PrivateKeyJWTCredential"
-      required:
-        - credentialType
-    # PlainCredential:  # not used in CAMARA
-    #   type: object
-    #   description: A plain credential as a combination of an identifier and a secret.
-    #   allOf:
-    #     - $ref: "#/components/schemas/SinkCredential"
-    #     - type: object
-    #       required:
-    #         - identifier
-    #         - secret
-    #       properties:
-    #         identifier:
-    #           description: The identifier might be an account or username.
-    #           type: string
-    #         secret:
-    #           description: The secret might be a password or passphrase.
-    #           type: string
-    AccessTokenCredential:
-      type: object
-      description: An access token credential. This type of credential is meant to be used by API Consumers that have limited capabilities to handle authorization requests.
-      allOf:
-        - $ref: "#/components/schemas/SinkCredential"
-        - type: object
-          properties:
-            accessToken:
-              description: REQUIRED. An access token is a token granting access to the target resource.
-              type: string
-            accessTokenExpiresUtc:
-              type: string
-              format: date-time
-              description: |
-                REQUIRED. An absolute (UTC) timestamp at which the token shall be considered expired.
-                In the case of an ACCESS_TOKEN_EXPIRED termination reason, implementation should notify the client before the expiration date.
-                If the access token is a JWT and registered "exp" (Expiration Time) claim is present, the two expiry times should match.
-                It must follow [RFC 3339](https://datatracker.ietf.org/doc/html/rfc3339#section-5.6) and must have time zone.
-              example: "2023-07-03T12:27:08.312Z"
-            accessTokenType:
-              description: REQUIRED. Type of the access token (See [OAuth 2.0](https://tools.ietf.org/html/rfc6749#section-7.1)).
-              type: string
-              enum:
-                - bearer
-          required:
-            - accessToken
-            - accessTokenExpiresUtc
-            - accessTokenType
-    PrivateKeyJWTCredential:
-      type: object
-      description: Use PRIVATE_KEY_JWT to get an access token. The authorization server information needed for this type of sink credential (token endpoint, client ID, JWKS URL) is shared upfront between the client and the CAMARA entity. This type of credential is to be used by clients that have an authorization server.
-      allOf:
-        - $ref: "#/components/schemas/SinkCredential"
 
     SubscriptionDetailRequest:
       description: The detail of the requested event subscription.
@@ -641,6 +568,7 @@ components:
           $ref: "#/components/schemas/ConfigResponse"
         id:
           type: string
+          maxLength: 256
           description: The unique identifier of the subscription in the scope of the subscription manager. When this information is contained within an event notification, this concept SHALL be referred as subscriptionId as per Commonalities Event Notification Model.
           example: "1119920371"
         startsAt:
@@ -691,97 +619,29 @@ components:
         id:
           $ref: "#/components/schemas/SubscriptionId"
 
-    SubscriptionId:
-      type: string
-      description: The unique identifier of the subscription in the scope of the subscription manager. When this information is contained within an event notification, this concept SHALL be referred as subscriptionId as per Commonalities Event Notification Model.
-      example: qs15-h556-rt89-1298
-
     Device:
-      description: |
-        End-user device able to connect to a mobile network. Examples of devices include smartphones or IoT sensors/actuators.
-
-        The developer can choose to provide the below specified device identifiers:
-
-        * `ipv4Address`
-        * `ipv6Address`
-        * `phoneNumber`
-        * `networkAccessIdentifier`
-
-        NOTE1: the API provider might support only a subset of these options. The API consumer can provide multiple identifiers to be compatible across different API providers. In this case the identifiers MUST belong to the same device. Where more than one device identifier is provided, only one identifier will be selected by the implementation and this choice indicated to the API consumer in the response or event.
-        NOTE2: as for this Commonalities release, we are enforcing that the networkAccessIdentifier is only part of the schema for future-proofing, and CAMARA does not currently allow its use. After the CAMARA meta-release work is concluded and the relevant issues are resolved, its use will need to be explicitly documented in the guidelines.
-      type: object
-      properties:
-        phoneNumber:
-          $ref: "#/components/schemas/PhoneNumber"
-        networkAccessIdentifier:
-          $ref: "#/components/schemas/NetworkAccessIdentifier"
-        ipv4Address:
-          $ref: "#/components/schemas/DeviceIpv4Addr"
-        ipv6Address:
-          $ref: "#/components/schemas/DeviceIpv6Address"
-      minProperties: 1
+      $ref: '../common/CAMARA_common.yaml#/components/schemas/Device'
 
     PhoneNumber:
-      description: A public identifier addressing a telephone subscription. In mobile networks, it corresponds to the MSISDN (Mobile Station International Subscriber Directory Number). In order to be globally unique it has to be formatted in international format, according to E.164 standard, prefixed with '+'.
-      type: string
-      pattern: '^\+[1-9][0-9]{4,14}$'
-      example: "+123456789"
+      $ref: '../common/CAMARA_common.yaml#/components/schemas/PhoneNumber'
 
     NetworkAccessIdentifier:
-      description: A public identifier addressing a subscription in a mobile network. In 3GPP terminology, it corresponds to the GPSI formatted with the External Identifier ({Local Identifier}@{Domain Identifier}). Unlike the telephone number, the network access identifier is not subjected to portability ruling in force, and is individually managed by each operator.
-      type: string
-      example: "123456789@domain.com"
+      $ref: '../common/CAMARA_common.yaml#/components/schemas/NetworkAccessIdentifier'
 
     DeviceIpv4Addr:
-      type: object
-      description: |
-        The device should be identified by either the public (observed) IP address and port as seen by the application server, or the private (local) and any public (observed) IP addresses in use by the device (this information can be obtained by various means, for example from some DNS servers).
-
-        If the allocated and observed IP addresses are the same (i.e. NAT is not in use) then  the same address should be specified for both publicAddress and privateAddress.
-
-        If NAT64 is in use, the device should be identified by its publicAddress and publicPort, or separately by its allocated IPv6 address (field ipv6Address of the Device object)
-
-        In all cases, publicAddress must be specified, along with at least one of either privateAddress or publicPort, dependent upon which is known. In general, mobile devices cannot be identified by their public IPv4 address alone.
-      properties:
-        publicAddress:
-          $ref: "#/components/schemas/SingleIpv4Addr"
-        privateAddress:
-          $ref: "#/components/schemas/SingleIpv4Addr"
-        publicPort:
-          $ref: "#/components/schemas/Port"
-      anyOf:
-        - required: [publicAddress, privateAddress]
-        - required: [publicAddress, publicPort]
-      example:
-        publicAddress: "84.125.93.10"
-        publicPort: 59765
+      $ref: '../common/CAMARA_common.yaml#/components/schemas/DeviceIpv4Address'
 
     SingleIpv4Addr:
-      description: A single IPv4 address with no subnet mask.
-      type: string
-      format: ipv4
-      example: "84.125.93.10"
+      $ref: '../common/CAMARA_common.yaml#/components/schemas/SingleIpv4Address'
 
     Port:
-      description: TCP or UDP port number.
-      type: integer
-      minimum: 0
-      maximum: 65535
+      $ref: '../common/CAMARA_common.yaml#/components/schemas/Port'
 
     DeviceIpv6Address:
-      description: |
-        The device should be identified by the observed IPv6 address, or by any single IPv6 address from within the subnet allocated to the device (e.g. adding ::0 to the /64 prefix).
-      type: string
-      format: ipv6
-      example: 2001:db8:85a3:8d3:1319:8a2e:370:7344
+      $ref: '../common/CAMARA_common.yaml#/components/schemas/DeviceIpv6Address'
 
     DeviceResponse:
-      description: |
-        An identifier for the end-user equipment able to connect to the network that the response refers to. This parameter is only returned when the API consumer includes the `device` parameter in their request (i.e. they are using a two-legged access token), and is relevant when more than one device identifier is specified, as only one of those device identifiers is allowed in the response.
-        If the API consumer provides more than one device identifier in their request, the API provider must return a single identifier which is the one they are using to fulfil the request, even if the identifiers do not match the same device. API provider does not perform any logic to validate/correlate that the indicated device identifiers match the same device. No error should be returned if the identifiers are otherwise valid to prevent API consumers correlating different identifiers with a given end user.
-      allOf:
-        - $ref: "#/components/schemas/Device"
-        - maxProperties: 1
+      $ref: '../common/CAMARA_common.yaml#/components/schemas/DeviceResponse'
 
     Area:
       type: object
@@ -829,69 +689,22 @@ components:
         radius: 50000
 
     Point:
-      type: object
-      description: Coordinates (latitude, longitude) defining a location in a map.
-      required:
-        - latitude
-        - longitude
-      properties:
-        latitude:
-          $ref: "#/components/schemas/Latitude"
-        longitude:
-          $ref: "#/components/schemas/Longitude"
-      example:
-        latitude: 50.735851
-        longitude: 7.10066
+      $ref: '../common/CAMARA_common.yaml#/components/schemas/Point'
 
     Latitude:
-      description: Latitude component of a location.
-      type: number
-      format: double
-      minimum: -90
-      maximum: 90
-      example: 50.735851
+      $ref: '../common/CAMARA_common.yaml#/components/schemas/Latitude'
 
     Longitude:
-      description: Longitude component of location.
-      type: number
-      format: double
-      minimum: -180
-      maximum: 180
-      example: 7.10066
+      $ref: '../common/CAMARA_common.yaml#/components/schemas/Longitude'
 
     CloudEvent:
       description: The notification callback.
-      type: object
-      required:
-        - id
-        - source
-        - specversion
-        - type
-        - time
-        - data
-      properties:
-        id:
-          type: string
-          description: Identifier of this event, that must be unique in the source context.
-        source:
-          $ref: "#/components/schemas/Source"
-        type:
-          $ref: "#/components/schemas/NotificationEventType"
-        specversion:
-          type: string
-          description: Version of the specification to which this event conforms (must be 1.0 if it conforms to cloudevents 1.0.2 version).
-          enum:
-            - "1.0"
-        datacontenttype:
-          type: string
-          description: 'media-type that describes the event payload encoding, must be "application/json" for CAMARA APIs'
-          enum:
-            - application/json
-        data:
-          type: object
-          description: Event details payload described in each CAMARA API and referenced by its type.
-        time:
-          $ref: "#/components/schemas/DateTime"
+      allOf:
+        - $ref: '../common/CAMARA_event_common.yaml#/components/schemas/CloudEvent'
+        - type: object
+          properties:
+            type:
+              $ref: "#/components/schemas/NotificationEventType"
       discriminator:
         propertyName: "type"
         mapping:
@@ -902,26 +715,31 @@ components:
           org.camaraproject.geofencing-subscriptions.v0.subscription-ended: "#/components/schemas/EventSubscriptionEnded"
 
     Source:
-      type: string
-      format: uri-reference
-      minLength: 1
-      description: |
-        Identifies the context in which an event happened - be a non-empty `URI-reference` like:
-        - URI with a DNS authority:
-          * https://github.com/cloudevents
-          * mailto:cncf-wg-serverless@lists.cncf.io
-        - Universally-unique URN with a UUID:
-          * urn:uuid:6e8bc430-9c3a-11d9-9669-0800200c9a66
-        - Application-specific identifier:
-          * /cloudevents/spec/pull/123
-          * 1-555-123-4567
-      example: "https://notificationSendServer12.supertelco.com"
+      $ref: '../common/CAMARA_event_common.yaml#/components/schemas/Source'
 
     DateTime:
-      type: string
-      format: date-time
-      description: Timestamp of when the occurrence happened. It must follow [RFC 3339](https://datatracker.ietf.org/doc/html/rfc3339#section-5.6) and must have time zone.
-      example: "2018-04-05T17:31:00Z"
+      $ref: '../common/CAMARA_common.yaml#/components/schemas/DateTime'
+
+    SubscriptionId:
+      $ref: '../common/CAMARA_event_common.yaml#/components/schemas/SubscriptionId'
+
+    SinkCredential:
+      $ref: '../common/CAMARA_event_common.yaml#/components/schemas/SinkCredential'
+
+    AccessTokenCredential:
+      $ref: '../common/CAMARA_event_common.yaml#/components/schemas/AccessTokenCredential'
+
+    PrivateKeyJWTCredential:
+      $ref: '../common/CAMARA_event_common.yaml#/components/schemas/PrivateKeyJWTCredential'
+
+    HTTPSettings:
+      $ref: '../common/CAMARA_event_common.yaml#/components/schemas/HTTPSettings'
+
+    InitiationReason:
+      $ref: '../common/CAMARA_event_common.yaml#/components/schemas/InitiationReason'
+
+    UpdateReason:
+      $ref: '../common/CAMARA_event_common.yaml#/components/schemas/UpdateReason'
 
     EventAreaLeft:
       description: Event structure for event when the device leaves the area.
@@ -969,13 +787,7 @@ components:
         initiationDescription:
           description: Description about the start of the subscription.
           type: string
-
-    InitiationReason:
-      type: string
-      description: |
-        - SUBSCRIPTION_CREATED - Subscription created by API Server
-      enum:
-        - SUBSCRIPTION_CREATED
+          maxLength: 512
 
     EventSubscriptionUpdated:
       description: Event structure for event subscription updated
@@ -1005,15 +817,7 @@ components:
         updateDescription:
           description: Description about the subscription update.
           type: string
-
-    UpdateReason:
-      type: string
-      description: |
-        - SUBSCRIPTION_ACTIVE - API server transitioned susbcription status to `ACTIVE`
-        - SUBSCRIPTION_INACTIVE - API server transitioned susbcription status to `INACTIVE`
-      enum:
-        - SUBSCRIPTION_ACTIVE
-        - SUBSCRIPTION_INACTIVE
+          maxLength: 512
 
     EventSubscriptionEnded:
       description: Event structure for event subscription ends.
@@ -1081,6 +885,7 @@ components:
         terminationDescription:
           description: Explanation why a subscription ended or had to end.
           type: string
+          maxLength: 512
         subscriptionId:
           $ref: "#/components/schemas/SubscriptionId"
 
@@ -1117,23 +922,6 @@ components:
             protocolSettings:
               $ref: "#/components/schemas/HTTPSettings"
 
-    HTTPSettings:
-      type: object
-      properties:
-        headers:
-          type: object
-          description: |-
-            A set of key/value pairs that is copied into the HTTP request as custom headers.
-
-            NOTE: Use/Applicability of this concept has not been discussed in Commonalities under the scope of Meta Release v0.4. When required by an API project as an option to meet a UC/Requirement, please generate an issue for Commonalities discussion about it.
-          additionalProperties:
-            type: string
-        method:
-          type: string
-          description: The HTTP method to use for sending the message.
-          enum:
-            - POST
-
     MQTTSubscriptionRequest:
       allOf:
         - $ref: "#/components/schemas/SubscriptionRequest"
@@ -1155,16 +943,29 @@ components:
       properties:
         topicName:
           type: string
+          maxLength: 256
+          description: Name of the MQTT topic to use for delivering events.
         qos:
           type: integer
           format: int32
+          minimum: 0
+          maximum: 2
+          description: MQTT Quality of Service level (0=at most once, 1=at least once, 2=exactly once).
         retain:
           type: boolean
+          description: Whether the broker should retain the last event message for new subscribers.
         expiry:
           type: integer
           format: int32
+          minimum: 0
+          maximum: 2147483647
+          description: The message expiry interval in seconds. A value of 0 means the message does not expire.
         userProperties:
           type: object
+          description: User-defined MQTT properties to include in event messages.
+          additionalProperties:
+            type: string
+            maxLength: 512
       required:
         - topicName
 
@@ -1189,15 +990,22 @@ components:
       properties:
         address:
           type: string
+          maxLength: 512
+          description: The AMQP address (node name) to use as the target for event delivery.
         linkName:
           type: string
+          maxLength: 256
+          description: The AMQP link name to use when attaching to the target.
         senderSettlementMode:
           type: string
+          description: The sender settlement mode for the AMQP link (settled or unsettled).
           enum: ["settled", "unsettled"]
         linkProperties:
           type: object
+          description: Additional AMQP link properties.
           additionalProperties:
             type: string
+            maxLength: 1024
 
     ApacheKafkaSubscriptionRequest:
       allOf:
@@ -1220,12 +1028,22 @@ components:
       properties:
         topicName:
           type: string
+          maxLength: 249
+          description: Name of the Apache Kafka topic to use for delivering events.
         partitionKeyExtractor:
           type: string
+          maxLength: 512
+          description: Expression used to extract the partition key from the event payload.
         clientId:
           type: string
+          maxLength: 256
+          description: Kafka client identifier used for the producer connection.
         ackMode:
           type: integer
+          format: int32
+          minimum: 0
+          maximum: 2
+          description: Kafka acknowledgement mode (0=none, 1=leader, 2=all replicas).
       required:
         - topicName
 
@@ -1250,6 +1068,8 @@ components:
       properties:
         subject:
           type: string
+          maxLength: 256
+          description: Name of the NATS subject to use for delivering events.
       required:
         - subject
   responses:
@@ -1298,30 +1118,7 @@ components:
                 code: INVALID_SINK
                 message: sink not valid for the specified protocol
     Generic400:
-      description: Bad Request
-      headers:
-        x-correlator:
-          $ref: "#/components/headers/x-correlator"
-      content:
-        application/json:
-          schema:
-            allOf:
-              - $ref: "#/components/schemas/ErrorInfo"
-              - type: object
-                properties:
-                  status:
-                    enum:
-                      - 400
-                  code:
-                    enum:
-                      - INVALID_ARGUMENT
-          examples:
-            GENERIC_400_INVALID_ARGUMENT:
-              description: Invalid Argument. Generic Syntax Exception
-              value:
-                status: 400
-                code: INVALID_ARGUMENT
-                message: Client specified an invalid argument, request body or query param.
+      $ref: '../common/CAMARA_common.yaml#/components/responses/Generic400'
     SubscriptionIdRequired:
       description: Problem with the client request
       headers:
@@ -1354,30 +1151,7 @@ components:
                 code: INVALID_ARGUMENT
                 message: "Expected property is missing: subscriptionId"
     Generic401:
-      description: Unauthorized
-      headers:
-        x-correlator:
-          $ref: "#/components/headers/x-correlator"
-      content:
-        application/json:
-          schema:
-            allOf:
-              - $ref: "#/components/schemas/ErrorInfo"
-              - type: object
-                properties:
-                  status:
-                    enum:
-                      - 401
-                  code:
-                    enum:
-                      - UNAUTHENTICATED
-          examples:
-            GENERIC_401_UNAUTHENTICATED:
-              description: Request cannot be authenticated and a new authentication is required
-              value:
-                status: 401
-                code: UNAUTHENTICATED
-                message: Request not authenticated due to missing, invalid, or expired credentials. A new authentication is required.
+      $ref: '../common/CAMARA_common.yaml#/components/responses/Generic401'
     SubscriptionPermissionDenied403:
       description: Client does not have sufficient permission.
       headers:
@@ -1562,7 +1336,7 @@ components:
     Generic429:
       description: Too Many Requests
       headers:
-        X-Correlator:
+        x-correlator:
           $ref: "#/components/headers/x-correlator"
       content:
         application/json:
