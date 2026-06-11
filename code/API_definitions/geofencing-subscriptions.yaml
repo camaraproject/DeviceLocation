@@ -447,14 +447,14 @@ components:
             Example: Consumer request area entered event. If consumer sets initialEvent to true and device is already in the geofence, an event is triggered.
 
     ConfigRequest:
+      description: |
+        Implementation-specific configuration parameters are needed by the subscription manager for acquiring events.
+        In CAMARA we have predefined attributes like `subscriptionExpireTime`, `subscriptionMaxEvents`, `initialEvent`.
+        Specific event type attributes requested by the client must be defined in `subscriptionDetail`.
+        Note: If a request is performed for several event types, all subscribed events will use the same `config` parameters.
       allOf:
         - $ref: "#/components/schemas/Config"
-        - description: |
-            Implementation-specific configuration parameters are needed by the subscription manager for acquiring events.
-            In CAMARA we have predefined attributes like `subscriptionExpireTime`, `subscriptionMaxEvents`, `initialEvent`.
-            Specific event type attributes requested by the client must be defined in `subscriptionDetail`.
-            Note: If a request is performed for several event types, all subscribed events will use the same `config` parameters.
-          type: object
+        - type: object
           required:
             - subscriptionDetail
           properties:
@@ -462,14 +462,14 @@ components:
               $ref: "#/components/schemas/SubscriptionDetailRequest"
 
     ConfigResponse:
+      description: |
+        Implementation-specific configuration parameters are needed by the subscription manager for acquiring events.
+        In CAMARA we have predefined attributes like `subscriptionExpireTime`, `subscriptionMaxEvents`, `initialEvent`.
+        Specific event type attributes granted by the implementation are included in `subscriptionDetail`.
+        Note: If a request is performed for several event types, all subscribed events will use the same `config` parameters.
       allOf:
         - $ref: "#/components/schemas/Config"
-        - description: |
-            Implementation-specific configuration parameters are needed by the subscription manager for acquiring events.
-            In CAMARA we have predefined attributes like `subscriptionExpireTime`, `subscriptionMaxEvents`, `initialEvent`.
-            Specific event type attributes granted by the implementation are included in `subscriptionDetail`.
-            Note: If a request is performed for several event types, all subscribed events will use the same `config` parameters.
-          type: object
+        - type: object
           required:
             - subscriptionDetail
           properties:
@@ -544,6 +544,7 @@ components:
         sink:
           type: string
           format: uri
+          maxLength: 2048
           pattern: ^https:\/\/.+$
           description: The address to which events shall be delivered using the selected protocol.
           example: "https://endpoint.example.com/sink"
@@ -566,6 +567,7 @@ components:
         startsAt:
           type: string
           format: date-time
+          maxLength: 64
           description: |
             Date when the event subscription will begin/began
             It must follow [RFC 3339](https://datatracker.ietf.org/doc/html/rfc3339#section-5.6) and must have time zone.
@@ -573,6 +575,7 @@ components:
         expiresAt:
           type: string
           format: date-time
+          maxLength: 64
           description: |
             Date when the event subscription will expire. Only provided when `subscriptionExpireTime` is indicated by API client or Telco Operator has specific policy about that.
             It must follow [RFC 3339](https://datatracker.ietf.org/doc/html/rfc3339#section-5.6) and must have time zone.
@@ -894,6 +897,7 @@ components:
         - ACCESS_TOKEN_EXPIRED
 
     HTTPSubscriptionRequest:
+      description: Subscription request for event delivery over HTTP.
       allOf:
         - $ref: "#/components/schemas/SubscriptionRequest"
         - type: object
@@ -902,6 +906,7 @@ components:
               $ref: "#/components/schemas/HTTPSettings"
 
     HTTPSubscriptionResponse:
+      description: Subscription response for event delivery over HTTP.
       allOf:
         - $ref: "#/components/schemas/Subscription"
         - type: object
