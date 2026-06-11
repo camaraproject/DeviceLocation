@@ -223,7 +223,8 @@ paths:
             - location-retrieval:read
 
 components:
-  securitySchemes:    openId:
+  securitySchemes:
+    openId:
       description: OpenID Connect authentication
       type: openIdConnect
       openIdConnectUrl: https://example.com/.well-known/openid-configuration
