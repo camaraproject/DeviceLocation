@@ -80,6 +80,21 @@ Feature: CAMARA Device location verification API, vwip - Operation verifyLocatio
     And the response property "$.lastLocationTime" exists
     And the response property "$.matchRate" does not exist
 
+  @location_verification_05_device_echoed_in_response_for_2legged_token
+  Scenario: Device identifier echoed in response when using 2-legged access token with multiple identifiers
+    # When a 2-legged access token is used and the request contains multiple device identifiers,
+    # the server must return the device identifier it used for the location check
+    Given the header "Authorization" is set to a valid 2-legged access token which does not identify a single device
+    And the request body property "$.device" includes multiple valid device identifiers
+    And the request body property "$.area" is set to a valid area covered by the service
+    When the request "verifyLocation" is sent
+    Then the response status code is 200
+    And the response header "Content-Type" is "application/json"
+    And the response header "x-correlator" has same value as the request header "x-correlator"
+    And the response body complies with the OAS schema at "/components/schemas/VerifyLocationResponse"
+    And the response property "$.device" exists
+    And the response property "$.device" complies with the OAS schema at "/components/schemas/DeviceResponse"
+
   # Error scenarios for management of input parameter device
 
   @location_verification_C01.01_device_empty
@@ -120,7 +135,7 @@ Feature: CAMARA Device location verification API, vwip - Operation verifyLocatio
     And the response property "$.code" is "IDENTIFIER_NOT_FOUND"
     And the response property "$.message" contains a user friendly text
 
-  @location_verification_C02.04_unnecessary_device
+  @location_verification_C01.04_unnecessary_device
   Scenario: Device not to be included when it can be deduced from the access token
     Given the header "Authorization" is set to a valid access token identifying a device
     And the request body property "$.device" is set to a valid device
@@ -184,7 +199,7 @@ Feature: CAMARA Device location verification API, vwip - Operation verifyLocatio
 
   @location_verification_400.3_other_input_properties_schema_not_compliant
   # Test other input properties in addition to device
-  Scenario Outline: Input property values doe not comply with the schema
+  Scenario Outline: Input property values do not comply with the schema
     Given the request body property "<input_property>" does not comply with the OAS schema at <oas_spec_schema>
     When the request "verifyLocation" is sent
     Then the response status code is 400
@@ -217,6 +232,15 @@ Feature: CAMARA Device location verification API, vwip - Operation verifyLocatio
       | $.area.center.latitude  |
       | $.area.center.longitude |
       | $.area.radius           |
+
+  @location_verification_400.5_invalid_x-correlator
+  Scenario: Invalid x-correlator value
+    Given the header "x-correlator" does not comply with the OAS schema at "/components/schemas/XCorrelator"
+    When the request "verifyLocation" is sent
+    Then the response status code is 400
+    And the response property "$.status" is 400
+    And the response property "$.code" is "INVALID_ARGUMENT"
+    And the response property "$.message" contains a user friendly text
 
   # Error code 401
 
