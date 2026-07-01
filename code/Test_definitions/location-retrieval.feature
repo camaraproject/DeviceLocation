@@ -194,6 +194,15 @@ Feature: CAMARA Device location retrieval API, vwip - Operation retrieveLocation
       | $.maxAge       | /components/schemas/RetrievalLocationRequest/properties/maxAge               |
       | $.maxSurface   | /components/schemas/RetrievalLocationRequest/properties/maxSurface           |
 
+  @location_retrieval_400.3_invalid_x-correlator
+  Scenario: Invalid x-correlator value
+    Given the header "x-correlator" does not comply with the OAS schema at "/components/schemas/XCorrelator"
+    When the request "retrieveLocation" is sent
+    Then the response status code is 400
+    And the response property "$.status" is 400
+    And the response property "$.code" is "INVALID_ARGUMENT"
+    And the response property "$.message" contains a user friendly text
+
   # Error code 401
 
   @location_retrieval_401.1_no_authorization_header

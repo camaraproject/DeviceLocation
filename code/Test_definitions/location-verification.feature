@@ -135,7 +135,7 @@ Feature: CAMARA Device location verification API, vwip - Operation verifyLocatio
     And the response property "$.code" is "IDENTIFIER_NOT_FOUND"
     And the response property "$.message" contains a user friendly text
 
-  @location_verification_C02.04_unnecessary_device
+  @location_verification_C01.04_unnecessary_device
   Scenario: Device not to be included when it can be deduced from the access token
     Given the header "Authorization" is set to a valid access token identifying a device
     And the request body property "$.device" is set to a valid device
@@ -232,6 +232,15 @@ Feature: CAMARA Device location verification API, vwip - Operation verifyLocatio
       | $.area.center.latitude  |
       | $.area.center.longitude |
       | $.area.radius           |
+
+  @location_verification_400.5_invalid_x-correlator
+  Scenario: Invalid x-correlator value
+    Given the header "x-correlator" does not comply with the OAS schema at "/components/schemas/XCorrelator"
+    When the request "verifyLocation" is sent
+    Then the response status code is 400
+    And the response property "$.status" is 400
+    And the response property "$.code" is "INVALID_ARGUMENT"
+    And the response property "$.message" contains a user friendly text
 
   # Error code 401
 

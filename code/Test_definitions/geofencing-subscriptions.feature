@@ -166,6 +166,41 @@ Feature: Camara Geofencing Subscriptions API, vwip - Operations on subscriptions
     And type="org.camaraproject.geofencing-subscriptions.v0.subscription-updated"
     And the notification property "$.data.subscriptionId" is equal to the existing subscriptionId
 
+  @geofencing_subscriptions_creation_with_accesstoken_sink_credential
+  Scenario: Create subscription with ACCESSTOKEN sink credential
+    Given a valid subscription request body
+    And the request body property "$.sinkCredential.credentialType" is set to "ACCESSTOKEN"
+    And the request body property "$.sinkCredential.accessTokenType" is set to "bearer"
+    And the request body property "$.sinkCredential.accessToken" is set to a valid token value
+    When the request "createGeofencingSubscription" is sent
+    Then the response code is 201 or 202
+    And the response header "Content-Type" is "application/json"
+    And the response header "x-correlator" has the same value as the request header "x-correlator"
+    And the response body complies with the OAS schema at "#/components/schemas/Subscription"
+
+  @geofencing_subscriptions_creation_with_private_key_jwt_out_of_band
+  Scenario: Create subscription with PRIVATE_KEY_JWT sink credential (pre-provisioned out of band)
+    Given the PRIVATE_KEY_JWT mechanism has been pre-configured out-of-band for this implementation
+    And a valid subscription request body
+    And the request body property "$.sinkCredential.credentialType" is set to "PRIVATE_KEY_JWT"
+    When the request "createGeofencingSubscription" is sent
+    Then the response code is 201 or 202
+    And the response header "Content-Type" is "application/json"
+    And the response header "x-correlator" has the same value as the request header "x-correlator"
+    And the response body complies with the OAS schema at "#/components/schemas/Subscription"
+
+  @geofencing_subscriptions_creation_with_private_key_jwt_in_band
+  Scenario: Create subscription with PRIVATE_KEY_JWT sink credential (in-band provisioning)
+    Given the PRIVATE_KEY_JWT mechanism supports in-band key provisioning for this implementation
+    And a valid subscription request body
+    And the request body property "$.sinkCredential.credentialType" is set to "PRIVATE_KEY_JWT"
+    And the request body includes the public key for notification verification
+    When the request "createGeofencingSubscription" is sent
+    Then the response code is 201 or 202
+    And the response header "Content-Type" is "application/json"
+    And the response header "x-correlator" has the same value as the request header "x-correlator"
+    And the response body complies with the OAS schema at "#/components/schemas/Subscription"
+
   # Error scenarios for management of input parameter device
 
   @geofencing_subscriptions_C01.01_device_empty
@@ -334,6 +369,16 @@ Feature: Camara Geofencing Subscriptions API, vwip - Operations on subscriptions
     And the response property "$.code" is "INVALID_SINK"
     And the response property "$.message" contains a user friendly text
 
+  @geofencing_subscriptions_400.8_invalid_x-correlator
+  Scenario: Invalid x-correlator value
+    Given a valid geofencing subscription request body
+    And the header "x-correlator" does not comply with the OAS schema at "/components/schemas/XCorrelator"
+    When the request "createGeofencingSubscription" is sent
+    Then the response status code is 400
+    And the response property "$.status" is 400
+    And the response property "$.code" is "INVALID_ARGUMENT"
+    And the response property "$.message" contains a user friendly text
+
   # Error code 401
 
   @geofencing_subscriptions_creation_401.1_no_authorization_header
@@ -387,6 +432,96 @@ Feature: Camara Geofencing Subscriptions API, vwip - Operations on subscriptions
     And the response property "$.status" is 401
     And the response property "$.code" is "UNAUTHENTICATED" or "AUTHENTICATION_REQUIRED"
     And the response property "$.message" contains a user friendly text
+
+  @geofencing_subscriptions_401_expired_access_token_for_retrieve_subscription
+  Scenario: Expired access token for retrieve subscription
+    Given the header "Authorization" is set to an expired access token
+    And the path parameter "subscriptionId" is set to an existing subscription identifier
+    When the request "retrieveGeofencingSubscription" is sent
+    Then the response status code is 401
+    And the response header "Content-Type" is "application/json"
+    And the response property "$.status" is 401
+    And the response property "$.code" is "UNAUTHENTICATED"
+    And the response property "$.message" contains a user friendly text
+
+  @geofencing_subscriptions_401_invalid_access_token_for_retrieve_subscription
+  Scenario: Invalid access token for retrieve subscription
+    Given the header "Authorization" is set to an invalid access token
+    And the path parameter "subscriptionId" is set to an existing subscription identifier
+    When the request "retrieveGeofencingSubscription" is sent
+    Then the response status code is 401
+    And the response header "Content-Type" is "application/json"
+    And the response property "$.status" is 401
+    And the response property "$.code" is "UNAUTHENTICATED"
+    And the response property "$.message" contains a user friendly text
+
+  @geofencing_subscriptions_401_no_authorization_header_for_list_subscriptions
+  Scenario: No Authorization header for list subscriptions
+    Given the header "Authorization" is removed
+    When the request "retrieveGeofencingSubscriptionList" is sent
+    Then the response status code is 401
+    And the response header "Content-Type" is "application/json"
+    And the response property "$.status" is 401
+    And the response property "$.code" is "UNAUTHENTICATED"
+    And the response property "$.message" contains a user friendly text
+
+  @geofencing_subscriptions_401_expired_access_token_for_list_subscriptions
+  Scenario: Expired access token for list subscriptions
+    Given the header "Authorization" is set to an expired access token
+    When the request "retrieveGeofencingSubscriptionList" is sent
+    Then the response status code is 401
+    And the response header "Content-Type" is "application/json"
+    And the response property "$.status" is 401
+    And the response property "$.code" is "UNAUTHENTICATED"
+    And the response property "$.message" contains a user friendly text
+
+  @geofencing_subscriptions_401_invalid_access_token_for_list_subscriptions
+  Scenario: Invalid access token for list subscriptions
+    Given the header "Authorization" is set to an invalid access token
+    When the request "retrieveGeofencingSubscriptionList" is sent
+    Then the response status code is 401
+    And the response header "Content-Type" is "application/json"
+    And the response property "$.status" is 401
+    And the response property "$.code" is "UNAUTHENTICATED"
+    And the response property "$.message" contains a user friendly text
+
+  @geofencing_subscriptions_401_expired_access_token_for_delete_subscription
+  Scenario: Expired access token for delete subscription
+    Given the header "Authorization" is set to an expired access token
+    And the path parameter "subscriptionId" is set to an existing subscription identifier
+    When the request "deleteGeofencingSubscription" is sent
+    Then the response status code is 401
+    And the response header "Content-Type" is "application/json"
+    And the response property "$.status" is 401
+    And the response property "$.code" is "UNAUTHENTICATED"
+    And the response property "$.message" contains a user friendly text
+
+  @geofencing_subscriptions_401_invalid_access_token_for_delete_subscription
+  Scenario: Invalid access token for delete subscription
+    Given the header "Authorization" is set to an invalid access token
+    And the path parameter "subscriptionId" is set to an existing subscription identifier
+    When the request "deleteGeofencingSubscription" is sent
+    Then the response status code is 401
+    And the response header "Content-Type" is "application/json"
+    And the response property "$.status" is 401
+    And the response property "$.code" is "UNAUTHENTICATED"
+    And the response property "$.message" contains a user friendly text
+
+  # Error code 403
+
+  @geofencing_subscriptions_403_subscription_mismatch
+  Scenario Outline: Access to subscription belonging to a different API client
+    Given the path parameter "subscriptionId" is set to an identifier of a valid subscription belonging to a different API client
+    When the request "<operation>" is sent
+    Then the response status code is 403
+    And the response property "$.status" is 403
+    And the response property "$.code" is "SUBSCRIPTION_MISMATCH"
+    And the response property "$.message" contains a user friendly text
+
+    Examples:
+      | operation                      |
+      | retrieveGeofencingSubscription |
+      | deleteGeofencingSubscription   |
 
   # Error code 404
 
