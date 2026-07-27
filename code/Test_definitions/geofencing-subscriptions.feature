@@ -50,7 +50,7 @@ Feature: Camara Geofencing Subscriptions API, vwip - Operations on subscriptions
     And event notification "subscription-started" is received on callback-url
     And notification body complies with the OAS schema at "#/components/schemas/EventSubscriptionStarted"
     And type="org.camaraproject.geofencing-subscriptions.v0.subscription-started"
-    And the response property "$.initiationReason" is "SUBSCRIPTION_CREATED"
+    And the response property "$.data.initiationReason" is "SUBSCRIPTION_CREATED"
 
   @geofencing_subscriptions_04_Operation_to_retrieve_list_of_subscriptions_when_no_records
   Scenario: Get a list of Geofencing subscriptions when no subscriptions available
@@ -95,7 +95,7 @@ Feature: Camara Geofencing Subscriptions API, vwip - Operations on subscriptions
     Then the event notification "subscription-ended" is received on callback-url
     And notification body complies with the OAS schema at "#/components/schemas/EventSubscriptionEnded"
     And type="org.camaraproject.geofencing-subscriptions.v0.subscription-ended"
-    And the response property "$.terminationReason" is "SUBSCRIPTION_EXPIRED"
+    And the response property "$.data.terminationReason" is "SUBSCRIPTION_EXPIRED"
 
   @geofencing_subscriptions_09_subscription_ends_on_max_events
   Scenario: Receive notification for subscription-ended event on max events reached
@@ -105,7 +105,7 @@ Feature: Camara Geofencing Subscriptions API, vwip - Operations on subscriptions
     And event notification "subscription-ended" is received on callback-url
     And notification body complies with the OAS schema at "#/components/schemas/EventSubscriptionEnded"
     And type="org.camaraproject.geofencing-subscriptions.v0.subscription-ended"
-    And the response property "$.terminationReason" is "MAX_EVENTS_REACHED"
+    And the response property "$.data.terminationReason" is "MAX_EVENTS_REACHED"
 
   @geofencing_subscriptions_10_subscription_delete_event_validation
   Scenario: Receive notification for subscription-ended event on deletion
@@ -115,7 +115,17 @@ Feature: Camara Geofencing Subscriptions API, vwip - Operations on subscriptions
     And event notification "subscription-ended" is received on callback-url
     And notification body complies with the OAS schema at "#/components/schemas/EventSubscriptionEnded"
     And type="org.camaraproject.geofencing-subscriptions.v0.subscription-ended"
-    And the response property "$.terminationReason" is "SUBSCRIPTION_DELETED"
+    And the response property "$.data.terminationReason" is "SUBSCRIPTION_DELETED"
+
+  @geofencing_subscriptions_subscription_ends_on_access_token_expired
+  Scenario: Receive notification for subscription-ended event on access token expiry
+    Given an existing Geofencing subscription created with a "$.sinkCredential.credentialType" set to "ACCESSTOKEN"
+    And the sinkCredential access token has an expiration time in the near future
+    When the sinkCredential access token expires
+    Then the event notification "subscription-ended" is received on callback-url
+    And notification body complies with the OAS schema at "#/components/schemas/EventSubscriptionEnded"
+    And type="org.camaraproject.geofencing-subscriptions.v0.subscription-ended"
+    And the response property "$.data.terminationReason" is "ACCESS_TOKEN_EXPIRED"
 
   @geofencing_subscriptions_11_receive_notification_when_device_enters_geofence
   Scenario: Receive notification for area-entered event
@@ -146,6 +156,50 @@ Feature: Camara Geofencing Subscriptions API, vwip - Operations on subscriptions
     Then the response code is 201 or 202
     And an event notification of the subscribed type is received on callback-url
     And notification body complies with the OAS schema at "#/components/schemas/CloudEvent"
+
+  @geofencing_subscriptions_receive_notification_when_subscription_is_updated
+  Scenario: Receive notification for subscription-updated event
+    Given an existing Geofencing subscription that the server updates (e.g. area adjustment due to system constraints)
+    When the subscription is updated by the server
+    Then the event notification "subscription-updated" is received on callback-url
+    And notification body complies with the OAS schema at "#/components/schemas/EventSubscriptionUpdated"
+    And type="org.camaraproject.geofencing-subscriptions.v0.subscription-updated"
+    And the notification property "$.data.subscriptionId" is equal to the existing subscriptionId
+
+  @geofencing_subscriptions_creation_with_accesstoken_sink_credential
+  Scenario: Create subscription with ACCESSTOKEN sink credential
+    Given a valid subscription request body
+    And the request body property "$.sinkCredential.credentialType" is set to "ACCESSTOKEN"
+    And the request body property "$.sinkCredential.accessTokenType" is set to "bearer"
+    And the request body property "$.sinkCredential.accessToken" is set to a valid token value
+    When the request "createGeofencingSubscription" is sent
+    Then the response code is 201 or 202
+    And the response header "Content-Type" is "application/json"
+    And the response header "x-correlator" has the same value as the request header "x-correlator"
+    And the response body complies with the OAS schema at "#/components/schemas/Subscription"
+
+  @geofencing_subscriptions_creation_with_private_key_jwt_out_of_band
+  Scenario: Create subscription with PRIVATE_KEY_JWT sink credential (pre-provisioned out of band)
+    Given the PRIVATE_KEY_JWT mechanism has been pre-configured out-of-band for this implementation
+    And a valid subscription request body
+    And the request body property "$.sinkCredential.credentialType" is set to "PRIVATE_KEY_JWT"
+    When the request "createGeofencingSubscription" is sent
+    Then the response code is 201 or 202
+    And the response header "Content-Type" is "application/json"
+    And the response header "x-correlator" has the same value as the request header "x-correlator"
+    And the response body complies with the OAS schema at "#/components/schemas/Subscription"
+
+  @geofencing_subscriptions_creation_with_private_key_jwt_in_band
+  Scenario: Create subscription with PRIVATE_KEY_JWT sink credential (in-band provisioning)
+    Given the PRIVATE_KEY_JWT mechanism supports in-band key provisioning for this implementation
+    And a valid subscription request body
+    And the request body property "$.sinkCredential.credentialType" is set to "PRIVATE_KEY_JWT"
+    And the request body includes the public key for notification verification
+    When the request "createGeofencingSubscription" is sent
+    Then the response code is 201 or 202
+    And the response header "Content-Type" is "application/json"
+    And the response header "x-correlator" has the same value as the request header "x-correlator"
+    And the response body complies with the OAS schema at "#/components/schemas/Subscription"
 
   # Error scenarios for management of input parameter device
 
@@ -306,42 +360,23 @@ Feature: Camara Geofencing Subscriptions API, vwip - Operations on subscriptions
     And the response property "$.message" contains a user friendly text
 
   @geofencing_subscriptions_400.7_invalid_url
-  Scenario: Subscription creation with sink
+  Scenario: Subscription creation with invalid sink URL
     Given a valid subscription request body
-    When the request "createGeofencingSubscription" is sent
     And the request property "$.sink" is not matching the defined pattern
-    Then the response property "$.status" is 400
+    When the request "createGeofencingSubscription" is sent
+    Then the response status code is 400
+    And the response property "$.status" is 400
     And the response property "$.code" is "INVALID_SINK"
     And the response property "$.message" contains a user friendly text
 
-  @geofencing_subscriptions_400.8_no_authorization_header_for_create_subscription
-  Scenario: No Authorization header for create subscription
+  @geofencing_subscriptions_400.8_invalid_x-correlator
+  Scenario: Invalid x-correlator value
     Given a valid geofencing subscription request body
-    And the request does not include the "Authorization" header
+    And the header "x-correlator" does not comply with the OAS schema at "/components/schemas/XCorrelator"
     When the request "createGeofencingSubscription" is sent
-    Then the response status code is 401
-    And the response property "$.status" is 401
-    And the response property "$.code" is "UNAUTHENTICATED"
-    And the response property "$.message" contains a user friendly text
-
-  @geofencing_subscriptions_400.9_expired_access_token_for_create_subscription
-  Scenario: Expired access token for create subscription
-    Given a valid geofencing subscription request body and header "Authorization" is expired
-    When the request "createGeofencingSubscription" is sent
-    Then the response status code is 401
-    And the response property "$.status" is 401
-    And the response property "$.code" is "UNAUTHENTICATED"
-    And the response property "$.message" contains a user friendly text
-
-  @geofencing_subscriptions_400.10_invalid_access_token_for_create_subscription
-  Scenario: Invalid access token for create subscription
-    Given a valid geofencing subscription request body
-    And header "Authorization" set to an invalid access token
-    When the request "createGeofencingSubscription" is sent
-    Then the response status code is 401
-    And the response header "Content-Type" is "application/json"
-    And the response property "$.status" is 401
-    And the response property "$.code" is "UNAUTHENTICATED"
+    Then the response status code is 400
+    And the response property "$.status" is 400
+    And the response property "$.code" is "INVALID_ARGUMENT"
     And the response property "$.message" contains a user friendly text
 
   # Error code 401
@@ -398,6 +433,96 @@ Feature: Camara Geofencing Subscriptions API, vwip - Operations on subscriptions
     And the response property "$.code" is "UNAUTHENTICATED" or "AUTHENTICATION_REQUIRED"
     And the response property "$.message" contains a user friendly text
 
+  @geofencing_subscriptions_401_expired_access_token_for_retrieve_subscription
+  Scenario: Expired access token for retrieve subscription
+    Given the header "Authorization" is set to an expired access token
+    And the path parameter "subscriptionId" is set to an existing subscription identifier
+    When the request "retrieveGeofencingSubscription" is sent
+    Then the response status code is 401
+    And the response header "Content-Type" is "application/json"
+    And the response property "$.status" is 401
+    And the response property "$.code" is "UNAUTHENTICATED"
+    And the response property "$.message" contains a user friendly text
+
+  @geofencing_subscriptions_401_invalid_access_token_for_retrieve_subscription
+  Scenario: Invalid access token for retrieve subscription
+    Given the header "Authorization" is set to an invalid access token
+    And the path parameter "subscriptionId" is set to an existing subscription identifier
+    When the request "retrieveGeofencingSubscription" is sent
+    Then the response status code is 401
+    And the response header "Content-Type" is "application/json"
+    And the response property "$.status" is 401
+    And the response property "$.code" is "UNAUTHENTICATED"
+    And the response property "$.message" contains a user friendly text
+
+  @geofencing_subscriptions_401_no_authorization_header_for_list_subscriptions
+  Scenario: No Authorization header for list subscriptions
+    Given the header "Authorization" is removed
+    When the request "retrieveGeofencingSubscriptionList" is sent
+    Then the response status code is 401
+    And the response header "Content-Type" is "application/json"
+    And the response property "$.status" is 401
+    And the response property "$.code" is "UNAUTHENTICATED"
+    And the response property "$.message" contains a user friendly text
+
+  @geofencing_subscriptions_401_expired_access_token_for_list_subscriptions
+  Scenario: Expired access token for list subscriptions
+    Given the header "Authorization" is set to an expired access token
+    When the request "retrieveGeofencingSubscriptionList" is sent
+    Then the response status code is 401
+    And the response header "Content-Type" is "application/json"
+    And the response property "$.status" is 401
+    And the response property "$.code" is "UNAUTHENTICATED"
+    And the response property "$.message" contains a user friendly text
+
+  @geofencing_subscriptions_401_invalid_access_token_for_list_subscriptions
+  Scenario: Invalid access token for list subscriptions
+    Given the header "Authorization" is set to an invalid access token
+    When the request "retrieveGeofencingSubscriptionList" is sent
+    Then the response status code is 401
+    And the response header "Content-Type" is "application/json"
+    And the response property "$.status" is 401
+    And the response property "$.code" is "UNAUTHENTICATED"
+    And the response property "$.message" contains a user friendly text
+
+  @geofencing_subscriptions_401_expired_access_token_for_delete_subscription
+  Scenario: Expired access token for delete subscription
+    Given the header "Authorization" is set to an expired access token
+    And the path parameter "subscriptionId" is set to an existing subscription identifier
+    When the request "deleteGeofencingSubscription" is sent
+    Then the response status code is 401
+    And the response header "Content-Type" is "application/json"
+    And the response property "$.status" is 401
+    And the response property "$.code" is "UNAUTHENTICATED"
+    And the response property "$.message" contains a user friendly text
+
+  @geofencing_subscriptions_401_invalid_access_token_for_delete_subscription
+  Scenario: Invalid access token for delete subscription
+    Given the header "Authorization" is set to an invalid access token
+    And the path parameter "subscriptionId" is set to an existing subscription identifier
+    When the request "deleteGeofencingSubscription" is sent
+    Then the response status code is 401
+    And the response header "Content-Type" is "application/json"
+    And the response property "$.status" is 401
+    And the response property "$.code" is "UNAUTHENTICATED"
+    And the response property "$.message" contains a user friendly text
+
+  # Error code 403
+
+  @geofencing_subscriptions_403_subscription_mismatch
+  Scenario Outline: Access to subscription belonging to a different API client
+    Given the path parameter "subscriptionId" is set to an identifier of a valid subscription belonging to a different API client
+    When the request "<operation>" is sent
+    Then the response status code is 403
+    And the response property "$.status" is 403
+    And the response property "$.code" is "SUBSCRIPTION_MISMATCH"
+    And the response property "$.message" contains a user friendly text
+
+    Examples:
+      | operation                      |
+      | retrieveGeofencingSubscription |
+      | deleteGeofencingSubscription   |
+
   # Error code 404
 
   @geofencing_subscriptions_404.1_retrieve_unknown_subscriptions_id
@@ -422,7 +547,7 @@ Feature: Camara Geofencing Subscriptions API, vwip - Operations on subscriptions
 
   @geofencing_subscriptions_422.1_create_with_an_unsupported_area
   Scenario: Create subscription with an unsupported area
-    Given the request body property "$.area" is set to an unsupported / uncovered area
+    Given the request body property "$.config.subscriptionDetail.area" is set to an unsupported / uncovered area
     When the request "createGeofencingSubscription" is sent
     Then the response status code is 422
     And the response property "$.status" is 422
@@ -431,7 +556,7 @@ Feature: Camara Geofencing Subscriptions API, vwip - Operations on subscriptions
 
   @geofencing_subscriptions_422.2_create_with_an_invalid_area
   Scenario: Create subscription with an invalid area
-    Given the request body property "$.area" is set with an too small area-size
+    Given the request body property "$.config.subscriptionDetail.area" is set with an too small area-size
     When the request "createGeofencingSubscription" is sent
     Then the response status code is 422
     And the response property "$.status" is 422

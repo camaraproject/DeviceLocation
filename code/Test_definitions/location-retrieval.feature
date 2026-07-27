@@ -49,6 +49,19 @@ Feature: CAMARA Device location retrieval API, vwip - Operation retrieveLocation
     And the response header "x-correlator" has same value as the request header "x-correlator"
     And the response body complies with the OAS schema at "#/components/schemas/Location"
 
+  @location_retrieval_200.3_location_retrieval_returns_polygon
+  Scenario: Retrieve location of a device returned as a polygon area
+    # This scenario applies only to implementations that can return a POLYGON area type
+    Given that the implementation is able to return a location of type POLYGON
+    And a valid testing device supported by the service for which the implementation returns a polygon area, identified by the token or provided in the request body
+    When the request "retrieveLocation" is sent
+    Then the response status code is 200
+    And the response header "Content-Type" is "application/json"
+    And the response header "x-correlator" has same value as the request header "x-correlator"
+    And the response body complies with the OAS schema at "#/components/schemas/Location"
+    And the response property "$.area.areaType" is "POLYGON"
+    And the response property "$.area.boundary" is a non-empty array
+
   @location_retrieval_200.2_location_retrieval_for_device_with_maxAge
   Scenario: Retrieve location of a device specifying maxAge
     # maxAge could be tested with several values with scenario variable
@@ -137,7 +150,6 @@ Feature: CAMARA Device location retrieval API, vwip - Operation retrieveLocation
   Scenario: Service not available for the device
     Given that the service is not available for all devices commercialized by the API provider
     And a valid device, identified by the token or provided in the request body, for which the service is not applicable
-    And a valid device, provided in the request body, for which the service is not applicable
     When the request "retrieveLocation" is sent
     Then the response status code is 422
     And the response property "$.status" is 422
@@ -168,10 +180,23 @@ Feature: CAMARA Device location retrieval API, vwip - Operation retrieveLocation
     And the response property "$.code" is "INVALID_ARGUMENT"
     And the response property "$.message" contains a user friendly text
 
-  @location_retrieval_400.2_max_age_schema_compliant
-  Scenario: Input property values doe not comply with the schema
-    Given a valid testing device supported by the service, identified by the token or provided in the request body
-    And the "maxAge" is set to 6a0
+  @location_retrieval_400.2_other_input_properties_schema_not_compliant
+  Scenario Outline: Input property values do not comply with the schema
+    Given the request body property "<input_property>" does not comply with the OAS schema at <oas_spec_schema>
+    When the request "retrieveLocation" is sent
+    Then the response status code is 400
+    And the response property "$.status" is 400
+    And the response property "$.code" is "INVALID_ARGUMENT"
+    And the response property "$.message" contains a user friendly text
+
+    Examples:
+      | input_property | oas_spec_schema                                                               |
+      | $.maxAge       | /components/schemas/RetrievalLocationRequest/properties/maxAge               |
+      | $.maxSurface   | /components/schemas/RetrievalLocationRequest/properties/maxSurface           |
+
+  @location_retrieval_400.3_invalid_x-correlator
+  Scenario: Invalid x-correlator value
+    Given the header "x-correlator" does not comply with the OAS schema at "/components/schemas/XCorrelator"
     When the request "retrieveLocation" is sent
     Then the response status code is 400
     And the response property "$.status" is 400
