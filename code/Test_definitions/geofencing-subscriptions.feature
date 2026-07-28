@@ -155,7 +155,7 @@ Feature: Camara Geofencing Subscriptions API, vwip - Operations on subscriptions
     When the request "createGeofencingSubscription" is sent
     Then the response code is 201 or 202
     And an event notification of the subscribed type is received on callback-url
-    And notification body complies with the OAS schema at "#/components/schemas/CloudEvent"
+    And notification body complies with the OAS schema at "#/components/schemas/GeofencingNotificationEvent"
 
   @geofencing_subscriptions_receive_notification_when_subscription_is_updated
   Scenario: Receive notification for subscription-updated event
