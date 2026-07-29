@@ -1,4 +1,4 @@
-Feature: Camara Geofencing Subscriptions API, vwip - Operations on subscriptions
+Feature: Camara Geofencing Subscriptions API, v0.6.0-rc.1 - Operations on subscriptions
 
   # Input to be provided by the implementation to the tester
   #
@@ -14,7 +14,7 @@ Feature: Camara Geofencing Subscriptions API, vwip - Operations on subscriptions
 
   Background: Common Geofencing Subscriptions setup
     Given an environment at "apiRoot"
-    And the resource  "/geofencing-subscriptions/vwip/" as geofencing base-url
+    And the resource  "/geofencing-subscriptions/v0.6rc1/" as geofencing base-url
     And the header "Authorization" is set to a valid access token
     And the header "x-correlator" complies with the schema at "#/components/schemas/XCorrelator"
 
