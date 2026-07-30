@@ -79,15 +79,17 @@ Changes documented below are compared to version 0.5.0.
 
 ### Added
 
-* N/A
+* Added support for credential type `PRIVATE_KEY_JWT` by @jlurien in https://github.com/camaraproject/DeviceLocation/pull/393
 
 ### Changed
 
-* N/A
+* Synced with CAMARA Commonalities r4.3 / 0.8.0: aligned schemas, responses, parameters and `info.description` mandatory markers by @jlurien in https://github.com/camaraproject/DeviceLocation/pull/408
+* Added `description` field to Area schema by @bigludo7 in https://github.com/camaraproject/DeviceLocation/pull/382
+* Aligned test plan with updated OpenAPI spec and CAMARA r4.3 testing artifacts by @jlurien in https://github.com/camaraproject/DeviceLocation/pull/414
 
 ### Fixed
 
-* N/A
+* Fixed `CloudEvent` schema: added missing `type: object` declaration by @bigludo7 in https://github.com/camaraproject/DeviceLocation/pull/406
 
 ### Removed
 
@@ -110,11 +112,13 @@ Changes documented below are compared to version 0.5.0.
 
 ### Added
 
-* N/A
+* Added `minimum: 0` for `maxAge` by @jlurien in https://github.com/camaraproject/DeviceLocation/pull/386
+* Added test case for 422 `LOCATION_RETRIEVAL.UNABLE_TO_LOCATE`; updated 404 test case for non-existent devices by @bigludo7 in https://github.com/camaraproject/DeviceLocation/pull/390
 
 ### Changed
 
-* N/A
+* Synced with CAMARA Commonalities r4.3 / 0.8.0: aligned schemas, responses, parameters and `info.description` mandatory markers by @jlurien in https://github.com/camaraproject/DeviceLocation/pull/408
+* Aligned test plan with updated OpenAPI spec and CAMARA r4.3 testing artifacts by @jlurien in https://github.com/camaraproject/DeviceLocation/pull/414
 
 ### Fixed
 
@@ -141,15 +145,16 @@ Changes documented below are compared to version 3.0.0.
 
 ### Added
 
-* N/A
+* Added `minimum: 0` for `maxAge` by @jlurien in https://github.com/camaraproject/DeviceLocation/pull/386
 
 ### Changed
 
-* N/A
+* Synced with CAMARA Commonalities r4.3 / 0.8.0: aligned schemas, responses, parameters and `info.description` mandatory markers by @jlurien in https://github.com/camaraproject/DeviceLocation/pull/408
+* Aligned test plan with updated OpenAPI spec and CAMARA r4.3 testing artifacts by @jlurien in https://github.com/camaraproject/DeviceLocation/pull/414
 
 ### Fixed
 
-* N/A
+* Fixed typo in test scenario 400.3 by @jlurien in https://github.com/camaraproject/DeviceLocation/pull/414
 
 ### Removed
 
