@@ -226,7 +226,7 @@ Feature: Camara Geofencing Subscriptions API, vwip - Operations on subscriptions
     Examples:
       | device_identifier                                          | oas_spec_schema                             |
       | $.config.subscriptionDetail.device.phoneNumber             | /components/schemas/PhoneNumber             |
-      | $.config.subscriptionDetail.device.ipv4Address             | /components/schemas/DeviceIpv4Addr          |
+      | $.config.subscriptionDetail.device.ipv4Address             | /components/schemas/DeviceIpv4Address        |
       | $.config.subscriptionDetail.device.ipv6Address             | /components/schemas/DeviceIpv6Address       |
       | $.config.subscriptionDetail.device.networkAccessIdentifier | /components/schemas/NetworkAccessIdentifier |
 
