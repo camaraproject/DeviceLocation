@@ -154,7 +154,7 @@ paths:
       description: Create a subscription for a device to receive notifications when the device enters or exits a specified area.
       operationId: createGeofencingSubscription
       parameters:
-        - $ref: "#/components/parameters/x-correlator"
+        - $ref: "../common/CAMARA_common.yaml#/components/parameters/x-correlator"
       security:
         - openId:
             - geofencing-subscriptions:org.camaraproject.geofencing-subscriptions.v0.area-entered:create
@@ -181,7 +181,7 @@ paths:
                 The `operationId` value will have to be replaced accordingly with WG API specific semantics.
               operationId: postNotification
               parameters:
-                - $ref: "#/components/parameters/x-correlator"
+                - $ref: "../common/CAMARA_common.yaml#/components/parameters/x-correlator"
               requestBody:
                 required: true
                 content:
@@ -206,7 +206,7 @@ paths:
                   description: Successful notification.
                   headers:
                     x-correlator:
-                      $ref: "#/components/headers/x-correlator"
+                      $ref: "../common/CAMARA_common.yaml#/components/headers/x-correlator"
                 "400":
                   $ref: "#/components/responses/Generic400"
                 "401":
@@ -225,7 +225,7 @@ paths:
           description: Created (Successful creation of subscription).
           headers:
             x-correlator:
-              $ref: "#/components/headers/x-correlator"
+              $ref: "../common/CAMARA_common.yaml#/components/headers/x-correlator"
           content:
             application/json:
               schema:
@@ -234,7 +234,7 @@ paths:
           description: Request accepted to be processed. It applies for async creation process.
           headers:
             x-correlator:
-              $ref: "#/components/headers/x-correlator"
+              $ref: "../common/CAMARA_common.yaml#/components/headers/x-correlator"
           content:
             application/json:
               schema:
@@ -256,7 +256,7 @@ paths:
       description: Retrieve a list of geofencing event subscription(s).
       operationId: retrieveGeofencingSubscriptionList
       parameters:
-        - $ref: "#/components/parameters/x-correlator"
+        - $ref: "../common/CAMARA_common.yaml#/components/parameters/x-correlator"
       security:
         - openId:
             - geofencing-subscriptions:read
@@ -265,7 +265,7 @@ paths:
           description: List of event subscription details.
           headers:
             x-correlator:
-              $ref: "#/components/headers/x-correlator"
+              $ref: "../common/CAMARA_common.yaml#/components/headers/x-correlator"
           content:
             application/json:
               schema:
@@ -292,13 +292,13 @@ paths:
             - geofencing-subscriptions:read
       parameters:
         - $ref: "#/components/parameters/SubscriptionId"
-        - $ref: "#/components/parameters/x-correlator"
+        - $ref: "../common/CAMARA_common.yaml#/components/parameters/x-correlator"
       responses:
         "200":
           description: OK
           headers:
             x-correlator:
-              $ref: "#/components/headers/x-correlator"
+              $ref: "../common/CAMARA_common.yaml#/components/headers/x-correlator"
           content:
             application/json:
               schema:
@@ -322,18 +322,18 @@ paths:
             - geofencing-subscriptions:delete
       parameters:
         - $ref: "#/components/parameters/SubscriptionId"
-        - $ref: "#/components/parameters/x-correlator"
+        - $ref: "../common/CAMARA_common.yaml#/components/parameters/x-correlator"
       responses:
         "204":
           description: Geofencing subscription deleted.
           headers:
             x-correlator:
-              $ref: "#/components/headers/x-correlator"
+              $ref: "../common/CAMARA_common.yaml#/components/headers/x-correlator"
         "202":
           description: Request accepted to be processed. It applies for async deletion process.
           headers:
             x-correlator:
-              $ref: "#/components/headers/x-correlator"
+              $ref: "../common/CAMARA_common.yaml#/components/headers/x-correlator"
           content:
             application/json:
               schema:
@@ -362,17 +362,6 @@ components:
       required: true
       schema:
         $ref: "#/components/schemas/SubscriptionId"
-    x-correlator:
-      name: x-correlator
-      in: header
-      description: Correlation id for the different services.
-      schema:
-        $ref: '../common/CAMARA_common.yaml#/components/schemas/XCorrelator'
-  headers:
-    x-correlator:
-      description: Correlation id for the different services.
-      schema:
-        $ref: '../common/CAMARA_common.yaml#/components/schemas/XCorrelator'
   schemas:
     ErrorInfo:
       $ref: '../common/CAMARA_common.yaml#/components/schemas/ErrorInfo'
@@ -893,7 +882,7 @@ components:
       description: Problem with the client request.
       headers:
         x-correlator:
-          $ref: "#/components/headers/x-correlator"
+          $ref: "../common/CAMARA_common.yaml#/components/headers/x-correlator"
       content:
         application/json:
           schema:
@@ -939,7 +928,7 @@ components:
       description: Problem with the client request
       headers:
         x-correlator:
-          $ref: "#/components/headers/x-correlator"
+          $ref: "../common/CAMARA_common.yaml#/components/headers/x-correlator"
       content:
         application/json:
           schema:
@@ -974,7 +963,7 @@ components:
       description: Client does not have sufficient permission
       headers:
         x-correlator:
-          $ref: "#/components/headers/x-correlator"
+          $ref: "../common/CAMARA_common.yaml#/components/headers/x-correlator"
       content:
         application/json:
           schema:
@@ -999,7 +988,7 @@ components:
       description: Not found
       headers:
         x-correlator:
-          $ref: "#/components/headers/x-correlator"
+          $ref: "../common/CAMARA_common.yaml#/components/headers/x-correlator"
       content:
         application/json:
           schema:
@@ -1024,7 +1013,7 @@ components:
       description: Gone
       headers:
         x-correlator:
-          $ref: "#/components/headers/x-correlator"
+          $ref: "../common/CAMARA_common.yaml#/components/headers/x-correlator"
       content:
         application/json:
           schema:
@@ -1050,7 +1039,7 @@ components:
       description: Unprocessable Entity
       headers:
         x-correlator:
-          $ref: "#/components/headers/x-correlator"
+          $ref: "../common/CAMARA_common.yaml#/components/headers/x-correlator"
       content:
         application/json:
           schema:
@@ -1125,7 +1114,7 @@ components:
       description: Too Many Requests
       headers:
         x-correlator:
-          $ref: "#/components/headers/x-correlator"
+          $ref: "../common/CAMARA_common.yaml#/components/headers/x-correlator"
       content:
         application/json:
           schema:
