@@ -1,4 +1,4 @@
-Feature: CAMARA Device location retrieval API, vwip - Operation retrieveLocation
+Feature: CAMARA Device location retrieval API, v1.0.0-rc.1 - Operation retrieveLocation
   # Input to be provided by the implementation to the tester
   #
   # Implementation indications:
@@ -15,7 +15,7 @@ Feature: CAMARA Device location retrieval API, vwip - Operation retrieveLocation
 
   Background: Common retrieveLocation setup
     Given an environment at "apiRoot"
-    And the resource "/location-retrieval/vwip/retrieve"                                                              |
+    And the resource "/location-retrieval/v1rc1/retrieve"                                                              |
     And the header "Content-Type" is set to "application/json"
     And the header "Authorization" is set to a valid access token
     And the header "x-correlator" complies with the schema at "#/components/schemas/XCorrelator"

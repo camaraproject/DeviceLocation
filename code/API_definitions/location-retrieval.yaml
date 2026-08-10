@@ -120,16 +120,13 @@ info:
     # Further info and support
 
     (FAQs will be added in a later version of the documentation)
-  version: wip
+  version: 1.0.0-rc.1
   license:
     name: Apache 2.0
     url: https://www.apache.org/licenses/LICENSE-2.0.html
   x-camara-commonalities: 0.8.0
-externalDocs:
-  description: Product documentation at CAMARA
-  url: https://github.com/camaraproject/DeviceLocation
 servers:
-  - url: '{apiRoot}/location-retrieval/vwip'
+  - url: '{apiRoot}/location-retrieval/v1rc1'
     variables:
       apiRoot:
         default: http://localhost:9091
@@ -137,16 +134,19 @@ servers:
 tags:
   - name: Location Retrieval
     description: Retrieve the location of a device
+externalDocs:
+  description: Product documentation at CAMARA
+  url: https://github.com/camaraproject/DeviceLocation
 paths:
   /retrieve:
     post:
       tags:
         - Location Retrieval
-      summary: 'Execute location retrieval for a user device'
+      summary: Execute location retrieval for a user device
       description: Retrieve the area where a certain user device is localized.
       operationId: retrieveLocation
       parameters:
-        - $ref: '../common/CAMARA_common.yaml#/components/parameters/x-correlator'
+        - $ref: '#/components/parameters/x-correlator'
       requestBody:
         required: true
         content:
@@ -159,14 +159,14 @@ paths:
                 description: Retrieve location for a device identified by a phone number, providing a maxAge
                 value:
                   device:
-                    phoneNumber: "+123456789"
+                    phoneNumber: '+123456789'
                   maxAge: 120
               INPUT_PHONE_NUMBER_MAX_AGE_AND_SURFACE:
                 summary: Phone number, maxAge and maxSurface
                 description: Retrieve location for a device identified by a phone number, providing a maxAge and maxSurface
                 value:
                   device:
-                    phoneNumber: "+123456789"
+                    phoneNumber: '+123456789'
                   maxAge: 120
                   maxSurface: 1000000
               INPUT_IP_ADDRESS_V4:
@@ -187,7 +187,7 @@ paths:
                 description: Retrieve location for a device identified both by a phone number and an IPv4 address, without an indication for maxAge
                 value:
                   device:
-                    phoneNumber: "+123456789"
+                    phoneNumber: '+123456789'
                     ipv4Address:
                       publicAddress: 123.234.1.2
                       publicPort: 1234
@@ -196,22 +196,22 @@ paths:
           description: Location retrieval result
           headers:
             x-correlator:
-              $ref: '../common/CAMARA_common.yaml#/components/headers/x-correlator'
+              $ref: '#/components/headers/x-correlator'
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/Location'
               examples:
                 LOCATION_CIRCLE:
-                  $ref: "#/components/examples/RETRIEVAL_CIRCLE"
+                  $ref: '#/components/examples/RETRIEVAL_CIRCLE'
                 LOCATION_POLYGON:
-                  $ref: "#/components/examples/RETRIEVAL_POLYGON"
+                  $ref: '#/components/examples/RETRIEVAL_POLYGON'
                 LOCATION_CIRCLE_WITH_DEVICE:
-                  $ref: "#/components/examples/LOCATION_CIRCLE_WITH_DEVICE"
+                  $ref: '#/components/examples/LOCATION_CIRCLE_WITH_DEVICE'
         '400':
-          $ref: '../common/CAMARA_common.yaml#/components/responses/Generic400'
+          $ref: '#/components/responses/Generic400'
         '401':
-          $ref: '../common/CAMARA_common.yaml#/components/responses/Generic401'
+          $ref: '#/components/responses/Generic401'
         '403':
           $ref: '#/components/responses/Generic403'
         '404':
@@ -221,7 +221,6 @@ paths:
       security:
         - openId:
             - location-retrieval:read
-
 components:
   securitySchemes:
     openId:
@@ -234,7 +233,7 @@ components:
       type: object
       properties:
         device:
-          $ref: '../common/CAMARA_common.yaml#/components/schemas/Device'
+          $ref: '#/components/schemas/Device'
         maxAge:
           type: integer
           format: int32
@@ -249,35 +248,114 @@ components:
           description: Maximum surface in square meters which is accepted by the client for the location retrieval. Absence of maxSurface means "any surface size".
           example: 1000000
     Device:
-      $ref: '../common/CAMARA_common.yaml#/components/schemas/Device'
-
+      description: |
+        End-user equipment able to connect to a mobile network. Examples of devices include smartphones or IoT sensors/actuators.
+            The developer can choose to provide the below specified device identifiers:
+            * `ipv4Address`
+            * `ipv6Address`
+            * `phoneNumber`
+            * `networkAccessIdentifier`
+            NOTE1: the network operator might support only a subset of these options. The API Consumer can provide multiple identifiers to ensure compatibility across different network operators. In this case, the API Provider will use one of the identifiers for the API logic without performing any matching checks among the provided identifiers.
+            NOTE2: as for this Commonalities release, we are enforcing that the networkAccessIdentifier is only part of the schema for future-proofing, and CAMARA does not currently allow its use. After the CAMARA meta-release work is concluded and the relevant issues are resolved, its use will need to be explicitly documented in the guidelines.
+      type: object
+      properties:
+        phoneNumber:
+          $ref: '#/components/schemas/PhoneNumber'
+        networkAccessIdentifier:
+          $ref: '#/components/schemas/NetworkAccessIdentifier'
+        ipv4Address:
+          $ref: '#/components/schemas/DeviceIpv4Address'
+        ipv6Address:
+          $ref: '#/components/schemas/DeviceIpv6Address'
+      minProperties: 1
     DeviceResponse:
-      $ref: '../common/CAMARA_common.yaml#/components/schemas/DeviceResponse'
+      description: |
+        An identifier for the end-user equipment able to connect to the network that the response refers to. This parameter is only returned when the API consumer includes the `device` parameter in their request (i.e. they are using a two-legged access token), and is relevant when more than one device identifier is specified, as only one of those device identifiers is allowed in the response.
 
+        If the API consumer provides more than one device identifier in their request, and this schema is included in the response definition, the API provider MUST use it to return a single identifier which is the one they are using to fulfil the request, even if the identifiers do not match the same device. API provider does not perform any logic to validate/correlate that the indicated device identifiers match the same device. No error should be returned if the identifiers are otherwise valid to prevent API consumers correlating different identifiers with a given end user.
+      allOf:
+        - $ref: '#/components/schemas/Device'
+        - maxProperties: 1
     Area:
-      $ref: '../common/CAMARA_common.yaml#/components/schemas/Area'
-
+      description: Base schema for all areas
+      type: object
+      properties:
+        areaType:
+          $ref: '#/components/schemas/AreaType'
+      required:
+        - areaType
+      discriminator:
+        propertyName: areaType
+        mapping:
+          CIRCLE: '#/components/schemas/Circle'
+          POLYGON: '#/components/schemas/Polygon'
     AreaType:
-      $ref: '../common/CAMARA_common.yaml#/components/schemas/AreaType'
-
+      type: string
+      description: |
+        Type of this area.
+        CIRCLE - The area is defined as a circle.
+        POLYGON - The area is defined as a polygon.
+      enum:
+        - CIRCLE
+        - POLYGON
     Circle:
-      $ref: '../common/CAMARA_common.yaml#/components/schemas/Circle'
-
+      description: Circular area
+      allOf:
+        - $ref: '#/components/schemas/Area'
+        - type: object
+          required:
+            - center
+            - radius
+          properties:
+            center:
+              $ref: '#/components/schemas/Point'
+            radius:
+              type: number
+              description: Distance from the center in meters
+              minimum: 1
     Polygon:
-      $ref: '../common/CAMARA_common.yaml#/components/schemas/Polygon'
-
+      description: Polygonal area. The Polygon should be a simple polygon, i.e. should not intersect itself.
+      allOf:
+        - $ref: '#/components/schemas/Area'
+        - type: object
+          required:
+            - boundary
+          properties:
+            boundary:
+              $ref: '#/components/schemas/PointList'
     PointList:
-      $ref: '../common/CAMARA_common.yaml#/components/schemas/PointList'
-
+      description: List of points defining a polygon
+      type: array
+      items:
+        $ref: '#/components/schemas/Point'
+      minItems: 3
+      maxItems: 15
     Point:
-      $ref: '../common/CAMARA_common.yaml#/components/schemas/Point'
-
+      type: object
+      description: Coordinates (latitude, longitude) defining a location in a map
+      required:
+        - latitude
+        - longitude
+      properties:
+        latitude:
+          $ref: '#/components/schemas/Latitude'
+        longitude:
+          $ref: '#/components/schemas/Longitude'
+      example:
+        latitude: 50.735851
+        longitude: 7.10066
     Latitude:
-      $ref: '../common/CAMARA_common.yaml#/components/schemas/Latitude'
-
+      description: Latitude component of a location
+      type: number
+      format: double
+      minimum: -90
+      maximum: 90
     Longitude:
-      $ref: '../common/CAMARA_common.yaml#/components/schemas/Longitude'
-
+      description: Longitude component of location
+      type: number
+      format: double
+      minimum: -180
+      maximum: 180
     Location:
       type: object
       description: Device location
@@ -286,30 +364,113 @@ components:
         - area
       properties:
         lastLocationTime:
-          $ref: "#/components/schemas/LastLocationTime"
+          $ref: '#/components/schemas/LastLocationTime'
         area:
           $ref: '#/components/schemas/Area'
         device:
-          $ref: "#/components/schemas/DeviceResponse"
-
+          $ref: '#/components/schemas/DeviceResponse'
     LastLocationTime:
       description: Last date and time when the device was localized. It must follow [RFC 3339](https://datatracker.ietf.org/doc/html/rfc3339#section-5.6) and must have time zone.
       type: string
       format: date-time
       maxLength: 64
-      example: "2023-09-07T10:40:52Z"
+      example: '2023-09-07T10:40:52Z'
+    XCorrelator:
+      type: string
+      description: Correlator string, UUID format recommended but any string matching the pattern can be used
+      pattern: ^[a-zA-Z0-9-_:;.\/<>{}]{0,256}$
+      maxLength: 256
+      example: b4333c46-49c0-4f62-80d7-f0ef930f1c46
+    PhoneNumber:
+      description: A public identifier addressing a telephone subscription. In mobile networks it corresponds to the MSISDN (Mobile Station International Subscriber Directory Number). In order to be globally unique it has to be formatted in international format, according to E.164 standard, prefixed with '+'.
+      type: string
+      pattern: ^\+[1-9][0-9]{4,14}$
+      maxLength: 16
+      example: '+123456789'
+    NetworkAccessIdentifier:
+      description: A public identifier addressing a subscription in a mobile network. In 3GPP terminology, it corresponds to the GPSI formatted with the External Identifier ({Local Identifier}@{Domain Identifier}). Unlike the telephone number, the network access identifier is not subjected to portability ruling in force, and is individually managed by each operator.
+      type: string
+      maxLength: 2048
+      example: 123456789@example.com
+    SingleIpv4Address:
+      description: A single IPv4 address with no subnet mask
+      type: string
+      format: ipv4
+      maxLength: 15
+      example: 84.125.93.10
+    Port:
+      description: TCP or UDP port number
+      type: integer
+      format: int32
+      minimum: 1
+      maximum: 65535
+    DeviceIpv4Address:
+      type: object
+      description: |
+        The device should be identified by either the public (observed) IP address and port as seen by the application server, or the private (local) and any public (observed) IP addresses in use by the device (this information can be obtained by various means, for example from some DNS servers).
 
+        If the allocated and observed IP addresses are the same (i.e. NAT is not in use) then  the same address should be specified for both publicAddress and privateAddress.
+
+        If NAT64 is in use, the device should be identified by its publicAddress and publicPort, or separately by its allocated IPv6 address (field ipv6Address of the Device object)
+
+        In all cases, publicAddress must be specified, along with at least one of either privateAddress or publicPort, dependent upon which is known. In general, mobile devices cannot be identified by their public IPv4 address alone.
+      properties:
+        publicAddress:
+          $ref: '#/components/schemas/SingleIpv4Address'
+        privateAddress:
+          $ref: '#/components/schemas/SingleIpv4Address'
+        publicPort:
+          $ref: '#/components/schemas/Port'
+      anyOf:
+        - required:
+            - publicAddress
+            - privateAddress
+        - required:
+            - publicAddress
+            - publicPort
+      example:
+        publicAddress: 84.125.93.10
+        publicPort: 59765
+    DeviceIpv6Address:
+      description: |
+        The device should be identified by the observed IPv6 address, or by any single IPv6 address from within the subnet allocated to the device (e.g. adding ::0 to the /64 prefix).
+      type: string
+      format: ipv6
+      maxLength: 45
+      example: 2001:db8:85a3:8d3:1319:8a2e:370:7344
+    ErrorInfo:
+      type: object
+      description: A structured error response providing details about a failed request, including the HTTP status code, an error code, and a human-readable message
+      required:
+        - status
+        - code
+        - message
+      properties:
+        status:
+          type: integer
+          format: int32
+          minimum: 100
+          maximum: 599
+          description: HTTP response status code
+        code:
+          type: string
+          maxLength: 96
+          description: A human-readable code to describe the error
+        message:
+          type: string
+          maxLength: 512
+          description: A human-readable description of what the event represents
   responses:
     Generic403:
       description: Forbidden
       headers:
         x-correlator:
-          $ref: '../common/CAMARA_common.yaml#/components/headers/x-correlator'
+          $ref: '#/components/headers/x-correlator'
       content:
         application/json:
           schema:
             allOf:
-              - $ref: '../common/CAMARA_common.yaml#/components/schemas/ErrorInfo'
+              - $ref: '#/components/schemas/ErrorInfo'
               - type: object
                 properties:
                   status:
@@ -330,12 +491,12 @@ components:
       description: Not found
       headers:
         x-correlator:
-          $ref: '../common/CAMARA_common.yaml#/components/headers/x-correlator'
+          $ref: '#/components/headers/x-correlator'
       content:
         application/json:
           schema:
             allOf:
-              - $ref: '../common/CAMARA_common.yaml#/components/schemas/ErrorInfo'
+              - $ref: '#/components/schemas/ErrorInfo'
               - type: object
                 properties:
                   status:
@@ -356,12 +517,12 @@ components:
       description: Unprocessable Content
       headers:
         x-correlator:
-          $ref: '../common/CAMARA_common.yaml#/components/headers/x-correlator'
+          $ref: '#/components/headers/x-correlator'
       content:
         application/json:
           schema:
             allOf:
-              - $ref: '../common/CAMARA_common.yaml#/components/schemas/ErrorInfo'
+              - $ref: '#/components/schemas/ErrorInfo'
               - type: object
                 properties:
                   status:
@@ -411,27 +572,84 @@ components:
               value:
                 status: 422
                 code: LOCATION_RETRIEVAL.UNABLE_TO_FULFILL_MAX_AGE
-                message: "Unable to provide expected freshness for location"
+                message: Unable to provide expected freshness for location
             LOCATION_RETRIEVAL_422_UNABLE_TO_FULFILL_MAX_SURFACE:
               summary: Unable to fulfill maxSurface
               description: The system is not able to provide accurate acceptable surface required by the client
               value:
                 status: 422
                 code: LOCATION_RETRIEVAL.UNABLE_TO_FULFILL_MAX_SURFACE
-                message: "Unable to provide accurate acceptable surface for location"
+                message: Unable to provide accurate acceptable surface for location
             LOCATION_RETRIEVAL_422_UNABLE_TO_LOCATE:
               summary: Unable to locate device
               description: The network cannot locate the device
               value:
                 status: 422
                 code: LOCATION_RETRIEVAL.UNABLE_TO_LOCATE
-                message: "The network is unable to locate the device"
+                message: The network is unable to locate the device
+    Generic400:
+      description: Bad Request
+      headers:
+        x-correlator:
+          $ref: '#/components/headers/x-correlator'
+      content:
+        application/json:
+          schema:
+            allOf:
+              - $ref: '#/components/schemas/ErrorInfo'
+              - type: object
+                properties:
+                  status:
+                    enum:
+                      - 400
+                  code:
+                    enum:
+                      - INVALID_ARGUMENT
+                      - OUT_OF_RANGE
+          examples:
+            GENERIC_400_INVALID_ARGUMENT:
+              description: Invalid Argument. Generic Syntax Exception
+              value:
+                status: 400
+                code: INVALID_ARGUMENT
+                message: Client specified an invalid argument, request body or query param.
+            GENERIC_400_OUT_OF_RANGE:
+              description: Out of Range. Specific Syntax Exception used when a given field has a pre-defined range or a invalid filter criteria combination is requested
+              value:
+                status: 400
+                code: OUT_OF_RANGE
+                message: Client specified an invalid range.
+    Generic401:
+      description: Unauthorized
+      headers:
+        x-correlator:
+          $ref: '#/components/headers/x-correlator'
+      content:
+        application/json:
+          schema:
+            allOf:
+              - $ref: '#/components/schemas/ErrorInfo'
+              - type: object
+                properties:
+                  status:
+                    enum:
+                      - 401
+                  code:
+                    enum:
+                      - UNAUTHENTICATED
+          examples:
+            GENERIC_401_UNAUTHENTICATED:
+              description: Request cannot be authenticated and a new authentication is required
+              value:
+                status: 401
+                code: UNAUTHENTICATED
+                message: Request not authenticated due to missing, invalid, or expired credentials. A new authentication is required.
   examples:
     RETRIEVAL_CIRCLE:
       summary: circle-based device location retrieval
       description: The device is localized within a circle with a center at the specified coordinates and a radius of 800 meters.
       value:
-        lastLocationTime: "2023-10-17T13:18:23.682Z"
+        lastLocationTime: '2023-10-17T13:18:23.682Z'
         area:
           areaType: CIRCLE
           center:
@@ -442,7 +660,7 @@ components:
       summary: polygon-based device location retrieval
       description: The device is localized within a polygon delimited by the provided coordinates.
       value:
-        lastLocationTime: "2023-10-17T13:18:23.682Z"
+        lastLocationTime: '2023-10-17T13:18:23.682Z'
         area:
           areaType: POLYGON
           boundary:
@@ -450,7 +668,7 @@ components:
               longitude: 4.860374
             - latitude: 45.753845
               longitude: 4.863185
-            - latitude: 45.752490
+            - latitude: 45.75249
               longitude: 4.861876
             - latitude: 45.751224
               longitude: 4.861125
@@ -460,7 +678,7 @@ components:
       summary: circle-based device location retrieval, returning the device identifier used by the implementation
       description: The device is localized within a circle with a center at the specified coordinates and a radius of 800 meters. Response when the request used a 2-legged access token with multiple device identifiers, or possibly only a single device identifier.
       value:
-        lastLocationTime: "2023-10-17T13:18:23.682Z"
+        lastLocationTime: '2023-10-17T13:18:23.682Z'
         area:
           areaType: CIRCLE
           center:
@@ -468,4 +686,16 @@ components:
             longitude: 4.860374
           radius: 800
         device:
-          phoneNumber: "+123456789"
+          phoneNumber: '+123456789'
+  parameters:
+    x-correlator:
+      name: x-correlator
+      in: header
+      description: Correlation id for the different services
+      schema:
+        $ref: '#/components/schemas/XCorrelator'
+  headers:
+    x-correlator:
+      description: Correlation id for the different services
+      schema:
+        $ref: '#/components/schemas/XCorrelator'

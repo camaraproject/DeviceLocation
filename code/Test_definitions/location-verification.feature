@@ -1,4 +1,4 @@
-Feature: CAMARA Device location verification API, vwip - Operation verifyLocation
+Feature: CAMARA Device location verification API, v3.1.0-rc.2 - Operation verifyLocation
   # Input to be provided by the implementation to the tester
   #
   # Implementation indications:
@@ -14,7 +14,7 @@ Feature: CAMARA Device location verification API, vwip - Operation verifyLocatio
 
   Background: Common verifyLocation setup
     Given an environment at "apiRoot"
-    And the resource "/location-verification/vwip/verify"
+    And the resource "/location-verification/v3rc2/verify"
     And the header "Content-Type" is set to "application/json"
     And the header "Authorization" is set to a valid access token
     And the header "x-correlator" complies with the schema at "#/components/schemas/XCorrelator"
