@@ -98,11 +98,11 @@ Feature: CAMARA Device location retrieval API, vwip - Operation retrieveLocation
     And the response property "$.message" contains a user friendly text
 
     Examples:
-      | device_identifier                | oas_spec_schema                             |
-      | $.device.phoneNumber             | /components/schemas/PhoneNumber             |
-      | $.device.ipv4Address             | /components/schemas/DeviceIpv4Addr          |
-      | $.device.ipv6Address             | /components/schemas/DeviceIpv6Address       |
-      | $.device.networkAccessIdentifier | /components/schemas/NetworkAccessIdentifier |
+      | device_identifier                | oas_spec_schema                              |
+      | $.device.phoneNumber             | #/components/schemas/PhoneNumber             |
+      | $.device.ipv4Address             | #/components/schemas/DeviceIpv4Addr          |
+      | $.device.ipv6Address             | #/components/schemas/DeviceIpv6Address       |
+      | $.device.networkAccessIdentifier | #/components/schemas/NetworkAccessIdentifier |
 
   @location_retrieval_C01.03_device_not_found
   Scenario: Some identifier cannot be matched to a device
@@ -190,13 +190,13 @@ Feature: CAMARA Device location retrieval API, vwip - Operation retrieveLocation
     And the response property "$.message" contains a user friendly text
 
     Examples:
-      | input_property | oas_spec_schema                                                               |
-      | $.maxAge       | /components/schemas/RetrievalLocationRequest/properties/maxAge               |
-      | $.maxSurface   | /components/schemas/RetrievalLocationRequest/properties/maxSurface           |
+      | input_property | oas_spec_schema                                                    |
+      | $.maxAge       | #/components/schemas/RetrievalLocationRequest/properties/maxAge     |
+      | $.maxSurface   | #/components/schemas/RetrievalLocationRequest/properties/maxSurface |
 
   @location_retrieval_400.3_invalid_x-correlator
   Scenario: Invalid x-correlator value
-    Given the header "x-correlator" does not comply with the OAS schema at "/components/schemas/XCorrelator"
+    Given the header "x-correlator" does not comply with the OAS schema at "#/components/schemas/XCorrelator"
     When the request "retrieveLocation" is sent
     Then the response status code is 400
     And the response property "$.status" is 400

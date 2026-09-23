@@ -33,7 +33,7 @@ Feature: CAMARA Device location verification API, vwip - Operation verifyLocatio
     And the response header "Content-Type" is "application/json"
     And the response header "x-correlator" has same value as the request header "x-correlator"
     # The response has to comply with the generic response schema which is part of the spec
-    And the response body complies with the OAS schema at "/components/schemas/VerifyLocationResponse"
+    And the response body complies with the OAS schema at "#/components/schemas/VerifyLocationResponse"
     # Additionally any success response has to comply with some constraints not documented in the schema
     And the response property "$.matchRate" exists only if "$.verificationResult" is "PARTIAL"
 
@@ -48,7 +48,7 @@ Feature: CAMARA Device location verification API, vwip - Operation verifyLocatio
     Then the response status code is 200
     And the response header "Content-Type" is "application/json"
     And the response header "x-correlator" has same value as the request header "x-correlator"
-    And the response body complies with the OAS schema at "/components/schemas/VerifyLocationResponse"
+    And the response body complies with the OAS schema at "#/components/schemas/VerifyLocationResponse"
     And the response property "$.verificationResult" is one of: ["TRUE", "PARTIAL"]
     And the response property "$.lastLocationTime" exists
     And the response property "$.matchRate" exists only if "$.verificationResult" is "PARTIAL"
@@ -62,7 +62,7 @@ Feature: CAMARA Device location verification API, vwip - Operation verifyLocatio
     Then the response status code is 200
     And the response header "Content-Type" is "application/json"
     And the response header "x-correlator" has same value as the request header "x-correlator"
-    And the response body complies with the OAS schema at "/components/schemas/VerifyLocationResponse"
+    And the response body complies with the OAS schema at "#/components/schemas/VerifyLocationResponse"
     And the response property "$.verificationResult" is one of: ["TRUE", "PARTIAL"]
     And the response property "$.matchRate" exists only if "$.verificationResult" is "PARTIAL"
     And the response property "$.lastLocationTime" value is not older than the value of "$.maxAge" in the request
@@ -75,7 +75,7 @@ Feature: CAMARA Device location verification API, vwip - Operation verifyLocatio
     Then the response status code is 200
     And the response header "Content-Type" is "application/json"
     And the response header "x-correlator" has same value as the request header "x-correlator"
-    And the response body complies with the OAS schema at "/components/schemas/VerifyLocationResponse"
+    And the response body complies with the OAS schema at "#/components/schemas/VerifyLocationResponse"
     And the response property "$.verificationResult" is "FALSE"
     And the response property "$.lastLocationTime" exists
     And the response property "$.matchRate" does not exist
@@ -91,9 +91,9 @@ Feature: CAMARA Device location verification API, vwip - Operation verifyLocatio
     Then the response status code is 200
     And the response header "Content-Type" is "application/json"
     And the response header "x-correlator" has same value as the request header "x-correlator"
-    And the response body complies with the OAS schema at "/components/schemas/VerifyLocationResponse"
+    And the response body complies with the OAS schema at "#/components/schemas/VerifyLocationResponse"
     And the response property "$.device" exists
-    And the response property "$.device" complies with the OAS schema at "/components/schemas/DeviceResponse"
+    And the response property "$.device" complies with the OAS schema at "#/components/schemas/DeviceResponse"
 
   # Error scenarios for management of input parameter device
 
@@ -118,11 +118,11 @@ Feature: CAMARA Device location verification API, vwip - Operation verifyLocatio
     And the response property "$.message" contains a user friendly text
 
     Examples:
-      | device_identifier                | oas_spec_schema                             |
-      | $.device.phoneNumber             | /components/schemas/PhoneNumber             |
-      | $.device.ipv4Address             | /components/schemas/DeviceIpv4Addr          |
-      | $.device.ipv6Address             | /components/schemas/DeviceIpv6Address       |
-      | $.device.networkAccessIdentifier | /components/schemas/NetworkAccessIdentifier |
+      | device_identifier                | oas_spec_schema                              |
+      | $.device.phoneNumber             | #/components/schemas/PhoneNumber             |
+      | $.device.ipv4Address             | #/components/schemas/DeviceIpv4Addr          |
+      | $.device.ipv6Address             | #/components/schemas/DeviceIpv6Address       |
+      | $.device.networkAccessIdentifier | #/components/schemas/NetworkAccessIdentifier |
 
   # This scenario may happen e.g. with 2-legged access tokens, which do not identify a single device.
   @location_verification_C01.03_device_not_found
@@ -208,12 +208,12 @@ Feature: CAMARA Device location verification API, vwip - Operation verifyLocatio
     And the response property "$.message" contains a user friendly text
 
     Examples:
-      | input_property          | oas_spec_schema                                      |
-      | $.area.areaType         | /components/schemas/AreaType                         |
-      | $.area.center.latitude  | /components/schemas/Latitude                         |
-      | $.area.center.longitude | /components/schemas/Longitude                        |
-      | $.area.radius           | /components/schemas/Circle/allOf/1/properties/radius |
-      | $.maxAge                | /components/schemas/MaxAge                           |
+      | input_property          | oas_spec_schema                                        |
+      | $.area.areaType         | #/components/schemas/AreaType                          |
+      | $.area.center.latitude  | #/components/schemas/Latitude                          |
+      | $.area.center.longitude | #/components/schemas/Longitude                         |
+      | $.area.radius           | #/components/schemas/Circle/allOf/1/properties/radius  |
+      | $.maxAge                | #/components/schemas/MaxAge                            |
 
   @location_verification_400.4_required_input_properties_missing
   Scenario Outline: Required input properties are missing
@@ -235,7 +235,7 @@ Feature: CAMARA Device location verification API, vwip - Operation verifyLocatio
 
   @location_verification_400.5_invalid_x-correlator
   Scenario: Invalid x-correlator value
-    Given the header "x-correlator" does not comply with the OAS schema at "/components/schemas/XCorrelator"
+    Given the header "x-correlator" does not comply with the OAS schema at "#/components/schemas/XCorrelator"
     When the request "verifyLocation" is sent
     Then the response status code is 400
     And the response property "$.status" is 400
