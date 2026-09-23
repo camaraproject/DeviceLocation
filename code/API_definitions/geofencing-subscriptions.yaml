@@ -575,18 +575,6 @@ components:
     Device:
       $ref: '../common/CAMARA_common.yaml#/components/schemas/Device'
 
-    PhoneNumber:
-      $ref: '../common/CAMARA_common.yaml#/components/schemas/PhoneNumber'
-
-    NetworkAccessIdentifier:
-      $ref: '../common/CAMARA_common.yaml#/components/schemas/NetworkAccessIdentifier'
-
-    Port:
-      $ref: '../common/CAMARA_common.yaml#/components/schemas/Port'
-
-    DeviceIpv6Address:
-      $ref: '../common/CAMARA_common.yaml#/components/schemas/DeviceIpv6Address'
-
     DeviceResponse:
       $ref: '../common/CAMARA_common.yaml#/components/schemas/DeviceResponse'
 
