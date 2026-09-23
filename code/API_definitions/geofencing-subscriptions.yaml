@@ -903,6 +903,7 @@ components:
                       - UNSUPPORTED_IDENTIFIER
                       - UNNECESSARY_IDENTIFIER
                       - MULTIEVENT_SUBSCRIPTION_NOT_SUPPORTED
+                      - MULTIEVENT_COMBINATION_TEMPORARILY_NOT_SUPPORTED
                       - PRIVATE_KEY_JWT_NOT_CONFIGURED
                       - GEOFENCING_SUBSCRIPTIONS.AREA_NOT_COVERED
                       - GEOFENCING_SUBSCRIPTIONS.INVALID_AREA
@@ -917,6 +918,8 @@ components:
               $ref: "../common/CAMARA_common.yaml#/components/examples/GENERIC_422_UNNECESSARY_IDENTIFIER_DEVICE"
             GENERIC_422_MULTIEVENT_SUBSCRIPTION_NOT_SUPPORTED:
               $ref: "../common/CAMARA_event_common.yaml#/components/examples/GENERIC_422_MULTIEVENT_SUBSCRIPTION_NOT_SUPPORTED"
+            GENERIC_422_MULTIEVENT_COMBINATION_TEMPORARILY_NOT_SUPPORTED:
+              $ref: "../common/CAMARA_event_common.yaml#/components/examples/GENERIC_422_MULTIEVENT_COMBINATION_TEMPORARILY_NOT_SUPPORTED"
             GENERIC_422_PRIVATE_KEY_JWT_NOT_CONFIGURED:
               $ref: "../common/CAMARA_event_common.yaml#/components/examples/GENERIC_422_PRIVATE_KEY_JWT_NOT_CONFIGURED"
             GEOFENCING_422_AREA_NOT_COVERED:
