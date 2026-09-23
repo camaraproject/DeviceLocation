@@ -249,35 +249,11 @@ components:
           maximum: 2147483647
           description: Maximum surface in square meters which is accepted by the client for the location retrieval. Absence of maxSurface means "any surface size".
           example: 1000000
-    Device:
-      $ref: '../common/CAMARA_common.yaml#/components/schemas/Device'
-
     DeviceResponse:
       $ref: '../common/CAMARA_common.yaml#/components/schemas/DeviceResponse'
 
     Area:
       $ref: '../common/CAMARA_common.yaml#/components/schemas/Area'
-
-    AreaType:
-      $ref: '../common/CAMARA_common.yaml#/components/schemas/AreaType'
-
-    Circle:
-      $ref: '../common/CAMARA_common.yaml#/components/schemas/Circle'
-
-    Polygon:
-      $ref: '../common/CAMARA_common.yaml#/components/schemas/Polygon'
-
-    PointList:
-      $ref: '../common/CAMARA_common.yaml#/components/schemas/PointList'
-
-    Point:
-      $ref: '../common/CAMARA_common.yaml#/components/schemas/Point'
-
-    Latitude:
-      $ref: '../common/CAMARA_common.yaml#/components/schemas/Latitude'
-
-    Longitude:
-      $ref: '../common/CAMARA_common.yaml#/components/schemas/Longitude'
 
     Location:
       type: object
