@@ -379,6 +379,23 @@ Feature: Camara Geofencing Subscriptions API, vwip - Operations on subscriptions
     And the response property "$.code" is "INVALID_ARGUMENT"
     And the response property "$.message" contains a user friendly text
 
+  @geofencing_subscriptions_400.9_out_of_range
+  Scenario Outline: Create subscription with a property value out of its defined range
+    Given a valid geofencing subscription request body
+    And the request body property "<property>" is set to "<value>"
+    When the request "createGeofencingSubscription" is sent
+    Then the response status code is 400
+    And the response property "$.status" is 400
+    And the response property "$.code" is "OUT_OF_RANGE"
+    And the response property "$.message" contains a user friendly text
+
+    Examples:
+      | property                                          | value   |
+      | $.config.subscriptionMaxEvents                    | 0       |
+      | $.config.subscriptionMaxEvents                    | 1000001 |
+      | $.config.subscriptionDetail.area.radius           | 0       |
+      | $.config.subscriptionDetail.area.center.latitude  | 91      |
+
   # Error code 401
 
   @geofencing_subscriptions_creation_401.1_no_authorization_header
@@ -563,6 +580,8 @@ Feature: Camara Geofencing Subscriptions API, vwip - Operations on subscriptions
     And the response property "$.code" is "GEOFENCING_SUBSCRIPTIONS.INVALID_AREA"
     And the response property "$.message" contains "The requested area is too small"
 
+  # Not applicable while "$.types" is limited to 1 item (maxItems: 1): a request with 2 items fails schema validation with 400 INVALID_ARGUMENT.
+  # Kept for a future version of the API that accepts more than one event type per subscription.
   @geofencing_subscriptions_422.3_create_with_unsupported_multiple_event_type
   Scenario: Multi event subscription not supported
     Given the API provider only allows one event to be subscribed per subscription request
