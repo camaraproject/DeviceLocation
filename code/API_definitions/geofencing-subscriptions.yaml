@@ -245,7 +245,7 @@ paths:
         "401":
           $ref: "../common/CAMARA_common.yaml#/components/responses/Unauthenticated401"
         "403":
-          $ref: "#/components/responses/SubscriptionPermissionDenied403"
+          $ref: "../common/CAMARA_event_common.yaml#/components/responses/SubscriptionPermissionDenied403"
         "422":
           $ref: "#/components/responses/CreateGeofencingSubscriptionDevice422"
         "429":
@@ -280,7 +280,7 @@ paths:
         "401":
           $ref: "../common/CAMARA_common.yaml#/components/responses/Unauthenticated401"
         "403":
-          $ref: "#/components/responses/SubscriptionPermissionDenied403"
+          $ref: "../common/CAMARA_event_common.yaml#/components/responses/SubscriptionPermissionDenied403"
   /subscriptions/{subscriptionId}:
     get:
       tags:
@@ -309,7 +309,7 @@ paths:
         "401":
           $ref: "../common/CAMARA_common.yaml#/components/responses/Unauthenticated401"
         "403":
-          $ref: "#/components/responses/SubscriptionPermissionDenied403"
+          $ref: "../common/CAMARA_event_common.yaml#/components/responses/SubscriptionPermissionDenied403"
         "404":
           $ref: "../common/CAMARA_common.yaml#/components/responses/NotFound404"
     delete:
@@ -344,7 +344,7 @@ paths:
         "401":
           $ref: "../common/CAMARA_common.yaml#/components/responses/Unauthenticated401"
         "403":
-          $ref: "#/components/responses/SubscriptionPermissionDenied403"
+          $ref: "../common/CAMARA_event_common.yaml#/components/responses/SubscriptionPermissionDenied403"
         "404":
           $ref: "../common/CAMARA_common.yaml#/components/responses/NotFound404"
 components:
@@ -842,8 +842,6 @@ components:
               $ref: "#/components/schemas/HTTPSettings"
 
   responses:
-    SubscriptionPermissionDenied403:
-      $ref: '../common/CAMARA_event_common.yaml#/components/responses/SubscriptionPermissionDenied403'
     CreateGeofencingSubscriptionDevice422:
       description: Unprocessable Entity
       headers:
