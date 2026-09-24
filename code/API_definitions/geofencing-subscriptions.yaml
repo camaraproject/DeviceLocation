@@ -209,7 +209,7 @@ paths:
                     x-correlator:
                       $ref: "../common/CAMARA_common.yaml#/components/headers/x-correlator"
                 "400":
-                  $ref: "../common/CAMARA_common.yaml#/components/responses/BadRequestWithRange400"
+                  $ref: "../common/CAMARA_common.yaml#/components/responses/BadRequest400"
                 "401":
                   $ref: "../common/CAMARA_common.yaml#/components/responses/Unauthenticated401"
                 "403":
@@ -217,7 +217,7 @@ paths:
                 "410":
                   $ref: "../common/CAMARA_event_common.yaml#/components/responses/SinkGone410"
                 "429":
-                  $ref: "#/components/responses/TooManyRequestsWithQuota429"
+                  $ref: "../common/CAMARA_common.yaml#/components/responses/TooManyRequests429"
               security:
                 - notificationsBearerAuth: []
                 - {}
@@ -276,7 +276,7 @@ paths:
                 items:
                   $ref: "#/components/schemas/Subscription"
         "400":
-          $ref: "../common/CAMARA_common.yaml#/components/responses/BadRequestWithRange400"
+          $ref: "../common/CAMARA_common.yaml#/components/responses/BadRequest400"
         "401":
           $ref: "../common/CAMARA_common.yaml#/components/responses/Unauthenticated401"
         "403":
