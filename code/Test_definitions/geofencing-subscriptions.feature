@@ -224,11 +224,11 @@ Feature: Camara Geofencing Subscriptions API, vwip - Operations on subscriptions
     And the response property "$.message" contains a user friendly text
 
     Examples:
-      | device_identifier                                          | oas_spec_schema                             |
-      | $.config.subscriptionDetail.device.phoneNumber             | /components/schemas/PhoneNumber             |
-      | $.config.subscriptionDetail.device.ipv4Address             | /components/schemas/DeviceIpv4Address        |
-      | $.config.subscriptionDetail.device.ipv6Address             | /components/schemas/DeviceIpv6Address       |
-      | $.config.subscriptionDetail.device.networkAccessIdentifier | /components/schemas/NetworkAccessIdentifier |
+      | device_identifier                                          | oas_spec_schema                              |
+      | $.config.subscriptionDetail.device.phoneNumber             | #/components/schemas/PhoneNumber             |
+      | $.config.subscriptionDetail.device.ipv4Address             | #/components/schemas/DeviceIpv4Address       |
+      | $.config.subscriptionDetail.device.ipv6Address             | #/components/schemas/DeviceIpv6Address       |
+      | $.config.subscriptionDetail.device.networkAccessIdentifier | #/components/schemas/NetworkAccessIdentifier |
 
  # This scenario may happen e.g. with 2-legged access tokens, which do not identify a single device.
   @geofencing_subscriptions_C01.03_device_not_found
@@ -372,7 +372,7 @@ Feature: Camara Geofencing Subscriptions API, vwip - Operations on subscriptions
   @geofencing_subscriptions_400.8_invalid_x-correlator
   Scenario: Invalid x-correlator value
     Given a valid geofencing subscription request body
-    And the header "x-correlator" does not comply with the OAS schema at "/components/schemas/XCorrelator"
+    And the header "x-correlator" does not comply with the OAS schema at "#/components/schemas/XCorrelator"
     When the request "createGeofencingSubscription" is sent
     Then the response status code is 400
     And the response property "$.status" is 400
