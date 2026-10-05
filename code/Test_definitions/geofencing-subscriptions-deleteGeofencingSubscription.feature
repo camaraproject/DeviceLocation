@@ -46,6 +46,7 @@ Feature: Camara Geofencing Subscriptions API, vwip - Operation deleteGeofencingS
   @geofencing_subscriptions_401.3_no_authorization_header_for_delete_subscription
   Scenario: No Authorization header for delete subscription
     Given header "Authorization" is set without a token
+    And the path parameter "subscriptionId" is set to an existing subscription identifier
     When the request "deleteGeofencingSubscription" is sent
     Then the response status code is 401
     And the response property "$.status" is 401
