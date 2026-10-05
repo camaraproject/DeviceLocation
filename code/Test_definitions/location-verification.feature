@@ -200,7 +200,7 @@ Feature: CAMARA Device location verification API, vwip - Operation verifyLocatio
   @location_verification_400.3_other_input_properties_schema_not_compliant
   # Test other input properties in addition to device
   Scenario Outline: Input property values do not comply with the schema
-    Given the request body property "<input_property>" does not comply with the OAS schema at <oas_spec_schema>
+    Given the request body property "<input_property>" does not comply with the OAS schema at "<oas_spec_schema>"
     When the request "verifyLocation" is sent
     Then the response status code is 400
     And the response property "$.status" is 400
