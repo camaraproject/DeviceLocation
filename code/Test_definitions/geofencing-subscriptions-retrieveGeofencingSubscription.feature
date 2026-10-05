@@ -35,7 +35,7 @@ Feature: Camara Geofencing Subscriptions API, vwip - Operation retrieveGeofencin
 
   @geofencing_subscriptions_401.4_no_authorization_header_for_get_subscription
   Scenario: No Authorization header for get subscription
-    Given header "Authorization" is not set to valid token
+    Given header "Authorization" is not present
     And path parameter "subscriptionId" is set to the identifier of an existing subscription
     When the request "retrieveGeofencingSubscription" is sent
     Then the response status code is 401
