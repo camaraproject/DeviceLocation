@@ -69,7 +69,8 @@ Changes documented below are compared to version 0.6.0-rc.1.
 
 ### Changed
 
-* N/A
+* Aligned with Commonalities r4.4 by @hdamker in https://github.com/camaraproject/DeviceLocation/pull/437
+* Align test definitions with the API definition by @hdamker in https://github.com/camaraproject/DeviceLocation/pull/439
 
 ### Fixed
 
@@ -100,7 +101,7 @@ Changes documented below are compared to version 1.0.0-rc.1.
 
 ### Changed
 
-* N/A
+* Aligned with Commonalities r4.4 by @hdamker in https://github.com/camaraproject/DeviceLocation/pull/436
 
 ### Fixed
 
@@ -131,7 +132,7 @@ Changes documented below are compared to version 3.1.0-rc.2.
 
 ### Changed
 
-* N/A
+* Aligned with Commonalities r4.4 by @hdamker in https://github.com/camaraproject/DeviceLocation/pull/436
 
 ### Fixed
 
