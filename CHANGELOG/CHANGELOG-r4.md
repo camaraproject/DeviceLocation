@@ -69,8 +69,8 @@ Changes documented below are compared to version 0.6.0-rc.1.
 
 ### Changed
 
-* Aligned with Commonalities r4.4 by @hdamker in https://github.com/camaraproject/DeviceLocation/pull/437
-* Align test definitions with the API definition by @hdamker in https://github.com/camaraproject/DeviceLocation/pull/439
+* Aligned with Commonalities r4.4: error responses reference the r4.4 common responses; `createGeofencingSubscription` declares two additional error codes, 400 `OUT_OF_RANGE` and 422 `MULTIEVENT_COMBINATION_TEMPORARILY_NOT_SUPPORTED` by @hdamker in https://github.com/camaraproject/DeviceLocation/pull/437
+* Added a test scenario for 400 `OUT_OF_RANGE` and split the test definitions into one feature file per operation by @hdamker in https://github.com/camaraproject/DeviceLocation/pull/439
 
 ### Fixed
 
