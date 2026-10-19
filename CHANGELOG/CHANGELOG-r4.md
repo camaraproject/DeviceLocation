@@ -78,7 +78,8 @@ Changes documented below are compared to version 0.6.0-rc.1.
 
 ### Removed
 
-* N/A
+* `retrieveGeofencingSubscriptionList` 400 and the notification callback 400 no longer declare `OUT_OF_RANGE`, reverting its addition in 0.6.0-rc.1 by @hdamker in https://github.com/camaraproject/DeviceLocation/pull/437
+* The notification callback 429 no longer declares `QUOTA_EXCEEDED` by @hdamker in https://github.com/camaraproject/DeviceLocation/pull/437
 
 ## location-retrieval 1.0.0-rc.2
 
