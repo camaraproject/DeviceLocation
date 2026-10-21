@@ -63,7 +63,7 @@ Changes documented below are compared to version 0.6.0-rc.1.
 
 ### Breaking changes
 
-* N/A
+* `createGeofencingSubscription` declares two additional error codes: 400 `OUT_OF_RANGE` and 422 `MULTIEVENT_COMBINATION_TEMPORARILY_NOT_SUPPORTED` by @hdamker in https://github.com/camaraproject/DeviceLocation/pull/437
 
 ### Added
 
@@ -71,7 +71,8 @@ Changes documented below are compared to version 0.6.0-rc.1.
 
 ### Changed
 
-* N/A
+* Aligned with Commonalities r4.4: error responses reference the r4.4 common responses; `createGeofencingSubscription` declares two additional error codes, 400 `OUT_OF_RANGE` and 422 `MULTIEVENT_COMBINATION_TEMPORARILY_NOT_SUPPORTED` by @hdamker in https://github.com/camaraproject/DeviceLocation/pull/437
+* Added a test scenario for 400 `OUT_OF_RANGE` and split the test definitions into one feature file per operation by @hdamker in https://github.com/camaraproject/DeviceLocation/pull/439
 
 ### Fixed
 
@@ -79,7 +80,9 @@ Changes documented below are compared to version 0.6.0-rc.1.
 
 ### Removed
 
-* N/A
+* `retrieveGeofencingSubscriptionList` 400 and the notification callback 400 no longer declare `OUT_OF_RANGE`, reverting its addition in 0.6.0-rc.1 by @hdamker in https://github.com/camaraproject/DeviceLocation/pull/437
+* The notification callback 429 no longer declares `QUOTA_EXCEEDED` by @hdamker in https://github.com/camaraproject/DeviceLocation/pull/437
+* Test scenario for deprecated error code IDENTIFIER_MISMATCH by @jlurien in https://github.com/camaraproject/DeviceLocation/pull/446
 
 ## location-retrieval 1.0.0-rc.2
 
@@ -102,7 +105,7 @@ Changes documented below are compared to version 1.0.0-rc.1.
 
 ### Changed
 
-* N/A
+* Aligned with Commonalities r4.4 by @hdamker in https://github.com/camaraproject/DeviceLocation/pull/436
 
 ### Fixed
 
@@ -110,7 +113,8 @@ Changes documented below are compared to version 1.0.0-rc.1.
 
 ### Removed
 
-* N/A
+* Test scenario for deprecated error code IDENTIFIER_MISMATCH by @jlurien in https://github.com/camaraproject/DeviceLocation/pull/446
+
 
 ## location-verification 3.1.0-rc.3
 
@@ -133,7 +137,7 @@ Changes documented below are compared to version 3.1.0-rc.2.
 
 ### Changed
 
-* N/A
+* Aligned with Commonalities r4.4 by @hdamker in https://github.com/camaraproject/DeviceLocation/pull/436
 
 ### Fixed
 
