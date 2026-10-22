@@ -2,6 +2,7 @@
 
 <!-- TOC:START -->
 ## Table of Contents
+- [r4.2](#r42)
 - [r4.1](#r41)
 <!-- TOC:END -->
 
@@ -13,6 +14,117 @@ The below sections record the changes for each API version in each release as fo
 * for the first release-candidate, all changes since the last public release
 * for subsequent release-candidate(s), only the delta to the previous release-candidate
 * for a public release, the consolidated changes since the previous public release
+
+# r4.2
+
+## Release Notes
+
+This release candidate contains the definition and documentation of
+* geofencing-subscriptions 0.6.0-rc.2
+* location-retrieval 1.0.0-rc.2
+* location-verification 3.1.0-rc.3
+
+The API definition(s) are based on
+* Commonalities r4.4 (0.9.0)
+* Identity and Consent Management r4.2 (0.5.0)
+
+## geofencing-subscriptions 0.6.0-rc.2
+
+**geofencing-subscriptions 0.6.0-rc.2 is a release-candidate version of this API.**
+
+Changes documented below are compared to version 0.6.0-rc.1.
+
+- API definition **with inline documentation**:
+  - [View it on ReDoc](https://redocly.github.io/redoc/?url=https://raw.githubusercontent.com/camaraproject/DeviceLocation/r4.2/code/API_definitions/geofencing-subscriptions.yaml&nocors)
+  - [View it on Swagger Editor](https://camaraproject.github.io/swagger-ui/?url=https://raw.githubusercontent.com/camaraproject/DeviceLocation/r4.2/code/API_definitions/geofencing-subscriptions.yaml)
+  - OpenAPI [YAML spec file](https://github.com/camaraproject/DeviceLocation/blob/r4.2/code/API_definitions/geofencing-subscriptions.yaml)
+
+### Breaking changes
+
+* `createGeofencingSubscription` declares two additional error codes: 400 `OUT_OF_RANGE` and 422 `MULTIEVENT_COMBINATION_TEMPORARILY_NOT_SUPPORTED` by @hdamker in https://github.com/camaraproject/DeviceLocation/pull/437
+
+### Added
+
+* N/A
+
+### Changed
+
+* Aligned with Commonalities r4.4: error responses reference the r4.4 common responses; `createGeofencingSubscription` declares two additional error codes, 400 `OUT_OF_RANGE` and 422 `MULTIEVENT_COMBINATION_TEMPORARILY_NOT_SUPPORTED` by @hdamker in https://github.com/camaraproject/DeviceLocation/pull/437
+* Added a test scenario for 400 `OUT_OF_RANGE` and split the test definitions into one feature file per operation by @hdamker in https://github.com/camaraproject/DeviceLocation/pull/439
+
+### Fixed
+
+* N/A
+
+### Removed
+
+* `retrieveGeofencingSubscriptionList` 400 and the notification callback 400 no longer declare `OUT_OF_RANGE`, reverting its addition in 0.6.0-rc.1 by @hdamker in https://github.com/camaraproject/DeviceLocation/pull/437
+* The notification callback 429 no longer declares `QUOTA_EXCEEDED` by @hdamker in https://github.com/camaraproject/DeviceLocation/pull/437
+* Test scenario for deprecated error code IDENTIFIER_MISMATCH by @jlurien in https://github.com/camaraproject/DeviceLocation/pull/446
+
+## location-retrieval 1.0.0-rc.2
+
+**location-retrieval 1.0.0-rc.2 is a release-candidate version of this API.**
+
+Changes documented below are compared to version 1.0.0-rc.1.
+
+- API definition **with inline documentation**:
+  - [View it on ReDoc](https://redocly.github.io/redoc/?url=https://raw.githubusercontent.com/camaraproject/DeviceLocation/r4.2/code/API_definitions/location-retrieval.yaml&nocors)
+  - [View it on Swagger Editor](https://camaraproject.github.io/swagger-ui/?url=https://raw.githubusercontent.com/camaraproject/DeviceLocation/r4.2/code/API_definitions/location-retrieval.yaml)
+  - OpenAPI [YAML spec file](https://github.com/camaraproject/DeviceLocation/blob/r4.2/code/API_definitions/location-retrieval.yaml)
+
+### Breaking changes
+
+* N/A
+
+### Added
+
+* N/A
+
+### Changed
+
+* Aligned with Commonalities r4.4 by @hdamker in https://github.com/camaraproject/DeviceLocation/pull/436
+
+### Fixed
+
+* N/A
+
+### Removed
+
+* Test scenario for deprecated error code IDENTIFIER_MISMATCH by @jlurien in https://github.com/camaraproject/DeviceLocation/pull/446
+
+## location-verification 3.1.0-rc.3
+
+**location-verification 3.1.0-rc.3 is a release-candidate version of this API.**
+
+Changes documented below are compared to version 3.1.0-rc.2.
+
+- API definition **with inline documentation**:
+  - [View it on ReDoc](https://redocly.github.io/redoc/?url=https://raw.githubusercontent.com/camaraproject/DeviceLocation/r4.2/code/API_definitions/location-verification.yaml&nocors)
+  - [View it on Swagger Editor](https://camaraproject.github.io/swagger-ui/?url=https://raw.githubusercontent.com/camaraproject/DeviceLocation/r4.2/code/API_definitions/location-verification.yaml)
+  - OpenAPI [YAML spec file](https://github.com/camaraproject/DeviceLocation/blob/r4.2/code/API_definitions/location-verification.yaml)
+
+### Breaking changes
+
+* N/A
+
+### Added
+
+* N/A
+
+### Changed
+
+* Aligned with Commonalities r4.4 by @hdamker in https://github.com/camaraproject/DeviceLocation/pull/436
+
+### Fixed
+
+* N/A
+
+### Removed
+
+* N/A
+
+**Full Changelog**: https://github.com/camaraproject/DeviceLocation/compare/r4.1...r4.2
 
 # r4.1
 
