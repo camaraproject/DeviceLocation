@@ -137,9 +137,11 @@ Changes documented below are compared to version 0.5.0.
 
 ### Changed
 
-* Synced with CAMARA Commonalities r4.3 / 0.8.0: aligned schemas, responses, parameters and `info.description` mandatory markers by @jlurien in https://github.com/camaraproject/DeviceLocation/pull/408
-* Aligned test plan with updated OpenAPI spec and CAMARA r4.3 testing artifacts by @jlurien in https://github.com/camaraproject/DeviceLocation/pull/414
-* Aligned with Commonalities r4.4 by @hdamker in https://github.com/camaraproject/DeviceLocation/pull/436
+* Aligned with CAMARA Commonalities r4.4 (0.9.0) by @jlurien and @hdamker in https://github.com/camaraproject/DeviceLocation/pull/408 and https://github.com/camaraproject/DeviceLocation/pull/436
+  * The `400` response of `retrieveLocation` also declares `OUT_OF_RANGE` (see Breaking changes)
+  * Request inputs carry explicit length and range limits, e.g. `x-correlator` (256 characters) and the device identifiers; `maxAge` and `maxSurface` are bounded by the 32-bit integer range; `device.ipv4Address.publicPort` must be at least 1 (`0` was allowed before but is not a usable port). No request that conforms to the documented semantics is rejected
+  * Added the info.description sections on authorization and authentication, additional error responses and request body strictness
+* Aligned the test definitions with the API definition and Commonalities r4.4 by @jlurien and @hdamker in https://github.com/camaraproject/DeviceLocation/pull/414 and https://github.com/camaraproject/DeviceLocation/pull/436
 
 ### Fixed
 
