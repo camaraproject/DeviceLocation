@@ -91,7 +91,7 @@ Changes documented below are compared to version 0.5.0.
 
 ### Added
 
-* Added support for credential type `PRIVATE_KEY_JWT` by @jlurien in https://github.com/camaraproject/DeviceLocation/pull/393
+* Added support for credential type `PRIVATE_KEY_JWT` for notification delivery, with the 422 `PRIVATE_KEY_JWT_NOT_CONFIGURED` error on `createGeofencingSubscription` when no JWK Set was pre-shared with the API provider, by @jlurien in https://github.com/camaraproject/DeviceLocation/pull/393
 
 ### Changed
 
