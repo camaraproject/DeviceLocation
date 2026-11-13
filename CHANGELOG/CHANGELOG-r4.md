@@ -128,7 +128,7 @@ Changes documented below are compared to version 0.5.0.
 
 ### Breaking changes
 
-* N/A
+* `retrieveLocation` declares the additional 400 error code `OUT_OF_RANGE` by @jlurien and @hdamker in https://github.com/camaraproject/DeviceLocation/pull/408 and https://github.com/camaraproject/DeviceLocation/pull/436
 
 ### Added
 
