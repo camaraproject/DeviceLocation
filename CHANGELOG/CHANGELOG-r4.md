@@ -95,11 +95,14 @@ Changes documented below are compared to version 0.5.0.
 
 ### Changed
 
-* Synced with CAMARA Commonalities r4.3 / 0.8.0: aligned schemas, responses, parameters and `info.description` mandatory markers by @jlurien in https://github.com/camaraproject/DeviceLocation/pull/408
+* Aligned with CAMARA Commonalities r4.4 (0.9.0) by @jlurien and @hdamker in https://github.com/camaraproject/DeviceLocation/pull/408, https://github.com/camaraproject/DeviceLocation/pull/420 and https://github.com/camaraproject/DeviceLocation/pull/437
+  * `createGeofencingSubscription` declares two additional error codes, 400 `OUT_OF_RANGE` and 422 `MULTIEVENT_COMBINATION_TEMPORARILY_NOT_SUPPORTED`; all operations declare the 403 error code `SUBSCRIPTION_MISMATCH` (see Breaking changes)
+  * Notifications follow the common CloudEvents model; `data` is no longer listed as required in the event envelope
+  * Request inputs carry explicit length and range limits, e.g. `x-correlator` (256 characters), `sink` and `networkAccessIdentifier` (2048); `subscriptionMaxEvents` is at most 1000000; `device.ipv4Address.publicPort` must be at least 1 (`0` was allowed before but is not a usable port)
+  * `retrieveGeofencingSubscriptionList` returns at most 20 subscriptions
+  * Added the info.description sections on authorization and authentication, additional error responses and request body strictness
 * Added `description` field to Area schema by @bigludo7 in https://github.com/camaraproject/DeviceLocation/pull/382
-* Aligned test plan with updated OpenAPI spec and CAMARA r4.3 testing artifacts by @jlurien in https://github.com/camaraproject/DeviceLocation/pull/414
-* Aligned with Commonalities r4.4: error responses reference the r4.4 common responses; `createGeofencingSubscription` declares two additional error codes, 400 `OUT_OF_RANGE` and 422 `MULTIEVENT_COMBINATION_TEMPORARILY_NOT_SUPPORTED` by @hdamker in https://github.com/camaraproject/DeviceLocation/pull/437
-* Added a test scenario for 400 `OUT_OF_RANGE` and split the test definitions into one feature file per operation by @hdamker in https://github.com/camaraproject/DeviceLocation/pull/439
+* Aligned the test definitions with the API definition, added a test scenario for 400 `OUT_OF_RANGE` and split the test definitions into one feature file per operation by @jlurien and @hdamker in https://github.com/camaraproject/DeviceLocation/pull/414 and https://github.com/camaraproject/DeviceLocation/pull/439
 
 ### Fixed
 
