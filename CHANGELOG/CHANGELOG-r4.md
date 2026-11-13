@@ -110,8 +110,9 @@ Changes documented below are compared to version 0.5.0.
 
 ### Removed
 
-* `retrieveGeofencingSubscriptionList` 400 and the notification callback 400 no longer declare `OUT_OF_RANGE`, reverting its addition in 0.6.0-rc.1 by @hdamker in https://github.com/camaraproject/DeviceLocation/pull/437
 * The notification callback 429 no longer declares `QUOTA_EXCEEDED` by @hdamker in https://github.com/camaraproject/DeviceLocation/pull/437
+* The `PLAIN` and `REFRESHTOKEN` sink credential types and the `AMQP`, `KAFKA`, `MQTT3`, `MQTT5` and `NATS` protocol values by @jlurien in https://github.com/camaraproject/DeviceLocation/pull/393 and https://github.com/camaraproject/DeviceLocation/pull/408
+  * Not breaking: 0.5.0 already required `credentialType` `ACCESSTOKEN` and allowed only `HTTP`
 * Test scenario for deprecated error code IDENTIFIER_MISMATCH by @jlurien in https://github.com/camaraproject/DeviceLocation/pull/446
 
 ## location-retrieval 1.0.0
