@@ -87,6 +87,7 @@ Changes documented below are compared to version 0.5.0.
 ### Breaking changes
 
 * `createGeofencingSubscription` declares two additional error codes: 400 `OUT_OF_RANGE` and 422 `MULTIEVENT_COMBINATION_TEMPORARILY_NOT_SUPPORTED` by @hdamker in https://github.com/camaraproject/DeviceLocation/pull/437
+* All operations declare the additional 403 error code `SUBSCRIPTION_MISMATCH` by @jlurien in https://github.com/camaraproject/DeviceLocation/pull/420
 
 ### Added
 
