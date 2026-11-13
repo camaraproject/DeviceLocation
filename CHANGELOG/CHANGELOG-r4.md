@@ -106,7 +106,7 @@ Changes documented below are compared to version 0.5.0.
 
 ### Fixed
 
-* Fixed `CloudEvent` schema: added missing `type: object` declaration by @bigludo7 in https://github.com/camaraproject/DeviceLocation/pull/406
+* N/A
 
 ### Removed
 
