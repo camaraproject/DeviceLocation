@@ -2,7 +2,7 @@ repository:
   repository_name: DeviceLocation
   release_tag: r4.3
   release_type: public-release
-  release_date: null
+  release_date: '2026-11-20T14:55:14Z'
   src_commit_sha: 938c694ebe5f2a7680dd5342c91960431d683bd4
 apis:
 - api_name: geofencing-subscriptions
